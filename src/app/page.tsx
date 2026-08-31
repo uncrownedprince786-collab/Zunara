@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
-import { ZodiacGrid } from "@/components/ui/zodiac-grid";
+import { LiveZodiacGrid } from "@/components/ui/live-zodiac-grid";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { elementRune, elementText } from "@/components/ui/element";
@@ -146,11 +146,11 @@ export default function HomePage() {
             href="/horoscope"
             className="hidden text-sm text-muted transition-colors hover:text-gold sm:block"
           >
-            All horoscopes \u2192
+            All horoscopes &rarr;
           </Link>
         </div>
         <div className="mt-8">
-          <ZodiacGrid hrefFor={(slug) => `/horoscope/${slug}/today`} />
+          <LiveZodiacGrid />
         </div>
       </section>
 

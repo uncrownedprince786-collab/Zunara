@@ -155,3 +155,110 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* ---------------- Motion system ---------------- */
+
+/* Entrance reveal: fade + gentle rise, driven by the Reveal primitive. */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.reveal-delay-1 { transition-delay: 0.06s; }
+.reveal-delay-2 { transition-delay: 0.12s; }
+.reveal-delay-3 { transition-delay: 0.18s; }
+.reveal-delay-4 { transition-delay: 0.24s; }
+.reveal-delay-5 { transition-delay: 0.30s; }
+
+/* Subtle card lift on hover (depth, not bounce). */
+.card-lift {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+  transform: translateZ(0);
+}
+.card-lift:hover {
+  transform: translateY(-3px);
+}
+
+/* Gentle orbital / celestial rotation for decorative cos (reduced on small marks). */
+.orbit-slow {
+  animation: z-spin 60s linear infinite;
+  transform-origin: center;
+}
+.orbit-slower {
+  animation: z-spin 120s linear infinite;
+  transform-origin: center;
+}
+@keyframes z-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Soft breathing glow for the moon/hero accent (opacity only, cheap). */
+.glow-pulse {
+  animation: z-glow 6s ease-in-out infinite;
+}
+@keyframes z-glow {
+  0%, 100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* Data reveal used on timelines / lists: fade in with a hairline draw. */
+.hairline-draw {
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.is-visible .hairline-draw,
+.hairline-draw.is-visible {
+  transform: scaleX(1);
+}
+
+/* Motion is a preference, not a requirement: fully disable under reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .card-lift {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .card-lift:hover {
+    transform: none;
+  }
+  .orbit-slow,
+  .orbit-slower,
+  .glow-pulse,
+  .hairline-draw {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* ---------------- Strength meter ---------------- */
+
+.strength-bar {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light));
+  transform-origin: left;
+}

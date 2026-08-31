@@ -2,6 +2,7 @@ import { Breadcrumbs, type Crumb } from "./breadcrumbs";
 import { PeriodTabs } from "./period-tabs";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { PlanetSymbol } from "./planet-symbol";
+import { ThemeSymbol, type ThemeKey } from "./theme-symbol";
 import type { ZodiacSign } from "@/lib/zodiac/zodiac";
 import type { PeriodType } from "@/lib/calendar/periods";
 import { periodLabel, periodKey } from "@/lib/calendar/periods";
@@ -25,6 +26,13 @@ const AREA_LABEL: Record<LifeArea, string> = {
   work: "Work",
   money: "Money",
   energy: "Energy",
+};
+
+const AREA_THEME_KEY: Record<LifeArea, ThemeKey> = {
+  love: "love",
+  work: "work",
+  money: "money",
+  energy: "energy",
 };
 
 function strengthTone(strength: SignalStrength): string {
@@ -61,6 +69,20 @@ function GlancePanel({ result }: { result: HoroscopeResult }) {
           <AreaChip key={s.area} signal={s} />
         ))}
       </div>
+      <dl className="mt-5 grid gap-4 border-t border-p-line pt-5 text-sm sm:grid-cols-2">
+        {result.glance.bestFor && (
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Best for</dt>
+            <dd className="font-serif-body leading-6 text-p-ink">{result.glance.bestFor}</dd>
+          </div>
+        )}
+        {result.glance.watchOutFor && (
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Watch out for</dt>
+            <dd className="font-serif-body leading-6 text-p-ink">{result.glance.watchOutFor}</dd>
+          </div>
+        )}
+      </dl>
     </section>
   );
 }
@@ -88,22 +110,62 @@ function ChangesPanel({ result }: { result: HoroscopeResult }) {
 }
 
 function ThirtySeconds({ result }: { result: HoroscopeResult }) {
-  const rows: Array<[string, string]> = [
-    ["Best for", result.glance.bestFor],
-    ["Watch out for", result.glance.watchOutFor],
-    ["Best move", result.glance.bestMove],
-  ];
+  const areas = result.signals.areas.filter((a) => a.present);
+  if (areas.length === 0) return null;
   return (
     <section aria-labelledby="thirty-heading" className="rounded-md border border-line-soft p-6">
       <h2 id="thirty-heading" className="kicker !text-gold-deep">Your day in 30 seconds</h2>
-      <dl className="mt-4 space-y-4">
-        {rows.map(([label, value]) => (
-          <div key={label} className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
-            <dt className="w-32 shrink-0 text-xs font-semibold uppercase tracking-wide text-p-muted">{label}</dt>
-            <dd className="font-serif-body text-base leading-7 text-p-ink">{value}</dd>
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {areas.map((a) => (
+          <div key={a.area} className={`flex flex-col items-center gap-2 rounded-md border p-4 ${strengthTone(a.strength)}`}>
+            <ThemeSymbol theme={AREA_THEME_KEY[a.area]} size="md" className="text-current" />
+            <span className="text-xs font-semibold uppercase tracking-wide">{AREA_LABEL[a.area]}</span>
+            <span className="text-[0.65rem] uppercase tracking-[0.12em] opacity-80">
+              {a.strength === "strong" ? "Strong" : a.strength === "moderate" ? "Moderate" : "Mild"}
+            </span>
           </div>
         ))}
-      </dl>
+      </div>
+    </section>
+  );
+}
+
+function YourMove({ result }: { result: HoroscopeResult }) {
+  if (!result.glance.bestMove) return null;
+  return (
+    <section aria-labelledby="move-heading" className="rounded-md border-l-2 border-gold-deep bg-ink-2/60 p-6">
+      <h2 id="move-heading" className="kicker !text-gold-deep">Your move</h2>
+      <p className="mt-3 font-serif-body text-lg italic leading-8 text-starlight">
+        &ldquo;{result.glance.bestMove}&rdquo;
+      </p>
+    </section>
+  );
+}
+
+function PeriodSignals({ result, periodType }: { result: HoroscopeResult; periodType: PeriodType }) {
+  const areas = result.signals.areas.filter((a) => a.present);
+  const periodLabel = periodType === "weekly" ? "this week" : periodType === "monthly" ? "this month" : "this year";
+  return (
+    <section aria-labelledby="period-signals-heading" className="rounded-md border border-line-soft p-6">
+      <h2 id="period-signals-heading" className="kicker !text-gold-deep">
+        Biggest themes {periodLabel}
+      </h2>
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {areas.map((a) => (
+          <div key={a.area} className={`flex flex-col items-center gap-2 rounded-md border p-4 ${strengthTone(a.strength)}`}>
+            <ThemeSymbol theme={AREA_THEME_KEY[a.area]} size="md" className="text-current" />
+            <span className="text-xs font-semibold uppercase tracking-wide">{AREA_LABEL[a.area]}</span>
+            <span className="text-[0.65rem] uppercase tracking-[0.12em] opacity-80">
+              {a.strength === "strong" ? "Strong" : a.strength === "moderate" ? "Moderate" : "Mild"}
+            </span>
+          </div>
+        ))}
+      </div>
+      {result.glance.bestMove && (
+        <p className="mt-5 border-t border-p-line pt-4 font-serif-body text-base italic leading-7 text-p-muted">
+          Best move: &ldquo;{result.glance.bestMove}&rdquo;
+        </p>
+      )}
     </section>
   );
 }
@@ -294,9 +356,16 @@ export function HoroscopeArticle({
         {isDaily && (
           <div className="space-y-5">
             <GlancePanel result={result} />
-            <ChangesPanel result={result} />
             <ThirtySeconds result={result} />
+            <ChangesPanel result={result} />
+            <YourMove result={result} />
             <StrongestThemes result={result} />
+          </div>
+        )}
+
+        {!isDaily && (
+          <div className="space-y-5">
+            <PeriodSignals result={result} periodType={periodType} />
           </div>
         )}
 
