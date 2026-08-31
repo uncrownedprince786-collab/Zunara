@@ -1,32 +1,27 @@
 import Link from "next/link";
 import { SiteNav } from "./site-nav";
-
-export function StarMark() {
-  return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1" aria-hidden="true" className="text-gold">
-      <path d="M12 4v16M4 12h16M6.5 6.5l11 11M17.5 6.5l-11 11" opacity="0.9" />
-      <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
+import { StarMark } from "./star-mark";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line-soft bg-void/85 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-line-soft bg-ink/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-xl tracking-tight text-starlight"
+          className="group flex items-center gap-2.5 text-starlight"
           aria-label="Zunara home"
         >
-          <StarMark />
-          <span>Zunara</span>
+          <StarMark className="h-5 w-5 text-gold transition-transform duration-500 group-hover:rotate-90" />
+          <span className="font-display text-[1.35rem] font-medium tracking-tight">
+            Zunara
+          </span>
         </Link>
-        <span className="hidden text-xs uppercase tracking-[0.2em] text-subdued md:block">
-          Written in the stars
+        <span className="hidden text-[0.62rem] uppercase tracking-[0.34em] text-subdued lg:block">
+          An editorial journal of the celestial
         </span>
         <SiteNav />
       </div>
+      <div aria-hidden="true" className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
     </header>
   );
 }

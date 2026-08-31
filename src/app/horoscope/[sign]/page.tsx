@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getZodiacSign, formatDateRange } from "@/lib/zodiac/zodiac";
-import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
+import { getZodiacSign } from "@/lib/zodiac/zodiac";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { PeriodTabs } from "@/components/ui/period-tabs";
 import { signIndexMetadata } from "@/lib/seo/metadata";
 import { absoluteUrl } from "@/lib/seo/site";
+import { elementRune, elementText } from "@/components/ui/element";
 
 export const revalidate = 86400;
 
@@ -26,7 +26,14 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
 
   const canonical = absoluteUrl(`/horoscope/${sign}`);
 
-  const scriptData = {
+  const periods = [
+    { type: "today", label: "Daily", blurb: "A single day in focus" },
+    { type: "weekly", label: "Weekly", blurb: "The week ahead" },
+    { type: "monthly", label: "Monthly", blurb: "A longer arc" },
+    { type: "yearly", label: "Yearly", blurb: "The whole year" },
+  ] as const;
+
+  const listScript = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `${signData.name} horoscopes`,
@@ -38,17 +45,10 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
     ],
   };
 
-  const periods = [
-    { type: "today" as const, label: "Daily horoscope" },
-    { type: "weekly" as const, label: "Weekly horoscope" },
-    { type: "monthly" as const, label: "Monthly horoscope" },
-    { type: "yearly" as const, label: "Yearly horoscope" },
-  ];
-
   return (
     <article className="mx-auto max-w-3xl px-4 pb-16 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebPage", "@id": canonical, name: `${signData.name} zodiac sign`, inLanguage: "en" }) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(scriptData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listScript) }} />
 
       <div className="mt-6">
         <Breadcrumbs
@@ -59,59 +59,88 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
         />
       </div>
 
-      <header className="mt-8">
-        <div className="flex items-center gap-4">
-          <ZodiacSymbol sign={signData.name} size="xl" className="text-gold" label={signData.name} />
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-subdued">
-              {signData.element} \u00b7 {signData.modality}
-            </p>
-            <h1 className="font-display text-4xl text-starlight">{signData.name} Horoscope</h1>
-            <p className="mt-1 text-sm text-muted">{formatDateRange(signData)}</p>
-          </div>
-        </div>
-      </header>
-
-      <div className="mt-6">
+      <div className="mt-8">
         <PeriodTabs signSlug={sign} active="daily" />
       </div>
 
-      <section className="mt-10">
-        <h2 className="font-display text-2xl text-starlight">About {signData.name}</h2>
-        <p className="mt-4 leading-7 text-starlight/90">{signData.description}</p>
-      </section>
+      <div className="mt-10 grid gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <div>
+          <h2 className="font-display text-2xl text-starlight">About {signData.name}</h2>
+          <p className="drop-cap mt-4 font-serif-body text-lg leading-8 text-starlight/90">
+            {signData.description}
+          </p>
 
-      <section className="mt-8">
-        <h3 className="text-xs uppercase tracking-[0.18em] text-gold">Element &amp; ruler</h3>
-        <p className="mt-2 text-starlight/90">
-          {signData.name} is a {signData.modality.toLowerCase()} {signData.element.toLowerCase()} sign,
-          traditionally ruled by {signData.ruler}.
-          {signData.modernRuler ? ` Modern astrology also associates it with ${signData.modernRuler}.` : ""}
-        </p>
-      </section>
+          <blockquote
+            className={`mt-8 border-l-2 pl-5 italic text-muted ${elementText(signData.element)}`}
+          >
+            &ldquo;{signData.keywords.join(" \u2014 ")}.&rdquo;
+          </blockquote>
+        </div>
 
-      <section className="mt-8">
-        <h3 className="text-xs uppercase tracking-[0.18em] text-gold">Traits</h3>
-        <ul className="mt-3 flex flex-wrap gap-2">
-          {signData.traits.map((trait) => (
-            <li key={trait} className="rounded-full border border-line bg-obsidian px-3 py-1 text-sm text-muted">
-              {trait}
-            </li>
-          ))}
-        </ul>
-      </section>
+        <aside className="space-y-5">
+          <section className="rounded-lg border border-line bg-ink-2 p-5">
+            <h3 className="kicker">Traits</h3>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {signData.traits.map((trait) => (
+                <li
+                  key={trait}
+                  className="rounded-full border border-line bg-ink-3 px-3 py-1 text-xs text-muted"
+                >
+                  {trait}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-      <section className="mt-10" aria-label={`${signData.name} forecasts`}>
-        <h2 className="font-display text-2xl text-starlight">Forecasts</h2>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          {periods.map((p) => (
+          <section className="rounded-lg border border-line bg-ink-2 p-5">
+            <h3 className="kicker">Signature</h3>
+            <dl className="mt-3 space-y-2.5 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-subdued">Element</dt>
+                <dd className={`font-medium ${elementText(signData.element)}`}>
+                  {signData.element} <span aria-hidden="true">{elementRune(signData.element)}</span>
+                </dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-subdued">Modality</dt>
+                <dd className="text-starlight">{signData.modality}</dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-subdued">Ruler</dt>
+                <dd className="text-starlight">
+                  {signData.ruler}
+                  {signData.modernRuler ? ` / ${signData.modernRuler}` : ""}
+                </dd>
+              </div>
+            </dl>
+          </section>
+        </aside>
+      </div>
+
+      <section className="mt-14" aria-label={`${signData.name} forecasts`}>
+        <div className="flex items-end justify-between border-b border-line-soft pb-4">
+          <div>
+            <p className="kicker">Forecasts</p>
+            <h2 className="mt-2 font-display text-2xl text-starlight">Choose a horizon</h2>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+          {periods.map((p, i) => (
             <Link
               key={p.type}
               href={`/horoscope/${sign}/${p.type}`}
-              className="rounded-lg border border-line bg-obsidian p-5 transition-colors hover:border-gold/40 hover:bg-obsidian-2"
+              className="group flex flex-col justify-between gap-8 bg-ink-2 p-6 transition-colors hover:bg-ink-3"
             >
-              <span className="text-sm text-gold">{p.label}</span>
-              <p className="mt-1 text-xs text-subdued">Read now \u2192</p>
+              <div className="flex items-center justify-between">
+                <span className="font-display text-3xl text-gold/30">
+                  {["I", "II", "III", "IV"][i]}
+                </span>
+                <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">\u2192</span>
+              </div>
+              <div>
+                <p className="font-display text-xl text-starlight">{p.label} horoscope</p>
+                <p className="mt-1 text-sm text-subdued">{p.blurb}</p>
+              </div>
             </Link>
           ))}
         </div>

@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#090a0f",
+  themeColor: "#0b0d14",
   width: "device-width",
   initialScale: 1,
 };
@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${playfair.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-void text-starlight">
+      <body className="min-h-full flex flex-col bg-ink text-starlight">
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

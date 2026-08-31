@@ -12,25 +12,33 @@ export const metadata: Metadata = {
 
 export default function HoroscopeIndexPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <div className="mx-auto max-w-3xl">
-        <Breadcrumbs items={[{ label: "Horoscopes", href: "/horoscope" }]} />
-        <h1 className="mt-6 font-display text-4xl text-starlight sm:text-5xl">All Zodiac Horoscopes</h1>
-        <p className="mt-4 leading-7 text-muted">
-          Twelve signs, four horizons. Choose your sign to read today&rsquo;s forecast, or look
-          ahead to your weekly, monthly and yearly outlooks \u2014 each calculated from real
-          astronomical positions of the Sun, Moon and planets.
-        </p>
-      </div>
-      <div className="mt-10">
-        <ZodiacGrid hrefFor={(slug) => `/horoscope/${slug}`} />
-      </div>
-      <div className="mx-auto mt-12 max-w-3xl">
-        <p className="text-sm text-subdued">
-          Zunara&rsquo;s {ZODIAC_SIGNS.length} sign horoscopes are generated deterministically from live
-          astronomical data. Planetary positions and aspects are computed locally and never
-          fabricated. {SITE.tagline}
-        </p>
+    <div className="constellation-bg">
+      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <Breadcrumbs items={[{ label: "Horoscopes", href: "/horoscope" }]} />
+          <h1 className="mt-8 font-display text-4xl text-starlight sm:text-6xl">
+            All Zodiac Horoscopes
+          </h1>
+          <div aria-hidden="true" className="gold-rule mx-auto mt-7 w-20" />
+          <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-muted">
+            Twelve signs, four horizons. Choose your sign to read today&rsquo;s forecast, or turn
+            to your weekly, monthly and yearly outlooks \u2014 each calculated from the true
+            positions of the Sun, Moon and planets.
+          </p>
+        </div>
+
+        <div className="mt-14">
+          <ZodiacGrid hrefFor={(slug) => `/horoscope/${slug}`} />
+        </div>
+
+        <div className="mx-auto mt-14 flex max-w-2xl items-center gap-4 text-center">
+          <div aria-hidden="true" className="gold-rule h-px flex-1" />
+          <p className="text-sm leading-6 text-subdued">
+            {SITE.tagline} {ZODIAC_SIGNS.length} sign horoscopes, generated deterministically from
+            live astronomical data. Positions and aspects are computed locally and never fabricated.
+          </p>
+          <div aria-hidden="true" className="gold-rule h-px flex-1" />
+        </div>
       </div>
     </div>
   );

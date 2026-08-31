@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
-import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { ZodiacGrid } from "@/components/ui/zodiac-grid";
+import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
+import { PlanetSymbol } from "@/components/ui/planet-symbol";
+import { elementRune, elementText } from "@/components/ui/element";
+import { snapshotForToday } from "@/lib/astronomy/astro";
+import { PLANET_LABELS } from "@/lib/astrology/interpret";
 
 function todayDate(): string {
   return new Intl.DateTimeFormat("en", {
@@ -17,136 +21,236 @@ export const revalidate = 3600;
 
 export default function HomePage() {
   const date = todayDate();
+  const snapshot = snapshotForToday();
+
+  const sun = snapshot.positions.find((p) => p.key === "sun");
+  const sunSign = sun ? ZODIAC_SIGNS.find((s) => s.slug === sun.sign) : undefined;
+
+  const retro = snapshot.positions.filter(
+    (p) => p.retrograde && p.key !== "northNode" && p.key !== "southNode",
+  );
+
+  const transit = snapshot.aspects[0];
 
   return (
-    <div className="celestial-bg">
-      <section className="mx-auto max-w-6xl px-4 pb-16 pt-20 text-center sm:px-6 sm:pt-28">
-        <p className="text-xs uppercase tracking-[0.3em] text-gold">{date}</p>
-        <h1 className="mx-auto mt-6 max-w-3xl font-display text-5xl leading-tight text-starlight sm:text-6xl">
-          Written in the stars.
-        </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-muted">
-          Daily, weekly, monthly and yearly horoscopes for all twelve signs of the zodiac \u2014
-          calculated from real astronomical data. No myths, just the mathematics of the sky.
-        </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+    <div className="constellation-bg">
+      {/* ---- Masthead ---- */}
+      <section className="border-b border-line-soft">
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
+          <p className="kicker">{date}</p>
+          <div aria-hidden="true" className="gold-rule mx-auto mt-5 w-20" />
+          <div className="starfield mx-auto -mb-3 mt-8 h-16" aria-hidden="true" />
+          <h1 className="mx-auto max-w-3xl font-display text-5xl font-medium leading-[1.05] text-starlight sm:text-7xl">
+            Written in the stars.
+          </h1>
+          <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-muted">
+            A premium editorial astrology publication. Daily, weekly, monthly and yearly
+            horoscopes for all twelve signs \u2014 calculated from real astronomical data.
+            No myths, just the mathematics of the sky.
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/horoscope"
+              className="rounded-full bg-gold px-8 py-3 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
+            >
+              Read today&rsquo;s horoscope
+            </Link>
+            <Link
+              href="/astrology"
+              className="rounded-full border border-line px-8 py-3 text-sm text-muted transition-colors hover:border-gold/40 hover:text-starlight"
+            >
+              The astronomy
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- The current sky (real data) ---- */}
+      <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6">
+        <div className="flex flex-col gap-10 lg:flex-row">
+          <div className="lg:w-3/5">
+            <p className="kicker">The sky, tonight</p>
+            <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
+              The Sun passes through {sunSign?.name ?? "the zodiac"}
+            </h2>
+            <p className="mt-4 max-w-xl leading-7 text-muted">
+              Every position below is computed from astronomical theory, not invented. Zunara
+              renders the movements of the spheres into reading \u2014 each aspect and retrograde
+              corresponds to the true state of the sky.
+            </p>
+            {sunSign && (
+              <div className="mt-6 flex flex-wrap gap-2">
+                {sunSign.traits.slice(0, 4).map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-line bg-ink-2 px-3 py-1 text-xs text-muted"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="lg:w-2/5">
+            <div className="paper-panel rounded-lg p-6">
+              <p className="kicker !text-gold-deep">Planetary bulletin</p>
+              <dl className="mt-5 space-y-3">
+                {retro.length > 0 ? (
+                  retro.map((p) => (
+                    <div key={p.key} className="flex items-center gap-3">
+                      <PlanetSymbol body={p.key} size="md" className="text-gold-deep" />
+                      <dd className="text-sm text-p-ink">
+                        <span className="font-medium">{PLANET_LABELS[p.key] ?? p.key}</span>
+                        <span className="text-p-muted"> retrograde in {sunSignName(p.sign)}</span>
+                      </dd>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <PlanetSymbol body="sun" size="md" className="text-gold-deep" />
+                    <dd className="text-sm text-p-ink">
+                      <span className="font-medium">No retrogrades</span>
+                      <span className="text-p-muted"> \u2014 all planets direct today</span>
+                    </dd>
+                  </div>
+                )}
+                {transit && (
+                  <div className="mt-3 flex items-start gap-3 border-t border-p-line pt-3">
+                    <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" />
+                    <dd className="text-sm text-p-ink">
+                      <span className="font-medium capitalize">{transit.name}</span>
+                      <span className="text-p-muted">
+                        {" "}\u2014 {PLANET_LABELS[transit.bodyA] ?? transit.bodyA} &amp;{" "}
+                        {PLANET_LABELS[transit.bodyB] ?? transit.bodyB}, {transit.orb.toFixed(1)}\u00B0 orb
+                      </span>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- The twelve signs ---- */}
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="signs-heading">
+        <div className="flex items-end justify-between border-b border-line-soft pb-5">
+          <div>
+            <p className="kicker">The twelve signs</p>
+            <h2 id="signs-heading" className="mt-3 font-display text-3xl text-starlight">
+              An index of the heavens
+            </h2>
+          </div>
           <Link
             href="/horoscope"
-            className="rounded-full bg-gold px-7 py-3 text-sm font-medium text-void transition-opacity hover:opacity-90"
+            className="hidden text-sm text-muted transition-colors hover:text-gold sm:block"
           >
-            Explore all signs
+            All horoscopes \u2192
           </Link>
-          <Link
-            href="/astrology"
-            className="rounded-full border border-line px-7 py-3 text-sm text-muted transition-colors hover:border-gold/40 hover:text-starlight"
-          >
-            The astronomy
-          </Link>
+        </div>
+        <div className="mt-8">
+          <ZodiacGrid hrefFor={(slug) => `/horoscope/${slug}/today`} />
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6" aria-labelledby="signs-heading">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <h2 id="signs-heading" className="font-display text-3xl text-starlight">The twelve signs</h2>
-            <p className="mt-2 text-muted">Select your sign to read today&rsquo;s forecast and beyond.</p>
-          </div>
-          <p className="hidden text-sm text-subdued sm:block">{ZODIAC_SIGNS.length} zodiac signs</p>
-        </div>
-        <ZodiacGrid hrefFor={(slug) => `/horoscope/${slug}/today`} />
-      </section>
-
-      <section className="border-y border-line-soft bg-obsidian/40">
+      {/* ---- Horizons ---- */}
+      <section className="border-y border-line-soft bg-ink-2">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="font-display text-3xl text-starlight">Today&rsquo;s horoscope, at a glance</h2>
-          <p className="mt-3 max-w-2xl text-muted">
-            A daily reading shaped by the Sun, Moon and planets in their current positions. Start
-            with your sign, then look ahead by the week, the month, or the year.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: "Daily", href: "/horoscope/aries/today", desc: "A day in focus" },
-              { label: "Weekly", href: "/horoscope/aries/weekly", desc: "The week ahead" },
-              { label: "Monthly", href: "/horoscope/aries/monthly", desc: "A longer arc" },
-              { label: "Yearly", href: "/horoscope/aries/yearly", desc: "The yearly view" },
-            ].map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className="group rounded-lg border border-line bg-obsidian p-6 transition-colors hover:border-gold/40 hover:bg-obsidian-2"
-              >
-                <p className="font-display text-xl text-starlight">{c.label}</p>
-                <p className="mt-1 text-sm text-subdued">{c.desc}</p>
-                <span className="mt-3 inline-block text-sm text-gold opacity-0 transition-opacity group-hover:opacity-100">
-                  Read now \u2192
-                </span>
-              </Link>
-            ))}
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+            <div>
+              <p className="kicker">Four horizons</p>
+              <h2 className="mt-3 font-display text-3xl text-starlight">
+                Beginnings to whole years
+              </h2>
+              <p className="mt-4 leading-7 text-muted">
+                Start with the day, then travel outward \u2014 the week, the month, the year. Each
+                horizon draws on the same truthful positions of the Sun, Moon and the planets.
+              </p>
+            </div>
+            <div className="grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+              {[
+                { label: "Daily", href: "/horoscope/aries/today", desc: "A single day in focus", n: "I" },
+                { label: "Weekly", href: "/horoscope/aries/weekly", desc: "The week ahead", n: "II" },
+                { label: "Monthly", href: "/horoscope/aries/monthly", desc: "A longer arc", n: "III" },
+                { label: "Yearly", href: "/horoscope/aries/yearly", desc: "The whole year", n: "IV" },
+              ].map((c) => (
+                <Link
+                  key={c.label}
+                  href={c.href}
+                  className="group flex flex-col justify-between gap-8 bg-ink p-6 transition-colors hover:bg-ink-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-display text-4xl text-gold/30">{c.n}</span>
+                    <span className="text-sm text-gold opacity-0 transition-opacity group-hover:opacity-100">
+                      \u2192
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl text-starlight">{c.label}</p>
+                    <p className="mt-1 text-sm text-subdued">{c.desc}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-3xl text-starlight">Real astronomy, editorial writing</h2>
-          <p className="mt-4 leading-7 text-muted">
-            At Zunara, every planetary position you see is calculated from astronomical theory, not
-            guessed. Our forecasts blend that calculated data with carefully crafted editorial
-            fragments \u2014 so the sky speaks with clarity, warmth and honesty.
-          </p>
-          <Link
-            href="/astrology"
-            className="mt-6 inline-block text-sm text-gold underline-offset-4 hover:underline"
-          >
-            Read about our method
-          </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-        <h2 className="mb-8 font-display text-2xl text-starlight">Begin with your element</h2>
-        <div className="grid gap-4 md:grid-cols-4">
-          {(["Fire", "Earth", "Air", "Water"] as const).map((element) => {
-            const signs = ZODIAC_SIGNS.filter((s) => s.element === element);
-            return (
-              <div key={element} className="rounded-xl border border-line bg-obsidian/50 p-6">
-                <div className="flex items-baseline justify-between">
-                  <h3 className="font-display text-xl text-gold">{element}</h3>
-                  <span className="text-2xl text-gold/40">{elementGlyph(element)}</span>
+      {/* ---- Method / editorial note ---- */}
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <div className="grid gap-10 lg:grid-cols-2">
+          <div>
+            <p className="kicker">Our method</p>
+            <h2 className="mt-3 font-display text-3xl leading-tight text-starlight">
+              Real astronomy, editorial writing
+            </h2>
+            <p className="mt-5 font-serif-body text-lg leading-8 text-starlight/85">
+              At Zunara, every planetary position you read is calculated from astronomical theory,
+              never guessed. Our forecasts blend that data with carefully crafted editorial
+              fragments \u2014 so the sky speaks with clarity, warmth and honesty.
+            </p>
+            <Link
+              href="/about"
+              className="mt-6 inline-block text-sm text-gold underline-offset-4 hover:underline"
+            >
+              Read about our method \u2192
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line">
+            {(["Fire", "Earth", "Air", "Water"] as const).map((element) => {
+              const signs = ZODIAC_SIGNS.filter((s) => s.element === element);
+              return (
+                <div key={element} className="bg-ink-2 p-6">
+                  <div className="flex items-baseline justify-between">
+                    <h3 className={`font-display text-2xl ${elementText(element)}`}>{element}</h3>
+                    <span aria-hidden="true" className={`text-xl ${elementText(element)} opacity-60`}>
+                      {elementRune(element)}
+                    </span>
+                  </div>
+                  <ul className="mt-5 space-y-3">
+                    {signs.map((s) => (
+                      <li key={s.slug}>
+                        <Link
+                          href={`/horoscope/${s.slug}/today`}
+                          className="flex items-center gap-3 text-sm text-muted transition-colors hover:text-gold"
+                        >
+                          <ZodiacSymbol sign={s.slug} size="sm" className={elementText(s.element)} label={s.name} />
+                          <span>{s.name}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="mt-5 space-y-3">
-                  {signs.map((s) => (
-                    <li key={s.slug}>
-                      <Link
-                        href={`/horoscope/${s.slug}/today`}
-                        className="flex items-center gap-3 text-starlight/90 transition-colors hover:text-gold"
-                      >
-                        <ZodiacSymbol sign={s.slug} size="sm" className="text-muted" label={s.name} />
-                        <span>{s.name}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
     </div>
   );
 }
 
-function elementGlyph(element: string): string {
-  switch (element) {
-    case "Fire":
-      return "\u25B3";
-    case "Earth":
-      return "\u25A7";
-    case "Air":
-      return "\u2B26";
-    case "Water":
-      return "\u29EB";
-    default:
-      return "\u2735";
-  }
+function sunSignName(slug: string): string {
+  return ZODIAC_SIGNS.find((s) => s.slug === slug)?.name ?? slug;
 }

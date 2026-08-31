@@ -38,7 +38,7 @@ export function makePeriodPage(periodType: PeriodType) {
     ];
 
     return (
-      <div className="px-4 sm:px-6">
+      <div>
         <ZodiacPeriodStrip periodType={periodType} activeSign={sign} />
         <div className="mt-8">
           <HoroscopeArticle

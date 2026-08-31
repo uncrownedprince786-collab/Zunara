@@ -23,7 +23,7 @@ export function PeriodTabs({ signSlug, active, basePath }: PeriodTabsProps) {
         : `/horoscope/${sign}/${type}`;
 
   return (
-    <nav aria-label="Forecast period" className="inline-flex rounded-full border border-line bg-obsidian p-1">
+    <nav aria-label="Forecast period" className="inline-flex items-center gap-1 border-b border-line">
       {TABS.map((tab) => {
         const isActive = tab.type === active;
         return (
@@ -31,10 +31,10 @@ export function PeriodTabs({ signSlug, active, basePath }: PeriodTabsProps) {
             key={tab.type}
             href={makePath(signSlug, tab.type)}
             aria-current={isActive ? "page" : undefined}
-            className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+            className={`px-5 py-2.5 text-[0.8rem] uppercase tracking-[0.16em] transition-colors ${
               isActive
-                ? "bg-gold/15 text-gold"
-                : "text-muted hover:text-starlight"
+                ? "border-b-2 border-gold text-gold"
+                : "border-b-2 border-transparent text-subdued hover:text-starlight"
             }`}
           >
             {tab.label}

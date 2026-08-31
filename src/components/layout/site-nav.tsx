@@ -2,28 +2,43 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/horoscope", label: "Horoscopes" },
-  { href: "/astrology", label: "Astrology" },
+  { href: "/astrology", label: "The Astronomy" },
   { href: "/about", label: "About" },
 ];
 
 export function SiteNav() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <nav aria-label="Primary">
-      <div className="hidden items-center gap-6 md:flex">
-        {LINKS.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="text-sm text-muted transition-colors hover:text-gold"
-          >
-            {l.label}
-          </Link>
-        ))}
+      <div className="hidden items-center gap-7 md:flex">
+        {LINKS.map((l) => {
+          const active = isActive(l.href);
+          return (
+            <Link
+              key={l.href}
+              href={l.href}
+              aria-current={active ? "page" : undefined}
+              className="group relative text-[0.8rem] uppercase tracking-[0.18em] text-muted transition-colors hover:text-gold"
+            >
+              {l.label}
+              <span
+                aria-hidden="true"
+                className={`absolute -bottom-1.5 left-0 h-px bg-gold transition-all duration-300 ${
+                  active ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              />
+            </Link>
+          );
+        })}
       </div>
       <button
         type="button"
@@ -44,7 +59,7 @@ export function SiteNav() {
         )}
       </button>
       {open && (
-        <div id="mobile-menu" className="absolute left-0 right-0 top-16 border-b border-line-soft bg-obsidian px-4 py-4 md:hidden">
+        <div id="mobile-menu" className="absolute left-0 right-0 top-16 border-b border-line-soft bg-ink px-4 py-4 md:hidden">
           <div className="flex flex-col gap-3">
             {LINKS.map((l) => (
               <Link
