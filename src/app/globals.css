@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #090a0f;
+  --color-obsidian: #12151f;
+  --color-obsidian-2: #161a26;
+  --color-starlight: #e2e8f0;
+  --color-gold: #c5a880;
+  --color-gold-light: #d6bd98;
+  --color-muted: #94a3b8;
+  --color-subdued: #64748b;
+  --color-line: #232839;
+  --color-line-soft: #1c2130;
+
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-inter);
+
+  --tracking-tightest: -0.03em;
+}
+
+:root {
+  --background: #090a0f;
+  --foreground: #e2e8f0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(197, 168, 128, 0.25);
+  color: #f4f4f5;
+}
+
+/* Focus-visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Subtle constellation line-work background texture */
+.celestial-bg {
+  background-image:
+    radial-gradient(ellipse at 80% -10%, rgba(197, 168, 128, 0.06), transparent 60%),
+    radial-gradient(circle at 10% 10%, rgba(148, 163, 184, 0.04), transparent 40%),
+    linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+}
+
+.hairline {
+  border-color: var(--color-line);
+}
