@@ -304,6 +304,91 @@ export const ADVICE_BODY: readonly string[] = [
   "remember that steadiness, more than brilliance, is what carries you far.",
 ];
 
+/** Opening lines for the daily "in 30 seconds" overall summary. */
+export const GLANCE_OVERALL: readonly string[] = [
+  "A day shaped by steady effort rather than sudden turns, with the most rewarding ground close to home and habit.",
+  "A day of gentle momentum where attention to detail is rewarded and small steps carry you further than grand plans.",
+  "A day favouring clarity and calm; the best outcomes come from doing one thing well rather than many things at once.",
+  "A day with a change of rhythm in the air, inviting you to adapt smoothly while keeping your core intentions steady.",
+  "A day where connection and follow-through matter most, and progress is built through consistency rather than force.",
+  "A day of measured possibility, when patience with a growing process brings the clearest results by evening.",
+];
+
+/** "Best for" — the areas or actions the day favours, in plain language. */
+export const GLANCE_BEST: Record<string, readonly string[]> = {
+  love: [
+    "honest conversation and quality time with someone close",
+    "expressing appreciation plainly and sharing a genuine feeling",
+    "repairing or warming an important relationship through small attentions",
+  ],
+  work: [
+    "finishing an existing task properly rather than starting a new one",
+    "careful preparation, clear priorities and steady follow-through",
+    "a considered conversation or review that moves a project forward",
+  ],
+  money: [
+    "a calm review of your finances and a small deliberate saving",
+    "postponing impulse spending in favour of a clear, planned decision",
+    "organising your accounts and settling something you have been putting off",
+  ],
+  energy: [
+    "protecting your rhythm with rest and gentle movement",
+    "pacing yourself and guarding the hours when your focus is strongest",
+    "honouring your body by matching activity to its natural tempo",
+  ],
+};
+
+/** "Watch out for" — gentle, non-fearful notes on where to give attention. */
+export const GLANCE_WATCH: readonly string[] = [
+  "rushing a decision before the full picture is clear",
+  "overcommitting your limited energy across too many fronts at once",
+  "letting a small assumption grow into a larger misunderstanding",
+  "postponing a straightforward conversation that is best had now",
+  "measuring your progress against someone else's timeline",
+  "loading your day with expectations that leave no room for rest",
+];
+
+/** "Best move" — the single practical action to take forward. */
+export const GLANCE_MOVE: readonly string[] = [
+  "pick one meaningful task and see it through before turning to the next",
+  "have the honest conversation you have been circling, kindly and plainly",
+  "protect a pocket of quiet time and let your intentions settle there",
+  "write down one next step so a vague wish becomes a concrete plan",
+  "offer the patience to a situation that you would want shown to you",
+  "choose the longer, steadier road over the tempting shortcut",
+  "close a small loop you have been meaning to finish, and feel the lift",
+];
+
+/** Opening paragraph pools for longer periods. */
+export const WEEK_OPENINGS: readonly string[] = [
+  "The week ahead rewards a steady hand and a clear sense of what matters most.",
+  "This week favours building on what is already in motion over chasing new beginnings.",
+  "A measured, intentional week: the gains come from depth, presence and follow-through.",
+  "The coming days ask for flexibility and warmth, with room for both focus and ease.",
+  "A calmer rhythm settles over the week, encouraging you to work with the season rather than against it.",
+];
+
+export const MONTH_OPENINGS: readonly string[] = [
+  "This month unfolds around a central theme of steady, deliberate progress across the areas you care about.",
+  "The month ahead supports consolidation, honest review and quietly building on what works.",
+  "A month for turning attention toward foundations — habits, relationships and resources that hold you steady.",
+  "Progress this month comes from patience and consistency, with clarity arriving through action.",
+];
+
+export const YEAR_OPENINGS: readonly string[] = [
+  "The year ahead is shaped by a drive toward meaningful, sustainable progress in the parts of life you value most.",
+  "This year rewards depth over breadth, inviting you to invest in a few things that truly matter and let them grow.",
+  "A year of constructive momentum, where steady effort in relationships, work and resources compounds into real change.",
+];
+
+/** Short phrasing for an area with no major astrological emphasis today. */
+export const NONE_NOTE: readonly string[] = [
+  "No major influence today; the ordinary course of things is fine.",
+  "Nothing significant to flag today; steady as ever.",
+  "Quiet today; no notable pull in this area.",
+  "No significant emphasis just now; keep things simple.",
+];
+
 export const THEME_SECONDS: Record<Theme, readonly string[]> = {
   love: LOVE_BODY,
   career: CAREER_BODY,

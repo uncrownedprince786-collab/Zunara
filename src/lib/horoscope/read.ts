@@ -12,6 +12,10 @@ export interface HoroscopeResult {
   seed: string;
   periodKeyStr: string;
   snapshot: PlanetarySnapshot;
+  signals: ForecastContent["signals"];
+  glance: ForecastContent["glance"];
+  changes: ForecastContent["changes"];
+  why: ForecastContent["why"];
 }
 
 /**
@@ -40,5 +44,9 @@ export function getHoroscopeContent(
     seed: content.seed,
     periodKeyStr: content.periodKeyStr,
     snapshot: snap,
+    signals: content.signals,
+    glance: content.glance,
+    changes: content.changes,
+    why: content.why,
   };
 }
