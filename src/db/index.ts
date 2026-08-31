@@ -1,9 +1,16 @@
-import { neon } from "@neondatabase/serverless";
+import {
+  neon,
+  type HTTPQueryOptions,
+  type NeonQueryFunction,
+} from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 
 function createDb() {
-  return drizzle(neon(process.env.DATABASE_URL!), { schema });
+  const run = neon(process.env.DATABASE_URL!);
+  const client = (query: string, params: unknown[], config?: HTTPQueryOptions<boolean, boolean>) =>
+    run.query(query, params, config);
+  return drizzle(client as unknown as NeonQueryFunction<boolean, boolean>, { schema });
 }
 
 type Database = ReturnType<typeof createDb>;
