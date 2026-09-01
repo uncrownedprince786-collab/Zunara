@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
-import { LiveZodiacGrid } from "@/components/ui/live-zodiac-grid";
+import { BentoZodiacGrid } from "@/components/ui/bento-zodiac-grid";
+import { HeroVisual } from "@/components/ui/hero-visual";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { elementRune, elementText } from "@/components/ui/element";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
+import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 
 function todayDate(): string {
   return new Intl.DateTimeFormat("en", {
@@ -35,8 +37,9 @@ export default function HomePage() {
   return (
     <div className="constellation-bg">
       {/* ---- Masthead ---- */}
-      <section className="border-b border-line-soft">
-        <div className="mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
+      <section className="relative overflow-hidden border-b border-line-soft">
+        <HeroVisual />
+        <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
           <p className="kicker">{date}</p>
           <div aria-hidden="true" className="gold-rule mx-auto mt-5 w-20" />
           <div className="starfield mx-auto -mb-3 mt-8 h-16" aria-hidden="true" />
@@ -64,6 +67,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <DailyOrbitBanner />
 
       {/* ---- The current sky (real data) ---- */}
       <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6">
@@ -150,7 +155,7 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="mt-8">
-          <LiveZodiacGrid />
+          <BentoZodiacGrid />
         </div>
       </section>
 

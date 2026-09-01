@@ -1,11 +1,37 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Zunara theme system — dark (default) + light
+   Semantic tokens are mapped through runtime CSS variables so
+   the entire design flips under `data-theme="light"` without
+   touching component markup. Cosmic purple/cyan are secondary
+   accents alongside the brand's celestial gold.
+   ============================================================ */
+:root {
+  --z-bg: #0b0d14;
+  --z-bg-2: #0f1220;
+  --z-bg-3: #141828;
+  --z-bg-4: #1a1f31;
+  --z-fg: #ece7db;
+  --z-muted: #a9a292;
+  --z-subdued: #7d7668;
+  --z-line: #232839;
+  --z-line-soft: #1c2130;
+  --z-gold: #b8915a;
+  --z-gold-light: #d0a86e;
+  --z-gold-deep: #8f6f3f;
+  --z-cosmic: #7b61ff;
+  --z-cosmic-soft: rgba(123, 97, 255, 0.16);
+  --z-nebula: #56ccf2;
+  --z-nebula-soft: rgba(86, 204, 242, 0.14);
+}
+
 @theme {
-  /* Ambient ink canvas */
-  --color-ink: #0b0d14;
-  --color-ink-2: #0f1220;
-  --color-ink-3: #141828;
-  --color-ink-4: #1a1f31;
+  /* Ambient ink canvas — mapped through runtime theme variables */
+  --color-ink: var(--z-bg);
+  --color-ink-2: var(--z-bg-2);
+  --color-ink-3: var(--z-bg-3);
+  --color-ink-4: var(--z-bg-4);
 
   /* Editorial ivory paper */
   --color-paper: #f6f1e7;
@@ -14,16 +40,20 @@
   --color-parchment: #fbf8f1;
 
   /* Antique gold */
-  --color-gold: #b8915a;
-  --color-gold-light: #d0a86e;
-  --color-gold-deep: #8f6f3f;
+  --color-gold: var(--z-gold);
+  --color-gold-light: var(--z-gold-light);
+  --color-gold-deep: var(--z-gold-deep);
+
+  /* Cosmic purple + nebula cyan secondary accents */
+  --color-cosmic: var(--z-cosmic);
+  --color-nebula: var(--z-nebula);
 
   /* Ink-toned text on dark */
-  --color-starlight: #ece7db;
-  --color-muted: #a9a292;
-  --color-subdued: #7d7668;
-  --color-line: #232839;
-  --color-line-soft: #1c2130;
+  --color-starlight: var(--z-fg);
+  --color-muted: var(--z-muted);
+  --color-subdued: var(--z-subdued);
+  --color-line: var(--z-line);
+  --color-line-soft: var(--z-line-soft);
 
   /* Element accents (muted, editorial) */
   --color-fire: #c97b52;
@@ -48,6 +78,26 @@
   --shadow-paper: 0 1px 2px rgba(30, 26, 20, 0.10), 0 10px 30px rgba(30, 26, 20, 0.08);
 }
 
+/* ---- Light theme overrides -------------------------------- */
+html[data-theme="light"] {
+  --z-bg: #f3eee3;
+  --z-bg-2: #fbf8f1;
+  --z-bg-3: #f6f1e7;
+  --z-bg-4: #efe7d8;
+  --z-fg: #1e1a14;
+  --z-muted: #544d40;
+  --z-subdued: #7d7463;
+  --z-line: #ded3c0;
+  --z-line-soft: #e9e1d2;
+  --z-gold: #8f6f3f;
+  --z-gold-light: #a6814e;
+  --z-gold-deep: #6f5630;
+  --z-cosmic: #6a4fd8;
+  --z-cosmic-soft: rgba(106, 79, 216, 0.14);
+  --z-nebula: #2b9bc9;
+  --z-nebula-soft: rgba(43, 155, 201, 0.12);
+}
+
 :root {
   --background: #0b0d14;
   --foreground: #ece7db;
@@ -56,6 +106,10 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+}
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {
@@ -64,6 +118,13 @@ body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Respect the OS preference on first paint before hydration. */
+@media (prefers-color-scheme: light) {
+  html:not([data-theme="dark"]):not([data-theme="light"]) {
+    color-scheme: light;
+  }
 }
 
 ::selection {
@@ -261,4 +322,50 @@ body {
   border-radius: 999px;
   background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light));
   transform-origin: left;
+}
+
+/* ---------------- Cosmic accents (secondary, subtle) ---------------- */
+
+/* Soft outer glow ring used on hover for interactive cards/CTAs. */
+.cosmic-glow {
+  box-shadow:
+    0 0 0 1px var(--color-line),
+    0 8px 30px -12px var(--z-cosmic-soft);
+}
+.cosmic-glow:hover {
+  box-shadow:
+    0 0 0 1px var(--color-line),
+    0 0 24px -6px var(--z-cosmic-soft),
+    0 18px 44px -16px var(--z-cosmic-soft);
+}
+
+/* Nebula hairline for section dividers / active-state tint lines. */
+.nebula-line {
+  background: linear-gradient(90deg, transparent, var(--color-nebula), transparent);
+}
+
+/* Gentle ambient drift behind the hero constellation. */
+.nova-pulse {
+  animation: z-nova 8s ease-in-out infinite;
+}
+@keyframes z-nova {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+}
+
+/* Theme transition — avoid jarring snap, but don't animate on load. */
+html.theme-ready,
+html.theme-ready body,
+html.theme-ready :where(section, header, nav, main, footer) {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nova-pulse {
+    animation: none;
+    opacity: 0.6;
+  }
 }

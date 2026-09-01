@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getZodiacSign, formatDateRange } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { elementText } from "@/components/ui/element";
+import { QuickNavigation } from "@/components/horoscope/quick-navigation";
 
 export function generateStaticParams() {
   return ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"].map((sign) => ({ sign }));
@@ -41,6 +42,7 @@ export default async function SignLayout({
         </div>
         <div aria-hidden="true" className="gold-rule" />
       </header>
+      <QuickNavigation currentSlug={signSlug} />
       <div className="mx-auto max-w-6xl px-0 py-8 sm:px-6">{children}</div>
     </div>
   );
