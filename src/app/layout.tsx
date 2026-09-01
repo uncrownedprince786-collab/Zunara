@@ -1,19 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Syne, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SITE } from "@/lib/seo/site";
 
-const playfair = Playfair_Display({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["600", "700", "800"],
+  variable: "--font-syne",
   display: "swap",
 });
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -54,7 +63,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0d14",
+  themeColor: "#090B10",
   width: "device-width",
   initialScale: 1,
 };
@@ -63,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} h-full antialiased`}
+      className={`${syne.variable} ${jakarta.variable} ${playfair.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
