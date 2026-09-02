@@ -60,7 +60,7 @@ function AreaChip({ signal }: { signal: { area: LifeArea; strength: SignalStreng
 function GlancePanel({ result }: { result: HoroscopeResult }) {
   return (
     <section aria-labelledby="glance-heading" className="paper-panel rounded-md p-6">
-      <h2 id="glance-heading" className="kicker !text-gold-deep">
+      <h2 id="glance-heading" className="kicker">
         Today at a glance
       </h2>
       <p className="mt-3 font-serif-body text-lg italic leading-8 text-p-ink">{result.glance.overall}</p>
@@ -90,7 +90,7 @@ function GlancePanel({ result }: { result: HoroscopeResult }) {
 function ChangesPanel({ result }: { result: HoroscopeResult }) {
   return (
     <section aria-labelledby="changes-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="changes-heading" className="kicker !text-gold-deep">What changed today?</h2>
+      <h2 id="changes-heading" className="kicker">What changed today?</h2>
       {result.changes.length === 0 ? (
         <p className="mt-3 font-serif-body text-base leading-7 text-p-muted">
           Nothing major changed in the sky today, so conditions stay largely steady. Small shifts matter more than any grand move.
@@ -114,7 +114,7 @@ function ThirtySeconds({ result }: { result: HoroscopeResult }) {
   if (areas.length === 0) return null;
   return (
     <section aria-labelledby="thirty-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="thirty-heading" className="kicker !text-gold-deep">Your day in 30 seconds</h2>
+      <h2 id="thirty-heading" className="kicker">Your day in 30 seconds</h2>
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {areas.map((a) => (
           <div key={a.area} className={`flex flex-col items-center gap-2 rounded-md border p-4 ${strengthTone(a.strength)}`}>
@@ -134,7 +134,7 @@ function YourMove({ result }: { result: HoroscopeResult }) {
   if (!result.glance.bestMove) return null;
   return (
     <section aria-labelledby="move-heading" className="rounded-md border-l-2 border-gold-deep bg-ink-2/60 p-6">
-      <h2 id="move-heading" className="kicker !text-gold-deep">Your move</h2>
+      <h2 id="move-heading" className="kicker">Your move</h2>
       <p className="mt-3 font-serif-body text-lg italic leading-8 text-starlight">
         &ldquo;{result.glance.bestMove}&rdquo;
       </p>
@@ -147,7 +147,7 @@ function PeriodSignals({ result, periodType }: { result: HoroscopeResult; period
   const periodLabel = periodType === "weekly" ? "this week" : periodType === "monthly" ? "this month" : "this year";
   return (
     <section aria-labelledby="period-signals-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="period-signals-heading" className="kicker !text-gold-deep">
+      <h2 id="period-signals-heading" className="kicker">
         Biggest themes {periodLabel}
       </h2>
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -175,7 +175,7 @@ function StrongestThemes({ result }: { result: HoroscopeResult }) {
   if (present.length === 0) return null;
   return (
     <section aria-labelledby="themes-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="themes-heading" className="kicker !text-gold-deep">Today&rsquo;s strongest themes</h2>
+      <h2 id="themes-heading" className="kicker">Today&rsquo;s strongest themes</h2>
       <ol className="mt-4 space-y-3">
         {present.map((t, i) => (
           <li key={t.theme} className="flex items-center gap-3 text-sm">
@@ -196,7 +196,7 @@ function WhyForecast({ result }: { result: HoroscopeResult }) {
   return (
     <details className="group rounded-md border border-line-soft p-6">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-        <h2 className="kicker !text-gold-deep">Why this forecast?</h2>
+        <h2 className="kicker">Why this forecast?</h2>
         <span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
       </summary>
       <p className="mt-4 font-serif-body text-base leading-7 text-p-muted">{why.summary}</p>
@@ -244,7 +244,7 @@ function PlanetPositions({ snapshot }: { snapshot: PlanetarySnapshot }) {
 
   return (
     <section aria-labelledby="planet-positions-heading" className="paper-panel rounded-md p-6">
-      <h2 id="planet-positions-heading" className="kicker !text-gold-deep">
+      <h2 id="planet-positions-heading" className="kicker">
         Planetary positions today
       </h2>
       <div className="mt-3 flex items-center gap-2 text-p-muted">
@@ -383,7 +383,7 @@ export function HoroscopeArticle({
             <div className="mt-9 space-y-8">
               {result.sections.map((section, i) => (
                 <section key={i}>
-                  <h2 className="kicker !text-gold-deep">{section.heading}</h2>
+                  <h2 className="kicker">{section.heading}</h2>
                   <div className="gold-rule mt-3 w-16" />
                   <p className="mt-4 font-serif-body text-[1.05rem] leading-8 text-p-ink">
                     {section.content}
@@ -393,7 +393,7 @@ export function HoroscopeArticle({
             </div>
 
             <section className="mt-10 border-l-2 border-gold-deep bg-paper-2/60 py-5 pl-6 pr-5">
-              <h2 className="kicker !text-gold-deep">Carry this forward</h2>
+              <h2 className="kicker">Carry this forward</h2>
               <p className="mt-3 font-serif-body text-lg italic leading-8 text-p-ink">
                 &ldquo;{result.advice}&rdquo;
               </p>

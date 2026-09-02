@@ -88,7 +88,7 @@ export function BentoZodiacGrid() {
             className="mb-8 rounded-lg border border-line bg-ink-2/60 p-6 cosmic-glow"
             aria-labelledby="whats-changed-heading"
           >
-            <h2 id="whats-changed-heading" className="kicker !text-gold-deep">
+            <h2 id="whats-changed-heading" className="kicker">
               What changed today
             </h2>
             <ul className="mt-4 grid gap-3 sm:grid-cols-2">

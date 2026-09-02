@@ -29,7 +29,7 @@ export default function AboutPage() {
           </div>
           <div className="space-y-9 p-7 sm:p-9">
             <section>
-              <h2 className="kicker !text-gold-deep">The method</h2>
+              <h2 className="kicker">The method</h2>
               <div className="gold-rule mt-3 w-14" />
               <p className="mt-4 font-serif-body text-[1.05rem] leading-8 text-p-ink">
                 Every planetary position on Zunara is calculated from astronomical theory using the
@@ -40,7 +40,7 @@ export default function AboutPage() {
               </p>
             </section>
             <section>
-              <h2 className="kicker !text-gold-deep">From data to words</h2>
+              <h2 className="kicker">From data to words</h2>
               <div className="gold-rule mt-3 w-14" />
               <p className="mt-4 font-serif-body text-[1.05rem] leading-8 text-p-ink">
                 Our forecasts follow a transparent pipeline: we calculate the true positions and
@@ -51,7 +51,7 @@ export default function AboutPage() {
               </p>
             </section>
             <section>
-              <h2 className="kicker !text-gold-deep">A note on astrology</h2>
+              <h2 className="kicker">A note on astrology</h2>
               <div className="gold-rule mt-3 w-14" />
               <p className="mt-4 font-serif-body text-[1.05rem] leading-8 text-p-ink">
                 Astrology is a practice of reflection and entertainment, not a science. It is

@@ -46,7 +46,7 @@ interface PaperSectionProps {
 export function PaperSection({ heading, children }: PaperSectionProps) {
   return (
     <section>
-      <h2 className="kicker !text-gold-deep">{heading}</h2>
+      <h2 className="kicker">{heading}</h2>
       <div className="gold-rule mt-3 w-14" />
       <p className="mt-4 font-serif-body text-[1.05rem] leading-8 text-p-ink">{children}</p>
     </section>

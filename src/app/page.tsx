@@ -103,7 +103,7 @@ export default function HomePage() {
 
           <div className="lg:w-2/5">
             <div className="paper-panel rounded-lg p-6">
-              <p className="kicker !text-gold-deep">Planetary bulletin</p>
+              <p className="kicker">Planetary bulletin</p>
               <dl className="mt-5 space-y-3">
                 {retro.length > 0 ? (
                   retro.map((p) => (

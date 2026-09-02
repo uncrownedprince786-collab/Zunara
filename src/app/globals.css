@@ -195,16 +195,19 @@ body {
 
 /* ---------------- Editorial primitives ---------------- */
 
-/* Serif body text helper */
+/* Editorial lead/body alias — shares the Inter body face for full type consistency */
 .font-serif-body {
   font-family: var(--font-serif-body);
 }
 
-/* Display headings: Syne 700/800 with tight cosmic tracking */
+/* Display face: Syne with tight cosmic tracking. Bold weight is reserved for
+   true headings (h1–h3) so brand marks, numerals and labels keep their own weight. */
 .font-display {
   font-family: var(--font-display);
-  font-weight: 700;
   letter-spacing: -0.03em;
+}
+.font-display:is(h1, h2, h3) {
+  font-weight: 700;
 }
 
 /* Editorial kicker: small, tracked uppercase with a rule */

@@ -191,7 +191,7 @@ function CurrentTheme({ signSlug }: { signSlug: string }) {
       <section aria-labelledby="current-theme-heading" className="rounded-lg border border-line bg-ink-2/70 p-7">
         <div className="flex items-center gap-2 text-gold">
           <span aria-hidden className="text-gold">&#10022;</span>
-          <p className="kicker !text-gold">Your current theme</p>
+          <p className="kicker">Your current theme</p>
         </div>
         <p className="mt-4 font-serif-body text-2xl italic leading-9 text-starlight">
           &ldquo;{result.glance.overall}&rdquo;
@@ -223,7 +223,7 @@ function Recently({ signSlug }: { signSlug: string }) {
   return (
     <Reveal delay={2}>
       <section aria-labelledby="recently-heading" className="mt-6 rounded-lg border border-line-soft bg-ink p-6">
-        <p className="kicker !text-gold">What changed lately</p>
+        <p className="kicker">What changed lately</p>
         {changes.length === 0 ? (
           <p className="mt-3 font-serif-body text-base leading-7 text-muted">
             The sky is relatively steady at the moment — no major transition is changing the

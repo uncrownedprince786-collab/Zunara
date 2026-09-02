@@ -28,7 +28,7 @@ export function DailyOrbitBanner() {
           <ZodiacSymbol sign={sign.slug} size={32} className="text-gold" strokeWidth={1.1} label={sign.name} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="kicker !text-gold">Your daily orbit</p>
+          <p className="kicker">Your daily orbit</p>
           <p className="mt-1 truncate font-display text-lg text-starlight sm:text-xl">
             {sign.name} <span className="text-subdued">· {formatDateRange(sign)}</span>
           </p>
