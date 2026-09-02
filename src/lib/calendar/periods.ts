@@ -115,7 +115,7 @@ export function endOfYear(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), 11, 31, 23, 59, 59, 999));
 }
 
-/** Human-readable window label for a period, e.g. "Week of Aug 31 \u2013 Sep 6, 2026". */
+/** Human-readable window label for a period, e.g. "Week of Aug 31 – Sep 6, 2026". */
 export function periodLabel(type: PeriodType, date: Date): string {
   const opts: Intl.DateTimeFormatOptions = { timeZone: "UTC", month: "short", day: "numeric" };
   const yearOpts: Intl.DateTimeFormatOptions = { timeZone: "UTC", year: "numeric" };
@@ -130,9 +130,9 @@ export function periodLabel(type: PeriodType, date: Date): string {
       const f = new Intl.DateTimeFormat("en", opts);
       if (s.getUTCFullYear() !== e.getUTCFullYear()) {
         const sLabel = new Intl.DateTimeFormat("en", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric" }).format(s);
-        return `${weekdayOf(s)} ${sLabel} \u2013 ${f.format(e)}, ${yLabel}`;
+        return `${weekdayOf(s)} ${sLabel} – ${f.format(e)}, ${yLabel}`;
       }
-      return `${weekdayOf(s)} ${f.format(s)} \u2013 ${f.format(e)}, ${yLabel}`;
+      return `${weekdayOf(s)} ${f.format(s)} – ${f.format(e)}, ${yLabel}`;
     }
     case "monthly":
       return new Intl.DateTimeFormat("en", { timeZone: "UTC", month: "long", year: "numeric" }).format(date);

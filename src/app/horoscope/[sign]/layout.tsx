@@ -30,8 +30,8 @@ export default async function SignLayout({
             </div>
             <div>
               <p className={`kicker ${elementText(sign.element)}`}>
-                {sign.element} \u00b7 {sign.modality} \u00b7 {sign.ruler}
-                {sign.modernRuler ? ` \u00b7 ${sign.modernRuler}` : ""}
+                {sign.element} · {sign.modality} · {sign.ruler}
+                {sign.modernRuler ? ` · ${sign.modernRuler}` : ""}
               </p>
               <h1 className="mt-2 font-display text-4xl font-medium text-starlight sm:text-5xl">
                 {sign.name}

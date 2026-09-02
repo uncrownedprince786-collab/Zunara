@@ -62,7 +62,7 @@ export default async function AstrologyTopicPage({ params }: { params: Promise<{
 
         <div className="paper-panel mt-9 rounded-md">
           <div className="border-b border-p-line p-2 text-center">
-            <p className="font-serif-body italic text-p-muted">Zunara \u00b7 The astronomy</p>
+            <p className="font-serif-body italic text-p-muted">Zunara · The astronomy</p>
           </div>
           <div className="space-y-6 p-7 sm:p-9">
             {data.body.map((para, i) => (

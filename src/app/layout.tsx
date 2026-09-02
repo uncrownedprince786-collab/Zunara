@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Syne, Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -12,24 +12,17 @@ const syne = Syne({
   display: "swap",
 });
 
-const jakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-playfair",
+  weight: ["400", "500"],
+  variable: "--font-inter",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} \u2014 Written in the stars`,
+    default: `${SITE.name} — Written in the stars`,
     template: `%s | ${SITE.name}`,
   },
   description:
@@ -72,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${jakarta.variable} ${playfair.variable} h-full antialiased`}
+      className={`${syne.variable} ${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

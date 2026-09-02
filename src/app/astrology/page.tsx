@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ASTROLOGY_TOPICS } from "@/lib/astrology/topics";
 
 export const metadata: Metadata = {
-  title: "Astrology \u2014 A Guide to the Zodiac",
+  title: "Astrology — A Guide to the Zodiac",
   description:
     "Evergreen guides to astrology: birth charts, transits, retrogrades, aspects, houses and the twelve signs.",
 };
@@ -36,7 +36,7 @@ export default function AstrologyIndexPage() {
                 <span className="font-display text-3xl text-gold/30">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">\u2192</span>
+                <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">→</span>
               </div>
               <div>
                 <h2 className="font-display text-2xl text-starlight">{topic.title}</h2>

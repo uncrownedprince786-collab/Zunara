@@ -32,7 +32,7 @@ export default function HoroscopeIndexPage() {
             Today&rsquo;s Horoscopes
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-muted">
-            The daily zodiac desk. Choose your sign to read today&rsquo;s forecast \u2014 each
+            The daily zodiac desk. Choose your sign to read today&rsquo;s forecast — each
             signal below is drawn from the real positions of the Sun, Moon and planets.
           </p>
         </div>
@@ -51,7 +51,7 @@ export default function HoroscopeIndexPage() {
                 </h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
                   Pick a sign to open its hub, then move from the day out to the week, month and
-                  year \u2014 always from the same truthful astronomical positions.
+                  year — always from the same truthful astronomical positions.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-gold">

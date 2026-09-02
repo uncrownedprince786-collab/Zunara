@@ -181,7 +181,7 @@ function aspectBlurb(name: string): string {
     case "conjunction":
       return "A strong, focused meeting of energies may concentrate your attention on one central theme.";
     default:
-      return "A notable relationship between today\u2019s positions may colour the mood of the day.";
+      return "A notable relationship between today’s positions may colour the mood of the day.";
   }
 }
 

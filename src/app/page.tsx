@@ -38,6 +38,10 @@ export default function HomePage() {
     <div className="constellation-bg">
       {/* ---- Masthead ---- */}
       <section className="relative overflow-hidden border-b border-line-soft">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_top,rgba(108,92,231,0.15)_0%,transparent_70%)]"
+        />
         <HeroVisual />
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
           <p className="kicker">{date}</p>
@@ -48,7 +52,7 @@ export default function HomePage() {
           </h1>
           <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-muted">
             A premium editorial astrology publication. Daily, weekly, monthly and yearly
-            horoscopes for all twelve signs \u2014 calculated from real astronomical data.
+            horoscopes for all twelve signs — calculated from real astronomical data.
             No myths, just the mathematics of the sky.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -80,7 +84,7 @@ export default function HomePage() {
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-muted">
               Every position below is computed from astronomical theory, not invented. Zunara
-              renders the movements of the spheres into reading \u2014 each aspect and retrograde
+              renders the movements of the spheres into reading — each aspect and retrograde
               corresponds to the true state of the sky.
             </p>
             {sunSign && (
@@ -116,7 +120,7 @@ export default function HomePage() {
                     <PlanetSymbol body="sun" size="md" className="text-gold-deep" />
                     <dd className="text-sm text-p-ink">
                       <span className="font-medium">No retrogrades</span>
-                      <span className="text-p-muted"> \u2014 all planets direct today</span>
+                      <span className="text-p-muted"> — all planets direct today</span>
                     </dd>
                   </div>
                 )}
@@ -126,8 +130,8 @@ export default function HomePage() {
                     <dd className="text-sm text-p-ink">
                       <span className="font-medium capitalize">{transit.name}</span>
                       <span className="text-p-muted">
-                        {" "}\u2014 {PLANET_LABELS[transit.bodyA] ?? transit.bodyA} &amp;{" "}
-                        {PLANET_LABELS[transit.bodyB] ?? transit.bodyB}, {transit.orb.toFixed(1)}\u00B0 orb
+                        {" "}— {PLANET_LABELS[transit.bodyA] ?? transit.bodyA} &amp;{" "}
+                        {PLANET_LABELS[transit.bodyB] ?? transit.bodyB}, {transit.orb.toFixed(1)}° orb
                       </span>
                     </dd>
                   </div>
@@ -169,7 +173,7 @@ export default function HomePage() {
                 Beginnings to whole years
               </h2>
               <p className="mt-4 leading-7 text-muted">
-                Start with the day, then travel outward \u2014 the week, the month, the year. Each
+                Start with the day, then travel outward — the week, the month, the year. Each
                 horizon draws on the same truthful positions of the Sun, Moon and the planets.
               </p>
             </div>
@@ -188,7 +192,7 @@ export default function HomePage() {
                   <div className="flex items-center justify-between">
                     <span className="font-display text-4xl text-gold/30">{c.n}</span>
                     <span className="text-sm text-gold opacity-0 transition-opacity group-hover:opacity-100">
-                      \u2192
+                      →
                     </span>
                   </div>
                   <div>
@@ -213,13 +217,13 @@ export default function HomePage() {
             <p className="mt-5 font-serif-body text-lg leading-8 text-starlight/85">
               At Zunara, every planetary position you read is calculated from astronomical theory,
               never guessed. Our forecasts blend that data with carefully crafted editorial
-              fragments \u2014 so the sky speaks with clarity, warmth and honesty.
+              fragments — so the sky speaks with clarity, warmth and honesty.
             </p>
             <Link
               href="/about"
               className="mt-6 inline-block text-sm text-gold underline-offset-4 hover:underline"
             >
-              Read about our method \u2192
+              Read about our method →
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line">

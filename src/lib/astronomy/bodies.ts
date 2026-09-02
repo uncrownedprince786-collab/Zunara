@@ -21,18 +21,18 @@ export interface CelestialBody {
 }
 
 export const CELESTIAL_BODIES: readonly CelestialBody[] = [
-  { key: "sun", name: "Sun", glyph: "\u2609", symbolPath: "sun", description: "Core identity and vitality" },
-  { key: "moon", name: "Moon", glyph: "\u263D", symbolPath: "moon", description: "Emotions and inner nature" },
-  { key: "mercury", name: "Mercury", glyph: "\u263F", symbolPath: "mercury", description: "Communication and thought" },
-  { key: "venus", name: "Venus", glyph: "\u2640", symbolPath: "venus", description: "Love, beauty and values" },
-  { key: "mars", name: "Mars", glyph: "\u2642", symbolPath: "mars", description: "Action, desire and drive" },
-  { key: "jupiter", name: "Jupiter", glyph: "\u2643", symbolPath: "jupiter", description: "Growth and fortune" },
-  { key: "saturn", name: "Saturn", glyph: "\u2644", symbolPath: "saturn", description: "Discipline and structure" },
-  { key: "uranus", name: "Uranus", glyph: "\u2645", symbolPath: "uranus", description: "Change and originality" },
-  { key: "neptune", name: "Neptune", glyph: "\u2646", symbolPath: "neptune", description: "Imagination and transcendence" },
-  { key: "pluto", name: "Pluto", glyph: "\u2647", symbolPath: "pluto", description: "Transformation and power" },
-  { key: "northNode", name: "North Node", glyph: "\u260A", symbolPath: "northNode", description: "Life direction" },
-  { key: "southNode", name: "South Node", glyph: "\u260B", symbolPath: "southNode", description: "Comfortable patterns" },
+  { key: "sun", name: "Sun", glyph: "☉", symbolPath: "sun", description: "Core identity and vitality" },
+  { key: "moon", name: "Moon", glyph: "☽", symbolPath: "moon", description: "Emotions and inner nature" },
+  { key: "mercury", name: "Mercury", glyph: "☿", symbolPath: "mercury", description: "Communication and thought" },
+  { key: "venus", name: "Venus", glyph: "♀", symbolPath: "venus", description: "Love, beauty and values" },
+  { key: "mars", name: "Mars", glyph: "♂", symbolPath: "mars", description: "Action, desire and drive" },
+  { key: "jupiter", name: "Jupiter", glyph: "♃", symbolPath: "jupiter", description: "Growth and fortune" },
+  { key: "saturn", name: "Saturn", glyph: "♄", symbolPath: "saturn", description: "Discipline and structure" },
+  { key: "uranus", name: "Uranus", glyph: "♅", symbolPath: "uranus", description: "Change and originality" },
+  { key: "neptune", name: "Neptune", glyph: "♆", symbolPath: "neptune", description: "Imagination and transcendence" },
+  { key: "pluto", name: "Pluto", glyph: "♇", symbolPath: "pluto", description: "Transformation and power" },
+  { key: "northNode", name: "North Node", glyph: "☊", symbolPath: "northNode", description: "Life direction" },
+  { key: "southNode", name: "South Node", glyph: "☋", symbolPath: "southNode", description: "Comfortable patterns" },
 ];
 
 export const CELESTIAL_BY_KEY: ReadonlyMap<BodyKey, CelestialBody> = new Map(

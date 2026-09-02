@@ -12,7 +12,7 @@ export interface PlanetPosition {
   sign: string;
   /** Degree within the sign [0, 30) */
   degreeInSign: number;
-  /** Degree and minute formatted string, e.g. "\u2648 12\u00B0 34\u2032" */
+  /** Degree and minute formatted string, e.g. "♈ 12° 34′" */
   position: string;
   /** True if the body is moving retrograde (apparent westward motion) */
   retrograde: boolean;
@@ -138,25 +138,25 @@ export function computePosition(key: BodyKey, date: Date): PlanetPosition | null
     longitude: lon,
     sign: signInfo.slug,
     degreeInSign: signInfo.degreeInSign,
-    position: `${ZODIAC_SIGN_GLYPH[signInfo.slug]} ${deg}\u00B0 ${String(minutes).padStart(2, "0")}\u2032`,
+    position: `${ZODIAC_SIGN_GLYPH[signInfo.slug]} ${deg}° ${String(minutes).padStart(2, "0")}′`,
     retrograde,
     speed: speed * 24, // degrees per day
   };
 }
 
 const ZODIAC_SIGN_GLYPH: Record<string, string> = {
-  aries: "\u2648",
-  taurus: "\u2649",
-  gemini: "\u264A",
-  cancer: "\u264B",
-  leo: "\u264C",
-  virgo: "\u264D",
-  libra: "\u264E",
-  scorpio: "\u264F",
-  sagittarius: "\u2650",
-  capricorn: "\u2651",
-  aquarius: "\u2652",
-  pisces: "\u2653",
+  aries: "♈",
+  taurus: "♉",
+  gemini: "♊",
+  cancer: "♋",
+  leo: "♌",
+  virgo: "♍",
+  libra: "♎",
+  scorpio: "♏",
+  sagittarius: "♐",
+  capricorn: "♑",
+  aquarius: "♒",
+  pisces: "♓",
 };
 
 export function angularDifference(a: number, b: number): number {
@@ -318,7 +318,7 @@ export function computeSnapshot(date: Date, includeNodes = true): PlanetarySnaps
         longitude: north,
         sign: si.slug,
         degreeInSign: si.degreeInSign,
-        position: `\u260A ${Math.floor(si.degreeInSign)}\u00B0`,
+        position: `☊ ${Math.floor(si.degreeInSign)}°`,
         retrograde: false,
         speed: 0,
       });
@@ -330,7 +330,7 @@ export function computeSnapshot(date: Date, includeNodes = true): PlanetarySnaps
         longitude: south,
         sign: si2.slug,
         degreeInSign: si2.degreeInSign,
-        position: `\u260B ${Math.floor(si2.degreeInSign)}\u00B0`,
+        position: `☋ ${Math.floor(si2.degreeInSign)}°`,
         retrograde: false,
         speed: 0,
       });

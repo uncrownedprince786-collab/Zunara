@@ -17,7 +17,7 @@ export default function NotFound() {
         </h1>
         <p className="mt-4 max-w-md leading-7 text-muted">
           The page you sought has drifted out of the ecliptic. Perhaps it was carried off by a
-          slow outer planet \u2014 or simply never came into view.
+          slow outer planet — or simply never came into view.
         </p>
         <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
           <Link

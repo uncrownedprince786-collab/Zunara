@@ -11,12 +11,12 @@ export default function DisclaimerPage() {
     <PaperArticle
       kicker="Disclaimer"
       title="Astrology Disclaimer"
-      lead="Astrology is offered as a practice of reflection and entertainment \u2014 never as a substitute for professional advice."
+      lead="Astrology is offered as a practice of reflection and entertainment — never as a substitute for professional advice."
       crumbs={[{ label: "Disclaimer", href: "/disclaimer" }]}
     >
       <PaperSection heading="Entertainment & reflection">
-        All astrology content on Zunara \u2014 including daily, weekly, monthly and yearly
-        horoscopes, guides, and planetary tables \u2014 is provided for entertainment, inspiration
+        All astrology content on Zunara — including daily, weekly, monthly and yearly
+        horoscopes, guides, and planetary tables — is provided for entertainment, inspiration
         and reflection. It is not a substitute for professional advice.
       </PaperSection>
       <PaperSection heading="Not professional advice">

@@ -63,7 +63,7 @@ export function SiteFooter() {
                 <li key={s.slug}>
                   <Link
                     href={`/horoscope/${s.slug}`}
-                    title={`${s.name} \u2014 ${formatDateRange(s)}`}
+                    title={`${s.name} — ${formatDateRange(s)}`}
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-line-soft text-sm text-muted transition-colors hover:border-gold/50 hover:text-gold"
                   >
                     <span aria-hidden="true">{s.glyph}</span>

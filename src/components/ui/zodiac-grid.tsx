@@ -37,7 +37,7 @@ export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
           </div>
           <div className="flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.18em] text-subdued">
             <span className={elementText(sign.element)}>{sign.element}</span>
-            <span aria-hidden="true" className="text-starlight/20">\u00b7</span>
+            <span aria-hidden="true" className="text-starlight/20">·</span>
             <span>{sign.modality}</span>
           </div>
         </Link>

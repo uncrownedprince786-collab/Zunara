@@ -18,14 +18,14 @@ export default function AboutPage() {
           <h1 className="mt-3 font-display text-4xl text-starlight sm:text-5xl">About Zunara</h1>
           <div aria-hidden="true" className="gold-rule mt-6 w-20" />
           <p className="mt-6 font-serif-body text-xl italic leading-8 text-muted">
-            Zunara publishes horoscopes grounded in real astronomical calculation \u2014 an
+            Zunara publishes horoscopes grounded in real astronomical calculation — an
             editorial journal in the spirit of a refined celestial publication.
           </p>
         </header>
 
         <div className="paper-panel mt-10 rounded-md">
           <div className="border-b border-p-line p-2 text-center">
-            <p className="font-serif-body italic text-p-muted">Zunara \u00b7 The method</p>
+            <p className="font-serif-body italic text-p-muted">Zunara · The method</p>
           </div>
           <div className="space-y-9 p-7 sm:p-9">
             <section>

@@ -102,7 +102,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
           <blockquote
             className={`mt-8 border-l-2 pl-5 italic text-muted ${elementText(signData.element)}`}
           >
-            &ldquo;{signData.keywords.join(" \u2014 ")}.&rdquo;
+            &ldquo;{signData.keywords.join(" — ")}.&rdquo;
           </blockquote>
         </div>
 
@@ -164,7 +164,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
                 <span className="font-display text-3xl text-gold/30">
                   {["I", "II", "III", "IV"][i]}
                 </span>
-                <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">\u2192</span>
+                <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">→</span>
               </div>
               <div>
                 <p className="font-display text-xl text-starlight">{p.label} horoscope</p>
@@ -226,7 +226,7 @@ function Recently({ signSlug }: { signSlug: string }) {
         <p className="kicker !text-gold">What changed lately</p>
         {changes.length === 0 ? (
           <p className="mt-3 font-serif-body text-base leading-7 text-muted">
-            The sky is relatively steady at the moment \u2014 no major transition is changing the
+            The sky is relatively steady at the moment — no major transition is changing the
             overall tone. Small shifts matter more than any grand move.
           </p>
         ) : (

@@ -236,7 +236,7 @@ export function zodiacForDate(year: number, month: number, day: number): ZodiacS
 
 export function formatDateRange(sign: ZodiacSign): string {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  return `${monthNames[sign.dateRange.startMonth - 1]} ${sign.dateRange.startDay} \u2013 ${monthNames[sign.dateRange.endMonth - 1]} ${sign.dateRange.endDay}`;
+  return `${monthNames[sign.dateRange.startMonth - 1]} ${sign.dateRange.startDay} – ${monthNames[sign.dateRange.endMonth - 1]} ${sign.dateRange.endDay}`;
 }
 
 export const SIGN_DEGREE = (slug: string, degree: number): string => {
@@ -244,5 +244,5 @@ export const SIGN_DEGREE = (slug: string, degree: number): string => {
   if (!sign) return "";
   const deg = Math.floor(degree);
   const min = Math.floor((degree - deg) * 60);
-  return `${sign.glyph} ${deg}\u00B0 ${TWO_DIGIT(min)}\u2032`;
+  return `${sign.glyph} ${deg}° ${TWO_DIGIT(min)}′`;
 };

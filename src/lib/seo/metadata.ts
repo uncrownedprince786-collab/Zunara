@@ -18,7 +18,7 @@ export function horoscopeMetadata(
   const periodNoun = PERIOD_TITLE[periodType];
   const path = `/horoscope/${sign.slug}/${periodType === "daily" ? "today" : periodType}`;
   const canonical = absoluteUrl(path);
-  const title = `${sign.name} ${periodNoun} Horoscope \u2014 ${label}`;
+  const title = `${sign.name} ${periodNoun} Horoscope — ${label}`;
   const description = `Read the ${sign.name.toLowerCase()} ${periodType.toLowerCase()} horoscope for ${label}. Calculated from real astronomical data, in ${sign.name}'s ${sign.element} ${sign.modality} sign.`;
 
   return {
@@ -50,7 +50,7 @@ function formatRange(sign: ZodiacSign): string {
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const s = sign.dateRange.startMonth - 1;
   const e = sign.dateRange.endMonth - 1;
-  return `${months[s]} ${sign.dateRange.startDay} \u2013 ${months[e]} ${sign.dateRange.endDay}`;
+  return `${months[s]} ${sign.dateRange.startDay} – ${months[e]} ${sign.dateRange.endDay}`;
 }
 
 export const siteUrl = SITE.url;

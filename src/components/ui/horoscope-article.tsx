@@ -208,7 +208,7 @@ function WhyForecast({ result }: { result: HoroscopeResult }) {
               <li key={b.key} className="flex items-center gap-2 text-p-ink">
                 <PlanetSymbol body={b.key as BodyKey} size="sm" className="text-gold-deep" />
                 <span className="font-medium">{b.name}</span>
-                <span className="text-p-muted">{b.position}{b.retrograde ? " \u00b7 retrograde" : ""}</span>
+                <span className="text-p-muted">{b.position}{b.retrograde ? " · retrograde" : ""}</span>
               </li>
             ))}
           </ul>
@@ -275,7 +275,7 @@ function PlanetPositions({ snapshot }: { snapshot: PlanetarySnapshot }) {
         {nodes.length > 0 && (
           <div className="flex items-center gap-3 py-2">
             <dt className="w-24 shrink-0 text-p-muted">Nodes</dt>
-            <dd className="text-p-muted">{nodes.map((n) => `${n.position}`).join(" \u00b7 ")}</dd>
+            <dd className="text-p-muted">{nodes.map((n) => `${n.position}`).join(" · ")}</dd>
           </div>
         )}
       </dl>
@@ -372,7 +372,7 @@ export function HoroscopeArticle({
         <div className="paper-panel mt-8 rounded-md">
           <div className="border-b border-p-line p-2 text-center">
             <p className="font-serif-body italic text-p-muted">
-              {sign.name} \u2014 the {sign.modality.toLowerCase()} {sign.element.toLowerCase()} sign
+              {sign.name} — the {sign.modality.toLowerCase()} {sign.element.toLowerCase()} sign
             </p>
           </div>
           <div className="p-7 sm:p-9">

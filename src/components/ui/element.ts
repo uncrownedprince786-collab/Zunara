@@ -25,10 +25,10 @@ export function elementBorder(element: Element): string {
 /** Small element rune glyph. */
 export function elementRune(element: Element): string {
   const map: Record<Element, string> = {
-    Fire: "\u25B3",
-    Earth: "\u25A7",
-    Air: "\u2B26",
-    Water: "\u29EB",
+    Fire: "△",
+    Earth: "▧",
+    Air: "⬦",
+    Water: "⧫",
   };
-  return map[element] ?? "\u2735";
+  return map[element] ?? "✵";
 }
