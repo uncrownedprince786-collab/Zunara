@@ -1,4 +1,7 @@
-const SYNODIC_MONTH = 29.53058867;
+import { computePosition } from "./astro";
+import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
+
+export const SYNODIC_MONTH = 29.53058867;
 const KNOWN_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14, 0);
 
 export interface MoonPhaseResult {
@@ -26,4 +29,27 @@ export function moonPhase(date: Date = new Date()): MoonPhaseResult {
   else name = "New Moon";
 
   return { age, phase, name, illumination };
+}
+
+export interface MoonSignResult {
+  sign: string;
+  signName: string;
+  glyph: string;
+  degreeInSign: number;
+  position: string;
+  emoji: string | null;
+}
+
+export function moonSign(date: Date = new Date()): MoonSignResult | null {
+  const pos = computePosition("moon", date);
+  if (!pos) return null;
+  const signData = ZODIAC_SIGNS.find((s) => s.slug === pos.sign);
+  return {
+    sign: pos.sign,
+    signName: signData?.name ?? pos.sign,
+    glyph: signData?.glyph ?? "",
+    degreeInSign: pos.degreeInSign,
+    position: pos.position,
+    emoji: null,
+  };
 }

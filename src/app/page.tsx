@@ -8,6 +8,7 @@ import { elementRune, elementText } from "@/components/ui/element";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
+import { MoonSignCard } from "@/components/ui/moon-sign-card";
 
 function todayDate(): string {
   return new Intl.DateTimeFormat("en", {
@@ -115,7 +116,9 @@ export default function HomePage() {
           </div>
 
           <div className="lg:w-2/5">
-            <div className="paper-panel rounded-lg p-6">
+            <div className="space-y-5">
+              <MoonSignCard />
+              <div className="paper-panel rounded-lg p-6">
               <p className="kicker">Planetary bulletin</p>
               <dl className="mt-5 space-y-3">
                 {retro.length > 0 ? (
@@ -150,6 +153,7 @@ export default function HomePage() {
                   </div>
                 )}
               </dl>
+            </div>
             </div>
           </div>
         </div>
