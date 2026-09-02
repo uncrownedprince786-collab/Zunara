@@ -438,3 +438,31 @@ html.theme-ready :where(section, header, nav, main, footer) {
     opacity: 0.6;
   }
 }
+
+/* ---------------- Accessibility: skip link ---------------- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  background: var(--color-gold);
+  color: var(--z-bg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 1rem;
+}
+
+/* ---------------- Print stylesheet ---------------- */
+@media print {
+  body { background: #fff; color: #111; }
+  .constellation-bg, .starfield, .skip-link, [aria-label="Toggle navigation menu"],
+  .cosmic-glow, .paper-panel, .back-to-top { display: none !important; }
+  header, footer, nav { display: none !important; }
+  main { padding: 0 !important; }
+  a { color: #111; text-decoration: underline; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.75em; color: #666; }
+}

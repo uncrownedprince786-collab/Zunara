@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { useZunaraState } from "@/lib/hooks/use-zunara-state";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
+import { MoonPhaseWidget } from "@/components/ui/moon-phase";
 
 /**
  * "Your Daily Orbit" pinned quick-reading card. Renders only once the reader
@@ -35,6 +36,9 @@ export function DailyOrbitBanner() {
           <p className="mt-0.5 hidden text-sm text-muted sm:block">
             Pick up where you left off — jump straight to today&rsquo;s reading for your sign.
           </p>
+        </div>
+        <div className="hidden shrink-0 sm:block">
+          <MoonPhaseWidget />
         </div>
         <Link
           href={`/horoscope/${sign.slug}/today`}

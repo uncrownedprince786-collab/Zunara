@@ -65,7 +65,8 @@ export function SiteNav() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-muted"
+                className={`text-muted transition-colors hover:text-gold ${isActive(l.href) ? "text-gold" : ""}`}
+                aria-current={isActive(l.href) ? "page" : undefined}
                 onClick={() => setOpen(false)}
               >
                 {l.label}

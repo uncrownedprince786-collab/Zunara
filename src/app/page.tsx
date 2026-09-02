@@ -36,6 +36,19 @@ export default function HomePage() {
 
   return (
     <div className="constellation-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Zunara",
+            description:
+              "Premium editorial astrology publication. Daily, weekly, monthly and yearly horoscopes for all twelve signs, calculated from real astronomical data.",
+            url: "https://zunara.vercel.app",
+          }),
+        }}
+      />
       {/* ---- Masthead ---- */}
       <section className="relative overflow-hidden border-b border-line-soft">
         <div

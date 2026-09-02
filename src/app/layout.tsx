@@ -3,6 +3,7 @@ import { Syne, Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { BackToTop } from "@/components/ui/back-to-top";
 import { SITE } from "@/lib/seo/site";
 
 const syne = Syne({
@@ -53,6 +54,13 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { title: "Zunara Horoscopes", url: "/rss.xml" },
+      ],
+    },
+  },
 };
 
 export const viewport: Viewport = {
@@ -76,9 +84,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-full flex flex-col bg-ink text-starlight">
+        <a href="#main-content" className="skip-link">Skip to content</a>
         <SiteHeader />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">{children}</main>
         <SiteFooter />
+        <BackToTop />
       </body>
     </html>
   );
