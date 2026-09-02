@@ -85,11 +85,11 @@
   --color-line: var(--z-line);
   --color-line-soft: var(--z-line-soft);
 
-  /* Element accents (muted, editorial) */
-  --color-fire: #c97b52;
-  --color-earth: #9ca870;
-  --color-air: #8fa4b4;
-  --color-water: #7fa2a8;
+  /* Element accents (harmonized with the cosmic accent system) */
+  --color-fire: #E8A05C;
+  --color-earth: #A9B26B;
+  --color-air: #4FC3C8;
+  --color-water: #8D7FE3;
 
   /* Text on unified glass surfaces */
   --color-p-ink: var(--z-p-ink);
@@ -100,7 +100,7 @@
 
   --font-display: var(--font-syne);
   --font-sans: var(--font-inter);
-  --font-serif-body: var(--font-syne);
+  --font-serif-body: var(--font-inter);
 
   --tracking-tightest: -0.03em;
 
@@ -156,7 +156,7 @@ html[data-theme="light"] {
 :root {
   --background: #090B10;
   --foreground: #F4F6FF;
-  --font-serif: var(--font-syne), Georgia, "Times New Roman", serif;
+  --font-serif: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
