@@ -9,6 +9,7 @@ import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
+import { SITE } from "@/lib/seo/site";
 
 function todayDate(): string {
   return new Intl.DateTimeFormat("en", {
@@ -46,7 +47,7 @@ export default function HomePage() {
             name: "Zunara",
             description:
               "Premium editorial astrology publication. Daily, weekly, monthly and yearly horoscopes for all twelve signs, calculated from real astronomical data.",
-            url: "https://zunara.vercel.app",
+            url: SITE.url,
           }),
         }}
       />

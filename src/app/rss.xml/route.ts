@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
+import { SITE } from "@/lib/seo/site";
 
-const SITE_URL = "https://zunara.vercel.app";
+const SITE_URL = SITE.url.replace(/\/$/, "");
 const PERIODS = [
   { slug: "daily", label: "Daily" },
   { slug: "weekly", label: "Weekly" },

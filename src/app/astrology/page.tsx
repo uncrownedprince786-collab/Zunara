@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ASTROLOGY_TOPICS } from "@/lib/astrology/topics";
+import { MoonSignCard } from "@/components/ui/moon-sign-card";
 
 export const metadata: Metadata = {
   title: "Astrology — A Guide to the Zodiac",
@@ -23,6 +24,10 @@ export default function AstrologyIndexPage() {
             interpretation. Every concept here connects to the real, calculated data behind
             Zunara&rsquo;s horizons.
           </p>
+        </div>
+
+        <div className="mt-12">
+          <MoonSignCard />
         </div>
 
         <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">

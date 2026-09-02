@@ -437,6 +437,11 @@ html.theme-ready :where(section, header, nav, main, footer) {
     animation: none;
     opacity: 0.6;
   }
+  html.theme-ready,
+  html.theme-ready body,
+  html.theme-ready :where(section, header, nav, main, footer) {
+    transition: none;
+  }
 }
 
 /* ---------------- Accessibility: skip link ---------------- */

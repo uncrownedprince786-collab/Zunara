@@ -20,7 +20,7 @@ export function BackToTop() {
       aria-label="Back to top"
       className="fixed bottom-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-ink/90 text-muted shadow-lg backdrop-blur-sm transition-colors hover:border-gold/40 hover:text-gold"
     >
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M18 15l-6-6-6 6" />
       </svg>
     </button>

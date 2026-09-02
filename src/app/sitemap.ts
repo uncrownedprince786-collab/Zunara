@@ -54,5 +54,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const page of ["/about", "/privacy", "/terms", "/disclaimer"]) {
     entries.push({ url: `${base}${page}`, lastModified: now, changeFrequency: "yearly", priority: 0.4 });
   }
+  entries.push({ url: `${base}/rss.xml`, lastModified: now, changeFrequency: "weekly", priority: 0.3 });
   return entries;
 }
