@@ -38,7 +38,7 @@ export default function AstrologyIndexPage() {
               className="group flex flex-col justify-between gap-8 bg-ink-2 p-7 transition-colors hover:bg-ink-3"
             >
               <div className="flex items-center justify-between">
-                <span className="font-display text-3xl text-gold/30">
+                <span className="font-display text-3xl text-gold/50">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">→</span>
@@ -54,3 +54,4 @@ export default function AstrologyIndexPage() {
     </div>
   );
 }
+

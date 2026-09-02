@@ -161,7 +161,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
               className="group flex flex-col justify-between gap-8 bg-ink-2 p-6 transition-colors hover:bg-ink-3"
             >
               <div className="flex items-center justify-between">
-                <span className="font-display text-3xl text-gold/30">
+                <span className="font-display text-3xl text-gold/50">
                   {["I", "II", "III", "IV"][i]}
                 </span>
                 <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">→</span>

@@ -125,7 +125,7 @@ export default function HomePage() {
                 {retro.length > 0 ? (
                   retro.map((p) => (
                     <div key={p.key} className="flex items-center gap-3">
-                      <PlanetSymbol body={p.key} size="md" className="text-gold-deep" />
+                      <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
                       <dd className="text-sm text-p-ink">
                         <span className="font-medium">{PLANET_LABELS[p.key] ?? p.key}</span>
                         <span className="text-p-muted"> retrograde in {sunSignName(p.sign)}</span>
@@ -134,7 +134,7 @@ export default function HomePage() {
                   ))
                 ) : (
                   <div className="flex items-center gap-3">
-                    <PlanetSymbol body="sun" size="md" className="text-gold-deep" />
+                    <PlanetSymbol body="sun" size="md" className="text-gold-deep" decorative />
                     <dd className="text-sm text-p-ink">
                       <span className="font-medium">No retrogrades</span>
                       <span className="text-p-muted"> — all planets direct today</span>
@@ -143,7 +143,7 @@ export default function HomePage() {
                 )}
                 {transit && (
                   <div className="mt-3 flex items-start gap-3 border-t border-p-line pt-3">
-                    <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" />
+                    <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" decorative />
                     <dd className="text-sm text-p-ink">
                       <span className="font-medium capitalize">{transit.name}</span>
                       <span className="text-p-muted">
@@ -208,7 +208,7 @@ export default function HomePage() {
                   className="group flex flex-col justify-between gap-8 bg-ink p-6 transition-colors hover:bg-ink-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-4xl text-gold/30">{c.n}</span>
+                    <span className="font-display text-4xl text-gold/50">{c.n}</span>
                     <span className="text-sm text-gold opacity-0 transition-opacity group-hover:opacity-100">
                       →
                     </span>
@@ -281,3 +281,4 @@ export default function HomePage() {
 function sunSignName(slug: string): string {
   return ZODIAC_SIGNS.find((s) => s.slug === slug)?.name ?? slug;
 }
+

@@ -61,6 +61,7 @@ interface PlanetSymbolProps {
   className?: string;
   label?: string;
   strokeWidth?: number;
+  decorative?: boolean;
 }
 
 export function PlanetSymbol({
@@ -69,6 +70,7 @@ export function PlanetSymbol({
   className = "",
   label,
   strokeWidth = 1.3,
+  decorative = false,
 }: PlanetSymbolProps) {
   const celestial = getCelestialBody(body);
   const paths = PLANET_PATHS[body] ?? [];
@@ -81,8 +83,9 @@ export function PlanetSymbol({
       width={px}
       height={px}
       className={className}
-      role="img"
-      aria-label={`${aria} astronomical symbol`}
+      role={decorative ? undefined : "img"}
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : `${aria} astronomical symbol`}
       fill="none"
       stroke="currentColor"
       strokeWidth={strokeWidth}
@@ -92,7 +95,7 @@ export function PlanetSymbol({
       {paths.map((d, i) => (
         <path key={i} d={d} />
       ))}
-      <title>{celestial.glyph} {aria}</title>
+      {!decorative && <title>{celestial.glyph} {aria}</title>}
     </svg>
   );
 }
