@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
@@ -14,16 +17,30 @@ interface ZodiacPeriodStripProps {
   activeSign?: string;
 }
 
-/** Horizontal strip of all twelve signs, preserving the current period type. */
+/**
+ * Horizontal strip of all twelve signs, preserving the current period type.
+ * On mount (and whenever the active sign changes) the strip auto-scrolls so
+ * the highlighted sign is centered in the viewport, keeping the surrounding
+ * signs visible instead of cutting them off at the right edge.
+ */
 export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripProps) {
+  const activeRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const el = activeRef.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [activeSign]);
+
   return (
     <div className="scrollbar-none -mx-4 overflow-x-auto border-b border-line-soft bg-ink-2/60 px-4 sm:-mx-6">
-      <div className="mx-auto flex min-w-max items-stretch gap-1">
+      <div className="mx-auto flex min-w-max items-stretch gap-1 px-6">
         {ZODIAC_SIGNS.map((sign) => {
           const isActive = sign.slug === activeSign;
           return (
             <Link
               key={sign.slug}
+              ref={isActive ? activeRef : undefined}
               href={hrefForPeriod(sign.slug, periodType)}
               aria-current={isActive ? "page" : undefined}
               className={`group flex shrink-0 flex-col items-center gap-1 px-4 py-3 transition-colors ${
