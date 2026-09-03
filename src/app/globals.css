@@ -241,6 +241,23 @@ body {
   display: none;
 }
 
+/* ---------------- Sign-switch dropdown (native select) ---------------- */
+/* Dark-midnight base so the options list is readable on light OS menus. */
+.sign-switch {
+  background-color: #111222;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 0;
+}
+.sign-switch option {
+  background-color: #111222;
+  color: #ffffff;
+}
+.sign-switch option:checked,
+.sign-switch option:hover {
+  background-color: rgba(108, 92, 231, 0.25);
+}
+
 /* ---------------- Motion system ---------------- */
 
 /* Entrance reveal: fade + gentle rise, driven by the Reveal primitive. */

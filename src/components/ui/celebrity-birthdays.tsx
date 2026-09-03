@@ -1,3 +1,7 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import {
   celebritiesForDate,
   type Celebrity,
@@ -29,43 +33,85 @@ const ELEMENT_RING: Record<ZodiacSign["element"], string> = {
   Water: "text-water",
 };
 
-/** Short initials for the monogram avatar (handles single names & K-Pop stage names). */
-function initials(name: string): string {
-  const parts = name.split(" ").filter(Boolean);
-  if (parts.length === 0) return "Z";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[1][0]).toUpperCase();
-}
+const ELEMENT_BG: Record<ZodiacSign["element"], string> = {
+  Fire: "from-fire/15 to-nebula/40",
+  Earth: "from-earth/15 to-nebula/40",
+  Air: "from-air/15 to-nebula/40",
+  Water: "from-water/15 to-nebula/40",
+};
 
-function CelebrityCard({
+function PortraitAvatar({
   celebrity,
-  dateLabel,
+  sign,
 }: {
   celebrity: Celebrity;
-  dateLabel: string;
+  sign: ZodiacSign;
 }) {
+  const [failed, setFailed] = useState(false);
+  const glow = ELEMENT_GLOW[sign.element];
+  const bg = ELEMENT_BG[sign.element];
+
+  if (!celebrity.image || failed) {
+    return (
+      <div className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10">
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${bg}`}
+        />
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute -right-3 -top-3 h-10 w-10 rounded-full bg-gradient-to-br ${glow} to-transparent blur-xl`}
+        />
+        <span className={`font-display text-lg font-semibold ${ELEMENT_RING[sign.element]}`}>
+          <ZodiacSymbol sign={sign.slug} size={24} label={sign.name} />
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-16 w-16 shrink-0">
+      <div className="absolute inset-0 overflow-hidden rounded-full border border-white/10">
+        <Image
+          src={celebrity.image}
+          alt={celebrity.name}
+          width={64}
+          height={64}
+          className="h-full w-full object-cover"
+          onError={() => setFailed(true)}
+          sizes="64px"
+        />
+      </div>
+      <span
+        aria-hidden
+        className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full border border-gold/25 bg-cosmic/15"
+      >
+        <ZodiacSymbol sign={sign.slug} size={16} label={sign.name} />
+      </span>
+    </div>
+  );
+}
+
+function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
   const sign = zodiacForDate(1990, celebrity.month, celebrity.day);
   const regionStyle = REGION_STYLE[celebrity.region];
   const glow = ELEMENT_GLOW[sign.element];
   const ring = ELEMENT_RING[sign.element];
+  const dateLabel = new Intl.DateTimeFormat("en", {
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(Date.UTC(2000, celebrity.month - 1, celebrity.day));
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-gold/20 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40">
+    <div className="group relative flex min-w-[19rem] max-w-[19rem] flex-col overflow-hidden rounded-2xl border border-gold/20 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 sm:min-w-[22rem] sm:max-w-[22rem]">
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-gradient-to-br ${glow} to-transparent blur-2xl`}
       />
 
       <div className="relative flex items-start gap-4">
-        <div className="relative grid h-16 w-16 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.04]">
-          <span className={`font-display text-lg font-semibold ${ring}`}>{initials(celebrity.name)}</span>
-          <span
-            aria-hidden
-            className="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full border border-gold/25 bg-cosmic/15"
-          >
-            <ZodiacSymbol sign={sign.slug} size={16} label={sign.name} />
-          </span>
-        </div>
+        <PortraitAvatar celebrity={celebrity} sign={sign} />
         <div className="min-w-0">
           <h3 className="truncate font-display text-xl text-starlight">{celebrity.name}</h3>
           <p className="mt-0.5 text-sm text-muted">{celebrity.profession}</p>
@@ -100,7 +146,9 @@ function CelebrityCard({
 
 /**
  * Dynamic "Born Under Today's Stars" section. Filters a curated dataset by the
- * caller's date (UTC) and renders frosted-glass celebrity cards. Server-side.
+ * caller's date (UTC) and renders frosted-glass celebrity cards in a
+ * horizontally scrollable, arrow-navigated carousel. Client-side so the
+ * portrait fallback + scroll controls can react.
  */
 export function CelebrityBirthdays() {
   const now = new Date();
@@ -112,7 +160,39 @@ export function CelebrityBirthdays() {
     timeZone: "UTC",
   }).format(now);
 
-  const people = celebritiesForDate(month, day).slice(0, 6);
+  const people = celebritiesForDate(month, day);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [canScroll, setCanScroll] = useState(false);
+  const [hasPrev, setHasPrev] = useState(false);
+  const [hasNext, setHasNext] = useState(false);
+
+  const measure = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanScroll(el.scrollWidth > el.clientWidth + 4);
+    setHasPrev(el.scrollLeft > 4);
+    setHasNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    measure();
+    const el = trackRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      el.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [measure, people.length]);
+
+  const scrollByCards = (dir: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.firstElementChild as HTMLElement | null;
+    const step = (card?.offsetWidth ?? 340) + 20;
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
@@ -123,23 +203,69 @@ export function CelebrityBirthdays() {
             {dateLabel}
           </h2>
         </div>
-        <p className="hidden max-w-xs text-right text-sm leading-6 text-muted sm:block">
-          Bright stars who share this day. Their birth chart is written in the
-          same sky you read here.
-        </p>
+        <div className="hidden items-center gap-2 sm:flex">
+          <button
+            type="button"
+            onClick={() => scrollByCards(-1)}
+            disabled={!hasPrev}
+            aria-label="Previous celebrities"
+            className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
+          >
+            <span aria-hidden>&larr;</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByCards(1)}
+            disabled={!hasNext}
+            aria-label="Next celebrities"
+            className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
+          >
+            <span aria-hidden>&rarr;</span>
+          </button>
+        </div>
       </div>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {people.map((celebrity) => (
-          <CelebrityCard key={celebrity.url} celebrity={celebrity} dateLabel={dateLabel} />
-        ))}
-      </div>
-
-      {people.length === 0 && (
+      {people.length === 0 ? (
         <p className="mt-8 text-center text-sm text-muted">
           No featured stars born today — but every day is written in the sky.
           Explore the signs to see who shares yours.
         </p>
+      ) : (
+        <div className="relative mt-8">
+          <div
+            ref={trackRef}
+            className="scrollbar-none flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 scroll-smooth"
+          >
+            {people.map((celebrity) => (
+              <div key={celebrity.url} className="shrink-0 snap-start">
+                <CelebrityCard celebrity={celebrity} />
+              </div>
+            ))}
+          </div>
+
+          {canScroll && (
+            <div className="mt-4 flex items-center justify-center gap-2 sm:hidden">
+              <button
+                type="button"
+                onClick={() => scrollByCards(-1)}
+                disabled={!hasPrev}
+                aria-label="Previous celebrities"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
+              >
+                <span aria-hidden>&larr;</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollByCards(1)}
+                disabled={!hasNext}
+                aria-label="Next celebrities"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
+              >
+                <span aria-hidden>&rarr;</span>
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </section>
   );

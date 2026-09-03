@@ -59,7 +59,7 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
               id="sign-switch"
               value={currentSlug}
               onChange={(e) => pickSign(e.target.value)}
-              className="appearance-none rounded-full border border-white/[0.12] bg-cosmic/10 py-1.5 pl-4 pr-9 text-sm font-medium text-starlight backdrop-blur-sm outline-none transition-colors hover:border-gold/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+              className="sign-switch appearance-none rounded-full border border-white/[0.12] bg-[#111222] py-1.5 pl-4 pr-9 text-sm font-medium text-white outline-none transition-colors hover:border-gold/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
             >
               {ZODIAC_SIGNS.map((s) => (
                 <option key={s.slug} value={s.slug}>
