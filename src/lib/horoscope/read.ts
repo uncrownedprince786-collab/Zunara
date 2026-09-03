@@ -14,6 +14,7 @@ export interface HoroscopeResult {
   snapshot: PlanetarySnapshot;
   signals: ForecastContent["signals"];
   glance: ForecastContent["glance"];
+  funFact: string;
   changes: ForecastContent["changes"];
   why: ForecastContent["why"];
 }
@@ -46,6 +47,7 @@ export function getHoroscopeContent(
     snapshot: snap,
     signals: content.signals,
     glance: content.glance,
+    funFact: content.funFact,
     changes: content.changes,
     why: content.why,
   };

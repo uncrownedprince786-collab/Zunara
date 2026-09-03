@@ -6,6 +6,7 @@ import { periodKey } from "../calendar/periods";
 import { computeSignals, type SignalSummary, type LifeArea, type SignalStrength } from "../astrology/signals";
 import { computeChanges, type ChangeItem } from "../astrology/changes";
 import { explainWhy, type WhyInput } from "../astrology/explain";
+import { funFactForSign } from "./funfacts";
 import { seededRandom, pick } from "./random";
 import {
   OVERVIEW_FRAGMENTS,
@@ -52,6 +53,8 @@ export interface ForecastContent {
   signals: SignalSummary;
   /** "30 seconds" summary. */
   glance: Glance;
+  /** A short, delightful celestial fact ("Did you know?"). */
+  funFact: string;
   /** "What changed against the previous period" (global, real only). */
   changes: ChangeItem[];
   /** Transparent "why this forecast" inputs. */
@@ -180,6 +183,7 @@ export function generateContent(
     generatedAt: new Date().toISOString(),
     signals,
     glance,
+    funFact: funFactForSign(sign.slug),
     changes,
     why,
   };

@@ -312,6 +312,14 @@ export const GLANCE_OVERALL: readonly string[] = [
   "A day with a change of rhythm in the air, inviting you to adapt smoothly while keeping your core intentions steady.",
   "A day where connection and follow-through matter most, and progress is built through consistency rather than force.",
   "A day of measured possibility, when patience with a growing process brings the clearest results by evening.",
+  "Good news finds a friendlier path to you today\u2014an update you weren't expecting may land before evening.",
+  "A small decision you've been sitting on finally starts to feel obvious\u2014today is a fine day to act on it.",
+  "An old obstacle quietly loosens its hold today, making space for a conversation or plan that kept stalling.",
+  "A lighter stretch of the day rewards a clear head\u2014finish the nagging task first and the rest gets easy.",
+  "Today leans on charm and a steady hand: a warm word opens a door that effort alone hasn't managed to.",
+  "Expect calmer waters in one corner of your day, even as another stays busy\u2014bank the ease where you find it.",
+  "The middle of your day holds the bright spot: an appreciated effort or a kind exchange turns things upward.",
+  "A pleasant surprise around the ordinary is more likely than a grand event\u2014keep your eyes open for it.",
 ];
 
 /** "Best for" — the areas or actions the day favours, in plain language. */

@@ -3,6 +3,8 @@ import { PeriodTabs } from "./period-tabs";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { PlanetSymbol } from "./planet-symbol";
 import { ThemeSymbol, type ThemeKey } from "./theme-symbol";
+import { CosmicFunFact } from "./cosmic-fun-fact";
+import { ShareVibe } from "./share-vibe";
 import type { ZodiacSign } from "@/lib/zodiac/zodiac";
 import type { PeriodType } from "@/lib/calendar/periods";
 import { periodLabel, periodKey } from "@/lib/calendar/periods";
@@ -223,9 +225,9 @@ function StrongestThemes({ result }: { result: HoroscopeResult }) {
 function WhyForecast({ result }: { result: HoroscopeResult }) {
   const { why } = result;
   return (
-    <details className="group rounded-md border border-line-soft p-6">
+    <details className="group rounded-2xl border border-line-soft bg-paper/40 p-6">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-        <h2 className="kicker">Why this forecast?</h2>
+        <h2 className="kicker">Explore the astronomical math</h2>
         <span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
       </summary>
       <p className="mt-4 font-serif-body text-base leading-7 text-p-muted">{why.summary}</p>
@@ -235,7 +237,7 @@ function WhyForecast({ result }: { result: HoroscopeResult }) {
           <ul className="mt-3 space-y-2 text-sm">
             {why.bodies.map((b) => (
               <li key={b.key} className="flex items-center gap-2 text-p-ink">
-                <PlanetSymbol body={b.key as BodyKey} size="sm" className="text-gold-deep" />
+                <PlanetSymbol body={b.key as BodyKey} size="sm" className="text-gold-deep" decorative />
                 <span className="font-medium">{b.name}</span>
                 <span className="text-p-muted">{b.position}{b.retrograde ? " · retrograde" : ""}</span>
               </li>
@@ -260,6 +262,9 @@ function WhyForecast({ result }: { result: HoroscopeResult }) {
           )}
         </div>
       </div>
+      <div className="mt-6 border-t border-p-line pt-5">
+        <PlanetPositions snapshot={result.snapshot} />
+      </div>
     </details>
   );
 }
@@ -272,28 +277,24 @@ function PlanetPositions({ snapshot }: { snapshot: PlanetarySnapshot }) {
   const nodes = snapshot.positions.filter((p) => p.key === "northNode" || p.key === "southNode");
 
   return (
-    <section aria-labelledby="planet-positions-heading" className="paper-panel rounded-md p-6">
-      <h2 id="planet-positions-heading" className="kicker">
+    <div>
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-p-muted">
         Planetary positions today
-      </h2>
-      <div className="mt-3 flex items-center gap-2 text-p-muted">
-        <PlanetSymbol body="sun" size="sm" className="text-gold-deep" />
-        <p className="text-xs">
-          Calculated from real astronomical data. Sun, Moon and planets shown at their current
-          zodiac degree.
-        </p>
-      </div>
-      <dl className="mt-5 divide-y divide-p-line text-sm">
+      </h3>
+      <p className="mt-1 text-xs text-p-muted">
+        Calculated from real astronomical data. Sun, Moon and planets shown at their current zodiac degree.
+      </p>
+      <dl className="mt-4 divide-y divide-p-line text-sm">
         {moon && (
           <div className="flex items-center gap-3 py-2">
-            <PlanetSymbol body="moon" size="md" className="text-gold-deep" />
+            <PlanetSymbol body="moon" size="md" className="text-gold-deep" decorative />
             <dt className="w-24 shrink-0 text-p-muted">Moon</dt>
             <dd className="font-medium text-p-ink">{moon.position}</dd>
           </div>
         )}
         {planets.map((p) => (
           <div key={p.key} className="flex items-center gap-3 py-2">
-            <PlanetSymbol body={p.key } size="md" className="text-gold-deep" />
+            <PlanetSymbol body={p.key } size="md" className="text-gold-deep" decorative />
             <dt className="w-24 shrink-0 text-p-muted">{planetName(p.key)}</dt>
             <dd className="font-medium text-p-ink">
               {p.position}
@@ -308,7 +309,7 @@ function PlanetPositions({ snapshot }: { snapshot: PlanetarySnapshot }) {
           </div>
         )}
       </dl>
-    </section>
+    </div>
   );
 }
 
@@ -376,8 +377,18 @@ export function HoroscopeArticle({
             <p className="mt-2 font-serif-body text-lg italic text-muted">{label}</p>
           </div>
         </div>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <PeriodTabs signSlug={sign.slug} active={periodType} />
+          <ShareVibe
+            data={{
+              signName: sign.name,
+              periodLabel: label,
+              hook: result.glance.overall,
+              move: result.glance.bestMove ?? "Make today a little easier on yourself.",
+              areas: result.signals.areas,
+              path,
+            }}
+          />
         </div>
       </header>
 
@@ -385,9 +396,10 @@ export function HoroscopeArticle({
         {isDaily && (
           <div className="space-y-5">
             <GlancePanel result={result} />
+            <CosmicFunFact fact={result.funFact} />
             <ThirtySeconds result={result} />
-            <ChangesPanel result={result} />
             <YourMove result={result} />
+            <ChangesPanel result={result} />
             <StrongestThemes result={result} />
           </div>
         )}
@@ -395,6 +407,7 @@ export function HoroscopeArticle({
         {!isDaily && (
           <div className="space-y-5">
             <PeriodSignals result={result} periodType={periodType} />
+            <CosmicFunFact fact={result.funFact} />
           </div>
         )}
 
@@ -428,9 +441,8 @@ export function HoroscopeArticle({
               </p>
             </section>
 
-            <div className="mt-9 space-y-5">
+            <div className="mt-9">
               <WhyForecast result={result} />
-              <PlanetPositions snapshot={result.snapshot} />
             </div>
           </div>
         </div>
