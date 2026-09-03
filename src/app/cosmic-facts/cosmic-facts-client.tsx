@@ -5,6 +5,7 @@ import { ZODIAC_SIGNS, type ZodiacSign, type Element } from "@/lib/zodiac/zodiac
 import { funFactForSign } from "@/lib/content/funfacts";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { elementText } from "@/components/ui/element";
+import { CompatibilityHub } from "@/components/ui/compatibility-hub";
 
 const ELEMENT_POWER: Record<Element, { glyph: string; color: string; signs: string[]; desc: string }> = {
   Fire: {
@@ -136,6 +137,20 @@ export function CosmicFactsClient() {
       {selected && (
         <SignProfile sign={selected} onClose={() => setSelected(null)} />
       )}
+
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <p className="kicker text-center">How two signs mesh</p>
+        <h2 className="mx-auto mt-3 max-w-2xl text-center font-display text-3xl text-starlight">
+          Zodiac compatibility
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-center leading-7 text-muted">
+          Choose any two signs to see how they score across love, energy and
+          intellect — drawn from elemental and modal harmony, never fabricated.
+        </p>
+        <div className="mt-10">
+          <CompatibilityHub />
+        </div>
+      </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
         <div className="paper-panel relative overflow-hidden p-8 sm:p-10">

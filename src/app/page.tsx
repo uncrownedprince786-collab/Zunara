@@ -10,6 +10,7 @@ import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
 import { SkyEvents } from "@/components/sky/sky-events";
+import { CelebrityBirthdays } from "@/components/ui/celebrity-birthdays";
 import { SITE } from "@/lib/seo/site";
 
 function todayDate(): string {
@@ -184,6 +185,9 @@ export default function HomePage() {
 
       {/* ---- Upcoming sky events (live from the USNO almanac) ---- */}
       <SkyEvents />
+
+      {/* ---- Born under today's stars (curated celebrity birthdays) ---- */}
+      <CelebrityBirthdays />
 
       {/* ---- Horizons ---- */}
       <section className="border-y border-white/[0.08] bg-white/[0.02] backdrop-blur-xl saturate-180">
