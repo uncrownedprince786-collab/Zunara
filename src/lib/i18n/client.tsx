@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import {
   type Locale,
   type Dict,
@@ -30,8 +30,41 @@ interface LocaleContextValue {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
+// --- Tiny external store (module-level) so the locale can be updated without
+// React `setState`, avoiding hydration mismatches and set-in-effect lint. ---
+let storeLocale: Locale = DEFAULT_LOCALE;
+const storeListeners = new Set<() => void>();
+function emitStore() {
+  for (const l of storeListeners) l();
+}
+function subscribeStore(cb: () => void) {
+  storeListeners.add(cb);
+  return () => storeListeners.delete(cb);
+}
+function getSnapshot() {
+  return storeLocale;
+}
+function getServerSnapshot() {
+  return DEFAULT_LOCALE;
+}
+function applyStore(next: Locale) {
+  if (storeLocale !== next) {
+    storeLocale = next;
+    emitStore();
+  }
+}
+
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(readLocaleCookie);
+  const locale = useSyncExternalStore(subscribeStore, getSnapshot, getServerSnapshot);
+
+  // Restore a saved language only after mount (writes through the external
+  // store, so it is picked up by subscribers without a hydration mismatch).
+  useEffect(() => {
+    const saved = readLocaleCookie();
+    if (saved !== DEFAULT_LOCALE) {
+      applyStore(saved);
+    }
+  }, []);
 
   // Sync the choice cookie + <html dir/lang> with the external system.
   useEffect(() => {
@@ -47,7 +80,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       locale,
       dir: getLocaleDir(locale),
       dict: dictionaries[locale],
-      setLocale: setLocaleState,
+      setLocale: applyStore,
     }),
     [locale],
   );
@@ -58,7 +91,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 export function useLocale(): LocaleContextValue {
   const ctx = useContext(LocaleContext);
   if (!ctx) {
-    return { locale: DEFAULT_LOCALE, dir: "ltr", dict: dictionaries[DEFAULT_LOCALE], setLocale: () => {} };
+    return { locale: DEFAULT_LOCALE, dir: "ltr", dict: dictionaries[DEFAULT_LOCALE], setLocale: applyStore };
   }
   return ctx;
 }
