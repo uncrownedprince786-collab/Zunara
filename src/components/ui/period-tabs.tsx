@@ -1,12 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import type { PeriodType } from "@/lib/calendar/periods";
+import { useLocale } from "@/lib/i18n/client";
 
-const TABS: Array<{ type: PeriodType; label: string }> = [
-  { type: "daily", label: "Daily" },
-  { type: "weekly", label: "Weekly" },
-  { type: "monthly", label: "Monthly" },
-  { type: "yearly", label: "Yearly" },
-];
+const TABS: PeriodType[] = ["daily", "weekly", "monthly", "yearly"];
 
 interface PeriodTabsProps {
   signSlug: string;
@@ -15,6 +13,7 @@ interface PeriodTabsProps {
 }
 
 export function PeriodTabs({ signSlug, active, basePath }: PeriodTabsProps) {
+  const { tHorizon, t } = useLocale();
   const makePath = (sign: string, type: PeriodType) =>
     basePath
       ? basePath(sign)
@@ -23,13 +22,13 @@ export function PeriodTabs({ signSlug, active, basePath }: PeriodTabsProps) {
         : `/horoscope/${sign}/${type}`;
 
   return (
-    <nav aria-label="Forecast period" className="inline-flex items-center gap-1 border-b border-line">
+    <nav aria-label={t("horoscope.chooseHorizon", "Forecast period")} className="inline-flex items-center gap-1 border-b border-line">
       {TABS.map((tab) => {
-        const isActive = tab.type === active;
+        const isActive = tab === active;
         return (
           <Link
-            key={tab.type}
-            href={makePath(signSlug, tab.type)}
+            key={tab}
+            href={makePath(signSlug, tab)}
             aria-current={isActive ? "page" : undefined}
             className={`px-5 py-2.5 text-[0.8rem] uppercase tracking-[0.16em] transition-colors ${
               isActive
@@ -37,7 +36,7 @@ export function PeriodTabs({ signSlug, active, basePath }: PeriodTabsProps) {
                 : "border-b-2 border-transparent text-subdued hover:text-starlight"
             }`}
           >
-            {tab.label}
+            {tHorizon(tab)}
           </Link>
         );
       })}

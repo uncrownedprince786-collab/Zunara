@@ -3,29 +3,32 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "@/lib/i18n/client";
 
 const LINKS = [
-  { href: "/horoscope", key: "horoscopes" },
-  { href: "/cosmic-facts", key: "cosmicFacts" },
-  { href: "/astrology", key: "astronomy" },
-  { href: "/about", key: "about" },
-] as const;
+  { href: "/horoscope", key: "horoscopes" as const },
+  { href: "/birthchart", key: "birthchart" as const },
+  { href: "/cosmic-facts", key: "cosmicFacts" as const },
+  { href: "/astrology", key: "astronomy" as const },
+  { href: "/about", key: "about" as const },
+];
 
-export function SiteNav({ labels }: { labels?: { horoscopes: string; cosmicFacts: string; astronomy: string; about: string } }) {
+export function SiteNav({ labels }: { labels?: Record<string, string> }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { t, dict } = useLocale();
 
   const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+    pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
   const items = LINKS.map((l) => ({
     href: l.href,
-    label: labels ? labels[l.key] : l.key,
+    label: labels?.[l.key] ?? dict.nav[l.key] ?? l.key,
   }));
 
   return (
-    <nav aria-label="Primary">
-      <div className="hidden items-center gap-7 md:flex">
+    <nav aria-label={t("nav.publication", "Primary")}>
+      <div className="hidden items-center gap-6 md:flex">
         {items.map((l) => {
           const active = isActive(l.href);
           return (
@@ -33,12 +36,12 @@ export function SiteNav({ labels }: { labels?: { horoscopes: string; cosmicFacts
               key={l.href}
               href={l.href}
               aria-current={active ? "page" : undefined}
-              className="group relative text-[0.8rem] uppercase tracking-[0.18em] text-muted transition-colors hover:text-gold"
+              className="group relative text-[0.8rem] uppercase tracking-[0.16em] text-muted transition-colors hover:text-gold"
             >
               {l.label}
               <span
                 aria-hidden="true"
-                className={`absolute -bottom-1.5 left-0 h-px bg-gold transition-all duration-300 ${
+                className={`absolute -bottom-1.5 start-0 h-px bg-gold transition-all duration-300 ${
                   active ? "w-full" : "w-0 group-hover:w-full"
                 }`}
               />
@@ -53,7 +56,7 @@ export function SiteNav({ labels }: { labels?: { horoscopes: string; cosmicFacts
         aria-controls="mobile-menu"
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="sr-only">Toggle navigation menu</span>
+        <span className="sr-only">{t("nav.menuToggle", "Toggle navigation menu")}</span>
         {open ? (
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M6 6l12 12M18 6 6 18" />
@@ -65,13 +68,13 @@ export function SiteNav({ labels }: { labels?: { horoscopes: string; cosmicFacts
         )}
       </button>
       {open && (
-        <div id="mobile-menu" className="absolute left-0 right-0 top-16 border-b border-white/[0.08] bg-white/[0.04] px-4 py-4 backdrop-blur-xl saturate-180 md:hidden">
+        <div id="mobile-menu" className="absolute inset-x-0 top-16 z-50 border-b border-white/[0.08] bg-ink/95 px-4 py-4 shadow-2xl backdrop-blur-xl saturate-180 md:hidden">
           <div className="flex flex-col gap-3">
             {items.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`text-muted transition-colors hover:text-gold ${isActive(l.href) ? "text-gold" : ""}`}
+                className={`text-sm tracking-wide text-muted transition-colors hover:text-gold ${isActive(l.href) ? "text-gold" : ""}`}
                 aria-current={isActive(l.href) ? "page" : undefined}
                 onClick={() => setOpen(false)}
               >

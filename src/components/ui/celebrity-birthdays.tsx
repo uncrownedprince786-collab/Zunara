@@ -9,6 +9,7 @@ import {
 } from "@/lib/content/celebrities";
 import { zodiacForDate, type ZodiacSign } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
+import { useLocale } from "@/lib/i18n/client";
 
 const REGION_STYLE: Record<CelebrityRegion, string> = {
   Hollywood: "border-white/10 bg-white/[0.04] text-muted",
@@ -94,11 +95,12 @@ function PortraitAvatar({
 }
 
 function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
+  const { t, tSign, locale } = useLocale();
   const sign = zodiacForDate(1990, celebrity.month, celebrity.day);
   const regionStyle = REGION_STYLE[celebrity.region];
   const glow = ELEMENT_GLOW[sign.element];
   const ring = ELEMENT_RING[sign.element];
-  const dateLabel = new Intl.DateTimeFormat("en", {
+  const dateLabel = new Intl.DateTimeFormat(locale, {
     month: "long",
     day: "numeric",
     timeZone: "UTC",
@@ -127,9 +129,9 @@ function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
       <div className="relative mt-5 flex items-center justify-between gap-3 border-t border-p-line pt-4">
         <span className="flex items-center gap-2 text-xs text-subdued">
           <span className={`text-sm ${ring}`}>
-            <ZodiacSymbol sign={sign.slug} size={18} label={sign.name} />
+            <ZodiacSymbol sign={sign.slug} size={18} label={tSign(sign.slug)} />
           </span>
-          {sign.name} · {dateLabel}
+          {tSign(sign.slug)} · {dateLabel}
         </span>
         <a
           href={celebrity.url}
@@ -137,7 +139,7 @@ function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-medium text-gold-deep transition-colors hover:bg-gold/20"
         >
-          Full profile
+          {t("celebrities.fullProfile", "Full profile")}
           <span aria-hidden className="text-gold">&rarr;</span>
         </a>
       </div>
@@ -146,16 +148,14 @@ function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
 }
 
 /**
- * Dynamic "Born Under Today's Stars" section. Filters a curated dataset by the
- * caller's date (UTC) and renders frosted-glass celebrity cards in a
- * horizontally scrollable, arrow-navigated carousel. Client-side so the
- * portrait fallback + scroll controls can react.
+ * Dynamic "Born Under Today's Stars" section.
  */
 export function CelebrityBirthdays() {
+  const { t, locale, dir } = useLocale();
   const now = new Date();
   const month = now.getUTCMonth() + 1;
   const day = now.getUTCDate();
-  const dateLabel = new Intl.DateTimeFormat("en", {
+  const dateLabel = new Intl.DateTimeFormat(locale, {
     month: "long",
     day: "numeric",
     timeZone: "UTC",
@@ -166,15 +166,13 @@ export function CelebrityBirthdays() {
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
 
-  // Arrows only appear when the carousel actually has more cards than fit in
-  // a single row (3+), per the celebrity-count threshold.
   const showArrows = people.length > 3;
 
   const measure = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    setHasPrev(el.scrollLeft > 4);
-    setHasNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    setHasPrev(Math.abs(el.scrollLeft) > 4);
+    setHasNext(Math.abs(el.scrollLeft) + el.clientWidth < el.scrollWidth - 4);
   }, []);
 
   useEffect(() => {
@@ -189,18 +187,18 @@ export function CelebrityBirthdays() {
     };
   }, [measure, people.length]);
 
-  const scrollByCards = (dir: 1 | -1) => {
+  const scrollByCards = (direction: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
-    // Fixed 340px step, smooth.
-    el.scrollBy({ left: dir * 340, behavior: "smooth" });
+    const scrollMultiplier = dir === "rtl" ? -1 : 1;
+    el.scrollBy({ left: direction * 340 * scrollMultiplier, behavior: "smooth" });
   };
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="flex items-end justify-between border-b border-line-soft pb-5">
         <div>
-          <p className="kicker">Born under today&rsquo;s stars</p>
+          <p className="kicker">{t("celebrities.kicker", "Born under today's stars")}</p>
           <h2 className="mt-3 font-display text-3xl text-starlight sm:text-4xl">
             {dateLabel}
           </h2>
@@ -211,7 +209,7 @@ export function CelebrityBirthdays() {
               type="button"
               onClick={() => scrollByCards(-1)}
               disabled={!hasPrev}
-              aria-label="Previous celebrities"
+              aria-label={t("celebrities.previous", "Previous celebrities")}
               className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
             >
               <span aria-hidden>&larr;</span>
@@ -220,7 +218,7 @@ export function CelebrityBirthdays() {
               type="button"
               onClick={() => scrollByCards(1)}
               disabled={!hasNext}
-              aria-label="Next celebrities"
+              aria-label={t("celebrities.next", "Next celebrities")}
               className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
             >
               <span aria-hidden>&rarr;</span>
@@ -231,8 +229,7 @@ export function CelebrityBirthdays() {
 
       {people.length === 0 ? (
         <p className="mt-8 text-center text-sm text-muted">
-          No featured stars born today — but every day is written in the sky.
-          Explore the signs to see who shares yours.
+          {t("celebrities.noStars", "No featured stars born today — but every day is written in the sky. Explore the signs to see who shares yours.")}
         </p>
       ) : (
         <div className="relative mt-8">
@@ -253,7 +250,7 @@ export function CelebrityBirthdays() {
                 type="button"
                 onClick={() => scrollByCards(-1)}
                 disabled={!hasPrev}
-                aria-label="Previous celebrities"
+                aria-label={t("celebrities.previous", "Previous celebrities")}
                 className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
               >
                 <span aria-hidden>&larr;</span>
@@ -262,7 +259,7 @@ export function CelebrityBirthdays() {
                 type="button"
                 onClick={() => scrollByCards(1)}
                 disabled={!hasNext}
-                aria-label="Next celebrities"
+                aria-label={t("celebrities.next", "Next celebrities")}
                 className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
               >
                 <span aria-hidden>&rarr;</span>

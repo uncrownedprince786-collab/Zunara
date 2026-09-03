@@ -62,7 +62,7 @@ export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
                 role="option"
                 aria-selected={l.code === locale}
                 onClick={() => select(l.code)}
-                className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-start text-sm transition-colors ${
                   l.code === locale ? "bg-white/[0.06] text-gold" : "text-muted hover:bg-white/[0.04] hover:text-starlight"
                 }`}
               >

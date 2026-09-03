@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLocale } from "@/lib/i18n/client";
 
 export type SkyEvent = {
   title: string;
@@ -8,9 +12,6 @@ export type SkyEvent = {
   category?: string;
 };
 
-/* Verified, high-authority astronomy sources (individually checked: HTTP 200,
-   stable, redirect-safe). Used to repair dead links from the live feed and as
-   graceful fallbacks when an event carries no valid URL. */
 const GUIDES = {
   moonPhases: "https://science.nasa.gov/moon/moon-phases/",
   meteorShowers: "https://www.imo.net/resources/calendar/",
@@ -19,8 +20,6 @@ const GUIDES = {
   default: "https://www.nasa.gov/skywatching/",
 } as const;
 
-/* Hosts known to serve dead/failed pages (e.g. the decommissioned USNO data
-   service). Any feed URL pointing here is treated as invalid and rewritten. */
 const DEAD_HOSTS = ["aa.usno.navy.mil"];
 
 const FALLBACK_BY_CATEGORY: Record<string, string> = {
@@ -31,7 +30,6 @@ const FALLBACK_BY_CATEGORY: Record<string, string> = {
   conjunctions: GUIDES.planetary,
 };
 
-/** Resolve a safe, working "How to watch" destination for an event. */
 function resolveUrl(e: SkyEvent): string {
   const raw = (e.url ?? "").trim();
   let host = "";
@@ -46,7 +44,6 @@ function resolveUrl(e: SkyEvent): string {
   return FALLBACK_BY_CATEGORY[e.category ?? ""] ?? GUIDES.default;
 }
 
-/** Curated fallback list used when the live feed cannot be reached. */
 const FALLBACK_EVENTS: SkyEvent[] = [
   {
     title: "Lyrids Meteor Shower · Peak Night",
@@ -74,32 +71,11 @@ const FALLBACK_EVENTS: SkyEvent[] = [
   },
 ];
 
-const CATEGORIES = [
-  "meteor-showers",
-  "eclipses",
-  "oppositions",
-  "conjunctions",
-  "moon-phases",
-] as const;
-
-const API_URL = `https://space-calendar.lukekorth.com/feed.json?c=${CATEGORIES.join(",")}`;
-
-function stripEmoji(s: string): string {
-  return s
-    .replace(
-      /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu,
-      "",
-    )
-    .replace(/\s{2,}/g, " ")
-    .replace(/\s+([.,:;])/g, "$1")
-    .trim();
-}
-
-function displayDate(iso: string): { month: string; text: string } {
+function displayDate(iso: string, locale: string): { month: string; text: string } {
   const d = new Date(iso === iso.slice(0, 10) ? `${iso}T00:00:00Z` : iso);
   if (Number.isNaN(d.getTime())) return { month: "", text: iso };
-  const month = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" }).format(d);
-  const text = new Intl.DateTimeFormat("en", {
+  const month = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(d);
+  const text = new Intl.DateTimeFormat(locale, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -108,47 +84,43 @@ function displayDate(iso: string): { month: string; text: string } {
   return { month, text };
 }
 
-function categoryLabel(category: string | undefined): string {
-  switch (category) {
-    case "meteor-showers": return "Meteor shower";
-    case "eclipses": return "Eclipse";
-    case "oppositions": return "Opposition";
-    case "conjunctions": return "Conjunction";
-    case "moon-phases": return "Lunar phase";
-    default: return "Sky event";
-  }
-}
+export function SkyEvents() {
+  const { t, locale } = useLocale();
+  const [events, setEvents] = useState<SkyEvent[]>(FALLBACK_EVENTS);
 
-async function fetchEvents(): Promise<SkyEvent[]> {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), 5000);
-  try {
-    const res = await fetch(API_URL, {
-      next: { revalidate: 21600 },
-      signal: controller.signal,
-    });
-    if (!res.ok) return FALLBACK_EVENTS;
-    const data = (await res.json()) as { events?: SkyEvent[] };
-    const now = Date.now();
-    const upcoming = (data.events ?? [])
-      .map((e) => ({
-        ...e,
-        title: stripEmoji(e.title),
-      }))
-      .filter((e) => new Date(e.start === e.start.slice(0, 10) ? `${e.start}T00:00:00Z` : e.start).getTime() >= now)
-      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-      .slice(0, 4);
-    if (upcoming.length === 0) return FALLBACK_EVENTS;
-    return upcoming;
-  } catch {
-    return FALLBACK_EVENTS;
-  } finally {
-    clearTimeout(t);
+  function categoryLabel(category: string | undefined): string {
+    switch (category) {
+      case "meteor-showers": return t("skyEvents.meteorShower", "Meteor shower");
+      case "eclipses": return t("skyEvents.eclipse", "Eclipse");
+      case "oppositions": return t("skyEvents.opposition", "Opposition");
+      case "conjunctions": return t("skyEvents.conjunction", "Conjunction");
+      case "moon-phases": return t("skyEvents.lunarPhase", "Lunar phase");
+      default: return t("skyEvents.skyEvent", "Sky event");
+    }
   }
-}
 
-export async function SkyEvents() {
-  const events = await fetchEvents();
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      try {
+        const res = await fetch("https://space-calendar.lukekorth.com/feed.json?c=meteor-showers,eclipses,oppositions,conjunctions,moon-phases");
+        if (!res.ok) return;
+        const data = (await res.json()) as { events?: SkyEvent[] };
+        const now = Date.now();
+        const upcoming = (data.events ?? [])
+          .filter((e) => new Date(e.start === e.start.slice(0, 10) ? `${e.start}T00:00:00Z` : e.start).getTime() >= now)
+          .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+          .slice(0, 4);
+        if (active && upcoming.length > 0) {
+          setEvents(upcoming);
+        }
+      } catch {
+        // use fallbacks
+      }
+    }
+    load();
+    return () => { active = false; };
+  }, []);
 
   return (
     <section
@@ -161,18 +133,17 @@ export async function SkyEvents() {
           className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(108,92,231,0.28)_0%,transparent_70%)] blur-2xl"
         />
         <div className="relative">
-          <p className="kicker">The sky ahead</p>
+          <p className="kicker">{t("skyEvents.kicker", "The sky ahead")}</p>
           <h2 id="sky-events-heading" className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
-            Upcoming celestial events
+            {t("skyEvents.title", "Upcoming celestial events")}
           </h2>
           <p className="mt-3 max-w-xl leading-7 text-muted">
-            Live from the USNO sky almanac — meteor showers, eclipses, oppositions and lunar
-            phases worth stepping outside for.
+            {t("skyEvents.desc", "Live from astronomical ephemerides — meteor showers, eclipses, oppositions and lunar phases worth stepping outside for.")}
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {events.map((e) => {
-              const { month, text } = displayDate(e.start);
+              const { month, text } = displayDate(e.start, locale);
               const label = categoryLabel(e.category);
               return (
                 <article
@@ -199,11 +170,11 @@ export async function SkyEvents() {
                       href={resolveUrl(e)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={`How to watch: ${e.title} (opens in a new tab)`}
+                      aria-label={`${t("common.howToWatch", "How to watch")}: ${e.title}`}
                       className="mt-4 inline-flex w-fit items-center rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-starlight transition-colors hover:border-gold/50 hover:text-gold"
                     >
-                      How to watch
-                      <span aria-hidden className="ml-1.5">→</span>
+                      {t("common.howToWatch", "How to watch")}
+                      <span aria-hidden className="ms-1.5">→</span>
                     </Link>
                   </div>
                 </article>
@@ -212,8 +183,7 @@ export async function SkyEvents() {
           </div>
 
           <p className="mt-6 text-[0.7rem] leading-5 text-subdued">
-            Event data is updated from the U.S. Naval Observatory / NASA-JPL sky almanac and
-            refreshed automatically. Always check a local astronomy guide before heading out.
+            {t("skyEvents.disclaimer", "Event data is updated from astronomical almanacs and refreshed automatically. Always check a local astronomy guide before heading out.")}
           </p>
         </div>
       </div>

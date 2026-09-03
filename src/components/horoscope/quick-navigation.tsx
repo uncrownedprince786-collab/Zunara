@@ -4,13 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import { useZunaraState, HORIZONS, type Horizon } from "@/lib/hooks/use-zunara-state";
-
-const HORIZON_LABELS: Record<Horizon, string> = {
-  today: "Today",
-  weekly: "Weekly",
-  monthly: "Monthly",
-  yearly: "Yearly",
-};
+import { useLocale } from "@/lib/i18n/client";
 
 interface QuickNavigationProps {
   currentSlug: string;
@@ -18,13 +12,13 @@ interface QuickNavigationProps {
 
 /**
  * Sticky sub-navigation for sign pages: instant sign switching via a compact
- * dropdown plus horizon tabs. Writing via the dropdown also records the
- * reader's chosen sign for the "Your Daily Orbit" personalisation.
+ * dropdown plus horizon tabs.
  */
 export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { setUserZodiacSign } = useZunaraState();
+  const { t, tSign, tElement, tHorizon } = useLocale();
 
   const current = ZODIAC_SIGNS.find((s) => s.slug === currentSlug);
 
@@ -45,7 +39,7 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
 
   return (
     <nav
-      aria-label="Sign navigation"
+      aria-label={t("horoscope.kicker", "Sign navigation")}
       className="sticky top-16 z-30 border-b border-white/[0.08] bg-white/[0.04] backdrop-blur-xl saturate-180"
     >
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 sm:px-6">
@@ -53,23 +47,23 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
           {/* Sign dropdown */}
           <div className="relative">
             <label htmlFor="sign-switch" className="sr-only">
-              Switch zodiac sign
+              {t("horoscope.switchSign", "Switch zodiac sign")}
             </label>
             <select
               id="sign-switch"
               value={currentSlug}
               onChange={(e) => pickSign(e.target.value)}
-              className="sign-switch appearance-none rounded-full border border-white/[0.12] bg-[#111222] py-1.5 pl-4 pr-9 text-sm font-medium text-white outline-none transition-colors hover:border-gold/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+              className="sign-switch appearance-none rounded-full border border-white/[0.12] bg-[#111222] py-1.5 pe-9 ps-4 text-sm font-medium text-white outline-none transition-colors hover:border-gold/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
             >
               {ZODIAC_SIGNS.map((s) => (
                 <option key={s.slug} value={s.slug}>
-                  {s.name}
+                  {tSign(s.slug)}
                 </option>
               ))}
             </select>
             <svg
               aria-hidden="true"
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-muted"
               viewBox="0 0 12 12"
               width="11"
               height="11"
@@ -80,10 +74,10 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
               <path d="M2.5 4.5 6 8l3.5-3.5" />
             </svg>
           </div>
-          {/* Active sign label (matches the selected sign's current page) */}
+          {/* Active sign label */}
           {current && (
             <span className="hidden text-sm text-subdued sm:inline">
-              {current.name} · {current.element}
+              {tSign(current.slug)} · {tElement(current.element)}
             </span>
           )}
         </div>
@@ -103,7 +97,7 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
                     : "text-muted hover:text-starlight"
                 }`}
               >
-                {HORIZON_LABELS[h]}
+                {tHorizon(h)}
                 {active && (
                   <span
                     aria-hidden="true"

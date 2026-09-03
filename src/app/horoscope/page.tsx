@@ -4,9 +4,10 @@ import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import { DailyDesk } from "@/components/ui/daily-desk";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Reveal } from "@/components/ui/reveal";
-import { StarMark } from "@/components/layout/star-mark";
+import { VitruvianMark } from "@/components/ui/vitruvian-mark";
 import { SITE, absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
+import { LocaleText } from "@/components/ui/locale-text";
 
 export const metadata: Metadata = {
   title: "Today's Horoscopes | All Zodiac Signs",
@@ -22,9 +23,9 @@ export const metadata: Metadata = {
 
 export default function HoroscopeIndexPage() {
   const horizons = [
-    { type: "weekly", label: "This Week", desc: "The week ahead" },
-    { type: "monthly", label: "This Month", desc: "A longer arc" },
-    { type: "yearly", label: "This Year", desc: "The whole year" },
+    { type: "weekly", labelKey: "horizons.thisWeek", descKey: "horizons.weeklyDesc" },
+    { type: "monthly", labelKey: "horizons.thisMonth", descKey: "horizons.monthlyDesc" },
+    { type: "yearly", labelKey: "horizons.thisYear", descKey: "horizons.yearlyDesc" },
   ] as const;
 
   return (
@@ -36,11 +37,10 @@ export default function HoroscopeIndexPage() {
           </div>
           <div aria-hidden className="gold-rule mx-auto mt-6 w-20" />
           <h1 className="mt-6 font-display text-4xl text-starlight sm:text-6xl">
-            Today&rsquo;s Horoscopes
+            <LocaleText path="nav.horoscopes" fallback="Today's Horoscopes" />
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-muted">
-            The daily zodiac desk. Choose your sign to read today&rsquo;s forecast — each
-            signal below is drawn from the real positions of the Sun, Moon and planets.
+            <LocaleText path="home.anIndexOfHeavensDesc" fallback="The daily zodiac desk. Choose your sign to read today's forecast — each signal below is drawn from the real positions of the Sun, Moon and planets." />
           </p>
         </div>
 
@@ -52,36 +52,37 @@ export default function HoroscopeIndexPage() {
           <section aria-labelledby="horizons-heading" className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-7 backdrop-blur-xl saturate-180 sm:p-9">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <p className="kicker">Beyond today</p>
+                <p className="kicker"><LocaleText path="home.horizonsKicker" fallback="Beyond today" /></p>
                 <h2 id="horizons-heading" className="mt-2 font-display text-2xl text-starlight">
-                  Turn to the wider view
+                  <LocaleText path="home.horizonsTitle" fallback="Turn to the wider view" />
                 </h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
-                  Pick a sign to open its hub, then move from the day out to the week, month and
-                  year — always from the same truthful astronomical positions.
+                  <LocaleText path="home.horizonsDesc" fallback="Pick a sign to open its hub, then move from the day out to the week, month and year — always from the same truthful astronomical positions." />
                 </p>
               </div>
               <div className="flex items-center gap-2 text-gold">
-                <StarMark className="h-4 w-4" />
-                <span className="text-[0.7rem] uppercase tracking-[0.2em]">Choose a sign</span>
+                <VitruvianMark className="h-4 w-4" />
+                <span className="text-[0.7rem] uppercase tracking-[0.2em]">
+                  <LocaleText path="cosmicFacts.chooseSign" fallback="Choose a sign" />
+                </span>
               </div>
             </div>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-3">
               {horizons.map((h) => (
-                  <Link
-                    key={h.type}
-                    href={`/horoscope/aries/${h.type}`}
-                    className="card-lift group flex items-center justify-between rounded-md border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-xl transition-colors hover:bg-white/[0.05]"
-                  >
-                    <div>
-                      <p className="font-display text-lg text-starlight">{h.label}</p>
-                      <p className="mt-0.5 text-sm text-subdued">{h.desc}</p>
-                    </div>
-                    <span aria-hidden className="text-gold opacity-60 transition-opacity group-hover:opacity-100">
-                      &rarr;
-                    </span>
-                  </Link>
+                <Link
+                  key={h.type}
+                  href={`/horoscope/aries/${h.type}`}
+                  className="card-lift group flex items-center justify-between rounded-md border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-xl transition-colors hover:bg-white/[0.05]"
+                >
+                  <div>
+                    <p className="font-display text-lg text-starlight"><LocaleText path={h.labelKey} /></p>
+                    <p className="mt-0.5 text-sm text-subdued"><LocaleText path={h.descKey} /></p>
+                  </div>
+                  <span aria-hidden className="text-gold opacity-60 transition-opacity group-hover:opacity-100">
+                    &rarr;
+                  </span>
+                </Link>
               ))}
             </div>
           </section>

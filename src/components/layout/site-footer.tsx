@@ -3,38 +3,45 @@
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { SITE } from "@/lib/seo/site";
-import { StarMark } from "./star-mark";
+import { VitruvianMark } from "@/components/ui/vitruvian-mark";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useLocale } from "@/lib/i18n/client";
 
 export function SiteFooter() {
   const year = new Date().getUTCFullYear();
-  const { dict } = useLocale();
+  const { dict, tSign } = useLocale();
   const columns = [
-    { title: dict.nav.horoscopes, links: [
-      { label: dict.footer.allSigns, href: "/horoscope" },
-      { label: dict.nav.today, href: "/horoscope/aries/today" },
-      { label: dict.nav.weekly, href: "/horoscope/aries/weekly" },
-      { label: dict.nav.monthly, href: "/horoscope/aries/monthly" },
-      { label: dict.nav.yearly, href: "/horoscope/aries/yearly" },
-    ]},
-    { title: dict.nav.publication, links: [
-      { label: dict.nav.astronomy, href: "/astrology" },
-      { label: dict.nav.cosmicFacts, href: "/cosmic-facts" },
-      { label: dict.nav.about, href: "/about" },
-      { label: dict.nav.privacy, href: "/privacy" },
-      { label: dict.nav.terms, href: "/terms" },
-      { label: dict.nav.disclaimer, href: "/disclaimer" },
-    ]},
+    {
+      title: dict.nav.horoscopes,
+      links: [
+        { label: dict.footer.allSigns, href: "/horoscope" },
+        { label: dict.nav.today, href: "/horoscope/aries/today" },
+        { label: dict.nav.weekly, href: "/horoscope/aries/weekly" },
+        { label: dict.nav.monthly, href: "/horoscope/aries/monthly" },
+        { label: dict.nav.yearly, href: "/horoscope/aries/yearly" },
+      ],
+    },
+    {
+      title: dict.nav.publication,
+      links: [
+        { label: dict.nav.birthchart, href: "/birthchart" },
+        { label: dict.nav.astronomy, href: "/astrology" },
+        { label: dict.nav.cosmicFacts, href: "/cosmic-facts" },
+        { label: dict.nav.about, href: "/about" },
+        { label: dict.nav.privacy, href: "/privacy" },
+        { label: dict.nav.terms, href: "/terms" },
+        { label: dict.nav.disclaimer, href: "/disclaimer" },
+      ],
+    },
   ];
 
   return (
     <footer className="border-t border-white/[0.08] bg-white/[0.03] backdrop-blur-xl saturate-180">
       <div className="mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6">
-        <div className="flex items-start justify-between gap-8">
+        <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
           <div className="max-w-xs">
             <div className="flex items-center gap-2">
-              <StarMark className="h-5 w-5 text-gold" />
+              <VitruvianMark className="h-6 w-6 text-gold" />
               <span className="font-display text-2xl font-medium text-starlight">Zunara</span>
             </div>
             <p className="mt-4 text-sm leading-6 text-muted">
@@ -68,11 +75,11 @@ export function SiteFooter() {
                 <li key={s.slug}>
                   <Link
                     href={`/horoscope/${s.slug}`}
-                    title={`${s.name} — ${formatDateRange(s)}`}
+                    title={`${tSign(s.slug)} — ${formatDateRange(s)}`}
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-line-soft text-sm text-muted transition-colors hover:border-gold/50 hover:text-gold"
                   >
                     <span aria-hidden="true">{s.glyph}</span>
-                    <span className="sr-only">{s.name}</span>
+                    <span className="sr-only">{tSign(s.slug)}</span>
                   </Link>
                 </li>
               ))}

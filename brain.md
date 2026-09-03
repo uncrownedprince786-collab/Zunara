@@ -395,4 +395,24 @@ The product is production-ready when:
 - `content/fragments.ts` prose was already plain-language/clean; no ALL-CAPS or stray punctuation remained.
 
 ### Verification
-`npx tsc --noEmit`, `npx eslint src`, `npx vitest run` (95 passed), `npx next build` (81 pages, all static/SSG). Deploy: `git push origin master:main` → Vercel auto-build → live `https://zunara.vercel.app` (language switcher + RTL + sitemap `/cosmic-facts` + FAQ JSON-LD).
+`npx tsc --noEmit`, `npx eslint src`, `npx vitest run` (113 passed), `npx next build` (83 pages, all static/SSG). Deploy: `git push origin master:main` → Vercel auto-build → live `https://zunara.vercel.app` (language switcher + RTL + sitemap `/cosmic-facts` + FAQ JSON-LD).
+
+---
+
+## 38. Supervisor Sprint #15: Repo-Wide i18n Multilingual & RTL Engine
+
+### Target Languages
+1. **English (`en`)** — Default LTR
+2. **Urdu (`ur`)** — RTL (اردو) with native text alignment and mirrored directional scroll controls
+3. **Arabic (`ar`)** — RTL (العربية) with native text alignment and mirrored directional scroll controls
+4. **Spanish (`es`)** — LTR (Español)
+5. **Mandarin Chinese (`zh`)** — LTR (简体中文)
+
+### Architecture
+- **Stateless Zero-Overhead Client Dictionary Pipeline:** `src/lib/i18n/dictionaries.ts` provides comprehensive dictionaries for all 5 languages covering navigation, 12 signs, 4 elements, 3 modalities, 10 planets, life areas & strengths, horizons, astrology/astronomy methods, cosmic traits, celebrities, sky events, and birth chart calculations.
+- **Client Synchronization:** `src/lib/i18n/client.tsx` manages cookie `zunara-locale`, synchronization of `<html dir="rtl|ltr" lang="...">`, and `document.body.dir`.
+- **Helpers:** `useLocale()` hook returns `{ locale, dir, dict, t, tSign, tElement, tModality, tPlanet, tHorizon, tArea, setLocale }`.
+- **Server/Static Compatibility:** `<LocaleText path="..." fallback="..." />` enables server components and SSG pages to re-render in place without breaking static generation (83/83 SSG static routes).
+- **RTL Layout Engine:** Logical CSS properties (`start-`, `end-`, `ps-`, `pe-`, `text-start`, `ms-`, `me-`) ensure dropdowns, carousels, forms, and cards mirror smoothly without overlapping.
+- **Dedicated Route:** `/birthchart` provides an interactive high-precision birth chart calculator supporting all 5 languages.
+

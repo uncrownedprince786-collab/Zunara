@@ -12,6 +12,7 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { elementText } from "@/components/ui/element";
 import { ElementIcon } from "@/components/ui/element-icon";
 import type { LifeArea } from "@/lib/astrology/signals";
+import { LocaleText } from "@/components/ui/locale-text";
 
 const AREA_THEME: Record<LifeArea, ThemeKey> = {
   love: "love",
@@ -39,10 +40,10 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
   const canonical = absoluteUrl(`/horoscope/${sign}`);
 
   const periods = [
-    { type: "today", label: "Daily", blurb: "A single day in focus" },
-    { type: "weekly", label: "Weekly", blurb: "The week ahead" },
-    { type: "monthly", label: "Monthly", blurb: "A longer arc" },
-    { type: "yearly", label: "Yearly", blurb: "The whole year" },
+    { type: "today", labelKey: "horizons.daily", descKey: "horizons.dailyDesc" },
+    { type: "weekly", labelKey: "horizons.weekly", descKey: "horizons.weeklyDesc" },
+    { type: "monthly", labelKey: "horizons.monthly", descKey: "horizons.monthlyDesc" },
+    { type: "yearly", labelKey: "horizons.yearly", descKey: "horizons.yearlyDesc" },
   ] as const;
 
   const listScript = {
@@ -79,7 +80,9 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
           <span className="sr-only">{signData.name}</span>
         </div>
         <div>
-          <h1 className="font-display text-4xl text-starlight sm:text-5xl">{signData.name}</h1>
+          <h1 className="font-display text-4xl text-starlight sm:text-5xl">
+            <LocaleText path={`signs.${signData.slug}`} fallback={signData.name} />
+          </h1>
           <p className="mt-1 text-muted">{formatDateRange(signData)}</p>
         </div>
       </header>
@@ -95,13 +98,15 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
 
       <div className="mt-16 grid gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div>
-          <h2 className="font-display text-2xl text-starlight">About {signData.name}</h2>
+          <h2 className="font-display text-2xl text-starlight">
+            <LocaleText path="horoscope.aboutSign" fallback="About" /> <LocaleText path={`signs.${signData.slug}`} fallback={signData.name} />
+          </h2>
           <p className="drop-cap mt-4 font-serif-body text-lg leading-8 text-starlight/90">
             {signData.description}
           </p>
 
           <blockquote
-            className={`mt-8 border-l-2 pl-5 italic text-muted ${elementText(signData.element)}`}
+            className={`mt-8 border-s-2 ps-5 italic text-muted ${elementText(signData.element)}`}
           >
             &ldquo;{signData.keywords.join(" — ")}.&rdquo;
           </blockquote>
@@ -109,7 +114,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
 
         <aside className="space-y-5">
           <section className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
-            <h3 className="kicker">Traits</h3>
+            <h3 className="kicker"><LocaleText path="common.traits" fallback="Traits" /></h3>
             <ul className="mt-3 flex flex-wrap gap-2">
               {signData.traits.map((trait) => (
                 <li
@@ -123,23 +128,23 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
           </section>
 
           <section className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
-            <h3 className="kicker">Signature</h3>
+            <h3 className="kicker"><LocaleText path="horoscope.signature" fallback="Signature" /></h3>
             <dl className="mt-3 space-y-2.5 text-sm">
               <div className="flex items-center justify-between">
-                <dt className="text-subdued">Element</dt>
+                <dt className="text-subdued"><LocaleText path="horoscope.element" fallback="Element" /></dt>
                 <dd className={`font-medium ${elementText(signData.element)}`}>
-                  {signData.element}{" "}
+                  <LocaleText path={`elements.${signData.element}`} fallback={signData.element} />{" "}
                   <ElementIcon element={signData.element} size={16} className={`inline ${elementText(signData.element)}`} />
                 </dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-subdued">Modality</dt>
-                <dd className="text-starlight">{signData.modality}</dd>
+                <dt className="text-subdued"><LocaleText path="horoscope.modality" fallback="Modality" /></dt>
+                <dd className="text-starlight"><LocaleText path={`modalities.${signData.modality}`} fallback={signData.modality} /></dd>
               </div>
               <div className="flex items-center justify-between">
-                <dt className="text-subdued">Ruler</dt>
+                <dt className="text-subdued"><LocaleText path="horoscope.ruler" fallback="Ruler" /></dt>
                 <dd className="text-starlight">
-                  {signData.ruler}
+                  <LocaleText path={`planets.${signData.ruler.toLowerCase()}`} fallback={signData.ruler} />
                   {signData.modernRuler ? ` / ${signData.modernRuler}` : ""}
                 </dd>
               </div>
@@ -151,8 +156,10 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
       <section className="mt-14" aria-label={`${signData.name} forecasts`}>
         <div className="flex items-end justify-between border-b border-line-soft pb-4">
           <div>
-            <p className="kicker">Forecasts</p>
-            <h2 className="mt-2 font-display text-2xl text-starlight">Choose a horizon</h2>
+            <p className="kicker"><LocaleText path="horoscope.forecast" fallback="Forecasts" /></p>
+            <h2 className="mt-2 font-display text-2xl text-starlight">
+              <LocaleText path="horoscope.chooseHorizon" fallback="Choose a horizon" />
+            </h2>
           </div>
         </div>
         <div className="mt-6 grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
@@ -169,8 +176,12 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
                 <span className="text-gold opacity-0 transition-opacity group-hover:opacity-100">→</span>
               </div>
               <div>
-                <p className="font-display text-xl text-starlight">{p.label} horoscope</p>
-                <p className="mt-1 text-sm text-subdued">{p.blurb}</p>
+                <p className="font-display text-xl text-starlight">
+                  <LocaleText path={p.labelKey} /> <LocaleText path="horoscope.kicker" fallback="horoscope" />
+                </p>
+                <p className="mt-1 text-sm text-subdued">
+                  <LocaleText path={p.descKey} />
+                </p>
               </div>
             </Link>
           ))}
@@ -193,7 +204,7 @@ function CurrentTheme({ signSlug }: { signSlug: string }) {
       <section aria-labelledby="current-theme-heading" className="rounded-lg border border-white/[0.08] bg-white/[0.05] p-7 backdrop-blur-xl saturate-180">
         <div className="flex items-center gap-2 text-gold">
           <span aria-hidden className="text-gold">&#10022;</span>
-          <p className="kicker">Your current theme</p>
+          <p className="kicker"><LocaleText path="horoscope.yourCurrentTheme" fallback="Your current theme" /></p>
         </div>
         <p className="mt-4 font-serif-body text-2xl italic leading-9 text-starlight">
           &ldquo;{result.glance.overall}&rdquo;
@@ -202,15 +213,15 @@ function CurrentTheme({ signSlug }: { signSlug: string }) {
           {strongest && (
             <span className="inline-flex items-center gap-2 text-muted">
               <ThemeSymbol theme={AREA_THEME[strongest.area]} size="sm" className="text-gold" />
-              Strongest in{" "}
-              <span className="capitalize text-starlight">{strongest.area}</span>
+              <LocaleText path="areas.strongest" fallback="Strongest in" />{" "}
+              <span className="capitalize text-starlight"><LocaleText path={`areas.${strongest.area}`} fallback={strongest.area} /></span>
             </span>
           )}
           <Link
             href={`/horoscope/${signSlug}/today`}
             className="inline-flex items-center gap-1.5 text-gold underline-offset-4 hover:underline"
           >
-            Read today&rsquo;s forecast &rarr;
+            <LocaleText path="common.readToday" fallback="Read today's forecast" /> &rarr;
           </Link>
         </div>
       </section>
@@ -225,16 +236,15 @@ function Recently({ signSlug }: { signSlug: string }) {
   return (
     <Reveal delay={2}>
       <section aria-labelledby="recently-heading" className="mt-6 rounded-lg border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
-        <p className="kicker">What changed lately</p>
+        <p className="kicker"><LocaleText path="horoscope.whatChangedLately" fallback="What changed lately" /></p>
         {changes.length === 0 ? (
           <p className="mt-3 font-serif-body text-base leading-7 text-muted">
-            The sky is relatively steady at the moment — no major transition is changing the
-            overall tone. Small shifts matter more than any grand move.
+            <LocaleText path="horoscope.steadySky" fallback="The sky is relatively steady at the moment — no major transition is changing the overall tone. Small shifts matter more than any grand move." />
           </p>
         ) : (
           <ul className="mt-4 space-y-3">
             {changes.slice(0, 3).map((c) => (
-              <li key={c.id} className="border-l-2 border-gold-deep bg-white/[0.03] py-2 pl-4 pr-3">
+              <li key={c.id} className="border-s-2 border-gold-deep bg-white/[0.03] py-2 pe-3 ps-4">
                 <p className="font-medium text-starlight">{c.title}</p>
                 <p className="mt-0.5 text-sm leading-6 text-muted">{c.blurb}</p>
               </li>

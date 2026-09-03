@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { snapshotForToday } from "@/lib/astronomy/astro";
@@ -6,6 +8,7 @@ import { ZodiacSymbol } from "./zodiac-symbol";
 import { ThemeSymbol, type ThemeKey } from "./theme-symbol";
 import { Reveal } from "./reveal";
 import type { SignalStrength, LifeArea } from "@/lib/astrology/signals";
+import { useLocale } from "@/lib/i18n/client";
 
 const AREA_THEME: Record<LifeArea, ThemeKey> = {
   love: "love",
@@ -13,19 +16,6 @@ const AREA_THEME: Record<LifeArea, ThemeKey> = {
   money: "money",
   energy: "energy",
 };
-
-function strengthWord(s: SignalStrength): string {
-  switch (s) {
-    case "strong":
-      return "Strong";
-    case "moderate":
-      return "Moderate";
-    case "mild":
-      return "Mild";
-    default:
-      return "";
-  }
-}
 
 function strengthText(s: SignalStrength): string {
   switch (s) {
@@ -42,8 +32,9 @@ function strengthText(s: SignalStrength): string {
 
 /** A "daily zodiac desk": all twelve signs with today's real signal before the click. */
 export function DailyDesk() {
+  const { t, tSign, tArea, locale } = useLocale();
   const snapshot = snapshotForToday();
-  const dateLabel = new Intl.DateTimeFormat("en", {
+  const dateLabel = new Intl.DateTimeFormat(locale, {
     timeZone: "UTC",
     weekday: "long",
     month: "long",
@@ -62,7 +53,7 @@ export function DailyDesk() {
     <div>
       <p className="kicker text-center">{dateLabel}</p>
       <p className="mx-auto mt-3 max-w-xl text-center font-serif-body text-lg italic leading-8 text-muted">
-        Twelve signs, each with its own signal today. Choose one to read the full reading.
+        {t("home.anIndexOfHeavensDesc", "Twelve signs, each with its own signal today. Choose one to read the full reading.")}
       </p>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -78,10 +69,10 @@ export function DailyDesk() {
                     sign={sign.slug}
                     size="md"
                     className={`text-gold/80 transition-colors group-hover:text-gold`}
-                    label={sign.name}
+                    label={tSign(sign.slug)}
                   />
                   <div>
-                    <p className="font-display text-lg leading-none text-starlight">{sign.name}</p>
+                    <p className="font-display text-lg leading-none text-starlight">{tSign(sign.slug)}</p>
                     <p className="mt-1 text-xs text-subdued">{formatDateRange(sign)}</p>
                   </div>
                 </div>
@@ -91,7 +82,7 @@ export function DailyDesk() {
               </div>
 
               <div className="mt-5 flex-1">
-                <p className="text-[0.62rem] uppercase tracking-[0.22em] text-subdued">Today&rsquo;s theme</p>
+                <p className="text-[0.62rem] uppercase tracking-[0.22em] text-subdued">{t("horoscope.activeTheme", "Today's theme")}</p>
                 <p className="mt-1.5 font-serif-body text-[0.98rem] italic leading-6 text-starlight/90">
                   {headline ?? "A steady day"}
                 </p>
@@ -99,22 +90,22 @@ export function DailyDesk() {
                 {strongest && (
                   <div className="mt-4 flex items-center gap-2">
                     <ThemeSymbol theme={AREA_THEME[strongest.area]} size="sm" className="text-gold" />
-                    <span className="text-[0.65rem] uppercase tracking-[0.18em] text-subdued">Strongest</span>
-                    <span className={`ml-auto rounded-full border border-line px-2 py-0.5 text-[0.62rem] uppercase tracking-wide ${strengthText(strongest.strength)}`}>
-                      {strengthWord(strongest.strength)}
+                    <span className="text-[0.65rem] uppercase tracking-[0.18em] text-subdued">{t("areas.strongest", "Strongest")} ({tArea(strongest.area)})</span>
+                    <span className={`ms-auto rounded-full border border-line px-2 py-0.5 text-[0.62rem] uppercase tracking-wide ${strengthText(strongest.strength)}`}>
+                      {t(`areas.${strongest.strength}`, strongest.strength)}
                     </span>
                   </div>
                 )}
 
                 {watch && (
                   <p className="mt-3 text-xs leading-5 text-muted">
-                    <span className="text-subdued">Watch:</span> {watch}
+                    <span className="text-subdued">{t("common.watchOutFor", "Watch")}:</span> {watch}
                   </p>
                 )}
               </div>
 
               <p className="mt-5 border-t border-line-soft pt-3 text-[0.72rem] uppercase tracking-[0.18em] text-gold">
-                Read {sign.name} &rarr;
+                {tSign(sign.slug)} &rarr;
               </p>
             </Link>
           </Reveal>

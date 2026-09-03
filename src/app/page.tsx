@@ -2,12 +2,12 @@ import Link from "next/link";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import { BentoZodiacGrid } from "@/components/ui/bento-zodiac-grid";
 import { HeroVisual } from "@/components/ui/hero-visual";
+import { VitruvianHero } from "@/components/ui/vitruvian-hero";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { elementBorder, elementText } from "@/components/ui/element";
 import { ElementIcon } from "@/components/ui/element-icon";
 import { snapshotForToday } from "@/lib/astronomy/astro";
-import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { LocaleText } from "@/components/ui/locale-text";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
@@ -62,6 +62,12 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(circle_at_top,rgba(108,92,231,0.15)_0%,transparent_70%)]"
         />
         <HeroVisual />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-1/2 z-0 mx-auto w-full max-w-[650px] -translate-y-1/2 select-none"
+        >
+          <VitruvianHero className="opacity-[0.14]" />
+        </div>
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
           <p className="kicker">{date}</p>
           <div aria-hidden="true" className="gold-rule mx-auto mt-5 w-20" />
@@ -78,6 +84,12 @@ export default function HomePage() {
               className="rounded-full bg-gold px-8 py-3 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
             >
               <LocaleText path="home.heroCtaPrimary" fallback="Read today's horoscope" />
+            </Link>
+            <Link
+              href="/birthchart"
+              className="rounded-full border border-gold/40 bg-gold/5 px-8 py-3 text-sm text-gold transition-colors hover:bg-gold/15"
+            >
+              <LocaleText path="nav.birthchart" fallback="Birth Chart" />
             </Link>
             <Link
               href="/astrology"
@@ -97,12 +109,10 @@ export default function HomePage() {
           <div className="lg:w-3/5">
             <p className="kicker"><LocaleText path="home.skyTonight" fallback="The sky, tonight" /></p>
             <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
-              The Sun passes through {sunSign?.name ?? "the zodiac"}
+              <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : "the zodiac"}
             </h2>
             <p className="mt-4 max-w-xl leading-7 text-muted">
-              Every position below is computed from astronomical theory, not invented. Zunara
-              renders the movements of the spheres into reading — each aspect and retrograde
-              corresponds to the true state of the sky.
+              <LocaleText path="home.methodDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
             </p>
             {sunSign && (
               <div className="mt-6 flex flex-wrap gap-2">
@@ -122,41 +132,41 @@ export default function HomePage() {
             <div className="space-y-5">
               <MoonSignCard />
               <div className="paper-panel rounded-lg p-6">
-              <p className="kicker">Planetary bulletin</p>
-              <dl className="mt-5 space-y-3">
-                {retro.length > 0 ? (
-                  retro.map((p) => (
-                    <div key={p.key} className="flex items-center gap-3">
-                      <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
+                <p className="kicker"><LocaleText path="home.planetaryBulletin" fallback="Planetary bulletin" /></p>
+                <dl className="mt-5 space-y-3">
+                  {retro.length > 0 ? (
+                    retro.map((p) => (
+                      <div key={p.key} className="flex items-center gap-3">
+                        <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
+                        <dd className="text-sm text-p-ink">
+                          <span className="font-medium"><LocaleText path={`planets.${p.key}`} fallback={p.key} /></span>
+                          <span className="text-p-muted"> <LocaleText path="home.retrogradeIn" fallback="retrograde in" /> <LocaleText path={`signs.${p.sign}`} fallback={p.sign} /></span>
+                        </dd>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <PlanetSymbol body="sun" size="md" className="text-gold-deep" decorative />
                       <dd className="text-sm text-p-ink">
-                        <span className="font-medium">{PLANET_LABELS[p.key] ?? p.key}</span>
-                        <span className="text-p-muted"> retrograde in {sunSignName(p.sign)}</span>
+                        <span className="font-medium"><LocaleText path="home.noRetrogrades" fallback="No retrogrades" /></span>
+                        <span className="text-p-muted"> — <LocaleText path="home.allPlanetsDirect" fallback="all planets direct today" /></span>
                       </dd>
                     </div>
-                  ))
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <PlanetSymbol body="sun" size="md" className="text-gold-deep" decorative />
-                    <dd className="text-sm text-p-ink">
-                      <span className="font-medium">No retrogrades</span>
-                      <span className="text-p-muted"> — all planets direct today</span>
-                    </dd>
-                  </div>
-                )}
-                {transit && (
-                  <div className="mt-3 flex items-start gap-3 border-t border-p-line pt-3">
-                    <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" decorative />
-                    <dd className="text-sm text-p-ink">
-                      <span className="font-medium capitalize">{transit.name}</span>
-                      <span className="text-p-muted">
-                        {" "}— {PLANET_LABELS[transit.bodyA] ?? transit.bodyA} &amp;{" "}
-                        {PLANET_LABELS[transit.bodyB] ?? transit.bodyB}, {transit.orb.toFixed(1)}° orb
-                      </span>
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </div>
+                  )}
+                  {transit && (
+                    <div className="mt-3 flex items-start gap-3 border-t border-p-line pt-3">
+                      <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" decorative />
+                      <dd className="text-sm text-p-ink">
+                        <span className="font-medium capitalize">{transit.name}</span>
+                        <span className="text-p-muted">
+                          {" "}— <LocaleText path={`planets.${transit.bodyA}`} fallback={transit.bodyA} /> &amp;{" "}
+                          <LocaleText path={`planets.${transit.bodyB}`} fallback={transit.bodyB} />, {transit.orb.toFixed(1)}° orb
+                        </span>
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
             </div>
           </div>
         </div>
@@ -166,16 +176,16 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="signs-heading">
         <div className="flex items-end justify-between border-b border-line-soft pb-5">
           <div>
-            <p className="kicker">The twelve signs</p>
+            <p className="kicker"><LocaleText path="home.anIndexOfHeavens" fallback="The twelve signs" /></p>
             <h2 id="signs-heading" className="mt-3 font-display text-3xl text-starlight">
-              An index of the heavens
+              <LocaleText path="home.anIndexOfHeavens" fallback="An index of the heavens" />
             </h2>
           </div>
           <Link
             href="/horoscope"
             className="hidden text-sm text-muted transition-colors hover:text-gold sm:block"
           >
-            All horoscopes &rarr;
+            <LocaleText path="home.allHoroscopesLink" fallback="All horoscopes →" />
           </Link>
         </div>
         <div className="mt-8">
@@ -183,10 +193,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---- Upcoming sky events (live from the USNO almanac) ---- */}
+      {/* ---- Upcoming sky events ---- */}
       <SkyEvents />
 
-      {/* ---- Born under today's stars (curated celebrity birthdays) ---- */}
+      {/* ---- Born under today's stars ---- */}
       <CelebrityBirthdays />
 
       {/* ---- Horizons ---- */}
@@ -194,24 +204,23 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
             <div>
-              <p className="kicker">Four horizons</p>
+              <p className="kicker"><LocaleText path="home.horizonsKicker" fallback="Four horizons" /></p>
               <h2 className="mt-3 font-display text-3xl text-starlight">
-                Beginnings to whole years
+                <LocaleText path="home.horizonsTitle" fallback="Beginnings to whole years" />
               </h2>
               <p className="mt-4 leading-7 text-muted">
-                Start with the day, then travel outward — the week, the month, the year. Each
-                horizon draws on the same truthful positions of the Sun, Moon and the planets.
+                <LocaleText path="home.horizonsDesc" fallback="Start with the day, then travel outward — the week, the month, the year. Each horizon draws on the same truthful positions of the Sun, Moon and the planets." />
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { label: "Daily", href: "/horoscope/aries/today", desc: "A single day in focus", n: "I" },
-                { label: "Weekly", href: "/horoscope/aries/weekly", desc: "The week ahead", n: "II" },
-                { label: "Monthly", href: "/horoscope/aries/monthly", desc: "A longer arc", n: "III" },
-                { label: "Yearly", href: "/horoscope/aries/yearly", desc: "The whole year", n: "IV" },
+                { labelKey: "horizons.daily", href: "/horoscope/aries/today", descKey: "horizons.dailyDesc", n: "I" },
+                { labelKey: "horizons.weekly", href: "/horoscope/aries/weekly", descKey: "horizons.weeklyDesc", n: "II" },
+                { labelKey: "horizons.monthly", href: "/horoscope/aries/monthly", descKey: "horizons.monthlyDesc", n: "III" },
+                { labelKey: "horizons.yearly", href: "/horoscope/aries/yearly", descKey: "horizons.yearlyDesc", n: "IV" },
               ].map((c) => (
                 <Link
-                  key={c.label}
+                  key={c.labelKey}
                   href={c.href}
                   className="group relative flex flex-col justify-between gap-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
                 >
@@ -228,8 +237,8 @@ export default function HomePage() {
                     </span>
                   </div>
                   <div>
-                    <p className="font-display text-2xl text-starlight">{c.label}</p>
-                    <p className="mt-1 text-sm text-subdued">{c.desc}</p>
+                    <p className="font-display text-2xl text-starlight"><LocaleText path={c.labelKey} /></p>
+                    <p className="mt-1 text-sm text-subdued"><LocaleText path={c.descKey} /></p>
                   </div>
                 </Link>
               ))}
@@ -242,20 +251,18 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-2">
           <div>
-            <p className="kicker">Our method</p>
+            <p className="kicker"><LocaleText path="home.methodKicker" fallback="Our method" /></p>
             <h2 className="mt-3 font-display text-3xl leading-tight text-starlight">
-              Real astronomy, editorial writing
+              <LocaleText path="home.methodTitle" fallback="Real astronomy, editorial writing" />
             </h2>
             <p className="mt-5 font-serif-body text-lg leading-8 text-starlight/85">
-              At Zunara, every planetary position you read is calculated from astronomical theory,
-              never guessed. Our forecasts blend that data with carefully crafted editorial
-              fragments — so the sky speaks with clarity, warmth and honesty.
+              <LocaleText path="home.methodDesc" fallback="At Zunara, every planetary position you read is calculated from astronomical theory, never guessed. Our forecasts blend that data with carefully crafted editorial fragments — so the sky speaks with clarity, warmth and honesty." />
             </p>
             <Link
               href="/about"
               className="mt-6 inline-block text-sm text-gold underline-offset-4 hover:underline"
             >
-              Read about our method →
+              <LocaleText path="home.readAboutMethod" fallback="Read about our method →" />
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -273,7 +280,7 @@ export default function HomePage() {
                   <div className="relative flex items-center justify-between">
                     <h3 className={`flex items-center gap-2 font-display text-2xl ${elementText(element)}`}>
                       <ElementIcon element={element} size={22} className={elementText(element)} />
-                      {element}
+                      <LocaleText path={`elements.${element}`} fallback={element} />
                     </h3>
                     <span aria-hidden="true" className={`text-xl ${elementText(element)} opacity-60`}>
                       <ElementIcon element={element} size={18} className={elementText(element)} />
@@ -287,7 +294,7 @@ export default function HomePage() {
                           className="flex items-center gap-3 text-sm text-muted transition-colors hover:text-gold"
                         >
                           <ZodiacSymbol sign={s.slug} size="sm" className={elementText(s.element)} label={s.name} />
-                          <span>{s.name}</span>
+                          <span><LocaleText path={`signs.${s.slug}`} fallback={s.name} /></span>
                         </Link>
                       </li>
                     ))}
@@ -301,8 +308,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-function sunSignName(slug: string): string {
-  return ZODIAC_SIGNS.find((s) => s.slug === slug)?.name ?? slug;
-}
-

@@ -1,3 +1,5 @@
+"use client";
+
 import { Breadcrumbs, type Crumb } from "./breadcrumbs";
 import { PeriodTabs } from "./period-tabs";
 import { ZodiacSymbol } from "./zodiac-symbol";
@@ -13,6 +15,7 @@ import type { LifeArea } from "@/lib/astrology/signals";
 import { absoluteUrl } from "@/lib/seo/site";
 import type { PlanetarySnapshot } from "@/lib/astronomy/astro";
 import type { BodyKey } from "@/lib/astronomy/bodies";
+import { useLocale } from "@/lib/i18n/client";
 
 interface HoroscopeArticleProps {
   sign: ZodiacSign;
@@ -21,13 +24,6 @@ interface HoroscopeArticleProps {
   result: HoroscopeResult;
   crumbs: Crumb[];
 }
-
-const AREA_LABEL: Record<LifeArea, string> = {
-  love: "Love",
-  work: "Work",
-  money: "Money",
-  energy: "Energy",
-};
 
 const AREA_THEME_KEY: Record<LifeArea, ThemeKey> = {
   love: "love",
@@ -55,12 +51,16 @@ function strengthTone(strength: SignalStrength): string {
 }
 
 function AreaBar({ signal }: { signal: { area: LifeArea; strength: SignalStrength } }) {
+  const { t, tArea } = useLocale();
   const pct = strengthPct(signal.strength);
+  const areaLabel = tArea(signal.area);
+  const strengthLabel = t(`areas.${signal.strength}`, signal.strength);
+
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
       <div className="flex items-center justify-between text-[0.65rem] uppercase tracking-[0.16em]">
-        <span className="font-medium text-p-muted">{AREA_LABEL[signal.area]}</span>
-        <span className="text-gold">{signal.strength}</span>
+        <span className="font-medium text-p-muted">{areaLabel}</span>
+        <span className="text-gold">{strengthLabel}</span>
       </div>
       <div
         className="h-[6px] w-full overflow-hidden rounded-full bg-white/5"
@@ -68,7 +68,7 @@ function AreaBar({ signal }: { signal: { area: LifeArea; strength: SignalStrengt
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={pct}
-        aria-label={`${AREA_LABEL[signal.area]} strength`}
+        aria-label={`${areaLabel} strength`}
       >
         <div
           className="h-full rounded-full bg-gradient-to-r from-cosmic via-gold to-nebula transition-[width] duration-700"
@@ -80,13 +80,14 @@ function AreaBar({ signal }: { signal: { area: LifeArea; strength: SignalStrengt
 }
 
 function GlancePanel({ result }: { result: HoroscopeResult }) {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="glance-heading"
       className="paper-panel relative overflow-hidden p-7 sm:p-8"
     >
       <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-      <p id="glance-heading" className="kicker">Your day in one line</p>
+      <p id="glance-heading" className="kicker">{t("horoscope.yourDayInOneLine", "Your day in one line")}</p>
       <p className="mt-4 font-serif-body text-2xl font-light leading-snug text-p-ink sm:text-[1.65rem]">
         {result.glance.overall}
       </p>
@@ -101,13 +102,13 @@ function GlancePanel({ result }: { result: HoroscopeResult }) {
         <div className="mt-7 grid gap-4 border-t border-p-line pt-6 text-sm sm:grid-cols-2">
           {result.glance.bestFor && (
             <div className="flex flex-col gap-0.5">
-              <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Best for</dt>
+              <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">{t("common.bestFor", "Best for")}</dt>
               <dd className="font-serif-body leading-6 text-p-ink">{result.glance.bestFor}</dd>
             </div>
           )}
           {result.glance.watchOutFor && (
             <div className="flex flex-col gap-0.5">
-              <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Watch out for</dt>
+              <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">{t("common.watchOutFor", "Watch out for")}</dt>
               <dd className="font-serif-body leading-6 text-p-ink">{result.glance.watchOutFor}</dd>
             </div>
           )}
@@ -118,17 +119,18 @@ function GlancePanel({ result }: { result: HoroscopeResult }) {
 }
 
 function ChangesPanel({ result }: { result: HoroscopeResult }) {
+  const { t } = useLocale();
   return (
     <section aria-labelledby="changes-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="changes-heading" className="kicker">What changed today?</h2>
+      <h2 id="changes-heading" className="kicker">{t("horoscope.whatChangedToday", "What changed today?")}</h2>
       {result.changes.length === 0 ? (
         <p className="mt-3 font-serif-body text-base leading-7 text-p-muted">
-          Nothing major changed in the sky today, so conditions stay largely steady. Small shifts matter more than any grand move.
+          {t("horoscope.steadySky", "Nothing major changed in the sky today, so conditions stay largely steady. Small shifts matter more than any grand move.")}
         </p>
       ) : (
         <ul className="mt-3 space-y-3">
           {result.changes.map((c) => (
-            <li key={c.id} className="border-l-2 border-gold-deep bg-paper-2/50 py-3 pl-4 pr-3">
+            <li key={c.id} className="border-s-2 border-gold-deep bg-paper-2/50 py-3 pe-3 ps-4">
               <p className="font-medium text-p-ink">{c.title}</p>
               <p className="mt-1 text-sm leading-6 text-p-muted">{c.blurb}</p>
             </li>
@@ -140,18 +142,20 @@ function ChangesPanel({ result }: { result: HoroscopeResult }) {
 }
 
 function ThirtySeconds({ result }: { result: HoroscopeResult }) {
+  const { t, tArea } = useLocale();
   const areas = result.signals.areas.filter((a) => a.present);
   if (areas.length === 0) return null;
+
   return (
     <section aria-labelledby="thirty-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="thirty-heading" className="kicker">Your day in 30 seconds</h2>
+      <h2 id="thirty-heading" className="kicker">{t("horoscope.thirtySeconds", "Your day in 30 seconds")}</h2>
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {areas.map((a) => (
           <div key={a.area} className={`flex flex-col items-center gap-2 rounded-md border p-4 ${strengthTone(a.strength)}`}>
             <ThemeSymbol theme={AREA_THEME_KEY[a.area]} size="md" className="text-current" />
-            <span className="text-xs font-semibold uppercase tracking-wide">{AREA_LABEL[a.area]}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide">{tArea(a.area)}</span>
             <span className="text-[0.65rem] uppercase tracking-[0.12em] opacity-80">
-              {a.strength === "strong" ? "Strong" : a.strength === "moderate" ? "Moderate" : "Mild"}
+              {t(`areas.${a.strength}`, a.strength)}
             </span>
           </div>
         ))}
@@ -161,10 +165,11 @@ function ThirtySeconds({ result }: { result: HoroscopeResult }) {
 }
 
 function YourMove({ result }: { result: HoroscopeResult }) {
+  const { t } = useLocale();
   if (!result.glance.bestMove) return null;
   return (
-    <section aria-labelledby="move-heading" className="rounded-md border-l-2 border-gold-deep bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
-      <h2 id="move-heading" className="kicker">Your move</h2>
+    <section aria-labelledby="move-heading" className="rounded-md border-s-2 border-gold-deep bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
+      <h2 id="move-heading" className="kicker">{t("horoscope.yourMove", "Your move")}</h2>
       <p className="mt-3 font-serif-body text-lg italic leading-8 text-starlight">
         &ldquo;{result.glance.bestMove}&rdquo;
       </p>
@@ -173,27 +178,29 @@ function YourMove({ result }: { result: HoroscopeResult }) {
 }
 
 function PeriodSignals({ result, periodType }: { result: HoroscopeResult; periodType: PeriodType }) {
+  const { t, tArea, tHorizon } = useLocale();
   const areas = result.signals.areas.filter((a) => a.present);
-  const periodLabel = periodType === "weekly" ? "this week" : periodType === "monthly" ? "this month" : "this year";
+  const periodNoun = tHorizon(periodType);
+
   return (
     <section aria-labelledby="period-signals-heading" className="rounded-md border border-line-soft p-6">
       <h2 id="period-signals-heading" className="kicker">
-        Biggest themes {periodLabel}
+        {t("horoscope.biggestThemes", "Biggest themes")} — {periodNoun}
       </h2>
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {areas.map((a) => (
           <div key={a.area} className={`flex flex-col items-center gap-2 rounded-md border p-4 ${strengthTone(a.strength)}`}>
             <ThemeSymbol theme={AREA_THEME_KEY[a.area]} size="md" className="text-current" />
-            <span className="text-xs font-semibold uppercase tracking-wide">{AREA_LABEL[a.area]}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide">{tArea(a.area)}</span>
             <span className="text-[0.65rem] uppercase tracking-[0.12em] opacity-80">
-              {a.strength === "strong" ? "Strong" : a.strength === "moderate" ? "Moderate" : "Mild"}
+              {t(`areas.${a.strength}`, a.strength)}
             </span>
           </div>
         ))}
       </div>
       {result.glance.bestMove && (
         <p className="mt-5 border-t border-p-line pt-4 font-serif-body text-base italic leading-7 text-p-muted">
-          Best move: &ldquo;{result.glance.bestMove}&rdquo;
+          {t("horoscope.yourMove", "Best move")}: &ldquo;{result.glance.bestMove}&rdquo;
         </p>
       )}
     </section>
@@ -201,18 +208,19 @@ function PeriodSignals({ result, periodType }: { result: HoroscopeResult; period
 }
 
 function StrongestThemes({ result }: { result: HoroscopeResult }) {
+  const { t } = useLocale();
   const present = result.signals.themes.filter((t) => t.present);
   if (present.length === 0) return null;
   return (
     <section aria-labelledby="themes-heading" className="rounded-md border border-line-soft p-6">
-      <h2 id="themes-heading" className="kicker">Today&rsquo;s strongest themes</h2>
+      <h2 id="themes-heading" className="kicker">{t("horoscope.todaysThemes", "Today's strongest themes")}</h2>
       <ol className="mt-4 space-y-3">
-        {present.map((t, i) => (
-          <li key={t.theme} className="flex items-center gap-3 text-sm">
-            <span aria-hidden className="w-5 shrink-0 text-right font-display text-gold">{i + 1}</span>
-            <span className="font-medium text-p-ink">{t.label}</span>
-            <span className={`ml-auto rounded-full border px-2 py-0.5 text-[0.65rem] uppercase tracking-wide ${strengthTone(t.strength)}`}>
-              {t.strength}
+        {present.map((item, i) => (
+          <li key={item.theme} className="flex items-center gap-3 text-sm">
+            <span aria-hidden className="w-5 shrink-0 font-display text-gold">{i + 1}</span>
+            <span className="font-medium text-p-ink">{item.label}</span>
+            <span className={`ms-auto rounded-full border px-2 py-0.5 text-[0.65rem] uppercase tracking-wide ${strengthTone(item.strength)}`}>
+              {t(`areas.${item.strength}`, item.strength)}
             </span>
           </li>
         ))}
@@ -222,42 +230,43 @@ function StrongestThemes({ result }: { result: HoroscopeResult }) {
 }
 
 function WhyForecast({ result }: { result: HoroscopeResult }) {
+  const { t, tPlanet } = useLocale();
   const { why } = result;
   return (
     <details className="group rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-        <h2 className="kicker">Explore the astronomical math</h2>
+        <h2 className="kicker">{t("horoscope.exploreMath", "Explore the astronomical math")}</h2>
         <span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
       </summary>
       <p className="mt-4 font-serif-body text-base leading-7 text-p-muted">{why.summary}</p>
       <div className="mt-5 grid gap-6 sm:grid-cols-2">
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-p-muted">Driving positions</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-p-muted">{t("horoscope.drivingPositions", "Driving positions")}</h3>
           <ul className="mt-3 space-y-2 text-sm">
             {why.bodies.map((b) => (
               <li key={b.key} className="flex items-center gap-2 text-p-ink">
                 <PlanetSymbol body={b.key as BodyKey} size="sm" className="text-gold-deep" decorative />
-                <span className="font-medium">{b.name}</span>
-                <span className="text-p-muted">{b.position}{b.retrograde ? " · retrograde" : ""}</span>
+                <span className="font-medium">{tPlanet(b.key)}</span>
+                <span className="text-p-muted">{b.position}{b.retrograde ? " · Rx" : ""}</span>
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-p-muted">Aspects shaping it</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-p-muted">{t("horoscope.aspectsShaping", "Aspects shaping it")}</h3>
           {why.aspects.length > 0 ? (
             <ul className="mt-3 space-y-2 text-sm text-p-ink">
               {why.aspects.map((a, i) => (
                 <li key={`${a.bodyA}-${a.bodyB}-${i}`}>
-                  <span className="capitalize">{a.name}</span> between{" "}
-                  <span className="font-medium">{a.bodyA}</span> and{" "}
-                  <span className="font-medium">{a.bodyB}</span>
-                  {" "}within {Math.round(a.orb * 10) / 10}&deg;
+                  <span className="capitalize">{a.name}</span>:{" "}
+                  <span className="font-medium">{tPlanet(a.bodyA)}</span> &amp;{" "}
+                  <span className="font-medium">{tPlanet(a.bodyB)}</span>
+                  {" "}({Math.round(a.orb * 10) / 10}&deg; orb)
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="mt-3 text-sm text-p-muted">No tight major aspects among the driving bodies right now.</p>
+            <p className="mt-3 text-sm text-p-muted">No tight major aspects right now.</p>
           )}
         </div>
       </div>
@@ -269,6 +278,7 @@ function WhyForecast({ result }: { result: HoroscopeResult }) {
 }
 
 function PlanetPositions({ snapshot }: { snapshot: PlanetarySnapshot }) {
+  const { t, tPlanet } = useLocale();
   const planets = snapshot.positions.filter(
     (p) => p.key !== "northNode" && p.key !== "southNode" && p.key !== "moon",
   );
@@ -278,46 +288,38 @@ function PlanetPositions({ snapshot }: { snapshot: PlanetarySnapshot }) {
   return (
     <div>
       <h3 className="text-xs font-semibold uppercase tracking-wide text-p-muted">
-        Planetary positions today
+        {t("horoscope.planetaryPositionsToday", "Planetary positions today")}
       </h3>
       <p className="mt-1 text-xs text-p-muted">
-        Calculated from real astronomical data. Sun, Moon and planets shown at their current zodiac degree.
+        {t("horoscope.planetaryPositionsDesc", "Calculated from real astronomical data. Sun, Moon and planets shown at their current zodiac degree.")}
       </p>
       <dl className="mt-4 divide-y divide-p-line text-sm">
         {moon && (
           <div className="flex items-center gap-3 py-2">
             <PlanetSymbol body="moon" size="md" className="text-gold-deep" decorative />
-            <dt className="w-24 shrink-0 text-p-muted">Moon</dt>
+            <dt className="w-28 shrink-0 text-p-muted">{tPlanet("moon")}</dt>
             <dd className="font-medium text-p-ink">{moon.position}</dd>
           </div>
         )}
         {planets.map((p) => (
           <div key={p.key} className="flex items-center gap-3 py-2">
-            <PlanetSymbol body={p.key } size="md" className="text-gold-deep" decorative />
-            <dt className="w-24 shrink-0 text-p-muted">{planetName(p.key)}</dt>
+            <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
+            <dt className="w-28 shrink-0 text-p-muted">{tPlanet(p.key)}</dt>
             <dd className="font-medium text-p-ink">
               {p.position}
-              {p.retrograde && <span className="ml-1 text-p-muted">R</span>}
+              {p.retrograde && <span className="ms-1 text-p-muted">(Rx)</span>}
             </dd>
           </div>
         ))}
         {nodes.length > 0 && (
           <div className="flex items-center gap-3 py-2">
-            <dt className="w-24 shrink-0 text-p-muted">Nodes</dt>
+            <dt className="w-28 shrink-0 text-p-muted">{t("planets.northNode", "Nodes")}</dt>
             <dd className="text-p-muted">{nodes.map((n) => `${n.position}`).join(" · ")}</dd>
           </div>
         )}
       </dl>
     </div>
   );
-}
-
-function planetName(key: string): string {
-  const map: Record<string, string> = {
-    sun: "Sun", moon: "Moon", mercury: "Mercury", venus: "Venus", mars: "Mars",
-    jupiter: "Jupiter", saturn: "Saturn", uranus: "Uranus", neptune: "Neptune", pluto: "Pluto",
-  };
-  return map[key] ?? key;
 }
 
 export function HoroscopeArticle({
@@ -327,14 +329,16 @@ export function HoroscopeArticle({
   result,
   crumbs,
 }: HoroscopeArticleProps) {
+  const { t, tSign, tElement, tModality, tHorizon } = useLocale();
+
   const label = periodLabel(periodType, date);
   const key = periodKey(periodType, date);
   const path = `/horoscope/${sign.slug}/${periodType === "daily" ? "today" : periodType}`;
   const canonical = absoluteUrl(path);
   const isDaily = periodType === "daily";
 
-  const periodNoun =
-    periodType === "daily" ? "Daily" : periodType === "weekly" ? "Weekly" : periodType === "monthly" ? "Monthly" : "Yearly";
+  const periodNoun = tHorizon(periodType);
+  const signLocalizedName = tSign(sign.slug);
 
   const articleData = {
     "@context": "https://schema.org",
@@ -354,38 +358,10 @@ export function HoroscopeArticle({
     },
   };
 
-  const faqData = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: `What does the ${sign.name} ${periodNoun.toLowerCase()} horoscope say?`,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: result.overview,
-        },
-      },
-      {
-        "@type": "Question",
-        name: "How are these horoscopes calculated?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Zunara computes each reading from real astronomical data — the planets' actual positions — rather than from myth or folklore. The tone is reflective guide, not prediction.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "When does the " + sign.name.toLowerCase() + " " + periodType.toLowerCase() + " horoscope update?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: periodType === "daily"
-            ? "The daily reading is refreshed for the current day based on that date's planetary sky."
-            : "This " + periodType.toLowerCase() + " reading reflects the sky for its stated period and updates as that period begins.",
-        },
-      },
-    ],
-  };
+  const localizedCrumbs = crumbs.map((c) => ({
+    ...c,
+    label: c.label === "Horoscopes" ? t("nav.horoscopes", c.label) : c.label === sign.name ? signLocalizedName : c.label,
+  }));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
@@ -393,22 +369,18 @@ export function HoroscopeArticle({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleData) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }}
-      />
 
-      <Breadcrumbs items={crumbs} />
+      <Breadcrumbs items={localizedCrumbs} />
 
       <header className="mt-8 border-b border-line-soft pb-8">
         <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
           <div className="flex shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15 p-5">
-            <ZodiacSymbol sign={sign.slug} size="lg" className="text-gold" strokeWidth={1.8} label={sign.name} />
+            <ZodiacSymbol sign={sign.slug} size="lg" className="text-gold" strokeWidth={1.8} label={signLocalizedName} />
           </div>
           <div>
-            <p className="kicker">{periodNoun} horoscope</p>
+            <p className="kicker">{periodNoun} {t("horoscope.kicker", "Horoscope")}</p>
             <h1 className="mt-2 font-display text-4xl text-starlight sm:text-5xl">
-              {sign.name}
+              {signLocalizedName}
             </h1>
             <p className="mt-2 font-serif-body text-lg italic text-muted">{label}</p>
           </div>
@@ -417,7 +389,7 @@ export function HoroscopeArticle({
           <PeriodTabs signSlug={sign.slug} active={periodType} />
           <ShareVibe
             data={{
-              signName: sign.name,
+              signName: signLocalizedName,
               periodLabel: label,
               hook: result.glance.overall,
               move: result.glance.bestMove ?? "Make today a little easier on yourself.",
@@ -448,7 +420,7 @@ export function HoroscopeArticle({
         <div className="paper-panel mt-8 rounded-md">
           <div className="border-b border-p-line p-2 text-center">
             <p className="font-serif-body italic text-p-muted">
-              {sign.name} — the {sign.modality.toLowerCase()} {sign.element.toLowerCase()} sign
+              {signLocalizedName} — {tModality(sign.modality)} · {tElement(sign.element)}
             </p>
           </div>
           <div className="p-7 sm:p-9">
@@ -468,8 +440,8 @@ export function HoroscopeArticle({
               ))}
             </div>
 
-            <section className="mt-10 border-l-2 border-gold-deep bg-white/[0.04] py-5 pl-6 pr-5 backdrop-blur-xl saturate-180">
-              <h2 className="kicker">Carry this forward</h2>
+            <section className="mt-10 border-s-2 border-gold-deep bg-white/[0.04] py-5 pe-5 ps-6 backdrop-blur-xl saturate-180">
+              <h2 className="kicker">{t("horoscope.carryForward", "Carry this forward")}</h2>
               <p className="mt-3 font-serif-body text-lg italic leading-8 text-p-ink">
                 &ldquo;{result.advice}&rdquo;
               </p>
@@ -483,8 +455,7 @@ export function HoroscopeArticle({
 
         <p className="mt-8 border-t border-line-soft pt-5 text-xs leading-5 text-subdued">
           {result.disclaimer}.{" "}
-          <span className="text-muted">Period key: {key}. Generated deterministically from
-          current astronomical data; content may be refreshed automatically.</span>
+          <span className="text-muted">{t("horoscope.periodKeyNote", "Generated deterministically from current astronomical data; content may be refreshed automatically.")} ({key})</span>
         </p>
       </article>
     </div>

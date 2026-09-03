@@ -1,11 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { elementText } from "./element";
+import { useLocale } from "@/lib/i18n/client";
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
 export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
+  const { tSign, tElement, tModality } = useLocale();
+
   return (
     <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3 lg:grid-cols-4">
       {ZODIAC_SIGNS.map((sign, i) => (
@@ -29,16 +34,16 @@ export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
             sign={sign.slug}
             className={`h-11 w-11 text-gold/80 transition-colors group-hover:text-gold ${elementText(sign.element)}`}
             strokeWidth={1.8}
-            label={sign.name}
+            label={tSign(sign.slug)}
           />
           <div>
-            <span className="block font-display text-xl text-starlight">{sign.name}</span>
+            <span className="block font-display text-xl text-starlight">{tSign(sign.slug)}</span>
             <span className="mt-0.5 block text-xs text-subdued">{formatDateRange(sign)}</span>
           </div>
           <div className="flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.18em] text-subdued">
-            <span className={elementText(sign.element)}>{sign.element}</span>
+            <span className={elementText(sign.element)}>{tElement(sign.element)}</span>
             <span aria-hidden="true" className="text-starlight/20">·</span>
-            <span>{sign.modality}</span>
+            <span>{tModality(sign.modality)}</span>
           </div>
         </Link>
       ))}

@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { snapshotForToday } from "@/lib/astronomy/astro";
@@ -7,6 +9,7 @@ import { ZodiacSymbol } from "./zodiac-symbol";
 import { ThemeSymbol, type ThemeKey } from "./theme-symbol";
 import { Reveal } from "./reveal";
 import type { LifeArea, SignalStrength } from "@/lib/astrology/signals";
+import { useLocale } from "@/lib/i18n/client";
 
 const AREA_THEME: Record<LifeArea, ThemeKey> = {
   love: "love",
@@ -17,7 +20,6 @@ const AREA_THEME: Record<LifeArea, ThemeKey> = {
 
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
-/** Width of a strength metric in the pill. */
 function strengthPct(s: SignalStrength | undefined): number {
   switch (s) {
     case "strong":
@@ -39,13 +41,17 @@ interface MetricPillProps {
 }
 
 function MetricPill({ area, strength }: MetricPillProps) {
+  const { t, tArea } = useLocale();
   const pct = strengthPct(strength);
+  const areaLabel = tArea(area);
+  const strengthLabel = strength && strength !== "none" ? t(`areas.${strength}`, strength) : "—";
+
   return (
     <div className="flex min-w-0 flex-col gap-1.5">
       <div className="flex items-center justify-between gap-1 text-[0.6rem] uppercase tracking-[0.16em]">
-        <span className="truncate text-muted">{AREA_THEME_LABEL[area]}</span>
+        <span className="truncate text-muted">{areaLabel}</span>
         <span className={strength && strength !== "none" ? "text-gold" : "text-subdued"}>
-          {strength ?? "—"}
+          {strengthLabel}
         </span>
       </div>
       <div
@@ -54,7 +60,7 @@ function MetricPill({ area, strength }: MetricPillProps) {
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={pct}
-        aria-label={`${AREA_THEME_LABEL[area]} strength`}
+        aria-label={`${areaLabel} strength`}
       >
         <div
           className="h-full rounded-full bg-gradient-to-r from-cosmic via-gold to-nebula transition-[width] duration-700"
@@ -68,19 +74,12 @@ function MetricPill({ area, strength }: MetricPillProps) {
   );
 }
 
-const AREA_THEME_LABEL: Record<LifeArea, string> = {
-  love: "Love",
-  work: "Work",
-  money: "Money",
-  energy: "Energy",
-};
-
 /**
  * Bento-style zodiac index with glass cards, real per-sign signals,
- * and visual metric pills. Cards span one column, with a spotlight on
- * today's strongest area rendered as a highlight strip.
+ * and visual metric pills.
  */
 export function BentoZodiacGrid() {
+  const { t, tSign, tArea } = useLocale();
   const snapshot = snapshotForToday();
   const changes = computeChanges(new Date(), snapshot);
 
@@ -93,11 +92,11 @@ export function BentoZodiacGrid() {
             aria-labelledby="whats-changed-heading"
           >
             <h2 id="whats-changed-heading" className="kicker">
-              What changed today
+              {t("horoscope.whatChangedToday", "What changed today")}
             </h2>
             <ul className="mt-4 grid gap-3 sm:grid-cols-2">
               {changes.slice(0, 4).map((c) => (
-                <li key={c.id} className="border-l-2 border-gold-deep bg-white/[0.03] py-2 pl-4 pr-3">
+                <li key={c.id} className="border-s-2 border-gold-deep bg-white/[0.03] py-2 pe-3 ps-4">
                   <p className="font-medium text-starlight">{c.title}</p>
                   <p className="mt-0.5 text-sm leading-6 text-muted">{c.blurb}</p>
                 </li>
@@ -122,7 +121,7 @@ export function BentoZodiacGrid() {
                 {/* accent vignette on the top edge */}
                 <span
                   aria-hidden="true"
-                  className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                 />
 
                 <div className="flex items-center justify-between">
@@ -140,13 +139,13 @@ export function BentoZodiacGrid() {
                 <div className="flex items-center gap-3">
                   <ZodiacSymbol
                     sign={sign.slug}
-                    className={`h-10 w-10 shrink-0 text-gold/80 transition-colors group-hover:text-gold`}
+                    className="h-10 w-10 shrink-0 text-gold/80 transition-colors group-hover:text-gold"
                     strokeWidth={1.8}
-                    label={sign.name}
+                    label={tSign(sign.slug)}
                   />
                   <div className="min-w-0">
                     <span className="block font-display text-xl leading-none text-starlight">
-                      {sign.name}
+                      {tSign(sign.slug)}
                     </span>
                     <span className="mt-1 block truncate text-[0.7rem] text-subdued">
                       {formatDateRange(sign)}
@@ -157,9 +156,9 @@ export function BentoZodiacGrid() {
                 {/* headline strip */}
                 <div className="mt-1 rounded-md border border-white/[0.08] bg-white/[0.03] px-3 py-2">
                   <p className="text-[0.62rem] uppercase tracking-[0.2em] text-gold">
-                    Today&rsquo;s theme
+                    {t("horoscope.activeTheme", "Today's theme")}
                   </p>
-                  <p className="mt-0.5 text-[0.78rem] italic leading-5 text-starlight/90 line-clamp-2">
+                  <p className="mt-0.5 line-clamp-2 text-[0.78rem] italic leading-5 text-starlight/90">
                     {result?.signals?.headline ?? "The sky is steady today."}
                   </p>
                 </div>
@@ -179,10 +178,10 @@ export function BentoZodiacGrid() {
                   {strongest ? (
                     <>
                       <ThemeSymbol theme={AREA_THEME[strongest.area]} size="sm" className="text-gold" />
-                      Strongest: {AREA_THEME_LABEL[strongest.area]}
+                      {t("areas.strongest", "Strongest")}: {tArea(strongest.area)}
                     </>
                   ) : (
-                    <span>Read today &rarr;</span>
+                    <span>{t("common.readToday", "Read today")} &rarr;</span>
                   )}
                 </span>
               </Link>

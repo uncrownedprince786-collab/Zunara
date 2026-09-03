@@ -6,6 +6,7 @@ import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { elementText } from "./element";
 import type { PeriodType } from "@/lib/calendar/periods";
+import { useLocale } from "@/lib/i18n/client";
 
 function hrefForPeriod(slug: string, periodType: PeriodType): string {
   if (periodType === "daily") return `/horoscope/${slug}/today`;
@@ -17,25 +18,19 @@ interface ZodiacPeriodStripProps {
   activeSign?: string;
 }
 
-/**
- * Horizontal strip of all twelve signs, preserving the current period type.
- * On mount (and whenever the active sign changes) the strip auto-scrolls so
- * the highlighted sign is centered in the viewport. Left/right arrow controls
- * let readers scroll through every sign on desktop and mobile without cutting
- * content off, with an auto-hidden left mask at the scroll origin.
- */
 export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [canScroll, setCanScroll] = useState(false);
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
+  const { tSign, dir } = useLocale();
 
   const measure = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
     setCanScroll(el.scrollWidth > el.clientWidth + 4);
-    setHasPrev(el.scrollLeft > 4);
-    setHasNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    setHasPrev(Math.abs(el.scrollLeft) > 4);
+    setHasNext(Math.abs(el.scrollLeft) + el.clientWidth < el.scrollWidth - 4);
   }, []);
 
   useEffect(() => {
@@ -57,12 +52,13 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
     active?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }, [activeSign]);
 
-  const scrollBySigns = (dir: 1 | -1) => {
+  const scrollBySigns = (direction: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
     const sign = el.querySelector<HTMLElement>("a");
     const step = (sign?.offsetWidth ?? 88) + 4;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
+    const scrollMultiplier = dir === "rtl" ? -1 : 1;
+    el.scrollBy({ left: direction * step * scrollMultiplier, behavior: "smooth" });
   };
 
   return (
@@ -73,7 +69,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
             type="button"
             onClick={() => scrollBySigns(-1)}
             aria-label="Scroll signs back"
-            className="absolute left-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight shadow-lg backdrop-blur-xl transition-colors hover:border-gold/40 hover:text-gold"
+            className="absolute start-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight shadow-lg backdrop-blur-xl transition-colors hover:border-gold/40 hover:text-gold"
           >
             <span aria-hidden>&larr;</span>
           </button>
@@ -83,7 +79,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
             type="button"
             onClick={() => scrollBySigns(1)}
             aria-label="Scroll signs forward"
-            className="absolute right-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight shadow-lg backdrop-blur-xl transition-colors hover:border-gold/40 hover:text-gold"
+            className="absolute end-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight shadow-lg backdrop-blur-xl transition-colors hover:border-gold/40 hover:text-gold"
           >
             <span aria-hidden>&rarr;</span>
           </button>
@@ -92,13 +88,13 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
         {canScroll && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-[#0a0b1a] to-transparent"
+            className="pointer-events-none absolute inset-y-0 start-0 z-10 w-8 bg-gradient-to-r from-[#0a0b1a] to-transparent rtl:bg-gradient-to-l"
           />
         )}
         {canScroll && hasNext && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-[#0a0b1a] to-transparent"
+            className="pointer-events-none absolute inset-y-0 end-0 z-10 w-8 bg-gradient-to-l from-[#0a0b1a] to-transparent rtl:bg-gradient-to-r"
           />
         )}
 
@@ -124,14 +120,14 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
                     sign={sign.slug}
                     size="sm"
                     className={`transition-colors ${isActive ? "text-gold" : `${elementText(sign.element)} opacity-70 group-hover:opacity-100`}`}
-                    label={sign.name}
+                    label={tSign(sign.slug)}
                   />
                   <span
                     className={`text-[0.7rem] uppercase tracking-[0.1em] ${
                       isActive ? "text-gold" : "text-subdued"
                     }`}
                   >
-                    {sign.name}
+                    {tSign(sign.slug)}
                   </span>
                   <span className="hidden text-[0.62rem] text-subdued/70 lg:block">
                     {formatDateRange(sign)}

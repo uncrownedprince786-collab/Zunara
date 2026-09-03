@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { absoluteUrl } from "@/lib/seo/site";
 import type { LifeArea } from "@/lib/astrology/signals";
+import { useLocale } from "@/lib/i18n/client";
 
 export interface ShareVibeData {
   signName: string;
@@ -13,37 +14,26 @@ export interface ShareVibeData {
   path: string;
 }
 
-const AREA_LABELS: Record<LifeArea, string> = {
-  love: "Love",
-  work: "Work",
-  money: "Money",
-  energy: "Energy",
-};
-
-function buildMessage(d: ShareVibeData): string {
-  const pills = d.areas
-    .map((a) => `${AREA_LABELS[a.area]} ${a.strength}`)
-    .join(" · ");
-  const lines = [
-    `✨ ${d.signName} — Today's Vibe ${d.periodLabel}`,
-    `"${d.hook}"`,
-    `Pills: ${pills}`,
-    `Your move: ${d.move}`,
-    `Shared with love via Zunara 🔭 ${absoluteUrl(d.path)}`,
-  ];
-  return lines.join("\n");
-}
-
-const WA = (msg: string) =>
-  `https://wa.me/?text=${encodeURIComponent(msg)}`;
-const X = (msg: string) =>
-  `https://twitter.com/intent/tweet?text=${encodeURIComponent(msg)}`;
-
 export function ShareVibe({ data }: { data: ShareVibeData }) {
   const [copied, setCopied] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const { t, tArea } = useLocale();
 
-  const msg = buildMessage(data);
+  const pills = data.areas
+    .map((a) => `${tArea(a.area)}: ${t(`areas.${a.strength.toLowerCase()}`, a.strength)}`)
+    .join(" · ");
+
+  const lines = [
+    `✨ ${data.signName} — ${t("horoscope.shareTitle", "Today's Vibe")} ${data.periodLabel}`,
+    `"${data.hook}"`,
+    `Pills: ${pills}`,
+    `${t("horoscope.yourMove", "Your move")}: ${data.move}`,
+    `Zunara 🔭 ${absoluteUrl(data.path)}`,
+  ];
+  const msg = lines.join("\n");
+
+  const WA = (m: string) => `https://wa.me/?text=${encodeURIComponent(m)}`;
+  const X = (m: string) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(m)}`;
 
   async function copy() {
     try {
@@ -63,14 +53,14 @@ export function ShareVibe({ data }: { data: ShareVibeData }) {
   async function nativeShare() {
     if (navigator.share) {
       try {
-        await navigator.share({ title: `${data.signName} — Today's Vibe`, text: msg });
+        await navigator.share({ title: `${data.signName} — ${t("horoscope.shareTitle", "Today's Vibe")}`, text: msg });
         return;
       } catch {
         /* user dismissed the sheet; fall through to the menu */
       }
     }
     await copy();
-    setNote("Snippet copied — paste it into Instagram, WhatsApp or anywhere you like.");
+    setNote(t("horoscope.shareSnippet", "Snippet copied — paste it into Instagram, WhatsApp or anywhere you like."));
   }
 
   return (
@@ -81,7 +71,7 @@ export function ShareVibe({ data }: { data: ShareVibeData }) {
         className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-4 py-2 text-sm font-medium text-starlight transition-colors hover:border-gold/50 hover:text-gold"
       >
         <span aria-hidden>🔭</span>
-        Share today&rsquo;s vibe
+        {t("horoscope.shareVibe", "Share today's vibe")}
       </button>
 
       <div className="mt-1 flex flex-wrap gap-2">
@@ -106,7 +96,7 @@ export function ShareVibe({ data }: { data: ShareVibeData }) {
           onClick={copy}
           className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted transition-colors hover:border-gold/40 hover:text-gold"
         >
-          {copied ? "Copied!" : "Copy"}
+          {copied ? t("common.copied", "Copied!") : t("common.copy", "Copy")}
         </button>
       </div>
 
