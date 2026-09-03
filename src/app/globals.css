@@ -85,11 +85,11 @@
   --color-line: var(--z-line);
   --color-line-soft: var(--z-line-soft);
 
-  /* Element accents (harmonized with the cosmic accent system) */
-  --color-fire: #E8A05C;
-  --color-earth: #A9B26B;
-  --color-air: #4FC3C8;
-  --color-water: #8D7FE3;
+  /* Element accents (authentic zodiac element palette) */
+  --color-fire: #F59E0B;
+  --color-earth: #10B981;
+  --color-air: #06B6D4;
+  --color-water: #8B5CF6;
 
   /* Text on unified glass surfaces */
   --color-p-ink: var(--z-p-ink);
