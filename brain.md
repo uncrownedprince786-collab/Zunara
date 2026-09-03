@@ -381,6 +381,7 @@ The product is production-ready when:
 - `LanguageSwitcher` (`components/ui/language-switcher.tsx`) — frosted-glass dropdown (client) in **site-header** and **site-footer**, native globe icon, marks RTL languages.
 - `site-header.tsx`, `site-footer.tsx`, `daily-orbit-banner.tsx` are now **client components** consuming `useLocale()` so chrome text re-renders on switch. RTL mirroring is native via flex (`dir="rtl"`); glass cards/carousels/grids are direction-agnostic.
 - Zero server-side `cookies()` reads → pages stay static. Content prose (horoscope body) remains English as the content layer; the hub translates chrome/nav/footer/labels in all 5 languages.
+- `LocaleText` (`components/ui/locale-text.tsx`) — client component that renders a translated string from the active dict by dotted path (e.g. `home.heroTitle`). Dropped into server pages (`page.tsx`: hero title/subtitle + both CTAs, "The sky tonight" kicker) from a new `home` dict block; it re-renders in place on language switch without making the page dynamic.
 
 ### Enterprise SEO additions (this sprint)
 - **RSS fix:** `rss.xml/route.ts` now emits `/horoscope/<sign>/today` URLs (was `daily`) matching the real routes; added separate `route` vs `label` per period.
