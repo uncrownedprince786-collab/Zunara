@@ -71,18 +71,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${syne.variable} ${inter.variable} h-full antialiased`}
-      suppressHydrationWarning
-    >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var k="zunara-theme",s=localStorage.getItem(k);var t=s==="light"||s==="dark"?s:(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=t;}catch(e){}})();`,
-          }}
-        />
-      </head>
+    <html lang="en" className={`${syne.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-ink text-starlight">
         <a href="#main-content" className="skip-link">Skip to content</a>
         <SiteHeader />

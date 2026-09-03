@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { SiteNav } from "./site-nav";
-import { ThemeToggle } from "./theme-toggle";
 import { StarMark } from "./star-mark";
 
 export function SiteHeader() {
@@ -20,10 +19,7 @@ export function SiteHeader() {
         <span className="hidden text-[0.62rem] uppercase tracking-[0.34em] text-subdued lg:block">
           An editorial journal of the celestial
         </span>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <SiteNav />
-        </div>
+        <SiteNav />
       </div>
       <div aria-hidden="true" className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
     </header>
