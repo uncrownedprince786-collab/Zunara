@@ -7,18 +7,19 @@
    cyan are the three accents on crisp starlight-white foreground.
    ============================================================ */
 :root {
-  /* Base canvas & surfaces */
-  --z-bg: #090B10;                 /* Deep Velvet Midnight */
-  --z-surface: #131722;            /* Glass Surface Card */
-  --z-surface-2: #1A2030;          /* Raised surface */
-  --z-surface-3: #222A3D;          /* Highest surface */
-  --z-border: rgba(255, 255, 255, 0.08);
-  --z-border-soft: rgba(255, 255, 255, 0.05);
+  /* Base canvas — deep midnight-to-indigo ambient gradient */
+  --z-bg: #0A0B12;                 /* Deep Velvet Midnight */
+  --z-bg-ambient: radial-gradient(circle at 50% -10%, #1c1d36 0%, #0a0b12 100%);
+  --z-surface: rgba(255, 255, 255, 0.04);
+  --z-surface-2: rgba(255, 255, 255, 0.06);
+  --z-surface-3: rgba(255, 255, 255, 0.08);
+  --z-border: rgba(255, 255, 255, 0.12);
+  --z-border-soft: rgba(255, 255, 255, 0.08);
 
-  /* Foreground (text) */
-  --z-fg-main: #F4F6FF;            /* Crisp Starlight White */
-  --z-fg-muted: #8E96A4;           /* Soft Slate Gray */
-  --z-fg-subdued: #7A8290;         /* Fainter slate (passes 4.5:1 on ink) */
+  /* Foreground (text) — crisp near-white headings, soft slate body */
+  --z-fg-main: #EFF3FA;            /* Crisp Starlight White (headings) */
+  --z-fg-muted: #A6B1C3;           /* Soft Slate (body copy) */
+  --z-fg-subdued: #7C8BA3;         /* Fainter slate (passes 4.5:1 on canvas) */
 
   /* Cosmic accents */
   --z-accent-gold: #FFD166;        /* Radiant Gold */
@@ -43,16 +44,16 @@
   --z-nebula: var(--z-accent-cyan);
   --z-nebula-soft: rgba(0, 206, 201, 0.16);
 
-  /* Unified glassmorphism surfaces (info drawers / cards) */
-  --z-glass: rgba(18, 20, 28, 0.75);
-  --z-glass-2: rgba(18, 20, 28, 0.6);
-  --z-glass-3: rgba(22, 26, 36, 0.85);
+  /* Unified glassmorphism surfaces (Apple-inspired frosted glass) */
+  --z-glass: rgba(255, 255, 255, 0.04);
+  --z-glass-2: rgba(255, 255, 255, 0.06);
+  --z-glass-3: rgba(255, 255, 255, 0.08);
 
   /* Text on glass */
-  --z-p-ink: #F4F6FF;
-  --z-p-muted: #8E96A4;
-  --z-p-line: rgba(255, 255, 255, 0.10);
-  --z-p-line-soft: rgba(255, 255, 255, 0.06);
+  --z-p-ink: #E2E8F0;
+  --z-p-muted: #94A3B8;
+  --z-p-line: rgba(255, 255, 255, 0.12);
+  --z-p-line-soft: rgba(255, 255, 255, 0.08);
 }
 
 @theme {
@@ -109,8 +110,8 @@
 }
 
 :root {
-  --background: #090B10;
-  --foreground: #F4F6FF;
+  --background: #0A0B12;
+  --foreground: #CBD5E1;
   --font-serif: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -120,7 +121,8 @@ html {
 }
 
 body {
-  background: var(--background);
+  background: var(--z-bg-ambient);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -145,11 +147,12 @@ body {
   font-family: var(--font-serif-body);
 }
 
-/* Display face: Syne with tight cosmic tracking. Bold weight is reserved for
-   true headings (h1–h3) so brand marks, numerals and labels keep their own weight. */
+/* Display face: Plus Jakarta Sans with clean cosmic tracking. Bold weight is
+   reserved for true headings (h1–h3) so brand marks, numerals and labels keep
+   their own weight. */
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
 }
 .font-display:is(h1, h2, h3) {
   font-weight: 700;
@@ -197,17 +200,24 @@ body {
     radial-gradient(circle at 46% 8%, rgba(0, 206, 201, 0.4) 0.5px, transparent 1.5px);
 }
 
-/* Unified glassmorphism editorial surface */
+/* Unified glassmorphism editorial surface — Apple-inspired frosted glass */
 .paper-panel {
   background: var(--color-paper);
-  -webkit-backdrop-filter: blur(10px) saturate(120%);
-  backdrop-filter: blur(10px) saturate(120%);
-  border: 1px solid var(--color-p-line);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
   color: var(--color-p-ink);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.03) inset,
-    0 1px 2px rgba(9, 11, 16, 0.24),
-    0 12px 32px rgba(9, 11, 16, 0.28);
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 8px 32px rgba(9, 11, 18, 0.35);
+  transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.35s ease;
+}
+.paper-panel:hover {
+  box-shadow:
+    0 12px 40px -10px rgba(120, 119, 198, 0.3),
+    0 8px 32px rgba(9, 11, 18, 0.4);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 /* Hairline gold rule divider */

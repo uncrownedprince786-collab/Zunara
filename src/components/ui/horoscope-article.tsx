@@ -35,54 +35,83 @@ const AREA_THEME_KEY: Record<LifeArea, ThemeKey> = {
   energy: "energy",
 };
 
-function strengthTone(strength: SignalStrength): string {
+function strengthPct(strength: SignalStrength): number {
   switch (strength) {
-    case "strong":
-      return "border-gold bg-gold/15 text-gold";
-    case "moderate":
-      return "border-gold-light/60 bg-gold-light/10 text-starlight";
-    case "mild":
-      return "border-line bg-ink-2 text-muted";
-    case "none":
-      return "border-line-soft bg-transparent text-subdued";
+    case "strong": return 92;
+    case "moderate": return 64;
+    case "mild": return 38;
+    default: return 10;
   }
 }
 
-function AreaChip({ signal }: { signal: { area: LifeArea; strength: SignalStrength } }) {
+function strengthTone(strength: SignalStrength): string {
+  switch (strength) {
+    case "strong": return "border-white/15 bg-white/[0.05] text-gold";
+    case "moderate": return "border-white/10 bg-white/[0.04] text-starlight";
+    case "mild": return "border-white/10 bg-white/[0.03] text-muted";
+    case "none": return "border-white/5 bg-transparent text-subdued";
+  }
+}
+
+function AreaBar({ signal }: { signal: { area: LifeArea; strength: SignalStrength } }) {
+  const pct = strengthPct(signal.strength);
   return (
-    <div className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${strengthTone(signal.strength)}`}>
-      <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current" />
-      {AREA_LABEL[signal.area]}
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <div className="flex items-center justify-between text-[0.65rem] uppercase tracking-[0.16em]">
+        <span className="font-medium text-p-muted">{AREA_LABEL[signal.area]}</span>
+        <span className="text-gold">{signal.strength}</span>
+      </div>
+      <div
+        className="h-[6px] w-full overflow-hidden rounded-full bg-white/5"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={pct}
+        aria-label={`${AREA_LABEL[signal.area]} strength`}
+      >
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-cosmic via-gold to-nebula transition-[width] duration-700"
+          style={{ width: `${pct}%`, boxShadow: "0 0 12px 0 rgba(255,209,102,0.55), 0 0 24px -4px rgba(108,92,231,0.5)" }}
+        />
+      </div>
     </div>
   );
 }
 
 function GlancePanel({ result }: { result: HoroscopeResult }) {
   return (
-    <section aria-labelledby="glance-heading" className="paper-panel rounded-md p-6">
-      <h2 id="glance-heading" className="kicker">
-        Today at a glance
-      </h2>
-      <p className="mt-3 font-serif-body text-lg italic leading-8 text-p-ink">{result.glance.overall}</p>
-      <div className="mt-5 flex flex-wrap gap-2">
+    <section
+      aria-labelledby="glance-heading"
+      className="paper-panel relative overflow-hidden p-7 sm:p-8"
+    >
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+      <p id="glance-heading" className="kicker">Your day in one line</p>
+      <p className="mt-4 font-serif-body text-2xl font-light leading-snug text-p-ink sm:text-[1.65rem]">
+        {result.glance.overall}
+      </p>
+
+      <div className="mt-7 grid gap-x-8 gap-y-5 border-t border-p-line pt-6 sm:grid-cols-2">
         {result.signals.areas.map((s) => (
-          <AreaChip key={s.area} signal={s} />
+          <AreaBar key={s.area} signal={s} />
         ))}
       </div>
-      <dl className="mt-5 grid gap-4 border-t border-p-line pt-5 text-sm sm:grid-cols-2">
-        {result.glance.bestFor && (
-          <div className="flex flex-col gap-0.5">
-            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Best for</dt>
-            <dd className="font-serif-body leading-6 text-p-ink">{result.glance.bestFor}</dd>
-          </div>
-        )}
-        {result.glance.watchOutFor && (
-          <div className="flex flex-col gap-0.5">
-            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Watch out for</dt>
-            <dd className="font-serif-body leading-6 text-p-ink">{result.glance.watchOutFor}</dd>
-          </div>
-        )}
-      </dl>
+
+      {(result.glance.bestFor || result.glance.watchOutFor) && (
+        <div className="mt-7 grid gap-4 border-t border-p-line pt-6 text-sm sm:grid-cols-2">
+          {result.glance.bestFor && (
+            <div className="flex flex-col gap-0.5">
+              <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Best for</dt>
+              <dd className="font-serif-body leading-6 text-p-ink">{result.glance.bestFor}</dd>
+            </div>
+          )}
+          {result.glance.watchOutFor && (
+            <div className="flex flex-col gap-0.5">
+              <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-p-muted">Watch out for</dt>
+              <dd className="font-serif-body leading-6 text-p-ink">{result.glance.watchOutFor}</dd>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }

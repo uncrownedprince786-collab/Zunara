@@ -39,8 +39,9 @@ interface MetricPillProps {
 }
 
 function MetricPill({ area, strength }: MetricPillProps) {
+  const pct = strengthPct(strength);
   return (
-    <div className="flex min-w-0 flex-col gap-1">
+    <div className="flex min-w-0 flex-col gap-1.5">
       <div className="flex items-center justify-between gap-1 text-[0.6rem] uppercase tracking-[0.16em]">
         <span className="truncate text-muted">{AREA_THEME_LABEL[area]}</span>
         <span className={strength && strength !== "none" ? "text-gold" : "text-subdued"}>
@@ -48,16 +49,19 @@ function MetricPill({ area, strength }: MetricPillProps) {
         </span>
       </div>
       <div
-        className="h-[3px] w-full rounded-full bg-line"
+        className="h-[5px] w-full overflow-hidden rounded-full bg-white/5"
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={strengthPct(strength)}
+        aria-valuenow={pct}
         aria-label={`${AREA_THEME_LABEL[area]} strength`}
       >
         <div
-          className="h-full rounded-full bg-gradient-to-r from-gold to-gold-light transition-[width] duration-500"
-          style={{ width: `${strengthPct(strength)}%` }}
+          className="h-full rounded-full bg-gradient-to-r from-cosmic via-gold to-nebula transition-[width] duration-700"
+          style={{
+            width: `${pct}%`,
+            boxShadow: "0 0 10px 0 rgba(255,209,102,0.55), 0 0 20px -4px rgba(108,92,231,0.5)",
+          }}
         />
       </div>
     </div>
@@ -85,7 +89,7 @@ export function BentoZodiacGrid() {
       {changes.length > 0 && (
         <Reveal>
           <section
-            className="mb-8 rounded-lg border border-line bg-ink-2/60 p-6 cosmic-glow"
+            className="paper-panel mb-8 p-6"
             aria-labelledby="whats-changed-heading"
           >
             <h2 id="whats-changed-heading" className="kicker">
@@ -113,7 +117,7 @@ export function BentoZodiacGrid() {
             <Reveal key={sign.slug} delay={i % 4} as="div">
               <Link
                 href={`/horoscope/${sign.slug}/today`}
-                className="card-lift group relative flex h-full flex-col gap-3 overflow-hidden rounded-xl border border-line bg-ink-2/60 p-5 backdrop-blur-sm hover:border-gold/40"
+                className="card-lift group relative flex h-full flex-col gap-3 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl hover:border-gold/40 hover:shadow-[0_12px_40px_-10px_rgba(120,119,198,0.3)]"
               >
                 {/* accent vignette on the top edge */}
                 <span

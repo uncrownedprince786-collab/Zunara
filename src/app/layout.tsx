@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { SITE } from "@/lib/seo/site";
 
-const syne = Syne({
+const display = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
   variable: "--font-syne",
@@ -71,7 +71,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${display.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-ink text-starlight">
         <a href="#main-content" className="skip-link">Skip to content</a>
         <SiteHeader />

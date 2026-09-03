@@ -9,6 +9,7 @@ import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
+import { SkyEvents } from "@/components/sky/sky-events";
 import { SITE } from "@/lib/seo/site";
 
 function todayDate(): string {
@@ -180,6 +181,9 @@ export default function HomePage() {
           <BentoZodiacGrid />
         </div>
       </section>
+
+      {/* ---- Upcoming sky events (live from the USNO almanac) ---- */}
+      <SkyEvents />
 
       {/* ---- Horizons ---- */}
       <section className="border-y border-line-soft bg-ink-2">
