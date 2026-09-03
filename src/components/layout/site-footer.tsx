@@ -24,7 +24,7 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="border-t border-line-soft bg-ink-2">
+    <footer className="border-t border-white/[0.08] bg-white/[0.03] backdrop-blur-xl saturate-180">
       <div className="mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6">
         <div className="flex items-start justify-between gap-8">
           <div className="max-w-xs">

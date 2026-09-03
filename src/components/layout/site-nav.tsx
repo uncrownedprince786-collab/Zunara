@@ -60,7 +60,7 @@ export function SiteNav() {
         )}
       </button>
       {open && (
-        <div id="mobile-menu" className="absolute left-0 right-0 top-16 border-b border-line-soft bg-ink px-4 py-4 md:hidden">
+        <div id="mobile-menu" className="absolute left-0 right-0 top-16 border-b border-white/[0.08] bg-white/[0.04] px-4 py-4 backdrop-blur-xl saturate-180 md:hidden">
           <div className="flex flex-col gap-3">
             {LINKS.map((l) => (
               <Link

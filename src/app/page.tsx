@@ -108,7 +108,7 @@ export default function HomePage() {
                 {sunSign.traits.slice(0, 4).map((t) => (
                   <span
                     key={t}
-                    className="rounded-full border border-line bg-ink-2 px-3 py-1 text-xs text-muted"
+                    className="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
                   >
                     {t}
                   </span>
@@ -186,7 +186,7 @@ export default function HomePage() {
       <SkyEvents />
 
       {/* ---- Horizons ---- */}
-      <section className="border-y border-line-soft bg-ink-2">
+      <section className="border-y border-white/[0.08] bg-white/[0.02] backdrop-blur-xl saturate-180">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
             <div>
@@ -209,7 +209,7 @@ export default function HomePage() {
                 <Link
                   key={c.label}
                   href={c.href}
-                  className="group flex flex-col justify-between gap-8 bg-ink p-6 transition-colors hover:bg-ink-3"
+                  className="group flex flex-col justify-between gap-8 bg-white/[0.03] p-6 backdrop-blur-xl transition-colors hover:bg-white/[0.05]"
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-display text-4xl text-gold/50">{c.n}</span>
@@ -252,7 +252,7 @@ export default function HomePage() {
             {(["Fire", "Earth", "Air", "Water"] as const).map((element) => {
               const signs = ZODIAC_SIGNS.filter((s) => s.element === element);
               return (
-                <div key={element} className="bg-ink-2 p-6">
+                <div key={element} className="bg-white/[0.03] p-6 backdrop-blur-xl">
                   <div className="flex items-baseline justify-between">
                     <h3 className={`font-display text-2xl ${elementText(element)}`}>{element}</h3>
                     <span aria-hidden="true" className={`text-xl ${elementText(element)} opacity-60`}>

@@ -42,7 +42,7 @@ export default function HoroscopeIndexPage() {
         </div>
 
         <Reveal className="mt-16">
-          <section aria-labelledby="horizons-heading" className="rounded-lg border border-line bg-ink-2/60 p-7 sm:p-9">
+          <section aria-labelledby="horizons-heading" className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-7 backdrop-blur-xl saturate-180 sm:p-9">
             <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <p className="kicker">Beyond today</p>
@@ -65,7 +65,7 @@ export default function HoroscopeIndexPage() {
                   <Link
                     key={h.type}
                     href={`/horoscope/aries/${h.type}`}
-                    className="card-lift group flex items-center justify-between rounded-md border border-line bg-ink p-5 hover:bg-ink-3"
+                    className="card-lift group flex items-center justify-between rounded-md border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-xl transition-colors hover:bg-white/[0.05]"
                   >
                     <div>
                       <p className="font-display text-lg text-starlight">{h.label}</p>

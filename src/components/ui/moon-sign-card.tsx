@@ -16,7 +16,7 @@ export function MoonSignCard() {
     <div className="paper-panel rounded-lg p-6">
       <p className="kicker">Moon card</p>
       <div className="mt-5 flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-ink">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15">
           <ZodiacSymbol sign={sign.sign} size={40} className="text-gold" strokeWidth={1.1} label={sign.signName} />
         </div>
         <div>

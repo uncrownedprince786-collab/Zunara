@@ -25,7 +25,7 @@ export default async function SignLayout({
         <div aria-hidden="true" className="starfield h-6 opacity-70" />
         <div className="mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6">
           <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
-            <div className="flex shrink-0 items-center justify-center rounded-full border border-line bg-ink-2 p-6">
+            <div className="flex shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15 p-6">
               <ZodiacSymbol sign={sign.slug} size={52} className="text-gold" strokeWidth={1.1} label={sign.name} />
             </div>
             <div>

@@ -70,7 +70,7 @@ export function DailyDesk() {
           <Reveal key={sign.slug} delay={i % 3} className="h-full">
             <Link
               href={`/horoscope/${sign.slug}/today`}
-              className={`card-lift group flex h-full flex-col rounded-lg border border-line bg-ink-2 p-5 hover:bg-ink-3 focus-visible:outline-gold`}
+              className={`card-lift group flex h-full flex-col rounded-lg border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl transition-colors hover:bg-white/[0.06] focus-visible:outline-gold`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">

@@ -33,7 +33,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
   }, [activeSign]);
 
   return (
-    <div className="scrollbar-none -mx-4 overflow-x-auto border-b border-line-soft bg-ink-2/60 px-4 sm:-mx-6">
+    <div className="scrollbar-none -mx-4 overflow-x-auto border-b border-white/[0.08] bg-white/[0.03] px-4 backdrop-blur-xl saturate-180 sm:-mx-6">
       <div className="mx-auto flex min-w-max items-stretch gap-1 px-6">
         {ZODIAC_SIGNS.map((sign) => {
           const isActive = sign.slug === activeSign;
@@ -45,8 +45,8 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
               aria-current={isActive ? "page" : undefined}
               className={`group flex shrink-0 flex-col items-center gap-1 px-4 py-3 transition-colors ${
                 isActive
-                  ? "border-t-2 border-gold bg-ink-3"
-                  : "border-t-2 border-transparent hover:bg-ink-3"
+                  ? "border-t-2 border-gold bg-cosmic/12"
+                  : "border-t-2 border-transparent hover:bg-cosmic/8"
               }`}
             >
               <ZodiacSymbol

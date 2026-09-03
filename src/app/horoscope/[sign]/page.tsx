@@ -71,7 +71,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
       </div>
 
       <header className="mt-8 flex flex-col gap-4 border-b border-line-soft pb-6 sm:flex-row sm:items-center">
-        <div className="flex shrink-0 items-center justify-center rounded-full border border-line bg-ink-2 p-5">
+        <div className="flex shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15 p-5">
           <span className="font-display text-3xl text-gold" aria-hidden="true">
             {signData.glyph}
           </span>
@@ -107,13 +107,13 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
         </div>
 
         <aside className="space-y-5">
-          <section className="rounded-lg border border-line bg-ink-2 p-5">
+          <section className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
             <h3 className="kicker">Traits</h3>
             <ul className="mt-3 flex flex-wrap gap-2">
               {signData.traits.map((trait) => (
                 <li
                   key={trait}
-                  className="rounded-full border border-line bg-ink-3 px-3 py-1 text-xs text-muted"
+                  className="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
                 >
                   {trait}
                 </li>
@@ -121,7 +121,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
             </ul>
           </section>
 
-          <section className="rounded-lg border border-line bg-ink-2 p-5">
+          <section className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
             <h3 className="kicker">Signature</h3>
             <dl className="mt-3 space-y-2.5 text-sm">
               <div className="flex items-center justify-between">
@@ -158,7 +158,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
             <Link
               key={p.type}
               href={`/horoscope/${sign}/${p.type}`}
-              className="group flex flex-col justify-between gap-8 bg-ink-2 p-6 transition-colors hover:bg-ink-3"
+              className="group flex flex-col justify-between gap-8 bg-white/[0.04] p-6 backdrop-blur-xl transition-colors hover:bg-white/[0.06]"
             >
               <div className="flex items-center justify-between">
                 <span className="font-display text-3xl text-gold/50">
@@ -188,7 +188,7 @@ function CurrentTheme({ signSlug }: { signSlug: string }) {
   const strongest = result.signals?.areas?.find((a) => a.present);
   return (
     <Reveal delay={1}>
-      <section aria-labelledby="current-theme-heading" className="rounded-lg border border-line bg-ink-2/70 p-7">
+      <section aria-labelledby="current-theme-heading" className="rounded-lg border border-white/[0.08] bg-white/[0.05] p-7 backdrop-blur-xl saturate-180">
         <div className="flex items-center gap-2 text-gold">
           <span aria-hidden className="text-gold">&#10022;</span>
           <p className="kicker">Your current theme</p>
@@ -222,7 +222,7 @@ function Recently({ signSlug }: { signSlug: string }) {
   const changes = result.changes ?? [];
   return (
     <Reveal delay={2}>
-      <section aria-labelledby="recently-heading" className="mt-6 rounded-lg border border-line-soft bg-ink p-6">
+      <section aria-labelledby="recently-heading" className="mt-6 rounded-lg border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
         <p className="kicker">What changed lately</p>
         {changes.length === 0 ? (
           <p className="mt-3 font-serif-body text-base leading-7 text-muted">
@@ -232,7 +232,7 @@ function Recently({ signSlug }: { signSlug: string }) {
         ) : (
           <ul className="mt-4 space-y-3">
             {changes.slice(0, 3).map((c) => (
-              <li key={c.id} className="border-l-2 border-gold-deep bg-ink-2/50 py-2 pl-4 pr-3">
+              <li key={c.id} className="border-l-2 border-gold-deep bg-white/[0.03] py-2 pl-4 pr-3">
                 <p className="font-medium text-starlight">{c.title}</p>
                 <p className="mt-0.5 text-sm leading-6 text-muted">{c.blurb}</p>
               </li>

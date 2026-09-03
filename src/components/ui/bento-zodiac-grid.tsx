@@ -97,7 +97,7 @@ export function BentoZodiacGrid() {
             </h2>
             <ul className="mt-4 grid gap-3 sm:grid-cols-2">
               {changes.slice(0, 4).map((c) => (
-                <li key={c.id} className="border-l-2 border-gold-deep bg-ink/60 py-2 pl-4 pr-3">
+                <li key={c.id} className="border-l-2 border-gold-deep bg-white/[0.03] py-2 pl-4 pr-3">
                   <p className="font-medium text-starlight">{c.title}</p>
                   <p className="mt-0.5 text-sm leading-6 text-muted">{c.blurb}</p>
                 </li>
@@ -155,7 +155,7 @@ export function BentoZodiacGrid() {
                 </div>
 
                 {/* headline strip */}
-                <div className="mt-1 rounded-md border border-line bg-ink/50 px-3 py-2">
+                <div className="mt-1 rounded-md border border-white/[0.08] bg-white/[0.03] px-3 py-2">
                   <p className="text-[0.62rem] uppercase tracking-[0.2em] text-gold">
                     Today&rsquo;s theme
                   </p>

@@ -163,7 +163,7 @@ function ThirtySeconds({ result }: { result: HoroscopeResult }) {
 function YourMove({ result }: { result: HoroscopeResult }) {
   if (!result.glance.bestMove) return null;
   return (
-    <section aria-labelledby="move-heading" className="rounded-md border-l-2 border-gold-deep bg-ink-2/60 p-6">
+    <section aria-labelledby="move-heading" className="rounded-md border-l-2 border-gold-deep bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
       <h2 id="move-heading" className="kicker">Your move</h2>
       <p className="mt-3 font-serif-body text-lg italic leading-8 text-starlight">
         &ldquo;{result.glance.bestMove}&rdquo;
@@ -224,7 +224,7 @@ function StrongestThemes({ result }: { result: HoroscopeResult }) {
 function WhyForecast({ result }: { result: HoroscopeResult }) {
   const { why } = result;
   return (
-    <details className="group rounded-2xl border border-line-soft bg-paper/40 p-6">
+    <details className="group rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-xl saturate-180">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
         <h2 className="kicker">Explore the astronomical math</h2>
         <span aria-hidden className="text-muted transition-transform group-open:rotate-45">+</span>
@@ -365,7 +365,7 @@ export function HoroscopeArticle({
 
       <header className="mt-8 border-b border-line-soft pb-8">
         <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
-          <div className="flex shrink-0 items-center justify-center rounded-full border border-line bg-ink-2 p-5">
+          <div className="flex shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15 p-5">
             <ZodiacSymbol sign={sign.slug} size="lg" className="text-gold" strokeWidth={1.1} label={sign.name} />
           </div>
           <div>
@@ -431,7 +431,7 @@ export function HoroscopeArticle({
               ))}
             </div>
 
-            <section className="mt-10 border-l-2 border-gold-deep bg-paper-2/60 py-5 pl-6 pr-5">
+            <section className="mt-10 border-l-2 border-gold-deep bg-white/[0.04] py-5 pl-6 pr-5 backdrop-blur-xl saturate-180">
               <h2 className="kicker">Carry this forward</h2>
               <p className="mt-3 font-serif-body text-lg italic leading-8 text-p-ink">
                 &ldquo;{result.advice}&rdquo;

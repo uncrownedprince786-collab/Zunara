@@ -35,7 +35,7 @@ export default function AstrologyIndexPage() {
             <Link
               key={topic.slug}
               href={`/astrology/${topic.slug}`}
-              className="group flex flex-col justify-between gap-8 bg-ink-2 p-7 transition-colors hover:bg-ink-3"
+              className="group flex flex-col justify-between gap-8 bg-white/[0.03] p-7 backdrop-blur-xl transition-colors hover:bg-white/[0.05]"
             >
               <div className="flex items-center justify-between">
                 <span className="font-display text-3xl text-gold/50">

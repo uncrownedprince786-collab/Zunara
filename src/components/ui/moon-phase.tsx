@@ -5,7 +5,7 @@ export function MoonPhaseWidget({ date }: { date?: Date }) {
   const shadowWidth = ((1 - mp.illumination / 100) * 100);
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-line bg-ink/60 px-4 py-3">
+    <div className="flex items-center gap-3 rounded-lg border border-white/[0.08] bg-white/[0.04] px-4 py-3 backdrop-blur-xl saturate-180">
       <div className="relative h-10 w-10 shrink-0 rounded-full bg-ink-3">
         <div className="absolute inset-0 rounded-full bg-starlight/90" />
         {shadowWidth > 0.5 && (

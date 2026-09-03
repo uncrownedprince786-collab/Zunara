@@ -46,7 +46,7 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
   return (
     <nav
       aria-label="Sign navigation"
-      className="sticky top-16 z-30 border-b border-line-soft bg-ink/90 backdrop-blur-md"
+      className="sticky top-16 z-30 border-b border-white/[0.08] bg-white/[0.04] backdrop-blur-xl saturate-180"
     >
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 sm:px-6">
         <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ export function QuickNavigation({ currentSlug }: QuickNavigationProps) {
               id="sign-switch"
               value={currentSlug}
               onChange={(e) => pickSign(e.target.value)}
-              className="appearance-none rounded-full border border-line bg-ink-2 py-1.5 pl-4 pr-9 text-sm font-medium text-starlight outline-none transition-colors hover:border-gold/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+              className="appearance-none rounded-full border border-white/[0.12] bg-cosmic/10 py-1.5 pl-4 pr-9 text-sm font-medium text-starlight backdrop-blur-sm outline-none transition-colors hover:border-gold/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
             >
               {ZODIAC_SIGNS.map((s) => (
                 <option key={s.slug} value={s.slug}>

@@ -207,7 +207,7 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
         <div className="relative p-8 sm:p-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-5">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-line bg-ink-2">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15">
                 <ZodiacSymbol sign={sign.slug} size="lg" className="text-gold" strokeWidth={1.1} label={sign.name} />
               </div>
               <div>

@@ -12,7 +12,7 @@ export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
         <Link
           key={sign.slug}
           href={hrefFor(sign.slug)}
-          className="group relative flex flex-col gap-4 bg-ink-2 p-5 transition-colors hover:bg-ink-3"
+          className="group relative flex flex-col gap-4 bg-white/[0.04] p-5 backdrop-blur-xl transition-colors hover:bg-white/[0.06]"
         >
           <div className="flex items-center justify-between">
             <span className="font-display text-sm italic text-subdued">

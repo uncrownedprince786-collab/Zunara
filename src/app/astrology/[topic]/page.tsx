@@ -92,7 +92,7 @@ export default async function AstrologyTopicPage({ params }: { params: Promise<{
                   <Link
                     key={slug}
                     href={`/astrology/${slug}`}
-                    className="rounded-full border border-line bg-ink-2 px-4 py-2 text-sm text-muted transition-colors hover:border-gold/40 hover:text-starlight"
+                    className="rounded-full border border-white/[0.12] bg-cosmic/10 px-4 py-2 text-sm text-muted backdrop-blur-sm transition-colors hover:border-gold/40 hover:text-starlight"
                   >
                     {related.title}
                   </Link>
