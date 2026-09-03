@@ -26,7 +26,7 @@ export function DailyOrbitBanner() {
     >
       <div className="cosmic-glow flex items-center gap-4 rounded-xl border border-line bg-ink-2/60 p-4 backdrop-blur-sm sm:p-5">
         <div className="flex shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15 p-3">
-          <ZodiacSymbol sign={sign.slug} size={32} className="text-gold" strokeWidth={1.1} label={sign.name} />
+          <ZodiacSymbol sign={sign.slug} size={32} className="text-gold" strokeWidth={1.8} label={sign.name} />
         </div>
         <div className="min-w-0 flex-1">
           <p className="kicker">Your daily orbit</p>

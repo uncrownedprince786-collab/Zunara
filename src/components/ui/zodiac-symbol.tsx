@@ -154,7 +154,7 @@ export function ZodiacSymbol({
   size = "md",
   className = "",
   label,
-  strokeWidth = 2,
+  strokeWidth = 1.8,
 }: ZodiacSymbolProps) {
   const slug = typeof sign === "string" ? sign : sign.slug;
   const resolved = typeof sign === "string" ? getZodiacSign(sign) : sign;

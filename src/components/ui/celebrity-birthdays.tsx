@@ -75,11 +75,12 @@ function PortraitAvatar({
         <Image
           src={celebrity.image}
           alt={celebrity.name}
-          width={64}
-          height={64}
+          width={120}
+          height={120}
+          quality={80}
           className="h-full w-full object-cover"
           onError={() => setFailed(true)}
-          sizes="64px"
+          sizes="120px"
         />
       </div>
       <span
@@ -162,14 +163,16 @@ export function CelebrityBirthdays() {
 
   const people = celebritiesForDate(month, day);
   const trackRef = useRef<HTMLDivElement>(null);
-  const [canScroll, setCanScroll] = useState(false);
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
+
+  // Arrows only appear when the carousel actually has more cards than fit in
+  // a single row (3+), per the celebrity-count threshold.
+  const showArrows = people.length > 3;
 
   const measure = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    setCanScroll(el.scrollWidth > el.clientWidth + 4);
     setHasPrev(el.scrollLeft > 4);
     setHasNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
   }, []);
@@ -189,9 +192,8 @@ export function CelebrityBirthdays() {
   const scrollByCards = (dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
-    const card = el.firstElementChild as HTMLElement | null;
-    const step = (card?.offsetWidth ?? 340) + 20;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
+    // Fixed 340px step, smooth.
+    el.scrollBy({ left: dir * 340, behavior: "smooth" });
   };
 
   return (
@@ -203,26 +205,28 @@ export function CelebrityBirthdays() {
             {dateLabel}
           </h2>
         </div>
-        <div className="hidden items-center gap-2 sm:flex">
-          <button
-            type="button"
-            onClick={() => scrollByCards(-1)}
-            disabled={!hasPrev}
-            aria-label="Previous celebrities"
-            className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
-          >
-            <span aria-hidden>&larr;</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollByCards(1)}
-            disabled={!hasNext}
-            aria-label="Next celebrities"
-            className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
-          >
-            <span aria-hidden>&rarr;</span>
-          </button>
-        </div>
+        {showArrows && (
+          <div className="hidden items-center gap-2 sm:flex">
+            <button
+              type="button"
+              onClick={() => scrollByCards(-1)}
+              disabled={!hasPrev}
+              aria-label="Previous celebrities"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
+            >
+              <span aria-hidden>&larr;</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollByCards(1)}
+              disabled={!hasNext}
+              aria-label="Next celebrities"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08] disabled:pointer-events-none disabled:opacity-30"
+            >
+              <span aria-hidden>&rarr;</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {people.length === 0 ? (
@@ -243,7 +247,7 @@ export function CelebrityBirthdays() {
             ))}
           </div>
 
-          {canScroll && (
+          {showArrows && (
             <div className="mt-4 flex items-center justify-center gap-2 sm:hidden">
               <button
                 type="button"

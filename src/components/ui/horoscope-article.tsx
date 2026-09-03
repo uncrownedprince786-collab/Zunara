@@ -366,7 +366,7 @@ export function HoroscopeArticle({
       <header className="mt-8 border-b border-line-soft pb-8">
         <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
           <div className="flex shrink-0 items-center justify-center rounded-full border border-cosmic/25 bg-cosmic/15 p-5">
-            <ZodiacSymbol sign={sign.slug} size="lg" className="text-gold" strokeWidth={1.1} label={sign.name} />
+            <ZodiacSymbol sign={sign.slug} size="lg" className="text-gold" strokeWidth={1.8} label={sign.name} />
           </div>
           <div>
             <p className="kicker">{periodNoun} horoscope</p>

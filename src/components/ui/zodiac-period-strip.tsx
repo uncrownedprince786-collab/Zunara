@@ -73,7 +73,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
             type="button"
             onClick={() => scrollBySigns(-1)}
             aria-label="Scroll signs back"
-            className="absolute left-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-[#111222]/90 text-starlight shadow-lg backdrop-blur transition-colors hover:border-gold/40 hover:text-gold"
+            className="absolute left-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight shadow-lg backdrop-blur-xl transition-colors hover:border-gold/40 hover:text-gold"
           >
             <span aria-hidden>&larr;</span>
           </button>
@@ -83,7 +83,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
             type="button"
             onClick={() => scrollBySigns(1)}
             aria-label="Scroll signs forward"
-            className="absolute right-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-[#111222]/90 text-starlight shadow-lg backdrop-blur transition-colors hover:border-gold/40 hover:text-gold"
+            className="absolute right-2 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-starlight shadow-lg backdrop-blur-xl transition-colors hover:border-gold/40 hover:text-gold"
           >
             <span aria-hidden>&rarr;</span>
           </button>

@@ -296,3 +296,70 @@ The product is production-ready when:
 3. Vercel Cron runs reliably, securely, and idempotently.
 4. Core Web Vitals and SEO audit pass with clean scores.
 5. All automated unit, integration, and build tests pass.
+
+---
+
+# CURRENT IMPLEMENTATION STATE (sprint-tracker)
+> Live reference for the running codebase. Updated per sprint to avoid re-indexing.
+> Deploy: `git push origin master:main` → Vercel auto-build. Live: `https://zunara.vercel.app`.
+> Stack in practice: Next.js 16.3.3 (App Router, Turbopack, React Server Components), TypeScript 5 strict, Tailwind v4 (`@theme` in `globals.css`), `astronomy-engine` for real positions. Deploy branch: `master` → `main`.
+
+## 30. Current Routes (`src/app`)
+- `/` — homepage (`page.tsx`): hero, SkyEvents, `CelebrityBirthdays` ("Born under today's stars"), Our method element grid.
+- `/about` — publication + methodology (3 Apple-spec glass cards) + Origins history (4 element glass panels).
+- `/cosmic-facts` — Compatibility Hub (`compatibility-hub.tsx` client) + fun facts + zodiac grid.
+- `/horoscope` — sign index (`horoscope-grid`).
+- `/horoscope/[sign]` — sign hub; sub-routes `/today`, `/weekly`, `/monthly`, `/yearly`.
+- `/astrology` and `/astrology/[topic]` — evergreen knowledge base.
+- `/disclaimer`, `/privacy`, `/terms` — legal.
+- API: `/api/health`, `/api/cron/daily` (Vercel Cron, `Authorization: Bearer ${CRON_SECRET}`).
+
+## 31. Icon Mapping (single source of truth)
+- **Zodiac glyphs:** `src/components/ui/zodiac-symbol.tsx` — exports `ZodiacSymbol({ sign, size?, className?, label?, strokeWidth? })`.
+  - Valid `sign`: `aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces`.
+  - `GLYPHS` map holds canonical stroke paths (24×24 viewBox). Uniform default `strokeWidth = 1.8`.
+  - **Element auto-tint:** `ELEMENT_OF_SIGN` + `ELEMENT_CLASS` color each glyph by element unless an explicit color `className` is passed. Element theme hexes (in `globals.css` `--color-*`):
+    - Fire → `#F59E0B` · Earth → `#10B981` · Air → `#06B6D4` · Water → `#8B5CF6`.
+    - Accents: `--color-cosmic: #6C5CE7`, `--color-gold: #FFD166`.
+  - No `zodiac-icons.tsx` file exists — `zodiac-symbol.tsx` is canonical. Do NOT create a parallel icon map.
+- **Planet symbols:** `src/components/ui/planet-symbol.tsx` (`PlanetSymbol`, default stroke 1.3).
+- **Theme runes:** `src/components/ui/theme-symbol.tsx` (`ThemeSymbol`, default stroke 1.3).
+- Navigation/utility icons are inline SVGs in `site-header.tsx`, `site-nav.tsx`, `quick-navigation.tsx`, `back-to-top.tsx`.
+
+## 32. Zodiac & Element Component Inventory
+| File (`src/components/...`) | Purpose |
+|---|---|
+| `ui/zodiac-symbol.tsx` | **Canonical 12 zodiac glyphs** (element-tinted, 1.8 stroke) |
+| `ui/zodiac-grid.tsx` | Homepage/grid of 12 signs |
+| `ui/zodiac-period-strip.tsx` | Horiz sign-selector strip w/ ←/→ scroll arrows (client) |
+| `ui/bento-zodiac-grid.tsx` | Bento-style sign grid |
+| `ui/celebrity-birthdays.tsx` | "Born under today's stars" — real Wikimedia portraits + carousel, arrows only when >3 items (client) |
+| `ui/compatibility-hub.tsx` | Client Compatibility Hub (mounted `/cosmic-facts`) |
+| `ui/planet-symbol.tsx` | Planet glyphs |
+| `ui/moon-sign-card.tsx` | Moon-in-sign card |
+| `ui/daily-orbit-banner.tsx` / `daily-desk.tsx` / `horoscope-article.tsx` / `period-tabs.tsx` | Horoscope rendering blocks |
+| `horoscope/quick-navigation.tsx` | Sticky sign dropdown (`#sign-switch`, dark `#111222` menu) + horizon tabs |
+| `sky/sky-events.tsx` | Sky events feed |
+| `layout/site-header.tsx`, `site-nav.tsx`, `site-footer.tsx`, `star-mark.tsx` | Layout chrome |
+
+## 33. Data Modules (`src/lib`)
+- `zodiac/zodiac.ts` — signs, `zodiacForDate(year,month,day)`, `getZodiacSign`.
+- `zodiac/compatibility.ts` — shared compatibility engine (drives `compatibility-hub`).
+- `content/celebrities.ts` — 80 celebrity entries; fields `month, day, name, profession, region, star, url, wiki?, image?`.
+  - `image` = Wikimedia portrait (`upload.wikimedia.org`, allowed via CSP `img-src` + `next.config` `images.remotePatterns`).
+  - `url` auto = `https://en.wikipedia.org/wiki/<wiki ?? name>`.
+- `content/engine.ts`, `fragments.ts`, `funfacts.ts`, `random.ts`, `validate.ts` — deterministic content pipeline.
+- `astronomy/astro.ts`, `bodies.ts`, `moon.ts` — real positions (VSOP87).
+- `astrology/{changes,explain,interpret,signals,topics}.ts` — interpretation rules.
+- `calendar/periods.ts`, `cron/generate.ts`, `horoscope/{generate,read}.ts`, `seo/*` — pipeline, storage, SEO.
+- `hooks/use-zunara-state.ts` — client sign personalization.
+
+## 34. Glass Design System (no solid dark boxes)
+- Page canvas: `--background: #0A0B12` (globals.css). **Cards are glass, never solid slate/grey.**
+- Glass recipe: `bg-white/[0.03–0.05]` + `backdrop-blur-xl saturate-180` + `border border-white/[0.08–0.12]`. No `bg-slate-*`, `bg-gray-*`, `bg-[#1a1d2d]`, `#3b4252` anywhere.
+- **Exception (intentional):** native `<select>` `#sign-switch` uses solid `#111222` base so OS options are readable (mandated by Sprint #11). This is a control, not a card.
+
+## 35. Performance Q&A
+- Celebrity images via `next/image` at intrinsic `width={120} height={120} quality={80}`, displayed ~64px (retina-ready), `remotePatterns: upload.wikimedia.org`, CSP `img-src 'self' data: blob: https://upload.wikimedia.org`.
+- Client components are minimal: celebrity carousel + compatibility hub + period strip + quick-nav. Hydration kept lean; heavy content is server-rendered.
+- Fonts via `next/font`. React strict mode on.

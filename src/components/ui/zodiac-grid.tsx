@@ -28,7 +28,7 @@ export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
           <ZodiacSymbol
             sign={sign.slug}
             className={`h-11 w-11 text-gold/80 transition-colors group-hover:text-gold ${elementText(sign.element)}`}
-            strokeWidth={1.1}
+            strokeWidth={1.8}
             label={sign.name}
           />
           <div>

@@ -141,7 +141,7 @@ export function BentoZodiacGrid() {
                   <ZodiacSymbol
                     sign={sign.slug}
                     className={`h-10 w-10 shrink-0 text-gold/80 transition-colors group-hover:text-gold`}
-                    strokeWidth={1.1}
+                    strokeWidth={1.8}
                     label={sign.name}
                   />
                   <div className="min-w-0">
