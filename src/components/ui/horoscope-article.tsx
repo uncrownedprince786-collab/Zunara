@@ -354,11 +354,48 @@ export function HoroscopeArticle({
     },
   };
 
+  const faqData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `What does the ${sign.name} ${periodNoun.toLowerCase()} horoscope say?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: result.overview,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How are these horoscopes calculated?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Zunara computes each reading from real astronomical data — the planets' actual positions — rather than from myth or folklore. The tone is reflective guide, not prediction.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "When does the " + sign.name.toLowerCase() + " " + periodType.toLowerCase() + " horoscope update?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: periodType === "daily"
+            ? "The daily reading is refreshed for the current day based on that date's planetary sky."
+            : "This " + periodType.toLowerCase() + " reading reflects the sky for its stated period and updates as that period begins.",
+        },
+      },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }}
       />
 
       <Breadcrumbs items={crumbs} />

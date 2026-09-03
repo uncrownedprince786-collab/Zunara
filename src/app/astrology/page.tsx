@@ -2,11 +2,19 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ASTROLOGY_TOPICS } from "@/lib/astrology/topics";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
+import { absoluteUrl } from "@/lib/seo/site";
+import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Astrology — A Guide to the Zodiac",
   description:
     "Evergreen guides to astrology: birth charts, transits, retrogrades, aspects, houses and the twelve signs.",
+  alternates: { canonical: absoluteUrl("/astrology") },
+  ...shareMeta(
+    absoluteUrl("/astrology"),
+    "Astrology — A Guide to the Zodiac",
+    "Evergreen guides to astrology: birth charts, transits, retrogrades, aspects, houses and the twelve signs.",
+  ),
 };
 
 export default function AstrologyIndexPage() {

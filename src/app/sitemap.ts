@@ -51,6 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
+  entries.push({ url: `${base}/cosmic-facts`, lastModified: now, changeFrequency: "weekly", priority: 0.6 });
   for (const page of ["/about", "/privacy", "/terms", "/disclaimer"]) {
     entries.push({ url: `${base}${page}`, lastModified: now, changeFrequency: "yearly", priority: 0.4 });
   }

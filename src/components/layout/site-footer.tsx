@@ -1,25 +1,30 @@
+"use client";
+
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
 import { SITE } from "@/lib/seo/site";
 import { StarMark } from "./star-mark";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { useLocale } from "@/lib/i18n/client";
 
 export function SiteFooter() {
   const year = new Date().getUTCFullYear();
+  const { dict } = useLocale();
   const columns = [
-    { title: "Horoscopes", links: [
-      { label: "All signs", href: "/horoscope" },
-      { label: "Today", href: "/horoscope/aries/today" },
-      { label: "Weekly", href: "/horoscope/aries/weekly" },
-      { label: "Monthly", href: "/horoscope/aries/monthly" },
-      { label: "Yearly", href: "/horoscope/aries/yearly" },
+    { title: dict.nav.horoscopes, links: [
+      { label: dict.footer.allSigns, href: "/horoscope" },
+      { label: dict.nav.today, href: "/horoscope/aries/today" },
+      { label: dict.nav.weekly, href: "/horoscope/aries/weekly" },
+      { label: dict.nav.monthly, href: "/horoscope/aries/monthly" },
+      { label: dict.nav.yearly, href: "/horoscope/aries/yearly" },
     ]},
-    { title: "The publication", links: [
-      { label: "The astronomy", href: "/astrology" },
-      { label: "Cosmic traits & facts", href: "/cosmic-facts" },
-      { label: "About & method", href: "/about" },
-      { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
-      { label: "Disclaimer", href: "/disclaimer" },
+    { title: dict.nav.publication, links: [
+      { label: dict.nav.astronomy, href: "/astrology" },
+      { label: dict.nav.cosmicFacts, href: "/cosmic-facts" },
+      { label: dict.nav.about, href: "/about" },
+      { label: dict.nav.privacy, href: "/privacy" },
+      { label: dict.nav.terms, href: "/terms" },
+      { label: dict.nav.disclaimer, href: "/disclaimer" },
     ]},
   ];
 
@@ -33,8 +38,7 @@ export function SiteFooter() {
               <span className="font-display text-2xl font-medium text-starlight">Zunara</span>
             </div>
             <p className="mt-4 text-sm leading-6 text-muted">
-              An editorial astrology publication. Every position is calculated from real
-              astronomical data; no myth, only the mathematics of the sky.
+              {dict.footer.tagline}
             </p>
           </div>
 
@@ -58,7 +62,7 @@ export function SiteFooter() {
 
         <div className="mt-12 border-t border-line-soft pt-8">
           <div className="flex flex-wrap items-center justify-between gap-6">
-            <p className="text-[0.7rem] uppercase tracking-[0.24em] text-subdued">The twelve signs</p>
+            <p className="text-[0.7rem] uppercase tracking-[0.24em] text-subdued">{dict.footer.theTwelve}</p>
             <ul className="flex flex-wrap items-center gap-2">
               {ZODIAC_SIGNS.map((s) => (
                 <li key={s.slug}>
@@ -75,9 +79,11 @@ export function SiteFooter() {
             </ul>
           </div>
           <p className="mt-8 text-center text-xs leading-5 text-subdued">
-            &copy; {year} {SITE.name}. Written in the stars. All astrological content is for
-            entertainment and reflection, not professional advice.
+            &copy; {year} {SITE.name}. {dict.footer.copyright}
           </p>
+          <div className="mt-6 flex items-center justify-center">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </footer>

@@ -6,6 +6,8 @@ export const SITE = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://zunara.example.com",
   twitter: "@zunara",
   locale: "en_US",
+  image: "/og.svg",
+  orgName: "Zunara Publishing",
 } as const;
 
 export function absoluteUrl(path = ""): string {

@@ -79,6 +79,16 @@ const ASPECT_THEME: Record<string, Theme[]> = {
   opposition: ["relationships"],
 };
 
+/** Plain-language gloss for each major aspect, added so readers never have to decode jargon. */
+const PLAIN_ASPECT: Record<string, string> = {
+  conjunction: "two planets sitting close together, concentrating their energy on one theme",
+  opposition: "two planets facing each other, gently pulling between two priorities",
+  trine: "two planets working together easily, making things flow with less effort",
+  square: "two planets at a hard angle, stirring a little productive friction or tension",
+  sextile: "two planets in a comfortable angle, opening a helpful, low-key opportunity",
+  quincunx: "two planets slightly out of step, asking for a small practical adjustment",
+};
+
 const PLANET_THEMES: Record<string, Set<Theme>> = {
   venus: new Set(["love", "money", "relationships"]),
   mars: new Set(["energy", "career"]),
@@ -127,7 +137,7 @@ export function interpret(snapshot: PlanetarySnapshot, sign: ZodiacSign): Interp
     if (rulerPos.retrograde) {
       transitNotes.push({
         planet: PLANET_LABELS[rulerName] ?? rulerName,
-        message: `Your ruling planet ${PLANET_LABELS[rulerName]} is currently retrograde, favouring revision and reflection over bold new starts.`,
+        message: `Your ruling planet, ${PLANET_LABELS[rulerName]}, is currently retrograde, which in plain terms means it appears to move backwards in the sky. It is a good stretch for slowing down, revisiting and refining things rather than diving into brand-new starts.`,
       });
     }
   }
@@ -157,7 +167,7 @@ export function interpret(snapshot: PlanetarySnapshot, sign: ZodiacSign): Interp
       const label = PLANET_LABELS[sunAspect] ?? sunAspect;
       transitNotes.push({
         planet: label,
-        message: `The Sun forms a ${aspect.name} with ${label}, ${aspect.applying ? "building toward" : "settling"} a theme of ${aspect.name} in your chart.`,
+        message: `The Sun forms a ${aspect.name} with ${label} — in plain terms, ${PLAIN_ASPECT[aspect.name] ?? "the two planets are interacting noticeably"}. This is ${aspect.applying ? "building toward" : "settling into"} a central theme for the day.`,
       });
     }
   }

@@ -5,23 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/horoscope", label: "Horoscopes" },
-  { href: "/cosmic-facts", label: "Cosmic Traits" },
-  { href: "/astrology", label: "The Astronomy" },
-  { href: "/about", label: "About" },
-];
+  { href: "/horoscope", key: "horoscopes" },
+  { href: "/cosmic-facts", key: "cosmicFacts" },
+  { href: "/astrology", key: "astronomy" },
+  { href: "/about", key: "about" },
+] as const;
 
-export function SiteNav() {
+export function SiteNav({ labels }: { labels?: { horoscopes: string; cosmicFacts: string; astronomy: string; about: string } }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
+  const items = LINKS.map((l) => ({
+    href: l.href,
+    label: labels ? labels[l.key] : l.key,
+  }));
+
   return (
     <nav aria-label="Primary">
       <div className="hidden items-center gap-7 md:flex">
-        {LINKS.map((l) => {
+        {items.map((l) => {
           const active = isActive(l.href);
           return (
             <Link
@@ -62,7 +67,7 @@ export function SiteNav() {
       {open && (
         <div id="mobile-menu" className="absolute left-0 right-0 top-16 border-b border-white/[0.08] bg-white/[0.04] px-4 py-4 backdrop-blur-xl saturate-180 md:hidden">
           <div className="flex flex-col gap-3">
-            {LINKS.map((l) => (
+            {items.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}

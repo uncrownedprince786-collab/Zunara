@@ -10,6 +10,24 @@ const PERIOD_TITLE: Record<PeriodType, string> = {
   yearly: "Yearly",
 };
 
+const socialImages = { images: [absoluteUrl(SITE.image)] };
+const twitterMeta = { site: SITE.twitter, creator: SITE.twitter, images: [absoluteUrl(SITE.image)] };
+
+/** Shared OG/Twitter card fields, spread into a page's supplied openGraph/twitter. */
+export function shareMeta(url: string, title: string, description: string) {
+  return {
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website" as const,
+      siteName: SITE.name,
+      ...socialImages,
+    },
+    twitter: { card: "summary_large_image" as const, title, description, ...twitterMeta },
+  };
+}
+
 export function horoscopeMetadata(
   sign: ZodiacSign,
   periodType: PeriodType,
@@ -30,7 +48,10 @@ export function horoscopeMetadata(
       description,
       url: canonical,
       type: "article",
+      siteName: SITE.name,
+      ...socialImages,
     },
+    twitter: { card: "summary_large_image", title, description, ...twitterMeta },
   };
 }
 
@@ -42,7 +63,31 @@ export function signIndexMetadata(sign: ZodiacSign): Metadata {
     title,
     description,
     alternates: { canonical },
-    openGraph: { title, description, url: canonical, type: "website" },
+    openGraph: { title, description, url: canonical, type: "website", siteName: SITE.name, ...socialImages },
+    twitter: { card: "summary_large_image", title, description, ...twitterMeta },
+  };
+}
+
+export function pageMetadata(
+  path: string,
+  title: string,
+  description: string,
+  type: "website" | "article" = "website",
+): Metadata {
+  const canonical = absoluteUrl(path);
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type,
+      siteName: SITE.name,
+      ...socialImages,
+    },
+    twitter: { card: "summary_large_image", title, description, ...twitterMeta },
   };
 }
 

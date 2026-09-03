@@ -2,74 +2,66 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-const SIGN_KEY = "zunara-zodiac-sign";
-const HORIZON_KEY = "zunara-active-horizon";
-
 export type Horizon = "today" | "weekly" | "monthly" | "yearly";
 
 export const HORIZONS: Horizon[] = ["today", "weekly", "monthly", "yearly"];
 
-function readStorage(key: string): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    return window.localStorage.getItem(key);
-  } catch {
-    return null;
-  }
+/**
+ * Stateless (in-memory) personalization store.
+ *
+ * Holds the reader's chosen sign / horizon for the *current page session only*.
+ * Nothing is written to localStorage, cookies, or any persistent storage, so
+ * every returning or new visitor lands on `/` with a clean slate and must pick
+ * any sign manually. The store resets on every fresh page load.
+ */
+
+type Listener = () => void;
+
+let signValue = "";
+let horizonValue: Horizon = "today";
+
+const signListeners = new Set<Listener>();
+const horizonListeners = new Set<Listener>();
+
+function emitSign() {
+  for (const l of signListeners) l();
+}
+function emitHorizon() {
+  for (const l of horizonListeners) l();
 }
 
-function subscribe(key: string, onChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-  const onStorage = (e: StorageEvent) => {
-    if (e.key === null || e.key === key) onChange();
-  };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
+function subscribeSign(onChange: () => void) {
+  signListeners.add(onChange);
+  return () => signListeners.delete(onChange);
+}
+function subscribeHorizon(onChange: () => void) {
+  horizonListeners.add(onChange);
+  return () => horizonListeners.delete(onChange);
 }
 
 function getSign(): string {
-  return readStorage(SIGN_KEY) ?? "";
+  return signValue;
 }
-
 function getHorizon(): Horizon {
-  const v = readStorage(HORIZON_KEY);
-  return v && HORIZONS.includes(v as Horizon) ? (v as Horizon) : "today";
+  return horizonValue;
 }
 
 /**
- * Simple localStorage-backed personalization via the canonical
- * useSyncExternalStore API (no setState-in-effect lint hazards).
- * - userZodiacSign: reader's chosen sign (drives the home banner / quick nav).
- * - setUserZodiacSign / setActiveHorizon: persist a value on write.
- * - ready: true once the browser store is hydrated.
+ * Lightweight in-memory personalization via useSyncExternalStore (no
+ * localStorage / cookies). Selection lasts only for the current page session.
  */
 export function useZunaraState() {
-  const userZodiacSign = useSyncExternalStore(
-    (cb) => subscribe(SIGN_KEY, cb),
-    getSign,
-    () => "",
-  );
-
-  const activeHorizon = useSyncExternalStore(
-    (cb) => subscribe(HORIZON_KEY, cb),
-    getHorizon,
-    () => "today" as Horizon,
-  );
+  const userZodiacSign = useSyncExternalStore(subscribeSign, getSign, () => "");
+  const activeHorizon = useSyncExternalStore(subscribeHorizon, getHorizon, () => "today" as Horizon);
 
   const setUserZodiacSign = useCallback((sign: string) => {
-    try {
-      window.localStorage.setItem(SIGN_KEY, sign);
-    } catch {
-      /* storage unavailable */
-    }
+    signValue = sign;
+    emitSign();
   }, []);
 
   const setActiveHorizon = useCallback((horizon: Horizon) => {
-    try {
-      window.localStorage.setItem(HORIZON_KEY, horizon);
-    } catch {
-      /* storage unavailable */
-    }
+    horizonValue = horizon;
+    emitHorizon();
   }, []);
 
   return {

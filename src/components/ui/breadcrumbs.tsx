@@ -10,12 +10,15 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: item.label,
-      item: `${SITE.url}${item.href}`,
-    })),
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+      ...items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 2,
+        name: item.label,
+        item: `${SITE.url}${item.href}`,
+      })),
+    ],
   };
 
   return (

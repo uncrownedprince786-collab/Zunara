@@ -355,7 +355,7 @@ The product is production-ready when:
 - `astronomy/astro.ts`, `bodies.ts`, `moon.ts` — real positions (VSOP87).
 - `astrology/{changes,explain,interpret,signals,topics}.ts` — interpretation rules.
 - `calendar/periods.ts`, `cron/generate.ts`, `horoscope/{generate,read}.ts`, `seo/*` — pipeline, storage, SEO.
-- `hooks/use-zunara-state.ts` — client sign personalization.
+- `hooks/use-zunara-state.ts` — **stateless (in-memory) sign personalization** (this sprint). No localStorage/cookies; the chosen sign/horizon lasts only the current page session, so every fresh visit lands on `/` with a clean slate. `daily-orbit-banner.tsx` is likewise stateless (clean manual picker).
 
 ## 34. Glass Design System (no solid dark boxes)
 - Page canvas: `--background: #0A0B12` (globals.css). **Cards are glass, never solid slate/grey.**
@@ -371,3 +371,27 @@ The product is production-ready when:
   - RAF render cadence halved to ~30fps (skips every other frame), DPR capped at 1.5, `MAX_CONCURRENT` 6→4.
   - Now pauses all frame scheduling via `IntersectionObserver` (margin 200px) + `document.visibilitychange` when the canvas is off-screen or the tab is hidden — removes its CPU cost while scrolling away / backgrounded.
   - Rationale: this always-on canvas gradient/streak loop was the main jank/INP contributor site-wide.
+
+## 36. Multilingual Hub (i18n) & Enterprise SEO
+**Approach — lightweight client dictionary wrapper (this sprint).** No i18n library and no path-based `/xx/` routing, so every route stays **static/SSG** (`○`/`●` in the build) and the site keeps its ISR caching. All pages remain static; locale lives entirely on the client.
+
+### i18n structure (`src/lib/i18n/`)
+- `dictionaries.ts` — locale types, `LOCALES` (en, ur, ar, es, zh), `DEFAULT_LOCALE`, `LOCALE_COOKIE` (`zunara-locale`), `getLocaleDir` (ur/ar → `rtl`), `isLocale`, and the 5-language `Dict` objects (`en`/`ur`/`ar`/`es`/`zh`) covering nav, footer columns, and common chrome. `Dict = typeof en` types the rest.
+- `client.tsx` — **`LocaleProvider`** (client context) wraps the whole app in `root layout.tsx`. It lazily reads the saved cookie, syncs the choice to a 1-year cookie, and flips `<html dir/lang>` on change. Exposes `useLocale()` → `{ locale, dir, dict, setLocale }`. This is the single source of truth; `LanguageSwitcher` consumes it.
+- `LanguageSwitcher` (`components/ui/language-switcher.tsx`) — frosted-glass dropdown (client) in **site-header** and **site-footer**, native globe icon, marks RTL languages.
+- `site-header.tsx`, `site-footer.tsx`, `daily-orbit-banner.tsx` are now **client components** consuming `useLocale()` so chrome text re-renders on switch. RTL mirroring is native via flex (`dir="rtl"`); glass cards/carousels/grids are direction-agnostic.
+- Zero server-side `cookies()` reads → pages stay static. Content prose (horoscope body) remains English as the content layer; the hub translates chrome/nav/footer/labels in all 5 languages.
+
+### Enterprise SEO additions (this sprint)
+- **RSS fix:** `rss.xml/route.ts` now emits `/horoscope/<sign>/today` URLs (was `daily`) matching the real routes; added separate `route` vs `label` per period.
+- **BreadcrumbList:** JSON-LD in `breadcrumbs.tsx` now includes **Home** at position 1 (mirrors the visible Home crumb); items shift to position 2+.
+- **Sitemap:** `sitemap.ts` now includes `/cosmic-facts`.
+- **OG/Twitter social cards:** new `public/og.svg` (1200×630 brand card). Wired site-wide via root `layout.tsx` (openGraph images + `twitter.card: summary_large_image`, `site`, `creator`) and via `shareMeta(url,title,desc)` in `seo/metadata.ts` for **about**, **astrology**, **astrology/[topic]**, **cosmic-facts**, **horoscope** pages; `horoscopeMetadata`/`signIndexMetadata` also carry images + twitter.
+- **Structured data (JSON-LD):** root layout emits `Organization` + `WebSite`; `horoscope-article.tsx` emits `FAQPage` alongside `Article`; `astrology/[topic]` keeps `Article`; sign pages keep `WebPage` + ItemList. `SITE.orgName`/`SITE.image` constants in `seo/site.ts`.
+
+### Editorial / copy polish (this sprint)
+- `astrology/interpret.ts`: transit notes now phrase retrograde and aspects in **plain English**, e.g. a `square` is explained as "two planets at a hard angle, stirring a little productive friction" and retrograde as "appears to move backwards in the sky … a good stretch for slowing down, revisiting and refining." Added `PLAIN_ASPECT` lexicon.
+- `content/fragments.ts` prose was already plain-language/clean; no ALL-CAPS or stray punctuation remained.
+
+### Verification
+`npx tsc --noEmit`, `npx eslint src`, `npx vitest run` (95 passed), `npx next build` (81 pages, all static/SSG). Deploy: `git push origin master:main` → Vercel auto-build → live `https://zunara.vercel.app` (language switcher + RTL + sitemap `/cosmic-facts` + FAQ JSON-LD).

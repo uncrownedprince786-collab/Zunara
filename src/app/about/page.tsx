@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { elementText } from "@/components/ui/element";
+import { absoluteUrl } from "@/lib/seo/site";
+import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "About Zunara & Methodology",
   description:
     "How Zunara calculates real astronomical positions and turns them into daily, weekly, monthly and yearly horoscopes — and the ancient origins of sky-watching.",
+  alternates: { canonical: absoluteUrl("/about") },
+  ...shareMeta(
+    absoluteUrl("/about"),
+    "About Zunara & Methodology",
+    "How Zunara calculates real astronomical positions and turns them into daily, weekly, monthly and yearly horoscopes.",
+  ),
 };
 
 const METHOD_STEPS = [

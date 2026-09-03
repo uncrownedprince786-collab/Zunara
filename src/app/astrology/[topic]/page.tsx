@@ -22,7 +22,8 @@ export async function generateMetadata({ params }: { params: Promise<{ topic: st
     title: data.title,
     description: data.summary,
     alternates: { canonical },
-    openGraph: { title: data.title, description: data.summary, url: canonical, type: "article" },
+    openGraph: { title: data.title, description: data.summary, url: canonical, type: "article", siteName: SITE.name, images: [absoluteUrl(SITE.image)] },
+    twitter: { card: "summary_large_image", title: data.title, description: data.summary, site: SITE.twitter, creator: SITE.twitter, images: [absoluteUrl(SITE.image)] },
   };
 }
 

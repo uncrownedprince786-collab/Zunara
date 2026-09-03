@@ -5,12 +5,19 @@ import { DailyDesk } from "@/components/ui/daily-desk";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Reveal } from "@/components/ui/reveal";
 import { StarMark } from "@/components/layout/star-mark";
-import { SITE } from "@/lib/seo/site";
+import { SITE, absoluteUrl } from "@/lib/seo/site";
+import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Today's Horoscopes | All Zodiac Signs",
   description:
     "A daily zodiac desk: today's real signal for all twelve signs, calculated from live astronomical data. Read daily, weekly, monthly and yearly forecasts.",
+  alternates: { canonical: absoluteUrl("/horoscope") },
+  ...shareMeta(
+    absoluteUrl("/horoscope"),
+    "Today's Horoscopes | All Zodiac Signs",
+    "A daily zodiac desk: real signals for all twelve signs, calculated from live astronomical data.",
+  ),
 };
 
 export default function HoroscopeIndexPage() {

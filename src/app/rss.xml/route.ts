@@ -4,10 +4,10 @@ import { SITE } from "@/lib/seo/site";
 
 const SITE_URL = SITE.url.replace(/\/$/, "");
 const PERIODS = [
-  { slug: "daily", label: "Daily" },
-  { slug: "weekly", label: "Weekly" },
-  { slug: "monthly", label: "Monthly" },
-  { slug: "yearly", label: "Yearly" },
+  { slug: "daily", route: "today", label: "Today" },
+  { slug: "weekly", route: "weekly", label: "Weekly" },
+  { slug: "monthly", route: "monthly", label: "Monthly" },
+  { slug: "yearly", route: "yearly", label: "Yearly" },
 ];
 
 function escapeXml(s: string) {
@@ -22,7 +22,7 @@ export function GET() {
 
   for (const sign of ZODIAC_SIGNS) {
     for (const period of PERIODS) {
-      const url = `${SITE_URL}/horoscope/${sign.slug}/${period.slug}`;
+      const url = `${SITE_URL}/horoscope/${sign.slug}/${period.route}`;
       const title = `${sign.name} ${period.label} Horoscope`;
       const desc = `Your ${period.label.toLowerCase()} horoscope for ${sign.name}. Read what the stars have in store.`;
       items.push(`
