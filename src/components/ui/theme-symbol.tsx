@@ -93,7 +93,7 @@ export function ThemeSymbol({
   size = "md",
   className = "",
   label,
-  strokeWidth = 1.3,
+  strokeWidth = 1.8,
 }: ThemeSymbolProps) {
   const paths = THEME_PATHS[theme] ?? [];
   const px = typeof size === "number" ? size : SIZE_MAP[size];

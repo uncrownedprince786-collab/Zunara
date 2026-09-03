@@ -1,24 +1,25 @@
 import type { SVGProps } from "react";
 
 /**
- * Editorial celestial mark: a fine four-point star within a hairline circle,
- * evoking a hand-drawn map asterisk. Reads as a small engraved device.
+ * Celestial brand mark — Lucide `sparkle` (ISC-licensed), a crisp professional
+ * four-point star used across the header, footer and index pages. Replaces the
+ * earlier hand-drawn four-point asterisk for a consistent, on-theme device.
  */
 export function StarMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
+      width={20}
+      height={20}
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.1"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
       {...props}
     >
-      <circle cx="12" cy="12" r="9" opacity="0.5" />
-      <circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none" />
-      <path d="M12 5.5v13M5.5 12h13M7.6 7.6l8.8 8.8M16.4 7.6l-8.8 8.8" opacity="0.9" />
+      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
     </svg>
   );
 }

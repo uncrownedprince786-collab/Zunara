@@ -69,7 +69,7 @@ export function PlanetSymbol({
   size = "md",
   className = "",
   label,
-  strokeWidth = 1.3,
+  strokeWidth = 1.8,
   decorative = false,
 }: PlanetSymbolProps) {
   const celestial = getCelestialBody(body);

@@ -21,25 +21,3 @@ export function elementBorder(element: Element): string {
   };
   return map[element] ?? "";
 }
-
-/** Theme-tinted glass background (top-corner radial glow + inner surface). */
-export function elementFill(element: Element): string {
-  const map: Record<Element, string> = {
-    Fire: "bg-fire/[0.07] hover:bg-fire/[0.12]",
-    Earth: "bg-earth/[0.07] hover:bg-earth/[0.12]",
-    Air: "bg-air/[0.07] hover:bg-air/[0.12]",
-    Water: "bg-water/[0.07] hover:bg-water/[0.12]",
-  };
-  return map[element] ?? "bg-white/[0.03]";
-}
-
-/** Small element rune glyph. */
-export function elementRune(element: Element): string {
-  const map: Record<Element, string> = {
-    Fire: "△",
-    Earth: "▧",
-    Air: "⬦",
-    Water: "⧫",
-  };
-  return map[element] ?? "✵";
-}

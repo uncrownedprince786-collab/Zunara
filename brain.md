@@ -322,9 +322,12 @@ The product is production-ready when:
     - Fire → `#F59E0B` · Earth → `#10B981` · Air → `#06B6D4` · Water → `#8B5CF6`.
     - Accents: `--color-cosmic: #6C5CE7`, `--color-gold: #FFD166`.
   - No `zodiac-icons.tsx` file exists — `zodiac-symbol.tsx` is canonical. Do NOT create a parallel icon map.
-- **Planet symbols:** `src/components/ui/planet-symbol.tsx` (`PlanetSymbol`, default stroke 1.3).
-- **Theme runes:** `src/components/ui/theme-symbol.tsx` (`ThemeSymbol`, default stroke 1.3).
+- **Planet symbols:** `src/components/ui/planet-symbol.tsx` (`PlanetSymbol`, default stroke 1.8). Forms encode the standard astronomical symbols (correct), not emoji.
+- **Theme icons:** `src/components/ui/theme-symbol.tsx` (`ThemeSymbol`, default stroke 1.8) — love/work/money/energy/etc.
+- **Element icons:** `src/components/ui/element-icon.tsx` (`ElementIcon`, default stroke 1.8) — professional Lucide `flame`/`leaf`/`wind`/`droplets` replacing the old unicode runes (△▧⬦⧫) in the "Our method" grid and sign pages.
+- **Brand mark:** `src/components/ui/../layout/star-mark.tsx` (`StarMark`) — Lucide `sparkle`, a professional four-point star used in header/footer/index pages.
 - Navigation/utility icons are inline SVGs in `site-header.tsx`, `site-nav.tsx`, `quick-navigation.tsx`, `back-to-top.tsx`.
+- **Stroke uniformity:** all icon families (zodiac, planet, theme, element, brand mark) use `strokeWidth = 1.8` so every mark belongs to one brand.
 
 ## 32. Zodiac & Element Component Inventory
 | File (`src/components/...`) | Purpose |
@@ -357,6 +360,7 @@ The product is production-ready when:
 ## 34. Glass Design System (no solid dark boxes)
 - Page canvas: `--background: #0A0B12` (globals.css). **Cards are glass, never solid slate/grey.**
 - Glass recipe: `bg-white/[0.03–0.05]` + `backdrop-blur-xl saturate-180` + `border border-white/[0.08–0.12]`. No `bg-slate-*`, `bg-gray-*`, `bg-[#1a1d2d]`, `#3b4252` anywhere.
+- **Box consistency (Sprint #13):** all "content" boxes share the same uniform glass (`bg-white/[0.04]` + `border-white/10` + rounded-2xl + gold accent on hover) — the "Four horizons" grid, the "Our method" element grid, bento cards, celebrity cards, SkyEvents. Element identity is carried by color-coded labels/icons *inside*, never a differently-painted box. No `bg-line` grey gap containers remain in these sections.
 - **Exception (intentional):** native `<select>` `#sign-switch` uses solid `#111222` base so OS options are readable (mandated by Sprint #11). This is a control, not a card.
 
 ## 35. Performance Q&A

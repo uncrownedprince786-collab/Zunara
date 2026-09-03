@@ -4,7 +4,8 @@ import { BentoZodiacGrid } from "@/components/ui/bento-zodiac-grid";
 import { HeroVisual } from "@/components/ui/hero-visual";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
-import { elementFill, elementRune, elementText } from "@/components/ui/element";
+import { elementBorder, elementText } from "@/components/ui/element";
+import { ElementIcon } from "@/components/ui/element-icon";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
@@ -203,7 +204,7 @@ export default function HomePage() {
                 horizon draws on the same truthful positions of the Sun, Moon and the planets.
               </p>
             </div>
-            <div className="grid gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {[
                 { label: "Daily", href: "/horoscope/aries/today", desc: "A single day in focus", n: "I" },
                 { label: "Weekly", href: "/horoscope/aries/weekly", desc: "The week ahead", n: "II" },
@@ -213,12 +214,18 @@ export default function HomePage() {
                 <Link
                   key={c.label}
                   href={c.href}
-                  className="group flex flex-col justify-between gap-8 bg-white/[0.03] p-6 backdrop-blur-xl transition-colors hover:bg-white/[0.05]"
+                  className="group relative flex flex-col justify-between gap-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
                 >
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  />
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-4xl text-gold/50">{c.n}</span>
-                    <span className="text-sm text-gold opacity-0 transition-opacity group-hover:opacity-100">
-                      →
+                    <span className="font-display text-4xl italic text-subdued transition-colors group-hover:text-gold/80">
+                      {c.n}
+                    </span>
+                    <span className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] bg-white/[0.03] text-gold opacity-0 transition-opacity group-hover:opacity-100">
+                      &rarr;
                     </span>
                   </div>
                   <div>
@@ -252,22 +259,25 @@ export default function HomePage() {
               Read about our method →
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {(["Fire", "Earth", "Air", "Water"] as const).map((element) => {
               const signs = ZODIAC_SIGNS.filter((s) => s.element === element);
               return (
                 <div
                   key={element}
-                  className={`relative overflow-hidden rounded-xl border border-white/[0.08] ${elementFill(element)} p-6 backdrop-blur-xl saturate-180 transition-colors`}
+                  className={`relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors ${elementBorder(element)}`}
                 >
                   <div
                     aria-hidden="true"
                     className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br ${elementText(element)} opacity-15 to-transparent blur-2xl`}
                   />
-                  <div className="relative flex items-baseline justify-between">
-                    <h3 className={`font-display text-2xl ${elementText(element)}`}>{element}</h3>
+                  <div className="relative flex items-center justify-between">
+                    <h3 className={`flex items-center gap-2 font-display text-2xl ${elementText(element)}`}>
+                      <ElementIcon element={element} size={22} className={elementText(element)} />
+                      {element}
+                    </h3>
                     <span aria-hidden="true" className={`text-xl ${elementText(element)} opacity-60`}>
-                      {elementRune(element)}
+                      <ElementIcon element={element} size={18} className={elementText(element)} />
                     </span>
                   </div>
                   <ul className="mt-5 space-y-3">

@@ -9,7 +9,8 @@ import { ThemeSymbol, type ThemeKey } from "@/components/ui/theme-symbol";
 import { Reveal } from "@/components/ui/reveal";
 import { signIndexMetadata } from "@/lib/seo/metadata";
 import { absoluteUrl } from "@/lib/seo/site";
-import { elementRune, elementText } from "@/components/ui/element";
+import { elementText } from "@/components/ui/element";
+import { ElementIcon } from "@/components/ui/element-icon";
 import type { LifeArea } from "@/lib/astrology/signals";
 
 const AREA_THEME: Record<LifeArea, ThemeKey> = {
@@ -127,7 +128,8 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
               <div className="flex items-center justify-between">
                 <dt className="text-subdued">Element</dt>
                 <dd className={`font-medium ${elementText(signData.element)}`}>
-                  {signData.element} <span aria-hidden="true">{elementRune(signData.element)}</span>
+                  {signData.element}{" "}
+                  <ElementIcon element={signData.element} size={16} className={`inline ${elementText(signData.element)}`} />
                 </dd>
               </div>
               <div className="flex items-center justify-between">
