@@ -92,35 +92,40 @@ export function MeteorShower() {
       points.length = 0;
       for (const pt of next) points.push(pt);
     }
-    let nextNormal = 0.8 + Math.random() * 1.5; // seconds until first normal
-    let nextHero = 12 + Math.random() * 8; // 12-20s
+    // First pattern fires almost immediately so the sky feels alive on load.
+    let nextPattern = 0.4;
 
-    const NORMAL_INTERVAL = [2.6, 6] as const;
-    const MAX_CONCURRENT = 3;
+    // More concurrent streaks allowed: double-streak + shower clusters + hero.
+    const MAX_CONCURRENT = 6;
 
-    function spawn(isHero: boolean) {
+    /** One isolated, accelerated meteor sweep per cycle. */
+    function spawn(isHero: boolean, speedBoost = 1, angle?: number) {
       // Top-left quadrant origins.
       const x0 = (0.04 + Math.random() * 0.34) * width;
       const y0 = (-0.08 + Math.random() * 0.3) * height;
-      // Steep descent: 45-60 degrees from horizontal.
-      const angle = ((45 + Math.random() * 15) * Math.PI) / 180;
+      // Steep descent: 45-60 degrees from horizontal (lock maintained).
+      const a =
+        angle ??
+        ((45 + Math.random() * 15) * Math.PI) / 180;
+      // High-speed base — half the wait time means shorter, faster events.
       const speed =
-        (0.5 + Math.random() * 0.5) *
-        (isHero ? 0.9 : 1) *
-        (width * 0.55);
-      const vx = Math.cos(angle) * speed;
-      const vy = Math.sin(angle) * speed;
+        (0.62 + Math.random() * 0.5) *
+        speedBoost *
+        (isHero ? 1.05 : 1) *
+        (width * 0.6);
+      const vx = Math.cos(a) * speed;
+      const vy = Math.sin(a) * speed;
 
       // Cap travel so the meteor always burns out before hitting an edge.
-      let dist = isHero ? width * 0.5 : width * (0.34 + Math.random() * 0.22);
+      let dist = isHero ? width * 0.5 : width * (0.3 + Math.random() * 0.22);
       const edgeAllow =
         Math.min(
-          (width - x0) / Math.cos(angle),
-          (height - y0) / Math.sin(angle),
+          (width - x0) / Math.cos(a),
+          (height - y0) / Math.sin(a),
         ) || dist;
       dist = Math.min(dist, edgeAllow * 0.62);
 
-      const dur = isHero ? 0.8 + Math.random() * 0.4 : 0.4 + Math.random() * 0.4;
+      const dur = isHero ? 0.7 + Math.random() * 0.3 : 0.34 + Math.random() * 0.34;
       const travel = speed; // ~distance covered in 1s
       const len = Math.max(90, Math.min(220, travel * (isHero ? 0.28 : 0.18)));
 
@@ -187,6 +192,49 @@ export function MeteorShower() {
       }
     }
 
+    function scheduleCycle() {
+      // Independent, unpredictable golden hero check fired on every cycle.
+      const hero = Math.random() < 0.12;
+
+      // Roll a dynamic atmospheric pattern.
+      const roll = Math.random();
+
+      // Shared steep descent (45-60°) so multi-meteor streaks look coherent,
+      // with small angular offsets added per meteor inside each pattern.
+      const baseAngle = ((45 + Math.random() * 15) * Math.PI) / 180;
+
+      if (roll < 0.2) {
+        // ---- Quiet phase (20%): short 1.5-3s pause, hero may pass solo.
+        if (hero) spawn(true, 1.1);
+        nextPattern = (1.5 + Math.random() * 1.5);
+      } else if (roll < 0.6) {
+        // ---- Single fast streak (40%): 1 isolated high-speed sweep.
+        spawn(hero, 1.25, baseAngle);
+        nextPattern = 0.8 + Math.random() * 1.0;
+      } else if (roll < 0.85) {
+        // ---- Double streak (25%): 2 meteors 80-200ms apart, offset angles.
+        spawn(hero, 1.15, baseAngle);
+        const second = setTimeout(() => {
+          spawn(Math.random() < 0.12, 1.2, baseAngle + (Math.random() * 0.06 - 0.03));
+        }, 80 + Math.random() * 120);
+        timeouts.push(second);
+        nextPattern = 0.9 + Math.random() * 0.9;
+      } else {
+        // ---- Shower cluster (15%): 3-4 meteors within 50-120ms of each other.
+        const count = 3 + Math.floor(Math.random() * 2); // 3 or 4
+        for (let i = 0; i < count; i++) {
+          const delay = i * (50 + Math.random() * 70);
+          const timeout = setTimeout(() => {
+            spawn(i === 0 ? hero : Math.random() < 0.12, 1.3, baseAngle + (Math.random() * 0.1 - 0.05));
+          }, delay);
+          timeouts.push(timeout);
+        }
+        nextPattern = 2.2 + Math.random() * 1.0;
+      }
+    }
+
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+
     let raf = 0;
     let last = performance.now();
     let simTime = 0;
@@ -196,16 +244,11 @@ export function MeteorShower() {
       last = t;
       simTime = t / 1000;
 
-      // Scheduling: frequent faint meteors, plus an occasional hero every 12-20s.
-      nextNormal -= dt;
-      nextHero -= dt;
-      if (nextNormal <= 0) {
-        spawn(false);
-        nextNormal = NORMAL_INTERVAL[0] + Math.random() * (NORMAL_INTERVAL[1] - NORMAL_INTERVAL[0]);
-      }
-      if (nextHero <= 0) {
-        spawn(true);
-        nextHero = 12 + Math.random() * 8;
+      // Dynamic multi-pattern scheduling: roll the pattern, then roll an
+      // independent 12% golden hero check so a hero may lead any pattern.
+      nextPattern -= dt;
+      if (nextPattern <= 0) {
+        scheduleCycle();
       }
 
       c.clearRect(0, 0, width, height);
@@ -238,6 +281,7 @@ export function MeteorShower() {
 
     return () => {
       cancelAnimationFrame(raf);
+      for (const t of timeouts) clearTimeout(t);
       window.removeEventListener("resize", resize);
     };
   }, []);
