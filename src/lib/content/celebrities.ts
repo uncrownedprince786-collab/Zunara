@@ -98,6 +98,9 @@ const C: Array<
 
   // ---- September ----
   { month: 9, day: 1, name: "Jungkook", profession: "Singer", region: "K-Pop", star: "The golden maknae of BTS, an all-round performer whose voice carries worldwide." },
+  { month: 9, day: 3, name: "Charlie Sheen", profession: "Actor", region: "Hollywood", star: "A brash comedic icon whose rapid-fire charisma defined an era of blockbuster comedy." },
+  { month: 9, day: 3, name: "Shaun White", profession: "Snowboarder", region: "Sports", star: "The three-time Olympic champion who redefined what a board can do in the halfpipe." },
+  { month: 9, day: 3, name: "Garrett Hedlund", profession: "Actor", region: "Hollywood", star: "A rugged leading man equally at home in westerns, epics and road-trip romances." },
   { month: 9, day: 4, name: "Beyoncé", profession: "Singer", region: "Global", star: "A once-in-a-generation artist whose voice, art and influence tower over pop culture." },
   { month: 9, day: 6, name: "Tim Roth", profession: "Actor", region: "Hollywood", star: "A fiercely independent actor prized for intensity and unpredictability." },
   { month: 9, day: 12, name: "RM", profession: "Rapper & leader", region: "K-Pop", star: "The thoughtful leader of BTS whose words and artistry shape a generation.", wiki: "RM_(musician)" },
