@@ -3,7 +3,6 @@ import { PeriodTabs } from "./period-tabs";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { PlanetSymbol } from "./planet-symbol";
 import { ThemeSymbol, type ThemeKey } from "./theme-symbol";
-import { CosmicFunFact } from "./cosmic-fun-fact";
 import { ShareVibe } from "./share-vibe";
 import type { ZodiacSign } from "@/lib/zodiac/zodiac";
 import type { PeriodType } from "@/lib/calendar/periods";
@@ -396,7 +395,6 @@ export function HoroscopeArticle({
         {isDaily && (
           <div className="space-y-5">
             <GlancePanel result={result} />
-            <CosmicFunFact fact={result.funFact} />
             <ThirtySeconds result={result} />
             <YourMove result={result} />
             <ChangesPanel result={result} />
@@ -407,7 +405,6 @@ export function HoroscopeArticle({
         {!isDaily && (
           <div className="space-y-5">
             <PeriodSignals result={result} periodType={periodType} />
-            <CosmicFunFact fact={result.funFact} />
           </div>
         )}
 

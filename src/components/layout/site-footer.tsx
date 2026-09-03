@@ -15,6 +15,7 @@ export function SiteFooter() {
     ]},
     { title: "The publication", links: [
       { label: "The astronomy", href: "/astrology" },
+      { label: "Cosmic traits & facts", href: "/cosmic-facts" },
       { label: "About & method", href: "/about" },
       { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },

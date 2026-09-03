@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/horoscope", label: "Horoscopes" },
+  { href: "/cosmic-facts", label: "Cosmic Traits" },
   { href: "/astrology", label: "The Astronomy" },
   { href: "/about", label: "About" },
 ];

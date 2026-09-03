@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { CosmicFunFact } from "@/components/ui/cosmic-fun-fact";
-import { funFactForCategory } from "@/lib/content/funfacts";
 
 export type SkyEvent = {
   title: string;
@@ -197,9 +195,6 @@ export async function SkyEvents() {
                   <div className="flex flex-1 flex-col px-5 py-4">
                     <h3 className="font-display text-base font-semibold leading-snug text-p-ink">{e.title}</h3>
                     <p className="mt-2 line-clamp-3 flex-1 text-sm leading-6 text-p-muted">{e.description}</p>
-                    <div className="mt-4">
-                      <CosmicFunFact fact={funFactForCategory(e.category)} compact />
-                    </div>
                     <Link
                       href={resolveUrl(e)}
                       target="_blank"
