@@ -8,6 +8,44 @@ export type SkyEvent = {
   category?: string;
 };
 
+/* Verified, high-authority astronomy sources (individually checked: HTTP 200,
+   stable, redirect-safe). Used to repair dead links from the live feed and as
+   graceful fallbacks when an event carries no valid URL. */
+const GUIDES = {
+  moonPhases: "https://science.nasa.gov/moon/moon-phases/",
+  meteorShowers: "https://www.imo.net/resources/calendar/",
+  eclipses: "https://www.nasa.gov/skywatching/",
+  planetary: "https://solarsystem.nasa.gov/planets/overview/",
+  default: "https://www.nasa.gov/skywatching/",
+} as const;
+
+/* Hosts known to serve dead/failed pages (e.g. the decommissioned USNO data
+   service). Any feed URL pointing here is treated as invalid and rewritten. */
+const DEAD_HOSTS = ["aa.usno.navy.mil"];
+
+const FALLBACK_BY_CATEGORY: Record<string, string> = {
+  "meteor-showers": GUIDES.meteorShowers,
+  "moon-phases": GUIDES.moonPhases,
+  eclipses: GUIDES.eclipses,
+  oppositions: GUIDES.planetary,
+  conjunctions: GUIDES.planetary,
+};
+
+/** Resolve a safe, working "How to watch" destination for an event. */
+function resolveUrl(e: SkyEvent): string {
+  const raw = (e.url ?? "").trim();
+  let host = "";
+  try {
+    host = raw.startsWith("http") ? new URL(raw).hostname : "";
+  } catch {
+    host = "";
+  }
+  const dead = host !== "" && DEAD_HOSTS.some((d) => host === d || host.endsWith(`.${d}`));
+  const missing = raw === "" || !/^https?:\/\//i.test(raw);
+  if (!missing && !dead) return raw;
+  return FALLBACK_BY_CATEGORY[e.category ?? ""] ?? GUIDES.default;
+}
+
 /** Curated fallback list used when the live feed cannot be reached. */
 const FALLBACK_EVENTS: SkyEvent[] = [
   {
@@ -15,7 +53,7 @@ const FALLBACK_EVENTS: SkyEvent[] = [
     start: "2026-04-22",
     description:
       "Up to 20 meteors per hour radiate from the constellation Lyra. Best after midnight from a dark site — no equipment needed.",
-    url: "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Lyrids",
+    url: GUIDES.meteorShowers,
     category: "meteor-showers",
   },
   {
@@ -23,7 +61,7 @@ const FALLBACK_EVENTS: SkyEvent[] = [
     start: "2026-04-17",
     description:
       "The darkest night of the lunar cycle — a perfect window for deep-sky observing and a quiet reset before the new month.",
-    url: "https://aa.usno.navy.mil/data/MoonPhases",
+    url: GUIDES.moonPhases,
     category: "moon-phases",
   },
   {
@@ -31,7 +69,7 @@ const FALLBACK_EVENTS: SkyEvent[] = [
     start: "2026-04-02",
     description:
       "The Moon rises at sunset and stays up all night, fully lit. A spectacular sight near the horizon, thanks to the Moon illusion.",
-    url: "https://aa.usno.navy.mil/data/MoonPhases",
+    url: GUIDES.moonPhases,
     category: "moon-phases",
   },
 ];
@@ -157,17 +195,16 @@ export async function SkyEvents() {
                   <div className="flex flex-1 flex-col px-5 py-4">
                     <h3 className="font-display text-base font-semibold leading-snug text-p-ink">{e.title}</h3>
                     <p className="mt-2 line-clamp-3 flex-1 text-sm leading-6 text-p-muted">{e.description}</p>
-                    {e.url && (
-                      <Link
-                        href={e.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 inline-flex w-fit items-center rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-starlight transition-colors hover:border-gold/50 hover:text-gold"
-                      >
-                        How to watch
-                        <span aria-hidden className="ml-1.5">→</span>
-                      </Link>
-                    )}
+                    <Link
+                      href={resolveUrl(e)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`How to watch: ${e.title} (opens in a new tab)`}
+                      className="mt-4 inline-flex w-fit items-center rounded-full border border-white/15 px-3 py-1.5 text-xs font-medium text-starlight transition-colors hover:border-gold/50 hover:text-gold"
+                    >
+                      How to watch
+                      <span aria-hidden className="ml-1.5">→</span>
+                    </Link>
                   </div>
                 </article>
               );

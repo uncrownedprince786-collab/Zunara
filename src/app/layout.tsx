@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { BackToTop } from "@/components/ui/back-to-top";
+import { MeteorShower } from "@/components/ui/meteor-shower";
 import { SITE } from "@/lib/seo/site";
 
 const display = Plus_Jakarta_Sans({
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-ink text-starlight">
+        <MeteorShower />
         <a href="#main-content" className="skip-link">Skip to content</a>
         <SiteHeader />
         <main id="main-content" className="flex-1">{children}</main>

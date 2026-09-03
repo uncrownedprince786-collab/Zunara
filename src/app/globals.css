@@ -377,12 +377,62 @@ body {
   50% { opacity: 0.7; }
 }
 
+/* ---- Ambient meteor shower --------------------------------------------
+   Pure-CSS, hardware-accelerated background streaks. Each streak is a thin
+   gradient line animated with translate3d + will-change so the compositor
+   handles it (no main-thread work, no effect on TBT). The whole field sits
+   strictly behind all interactive content and ignores pointer events. */
+.meteor-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.meteor {
+  position: absolute;
+  top: var(--top);
+  left: var(--left);
+  width: var(--len);
+  height: 1.5px;
+  transform: rotate(-45deg);
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0));
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: z-meteor var(--dur) linear var(--delay) infinite;
+}
+
+@keyframes z-meteor {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-45deg);
+    opacity: 0;
+  }
+  4% {
+    opacity: var(--o, 0.5);
+  }
+  12% {
+    opacity: var(--o, 0.5);
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(var(--dist), var(--dist), 0) rotate(-45deg);
+    opacity: 0;
+  }
+}
+
 /* Theme transition — avoid jarring snap, but don't animate on load. */
 
 @media (prefers-reduced-motion: reduce) {
   .nova-pulse {
     animation: none;
     opacity: 0.6;
+  }
+  .meteor-field {
+    display: none;
   }
 }
 
