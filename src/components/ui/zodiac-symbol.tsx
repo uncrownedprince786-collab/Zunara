@@ -37,92 +37,65 @@ const ELEMENT_OF_SIGN: Record<string, Element> = {
   pisces: "Water",
 };
 
-/**
- * Authentic, high-precision vector glyphs for the twelve zodiac signs,
- * composed of clean geometric strokes in a 24x24 viewBox. Each symbol follows
- * its canonical astronomical form (horns, twin pillars, claws, scales, arrow,
- * water waves, paired fishes). Stroke-based so they stay crisp at any size.
- */
-const GLYPHS: Record<string, string[]> = {
-  // ♈ Two flaring ram horns with curled tips
-  aries: [
-    "M12 18.5 C 13.8 14, 14.8 9.5, 15.6 6.8 C 16.2 4.9, 18.2 4.6, 19.2 6 C 20 7.2, 19 8.6, 17.8 8.3",
-    "M12 18.5 C 10.2 14, 9.2 9.5, 8.4 6.8 C 7.8 4.9, 5.8 4.6, 4.8 6 C 4 7.2, 5 8.6, 6.2 8.3",
-  ],
-  // ♉ Bull head circle, up-curving horns and a shallow V base
-  taurus: [
-    "M9 10 a3 3 0 1 0 6 0 a3 3 0 1 0 -6 0",
-    "M10.2 7 C 8.7 5, 7 3.5, 5 2.5",
-    "M13.8 7 C 15.3 5, 17 3.5, 19 2.5",
-    "M7 19 L12 14.5 L17 19",
-  ],
-  // ♊ Twin pillars (Roman-numeral II) with top cap and outward feet
+/** A single SVG primitive within a zodiac icon. */
+type GlyphElement =
+  | { kind: "path"; d: string }
+  | { kind: "circle"; cx: number; cy: number; r: number };
+
+/** Canonical Lucide `zodiac-*` icon paths for the twelve signs. */
+const LUCIDE_GLYPHS: Record<string, GlyphElement[]> = {
+  aries: [{ kind: "path", d: "M12 7.5a4.5 4.5 0 1 1 5 4.5" }, { kind: "path", d: "M7 12a4.5 4.5 0 1 1 5-4.5V21" }],
+  taurus: [{ kind: "circle", cx: 12, cy: 15, r: 6 }, { kind: "path", d: "M18 3A6 6 0 0 1 6 3" }],
   gemini: [
-    "M7.5 4.5 H16.5",
-    "M9.5 4.5 V14 C 9.5 16.5, 8.2 18.5, 6.5 19",
-    "M14.5 4.5 V14 C 14.5 16.5, 15.8 18.5, 17.5 19",
+    { kind: "path", d: "M16 4.525v14.948" },
+    { kind: "path", d: "M20 3A17 17 0 0 1 4 3" },
+    { kind: "path", d: "M4 21a17 17 0 0 1 16 0" },
+    { kind: "path", d: "M8 4.525v14.948" },
   ],
-  // ♋ Crab claws: central bar flanked by symmetric curls
   cancer: [
-    "M6 13 H18",
-    "M6 13 C 3 13, 3 7, 6.5 7 C 9.5 7, 8.5 10.2, 6.5 10.4",
-    "M18 13 C 21 13, 21 7, 17.5 7 C 14.5 7, 15.5 10.2, 17.5 10.4",
+    { kind: "path", d: "M21 14.5A9 6.5 0 0 1 5.5 19" },
+    { kind: "path", d: "M3 9.5A9 6.5 0 0 1 18.5 5" },
+    { kind: "circle", cx: 17.5, cy: 14.5, r: 3.5 },
+    { kind: "circle", cx: 6.5, cy: 9.5, r: 3.5 },
   ],
-  // ♌ Flowing lion mane loop, sweeping tail and top tuft
   leo: [
-    "M11 18 C 15 20, 19 18, 19.5 14 C 20 9.5, 15.5 8.5, 13 10.5 C 11 12, 11.5 15, 13.5 15.2",
-    "M11 18 C 8 19, 6 18.5, 4.5 17 C 3 15.5, 3.5 14, 5 14.5",
-    "M13 10.5 C 11 9, 10 6.5, 10.5 4.5 C 11 3, 13 2.8, 14 4",
+    { kind: "path", d: "M10 16c0-4-3-4.5-3-8a5 5 0 0 1 10 0c0 3.466-3 6.196-3 10a3 3 0 0 0 6 0" },
+    { kind: "circle", cx: 7, cy: 16, r: 3 },
   ],
-  // ♍ Virgin M with a looped right arm and a dot on the left stem
   virgo: [
-    "M6 20 C 6 14, 6 8.6, 8 6",
-    "M8 6 C 10 12, 10.5 15, 12 20",
-    "M12 20 C 13 14, 15 11, 18.5 10.5",
-    "M15 13 C 17 12, 18.8 12.5, 18.8 14.5 C 18.8 16.5, 17 17.2, 15.8 16.3 C 14.8 15.5, 15.4 14.3, 16.3 14.1",
-    "M7.5 6 a1.3 1.3 0 1 0 0.01 0",
+    { kind: "path", d: "M11 5.5a1 1 0 0 1 5 0V16a5 5 0 0 0 5 5" },
+    { kind: "path", d: "M16 11.5a1 1 0 0 1 5 0V16a5 5 0 0 1-5 5" },
+    { kind: "path", d: "M6 19V6a3 3 0 0 0-3-3h0" },
+    { kind: "path", d: "M6 5.5a1 1 0 0 1 5 0V19" },
   ],
-  // ♎ Balance scales: beam, pivot post and two hanging trays
   libra: [
-    "M5 19 H19",
-    "M12 10.5 V14",
-    "M7 10.5 H17",
-    "M7 10.5 L5 14.5 M7 10.5 L9 14.5 M5 14.5 L9 14.5",
-    "M17 10.5 L15 14.5 M17 10.5 L19 14.5 M15 14.5 L19 14.5",
+    { kind: "path", d: "M3 16h6.857c.162-.012.19-.323.038-.38a6 6 0 1 1 4.212 0c-.153.057-.125.368.038.38H21" },
+    { kind: "path", d: "M3 20h18" },
   ],
-  // ♏ Scorpion M with a horizontal arrowed sting
   scorpio: [
-    "M7 5 C 8 9, 8.2 13, 10 18",
-    "M10 18 C 11 13, 11.2 11, 12.5 8",
-    "M12.5 8 C 13.5 9.5, 14.8 10.5, 16.5 10.8",
-    "M16.5 10.8 H21",
-    "M21 10.8 L18.5 8.8 M21 10.8 L18.5 12.8",
+    { kind: "path", d: "M10 19V5.5a1 1 0 0 1 5 0V17a2 2 0 0 0 2 2h5l-3-3" },
+    { kind: "path", d: "m22 19-3 3" },
+    { kind: "path", d: "M5 19V5.5a1 1 0 0 1 5 0" },
+    { kind: "path", d: "M5 5.5A2.5 2.5 0 0 0 2.5 3" },
   ],
-  // ♐ Archer's arrow with crossbar and feather
   sagittarius: [
-    "M5 4 L14.5 21",
-    "M14.5 21 L16.5 19.5 M10.5 22.5 L14.5 21",
-    "M12.5 12 L5 5",
-    "M8 9.5 L5.5 8.5 M8 9.5 L7 12",
+    { kind: "path", d: "M15 3h6v6" },
+    { kind: "path", d: "M21 3 3 21" },
+    { kind: "path", d: "m9 9 6 6" },
   ],
-  // ♑ Sea-goat: top bar, spiral horn and right descender
   capricorn: [
-    "M6 5 H17",
-    "M6 5 V10 C 6 13, 8 17.5, 12 18.5 C 13.5 19, 15 18.8, 16 17.8 C 17 16.8, 17 15.2, 16 14.5 C 15 13.8, 14 14.6, 14 15.6",
-    "M17 5 L21 9.5 L19.5 12",
+    { kind: "path", d: "M11 21a3 3 0 0 0 3-3V6.5a1 1 0 0 0-7 0" },
+    { kind: "path", d: "M7 19V6a3 3 0 0 0-3-3h0" },
+    { kind: "circle", cx: 17, cy: 17, r: 3 },
   ],
-  // ♒ Water bearer's twin zigzag waves
   aquarius: [
-    "M3 6 L6 11 L9 6 L12 11 L15 6 L18 11 L21 6",
-    "M3 15 L6 20 L9 15 L12 20 L15 15 L18 20 L21 15",
+    { kind: "path", d: "m2 10 2.456-3.684a.7.7 0 0 1 1.106-.013l2.39 3.413a.7.7 0 0 0 1.096-.001l2.402-3.432a.7.7 0 0 1 1.098 0l2.402 3.432a.7.7 0 0 0 1.098 0l2.389-3.413a.7.7 0 0 1 1.106.013L22 10" },
+    { kind: "path", d: "m2 18.002 2.456-3.684a.7.7 0 0 1 1.106-.013l2.39 3.413a.7.7 0 0 0 1.097 0l2.402-3.432a.7.7 0 0 1 1.098 0l2.402 3.432a.7.7 0 0 0 1.098 0l2.389-3.413a.7.7 0 0 1 1.106.013L22 18.002" },
   ],
-  // ♓ Two opposing fish arcs joined by a central bar with hooked tails
   pisces: [
-    "M8.5 4 H15.5",
-    "M8.5 4 C 11 7, 11 15, 8.5 18.5",
-    "M15.5 4 C 13 7, 13 15, 15.5 18.5",
-    "M8.5 18.5 C 9 20.5, 10 21.5, 11.5 21.5",
-    "M15.5 18.5 C 15 20.5, 14 21.5, 12.5 21.5",
+    { kind: "path", d: "M19 21a15 15 0 0 1 0-18" },
+    { kind: "path", d: "M20 12H4" },
+    { kind: "path", d: "M5 3a15 15 0 0 1 0 18" },
   ],
 };
 
@@ -159,7 +132,7 @@ export function ZodiacSymbol({
   const slug = typeof sign === "string" ? sign : sign.slug;
   const resolved = typeof sign === "string" ? getZodiacSign(sign) : sign;
   const glyph = resolved?.glyph ?? "";
-  const paths = GLYPHS[slug] ?? [];
+  const parts = LUCIDE_GLYPHS[slug] ?? [];
   const px = typeof size === "number" ? size : SIZE_MAP[size];
   const aria = label ?? (resolved ? resolved.name : LABEL_BY_SIGN[slug] ?? slug);
   const element = ELEMENT_OF_SIGN[slug];
@@ -181,9 +154,13 @@ export function ZodiacSymbol({
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {paths.map((d, i) => (
-        <path key={i} d={d} />
-      ))}
+      {parts.map((part, i) =>
+        part.kind === "path" ? (
+          <path key={i} d={part.d} />
+        ) : (
+          <circle key={i} cx={part.cx} cy={part.cy} r={part.r} />
+        ),
+      )}
       <title>{glyph} {aria}</title>
     </svg>
   );

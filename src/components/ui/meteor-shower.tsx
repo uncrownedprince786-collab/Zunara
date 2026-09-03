@@ -58,7 +58,7 @@ export function MeteorShower() {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
     const resize = () => {
       width = window.innerWidth;
@@ -69,6 +69,24 @@ export function MeteorShower() {
     };
     resize();
     window.addEventListener("resize", resize);
+
+    // Performance: only animate while the canvas is actually on screen and the
+    // tab is visible. When either is false we stop scheduling frames entirely,
+    // which removes the animation's CPU cost while scrolling away / tab-hidden.
+    let visible = true;
+    let hidden = document.visibilityState === "hidden";
+    const onVis = () => (hidden = document.visibilityState === "hidden");
+    document.addEventListener("visibilitychange", onVis);
+    let io: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver === "function") {
+      io = new IntersectionObserver(
+        (entries) => {
+          visible = entries[0]?.isIntersecting ?? true;
+        },
+        { rootMargin: "200px 0px" },
+      );
+      io.observe(canvas);
+    }
 
     const meteors: Meteor[] = [];
     // Smoke/light streaks that linger ~1s after a hero meteor has burned out.
@@ -96,7 +114,7 @@ export function MeteorShower() {
     let nextPattern = 0.4;
 
     // More concurrent streaks allowed: double-streak + shower clusters + hero.
-    const MAX_CONCURRENT = 6;
+    const MAX_CONCURRENT = 4;
 
     /** One isolated, accelerated meteor sweep per cycle. */
     function spawn(isHero: boolean, speedBoost = 1, angle?: number) {
@@ -238,41 +256,49 @@ export function MeteorShower() {
     let raf = 0;
     let last = performance.now();
     let simTime = 0;
+    // Render at ~30fps instead of 60: halves canvas paint/CPU on every page
+    // while the sparse streaks stay imperceptibly smooth.
+    let frameSkip = 0;
 
     function frame(t: number) {
-      const dt = Math.min(0.05, (t - last) / 1000);
-      last = t;
-      simTime = t / 1000;
+      if (visible && !hidden) {
+        const dt = Math.min(0.05, (t - last) / 1000);
+        last = t;
+        simTime = t / 1000;
 
-      // Dynamic multi-pattern scheduling: roll the pattern, then roll an
-      // independent 12% golden hero check so a hero may lead any pattern.
-      nextPattern -= dt;
-      if (nextPattern <= 0) {
-        scheduleCycle();
-      }
-
-      c.clearRect(0, 0, width, height);
-
-      for (let i = meteors.length - 1; i >= 0; i--) {
-        const m = meteors[i];
-        m.life += dt;
-        drawMeteor(m, simTime);
-        drawResidue(m.residue, simTime);
-        // Burn out fully before edges — the hero leaves a lingering smoke streak.
-        if (m.life >= m.dur) {
-          const endX = m.x0 + m.vx * m.dur;
-          const endY = m.y0 + m.vy * m.dur;
-          if (m.hue === "hero") {
-            // A quick atmospheric flare-out right at the burn-out point.
-            wearOff.push({ x: endX, y: endY, age: simTime, alpha: 0.7 });
-            for (const pt of m.residue) wearOff.push(pt);
+        if (frameSkip % 2 === 0) {
+          // Dynamic multi-pattern scheduling: roll the pattern, then roll an
+          // independent 12% golden hero check so a hero may lead any pattern.
+          nextPattern -= dt;
+          if (nextPattern <= 0) {
+            scheduleCycle();
           }
-          meteors.splice(i, 1);
-        }
-      }
 
-      // Smoke/light streaks for heroes that have already burned out.
-      if (wearOff.length) drawResidue(wearOff, simTime);
+          c.clearRect(0, 0, width, height);
+
+          for (let i = meteors.length - 1; i >= 0; i--) {
+            const m = meteors[i];
+            m.life += dt;
+            drawMeteor(m, simTime);
+            drawResidue(m.residue, simTime);
+            // Burn out fully before edges — the hero leaves a lingering smoke streak.
+            if (m.life >= m.dur) {
+              const endX = m.x0 + m.vx * m.dur;
+              const endY = m.y0 + m.vy * m.dur;
+              if (m.hue === "hero") {
+                // A quick atmospheric flare-out right at the burn-out point.
+                wearOff.push({ x: endX, y: endY, age: simTime, alpha: 0.7 });
+                for (const pt of m.residue) wearOff.push(pt);
+              }
+              meteors.splice(i, 1);
+            }
+          }
+
+          // Smoke/light streaks for heroes that have already burned out.
+          if (wearOff.length) drawResidue(wearOff, simTime);
+        }
+        frameSkip++;
+      }
 
       raf = requestAnimationFrame(frame);
     }
@@ -283,6 +309,8 @@ export function MeteorShower() {
       cancelAnimationFrame(raf);
       for (const t of timeouts) clearTimeout(t);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVis);
+      io?.disconnect();
     };
   }, []);
 

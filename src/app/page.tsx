@@ -4,7 +4,7 @@ import { BentoZodiacGrid } from "@/components/ui/bento-zodiac-grid";
 import { HeroVisual } from "@/components/ui/hero-visual";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
-import { elementRune, elementText } from "@/components/ui/element";
+import { elementFill, elementRune, elementText } from "@/components/ui/element";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
@@ -252,12 +252,19 @@ export default function HomePage() {
               Read about our method →
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {(["Fire", "Earth", "Air", "Water"] as const).map((element) => {
               const signs = ZODIAC_SIGNS.filter((s) => s.element === element);
               return (
-                <div key={element} className="bg-white/[0.03] p-6 backdrop-blur-xl">
-                  <div className="flex items-baseline justify-between">
+                <div
+                  key={element}
+                  className={`relative overflow-hidden rounded-xl border border-white/[0.08] ${elementFill(element)} p-6 backdrop-blur-xl saturate-180 transition-colors`}
+                >
+                  <div
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br ${elementText(element)} opacity-15 to-transparent blur-2xl`}
+                  />
+                  <div className="relative flex items-baseline justify-between">
                     <h3 className={`font-display text-2xl ${elementText(element)}`}>{element}</h3>
                     <span aria-hidden="true" className={`text-xl ${elementText(element)} opacity-60`}>
                       {elementRune(element)}

@@ -317,7 +317,7 @@ The product is production-ready when:
 ## 31. Icon Mapping (single source of truth)
 - **Zodiac glyphs:** `src/components/ui/zodiac-symbol.tsx` — exports `ZodiacSymbol({ sign, size?, className?, label?, strokeWidth? })`.
   - Valid `sign`: `aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces`.
-  - `GLYPHS` map holds canonical stroke paths (24×24 viewBox). Uniform default `strokeWidth = 1.8`.
+  - `LUCIDE_GLYPHS` map holds the professional **Lucide** `zodiac-*` icon data (ISC-licensed, consistent 24×24 stroke design) as `{ kind: "path"|"circle", ... }` tuples. Replaced the earlier hand-drawn glyphs (Sprint #13). Uniform default `strokeWidth = 1.8`.
   - **Element auto-tint:** `ELEMENT_OF_SIGN` + `ELEMENT_CLASS` color each glyph by element unless an explicit color `className` is passed. Element theme hexes (in `globals.css` `--color-*`):
     - Fire → `#F59E0B` · Earth → `#10B981` · Air → `#06B6D4` · Water → `#8B5CF6`.
     - Accents: `--color-cosmic: #6C5CE7`, `--color-gold: #FFD166`.
@@ -363,3 +363,7 @@ The product is production-ready when:
 - Celebrity images via `next/image` at intrinsic `width={120} height={120} quality={80}`, displayed ~64px (retina-ready), `remotePatterns: upload.wikimedia.org`, CSP `img-src 'self' data: blob: https://upload.wikimedia.org`.
 - Client components are minimal: celebrity carousel + compatibility hub + period strip + quick-nav. Hydration kept lean; heavy content is server-rendered.
 - Fonts via `next/font`. React strict mode on.
+- **Sprint #13 perf pass:** `meteor-shower.tsx` (full-viewport canvas, mounted on every page) throttled:
+  - RAF render cadence halved to ~30fps (skips every other frame), DPR capped at 1.5, `MAX_CONCURRENT` 6→4.
+  - Now pauses all frame scheduling via `IntersectionObserver` (margin 200px) + `document.visibilitychange` when the canvas is off-screen or the tab is hidden — removes its CPU cost while scrolling away / backgrounded.
+  - Rationale: this always-on canvas gradient/streak loop was the main jank/INP contributor site-wide.
