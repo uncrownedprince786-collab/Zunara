@@ -54,6 +54,17 @@ export const en = {
     yourDailyOrbit: "Your daily orbit",
     language: "Language",
   },
+  home: {
+    heroTitle: "Written in the stars.",
+    heroSubtitle:
+      "A premium editorial astrology publication. Daily, weekly, monthly and yearly horoscopes for all twelve signs — calculated from real astronomical data. No myths, just the mathematics of the sky.",
+    heroCtaPrimary: "Read today's horoscope",
+    heroCtaSecondary: "The astronomy",
+    skyTonight: "The sky, tonight",
+    yourHoroscope: "Your horoscope",
+    fourHorizons: "Four horizons",
+    ourMethod: "Our method",
+  },
 };
 
 export const ur: Dict = {
@@ -87,6 +98,17 @@ export const ur: Dict = {
     browseSigns: "برج دیکھیں",
     yourDailyOrbit: "آپ کا روزانہ مدار",
     language: "زبان",
+  },
+  home: {
+    heroTitle: "ستاروں میں لکھا ہوا۔",
+    heroSubtitle:
+      "ایک اعلیٰ ادبی نجومیات رسالہ۔ بارہوں برجوں کے روزانہ، ہفتہ وار، ماہانہ اور سالانہ زائچے — اصلی فلکیاتی اعداد سے شمار کیے گئے۔ نہ کوئی افسانہ، صرف آسمان کی ریاضی۔",
+    heroCtaPrimary: "آج کا زائچہ پڑھیں",
+    heroCtaSecondary: "فلکیات",
+    skyTonight: "آج رات کا آسمان",
+    yourHoroscope: "آپ کا زائچہ",
+    fourHorizons: "چار افق",
+    ourMethod: "ہمارا طریقہ",
   },
 };
 
@@ -122,6 +144,17 @@ export const ar: Dict = {
     yourDailyOrbit: "مدارك اليومي",
     language: "اللغة",
   },
+  home: {
+    heroTitle: "مكتوب في النجوم.",
+    heroSubtitle:
+      "مجلة فلكية تحريرية مميزة. أبراج يومية وأسبوعية وشهرية وسنوية للأبراج الاثني عشر — محسوبة من بيانات فلكية حقيقية. لا خرافات، فقط رياضيات السماء.",
+    heroCtaPrimary: "اقرأ برجك لليوم",
+    heroCtaSecondary: "علم الفلك",
+    skyTonight: "السماء الليلة",
+    yourHoroscope: "برجك",
+    fourHorizons: "أربعة آفاق",
+    ourMethod: "منهجنا",
+  },
 };
 
 export const es: Dict = {
@@ -156,6 +189,17 @@ export const es: Dict = {
     yourDailyOrbit: "Tu órbita diaria",
     language: "Idioma",
   },
+  home: {
+    heroTitle: "Escrito en las estrellas.",
+    heroSubtitle:
+      "Una publicación editorial de astrología premium. Horóscopos diarios, semanales, mensuales y anuales para los doce signos — calculados con datos astronómicos reales. Sin mitos, solo las matemáticas del cielo.",
+    heroCtaPrimary: "Lee el horóscopo de hoy",
+    heroCtaSecondary: "La astronomía",
+    skyTonight: "El cielo, esta noche",
+    yourHoroscope: "Tu horóscopo",
+    fourHorizons: "Cuatro horizontes",
+    ourMethod: "Nuestro método",
+  },
 };
 
 export const zh: Dict = {
@@ -189,6 +233,17 @@ export const zh: Dict = {
     browseSigns: "浏览星座",
     yourDailyOrbit: "你的每日星轨",
     language: "语言",
+  },
+  home: {
+    heroTitle: "写在星辰之中。",
+    heroSubtitle:
+      "一份高端编辑型占星刊物。为十二星座提供每日、每周、每月和每年的运势——基于真实的天文数据计算。没有神话，只有天空的数学。",
+    heroCtaPrimary: "查看今日运势",
+    heroCtaSecondary: "天文",
+    skyTonight: "今夜星空",
+    yourHoroscope: "你的运势",
+    fourHorizons: "四个视野",
+    ourMethod: "我们的方法",
   },
 };
 

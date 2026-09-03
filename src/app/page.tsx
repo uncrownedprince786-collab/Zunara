@@ -9,6 +9,7 @@ import { ElementIcon } from "@/components/ui/element-icon";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { PLANET_LABELS } from "@/lib/astrology/interpret";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
+import { LocaleText } from "@/components/ui/locale-text";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
 import { SkyEvents } from "@/components/sky/sky-events";
 import { CelebrityBirthdays } from "@/components/ui/celebrity-birthdays";
@@ -66,25 +67,23 @@ export default function HomePage() {
           <div aria-hidden="true" className="gold-rule mx-auto mt-5 w-20" />
           <div className="starfield mx-auto -mb-3 mt-8 h-16" aria-hidden="true" />
           <h1 className="mx-auto max-w-3xl font-display text-5xl font-medium leading-[1.05] text-starlight sm:text-7xl">
-            Written in the stars.
+            <LocaleText path="home.heroTitle" fallback="Written in the stars." />
           </h1>
           <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-muted">
-            A premium editorial astrology publication. Daily, weekly, monthly and yearly
-            horoscopes for all twelve signs — calculated from real astronomical data.
-            No myths, just the mathematics of the sky.
+            <LocaleText path="home.heroSubtitle" fallback="A premium editorial astrology publication." />
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/horoscope"
               className="rounded-full bg-gold px-8 py-3 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
             >
-              Read today&rsquo;s horoscope
+              <LocaleText path="home.heroCtaPrimary" fallback="Read today's horoscope" />
             </Link>
             <Link
               href="/astrology"
               className="rounded-full border border-line px-8 py-3 text-sm text-muted transition-colors hover:border-gold/40 hover:text-starlight"
             >
-              The astronomy
+              <LocaleText path="home.heroCtaSecondary" fallback="The astronomy" />
             </Link>
           </div>
         </div>
@@ -96,7 +95,7 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6">
         <div className="flex flex-col gap-10 lg:flex-row">
           <div className="lg:w-3/5">
-            <p className="kicker">The sky, tonight</p>
+            <p className="kicker"><LocaleText path="home.skyTonight" fallback="The sky, tonight" /></p>
             <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
               The Sun passes through {sunSign?.name ?? "the zodiac"}
             </h2>
