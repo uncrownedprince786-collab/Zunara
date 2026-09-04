@@ -16,6 +16,7 @@ import { absoluteUrl } from "@/lib/seo/site";
 import type { PlanetarySnapshot } from "@/lib/astronomy/astro";
 import type { BodyKey } from "@/lib/astronomy/bodies";
 import { useLocale } from "@/lib/i18n/client";
+import { LocalizedChange } from "./localized-change";
 
 interface HoroscopeArticleProps {
   sign: ZodiacSign;
@@ -131,8 +132,11 @@ function ChangesPanel({ result }: { result: HoroscopeResult }) {
         <ul className="mt-3 space-y-3">
           {result.changes.map((c) => (
             <li key={c.id} className="border-s-2 border-gold-deep bg-paper-2/50 py-3 pe-3 ps-4">
-              <p className="font-medium text-p-ink">{c.title}</p>
-              <p className="mt-1 text-sm leading-6 text-p-muted">{c.blurb}</p>
+              <LocalizedChange
+                change={c}
+                titleClassName="font-medium text-p-ink"
+                blurbClassName="mt-1 text-sm leading-6 text-p-muted"
+              />
             </li>
           ))}
         </ul>

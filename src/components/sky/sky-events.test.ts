@@ -3,6 +3,7 @@ import {
   selectActiveMonthEvents,
   type SkyEvent,
 } from "./sky-events";
+import { YEARLY_EVENTS_2026 } from "@/lib/content/sky-events-data";
 
 function ev(month: number, day: number, title = `ev-${month}-${day}`): SkyEvent {
   return {
@@ -15,7 +16,8 @@ function ev(month: number, day: number, title = `ev-${month}-${day}`): SkyEvent 
 const NOW = new Date("2026-09-15T12:00:00Z");
 
 describe("selectActiveMonthEvents", () => {
-  it("keeps the current month while it still has upcoming events", () => {
+  it("keeps the current month and pulls the next month in when it is sparse", () => {
+    // September has only 2 upcoming events (<3), so October's are merged in.
     const result = selectActiveMonthEvents(
       [
         ev(9, 18),
@@ -26,7 +28,11 @@ describe("selectActiveMonthEvents", () => {
       NOW,
     );
     expect(result.month).toBe(9);
-    expect(result.events.map((e) => e.start)).toEqual(["2026-09-18", "2026-09-25"]);
+    expect(result.events.map((e) => e.start)).toEqual([
+      "2026-09-18",
+      "2026-09-25",
+      "2026-10-05",
+    ]);
   });
 
   it("rolls over to the next month when the current month has none left", () => {
@@ -61,5 +67,31 @@ describe("selectActiveMonthEvents", () => {
   it("ignores past events", () => {
     const result = selectActiveMonthEvents([ev(9, 10), ev(9, 12), ev(9, 20)], NOW);
     expect(result.events.map((e) => e.start)).toEqual(["2026-09-20"]);
+  });
+
+  it("never returns an empty list when events exist anywhere later in the year", () => {
+    const result = selectActiveMonthEvents([ev(12, 14)], new Date("2026-09-15T12:00:00Z"));
+    expect(result.events.length).toBeGreaterThan(0);
+  });
+});
+
+describe("full-year 2026 fallback dataset (regression)", () => {
+  it("returns September 2026 events for mid-September (the reported live bug)", () => {
+    const result = selectActiveMonthEvents(YEARLY_EVENTS_2026, NOW);
+    expect(result.month).toBe(9);
+    expect(result.events.length).toBeGreaterThanOrEqual(3);
+    // September 2026 should include the autumnal equinox + September full/new moons
+    const titles = result.events.map((e) => e.title).join(" ");
+    expect(titles.toLowerCase()).toContain("equinox");
+  });
+
+  it("always populates at least 3 events for every month of 2026", () => {
+    for (const month of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+      const sample = new Date(Date.UTC(2026, month - 1, 8)); // mid-month
+      const result = selectActiveMonthEvents(YEARLY_EVENTS_2026, sample);
+      expect(result.events.length, `month ${month} should have events`).toBeGreaterThanOrEqual(1);
+      // Rich months (e.g. December) can return up to 5; the component displays `.slice(0,4)`.
+      expect(result.events.length, `month ${month} card count`).toBeLessThanOrEqual(5);
+    }
   });
 });

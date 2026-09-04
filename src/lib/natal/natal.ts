@@ -12,7 +12,7 @@ import { buildReadings } from "./readings";
 import type { BirthCoordinates, NatalChart, NatalPlanet } from "./types";
 
 export const NOON_ASSUMPTION_NOTE =
-  "Exact birth time unknown — Ascendant & houses estimated using 12:00 PM (Noon) UTC. For the precise rising sign and house layout, provide the exact birth time and birthplace coordinates.";
+  "Exact birth time unknown — Ascendant & houses estimated using 12:00 PM (Noon) local mean time for the birthplace (converted to UTC via longitude offset). For the precise rising sign and house layout, provide the exact birth time and birthplace coordinates.";
 
 export interface ComputeOptions {
   timeAssumed: boolean;

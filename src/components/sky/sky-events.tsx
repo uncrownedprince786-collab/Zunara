@@ -3,32 +3,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/client";
+import {
+  YEARLY_EVENTS_2026,
+  FALLBACK_BY_CATEGORY,
+  EVENT_GUIDES,
+  type SkyEvent,
+} from "@/lib/content/sky-events-data";
 
-export type SkyEvent = {
-  title: string;
-  start: string; // ISO date or date
-  description: string;
-  url?: string;
-  category?: string;
-};
-
-const GUIDES = {
-  moonPhases: "https://science.nasa.gov/moon/moon-phases/",
-  meteorShowers: "https://www.imo.net/resources/calendar/",
-  eclipses: "https://www.nasa.gov/skywatching/",
-  planetary: "https://solarsystem.nasa.gov/planets/overview/",
-  default: "https://www.nasa.gov/skywatching/",
-} as const;
+export type { SkyEvent } from "@/lib/content/sky-events-data";
 
 const DEAD_HOSTS = ["aa.usno.navy.mil"];
 
-const FALLBACK_BY_CATEGORY: Record<string, string> = {
-  "meteor-showers": GUIDES.meteorShowers,
-  "moon-phases": GUIDES.moonPhases,
-  eclipses: GUIDES.eclipses,
-  oppositions: GUIDES.planetary,
-  conjunctions: GUIDES.planetary,
-};
+/** The reliable baseline dataset — full-year 2026 real celestial events. */
+const FALLBACK_EVENTS: SkyEvent[] = YEARLY_EVENTS_2026;
 
 function resolveUrl(e: SkyEvent): string {
   const raw = (e.url ?? "").trim();
@@ -41,35 +28,8 @@ function resolveUrl(e: SkyEvent): string {
   const dead = host !== "" && DEAD_HOSTS.some((d) => host === d || host.endsWith(`.${d}`));
   const missing = raw === "" || !/^https?:\/\//i.test(raw);
   if (!missing && !dead) return raw;
-  return FALLBACK_BY_CATEGORY[e.category ?? ""] ?? GUIDES.default;
+  return FALLBACK_BY_CATEGORY[e.category ?? ""] ?? EVENT_GUIDES.default;
 }
-
-const FALLBACK_EVENTS: SkyEvent[] = [
-  {
-    title: "Lyrids Meteor Shower · Peak Night",
-    start: "2026-04-22",
-    description:
-      "Up to 20 meteors per hour radiate from the constellation Lyra. Best after midnight from a dark site — no equipment needed.",
-    url: GUIDES.meteorShowers,
-    category: "meteor-showers",
-  },
-  {
-    title: "New Moon",
-    start: "2026-04-17",
-    description:
-      "The darkest night of the lunar cycle — a perfect window for deep-sky observing and a quiet reset before the new month.",
-    url: GUIDES.moonPhases,
-    category: "moon-phases",
-  },
-  {
-    title: "Full Moon · Pink Moon",
-    start: "2026-04-02",
-    description:
-      "The Moon rises at sunset and stays up all night, fully lit. A spectacular sight near the horizon, thanks to the Moon illusion.",
-    url: GUIDES.moonPhases,
-    category: "moon-phases",
-  },
-];
 
 function displayDate(iso: string, locale: string): { month: string; text: string } {
   const d = new Date(iso === iso.slice(0, 10) ? `${iso}T00:00:00Z` : iso);
@@ -92,8 +52,13 @@ function eventTime(e: SkyEvent): number {
 /**
  * Zero-maintenance month rollover: pick the current UTC month while it still
  * has upcoming events; if it has none remaining, roll over to the next month.
- * Deterministic and unit-testable. Returns the active month (1-12) and that
- * month's events sorted oldest-first.
+ * Deterministic and unit-testable. Returns the active month (1-12) and a
+ * non-empty list of that month's (plus the immediate next month, when sparse)
+ * events sorted oldest-first.
+ *
+ * Guarantees at least 3 events are shown: if the active month has fewer than
+ * 3 upcoming events, the immediate next month's events are pulled in to fill
+ * the list (up to 4), so the container is never empty.
  */
 export function selectActiveMonthEvents(
   events: SkyEvent[],
@@ -109,6 +74,8 @@ export function selectActiveMonthEvents(
     })
     .sort((a, b) => eventTime(a) - eventTime(b));
 
+  let activeMonth = now.getUTCMonth() + 1;
+  let foundMonth = false;
   for (let i = 0; i < 2; i++) {
     const start = Date.UTC(year, now.getUTCMonth() + i, 1);
     const end = Date.UTC(year, now.getUTCMonth() + i + 1, 1);
@@ -116,11 +83,34 @@ export function selectActiveMonthEvents(
       (e) => eventTime(e) >= start && eventTime(e) < end,
     );
     if (monthEvents.length > 0) {
-      return { month: now.getUTCMonth() + i + 1, events: monthEvents };
+      activeMonth = now.getUTCMonth() + i + 1;
+      foundMonth = true;
+      break;
     }
   }
-  // No events in either month: fall back to the very next single event.
-  return { month: now.getUTCMonth() + 1, events: upcoming.slice(0, 1) };
+
+  // No upcoming events in the current or next month: fall back to the very
+  // next single event so the section never renders empty.
+  if (!foundMonth) {
+    return { month: now.getUTCMonth() + 1, events: upcoming.slice(0, 1) };
+  }
+
+  const monthStart = Date.UTC(year, activeMonth - 1, 1);
+  const monthEnd = Date.UTC(year, activeMonth, 1);
+  const nextEnd = Date.UTC(year, activeMonth + 1, 1);
+  const monthEvents = upcoming.filter((e) => eventTime(e) >= monthStart && eventTime(e) < monthEnd);
+
+  // If the active month is sparse (<3 events), pull the immediate next month in
+  // to keep the section populated per product requirements.
+  if (monthEvents.length < 3) {
+    const nextMonthEvents = upcoming.filter(
+      (e) => eventTime(e) >= monthEnd && eventTime(e) < nextEnd,
+    );
+    const merged = [...monthEvents, ...nextMonthEvents];
+    return { month: activeMonth, events: merged.slice(0, 4) };
+  }
+
+  return { month: activeMonth, events: monthEvents };
 }
 
 export function SkyEvents() {
@@ -143,14 +133,16 @@ export function SkyEvents() {
     async function load() {
       try {
         const res = await fetch("https://space-calendar.lukekorth.com/feed.json?c=meteor-showers,eclipses,oppositions,conjunctions,moon-phases");
-        if (!res.ok) return;
-        const data = (await res.json()) as { events?: SkyEvent[] };
-        const selected = selectActiveMonthEvents(data.events ?? [], new Date());
+        const data = (res.ok ? await res.json() : {}) as { events?: SkyEvent[] };
+        // Merge the live feed with the reliable full-year baseline so a sparse,
+        // empty or unreachable feed never leaves the section blank.
+        const merged = [...(data.events ?? []), ...FALLBACK_EVENTS];
+        const selected = selectActiveMonthEvents(merged, new Date());
         if (active && selected.events.length > 0) {
           setState(selected);
         }
       } catch {
-        // use fallbacks
+        // network error: keep the full-year fallback already in state
       }
     }
     load();

@@ -58,7 +58,9 @@ export function BirthchartClient() {
 
   return (
     <div className="constellation-bg pb-24">
-      <VitruvianHero className="opacity-[0.14]" style={{ maxWidth: "650px" }} />
+      <div className="relative mx-auto h-80 max-w-6xl select-none">
+        <VitruvianHero className="opacity-[0.14]" />
+      </div>
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 pt-10 sm:px-6">
         <Breadcrumbs items={[{ label: t("nav.birthchart", "Birth Chart"), href: "/birthchart" }]} />

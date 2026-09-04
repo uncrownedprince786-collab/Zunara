@@ -44,6 +44,7 @@ function buildDate(
   minute: number,
   ampm: "AM" | "PM",
   timeKnown: boolean,
+  longitude: number,
 ): Date | null {
   const hour24 =
     timeKnown === false
@@ -54,7 +55,13 @@ function buildDate(
           : hour12
         : (hour12 % 12) + 12;
   const minute24 = timeKnown === false ? 0 : minute;
-  return new Date(Date.UTC(year, month - 1, day, hour24, minute24, 0, 0));
+  // The entered civil birth time is local-mean-time for the birthplace. Convert
+  // it to a UTC instant by subtracting the longitude-derived LMT offset
+  // (offsetHours = -longitude/15). East is ahead of Greenwich, so UTC = LMT − λ/15.
+  const lmtOffsetMs = (longitude / 15) * 3600000;
+  return new Date(
+    Date.UTC(year, month - 1, day, hour24, minute24, 0, 0) - lmtOffsetMs,
+  );
 }
 
 export function validateBirth(input: BirthInput): ValidationResult {
@@ -111,6 +118,32 @@ export function validateBirth(input: BirthInput): ValidationResult {
   }
 
   // Cross-field calendar check (rejects e.g. day 31 in April or 2023-02-30).
+  // We verify against the LOCAL civil date (without LMT offset), since the LMT
+  // conversion can push the UTC date across a day boundary.
+  const hour24 =
+    input.timeKnown === false
+      ? 12
+      : input.ampm === "AM"
+        ? input.hour12 % 12 === 0
+          ? 0
+          : input.hour12
+        : (input.hour12 % 12) + 12;
+  const minute24 = input.timeKnown === false ? 0 : input.minute;
+  const localDate = new Date(
+    Date.UTC(input.year, input.month - 1, input.day, hour24, minute24, 0, 0),
+  );
+  if (
+    localDate.getUTCFullYear() !== input.year ||
+    localDate.getUTCMonth() !== input.month - 1 ||
+    localDate.getUTCDate() !== input.day
+  ) {
+    return {
+      ok: false,
+      errors: { day: "That date does not exist in the chosen month/year." },
+    };
+  }
+
+  // Build the actual UTC instant using the LMT longitude offset.
   const date = buildDate(
     input.year,
     input.month,
@@ -119,13 +152,9 @@ export function validateBirth(input: BirthInput): ValidationResult {
     input.minute,
     input.ampm,
     input.timeKnown,
+    input.longitude,
   );
-  if (
-    !date ||
-    date.getUTCFullYear() !== input.year ||
-    date.getUTCMonth() !== input.month - 1 ||
-    date.getUTCDate() !== input.day
-  ) {
+  if (!date) {
     return {
       ok: false,
       errors: { day: "That date does not exist in the chosen month/year." },

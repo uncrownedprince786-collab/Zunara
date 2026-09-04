@@ -13,6 +13,7 @@ import { elementText } from "@/components/ui/element";
 import { ElementIcon } from "@/components/ui/element-icon";
 import type { LifeArea } from "@/lib/astrology/signals";
 import { LocaleText } from "@/components/ui/locale-text";
+import { LocalizedChange } from "@/components/ui/localized-change";
 
 const AREA_THEME: Record<LifeArea, ThemeKey> = {
   love: "love",
@@ -245,8 +246,7 @@ function Recently({ signSlug }: { signSlug: string }) {
           <ul className="mt-4 space-y-3">
             {changes.slice(0, 3).map((c) => (
               <li key={c.id} className="border-s-2 border-gold-deep bg-white/[0.03] py-2 pe-3 ps-4">
-                <p className="font-medium text-starlight">{c.title}</p>
-                <p className="mt-0.5 text-sm leading-6 text-muted">{c.blurb}</p>
+                <LocalizedChange change={c} />
               </li>
             ))}
           </ul>

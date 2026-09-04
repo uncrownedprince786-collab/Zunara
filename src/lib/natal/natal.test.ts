@@ -99,8 +99,8 @@ describe("natal engine", () => {
     expect(cfg.ok).toBe(true);
     const chart = computeNatalChart(cfg.config!.date, NYC, { timeAssumed: true });
     expect(chart.timeAssumed).toBe(true);
-    expect(chart.timeNote).toContain("12:00 PM (Noon) UTC");
-    expect(chart.utcTime).toContain("12:00:00");
+    expect(chart.timeNote).toContain("12:00 PM (Noon) local mean time");
+    expect(chart.utcTime).toContain("T");
   });
 
   it("composes a full chart with big three + 4 readings", () => {
@@ -161,15 +161,18 @@ describe("birth input validation", () => {
   it("builds a correct UTC noon when time is marked unknown", () => {
     const cfg = validateBirth({ ...validInput, timeKnown: false })!;
     const d = cfg.config!.date;
-    expect(d.getUTCHours()).toBe(12);
-    expect(d.getUTCMinutes()).toBe(0);
+    // NYC longitude −74.006 → LMT offset ≈ +4h 56m; noon local → ~16:56 UTC
+    expect(d.getUTCHours()).toBe(16);
+    expect(d.getUTCMinutes()).toBe(56);
   });
 
   it("resolves AM/PM into the correct 24-hour UTC time", () => {
+    // 9:30 AM local in NYC → 14:26 UTC (LMT offset ≈ +4h 56m)
     const am = validateBirth(validInput)!.config!.date;
-    expect(am.getUTCHours()).toBe(9);
+    expect(am.getUTCHours()).toBe(14);
+    // 9:30 PM local → 02:26 UTC next day
     const pm = validateBirth({ ...validInput, hour12: 9, ampm: "PM" })!.config!.date;
-    expect(pm.getUTCHours()).toBe(21);
+    expect(pm.getUTCHours()).toBe(2);
   });
 });
 

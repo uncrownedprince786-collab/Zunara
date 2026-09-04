@@ -14,6 +14,11 @@ export interface ChangeItem {
   title: string;
   blurb: string;
   planet?: string;
+  /** Structured fields (added for i18n) so the client can build localized copy. */
+  sign?: string;
+  bodyA?: string;
+  bodyB?: string;
+  aspect?: string;
 }
 
 const PLANET_NAMES: Record<string, string> = {
@@ -96,6 +101,7 @@ export function diffSnapshots(
         id: `${key}-sign`,
         kind,
         planet: key,
+        sign: p.sign,
         title: `${PLANET_NAMES[key]} moved into ${signName(p.sign)}`,
         blurb: signChangeBlurb(key, signName(p.sign)),
       });
@@ -155,6 +161,9 @@ function newAspects(before: PlanetarySnapshot, today: PlanetarySnapshot, date: D
     out.push({
       id: `aspect-${date.getTime()}-${keyPair}`,
       kind: "aspect",
+      bodyA: aspect.bodyA,
+      bodyB: aspect.bodyB,
+      aspect: aspect.name,
       title: `${a} forms ${article} ${aspect.name} with ${b}`,
       blurb: aspectBlurb(aspect.name),
     });

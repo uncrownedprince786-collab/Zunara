@@ -72,7 +72,7 @@ export default function HomePage() {
         <HeroVisual />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-1/2 z-0 mx-auto w-full max-w-[650px] -translate-y-1/2 select-none"
+          className="pointer-events-none absolute inset-0 z-0 select-none"
         >
           <VitruvianHero className="opacity-[0.14]" />
         </div>
@@ -165,10 +165,14 @@ export default function HomePage() {
                     <div className="mt-3 flex items-start gap-3 border-t border-p-line pt-3">
                       <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" decorative />
                       <dd className="text-sm text-p-ink">
-                        <span className="font-medium capitalize">{transit.name}</span>
+                        <span className="font-medium capitalize">
+                          <LocaleText path={`aspects.${transit.name.toLowerCase()}`} fallback={transit.name} />
+                        </span>
                         <span className="text-p-muted">
                           {" "}— <LocaleText path={`planets.${transit.bodyA}`} fallback={transit.bodyA} /> &amp;{" "}
-                          <LocaleText path={`planets.${transit.bodyB}`} fallback={transit.bodyB} />, {transit.orb.toFixed(1)}° orb
+                          <LocaleText path={`planets.${transit.bodyB}`} fallback={transit.bodyB} />
+                          {", " + transit.orb.toFixed(1) + "° "}
+                          <LocaleText path="aspects.orb" fallback="orb" />
                         </span>
                       </dd>
                     </div>

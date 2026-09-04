@@ -140,14 +140,150 @@ const C: Array<
   { month: 12, day: 30, name: "V", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/BTS%27s_V_20251004_04.jpg/330px-BTS%27s_V_20251004_04.jpg", profession: "Singer", region: "K-Pop", star: "The soulful vocalist and visual of BTS, beloved for depth beyond the spotlight.", wiki: "V_(singer)" },
 ];
 
+import { SUPPLEMENTARY_POOL, type SupplementaryCelebrity } from "./celebrity-pool";
+
 const CELEBRITIES: Celebrity[] = C.map((c) => ({
   ...c,
   url: `https://en.wikipedia.org/wiki/${c.wiki ?? c.name.replace(/ /g, "_")}`,
 }));
 
+/**
+ * Deterministic hash: given a month, day, and index, produces a stable
+ * non-negative integer.  Uses a simple multiplicative hash so the same
+ * inputs always yield the same output regardless of runtime.
+ */
+function dateHash(month: number, day: number, index: number): number {
+  let h = 2166136261;
+  h = (h ^ month) >>> 0;
+  h = Math.imul(h, 16777619);
+  h = (h ^ day) >>> 0;
+  h = Math.imul(h, 16777619);
+  h = (h ^ index) >>> 0;
+  h = Math.imul(h, 16777619);
+  return h >>> 0;
+}
+
+/**
+ * Convert a SupplementaryCelebrity into a full Celebrity with a generated URL.
+ */
+function supplementToCelebriant(s: SupplementaryCelebrity): Celebrity {
+  return {
+    ...s,
+    url: `https://en.wikipedia.org/wiki/${s.name.replace(/ /g, "_")}`,
+  };
+}
+
+/**
+ * Diversity-preserving selection: picks `count` items from `pool` using a
+ * deterministic hash, trying to balance across regions and professions.
+ */
+function diversitySelect(
+  month: number,
+  day: number,
+  pool: SupplementaryCelebrity[],
+  count: number,
+): SupplementaryCelebrity[] {
+  if (pool.length <= count) return pool;
+
+  const selected: SupplementaryCelebrity[] = [];
+  const usedIndices = new Set<number>();
+  const usedRegions = new Set<string>();
+  const usedProfessions = new Set<string>();
+
+  // Try to get one from each region first (priority pass)
+  const regions: CelebrityRegion[] = [
+    "Hollywood",
+    "Bollywood",
+    "K-Pop",
+    "Thai",
+    "Sports",
+    "Global",
+  ];
+  for (const region of regions) {
+    if (selected.length >= count) break;
+    const candidates = pool
+      .map((entry, i) => ({ entry, i }))
+      .filter(
+        ({ entry, i }) =>
+          entry.region === region && !usedIndices.has(i),
+      );
+    if (candidates.length > 0) {
+      const pick =
+        candidates[dateHash(month, day, selected.length) % candidates.length];
+      selected.push(pick.entry);
+      usedIndices.add(pick.i);
+      usedRegions.add(region);
+      usedProfessions.add(pick.entry.profession);
+    }
+  }
+
+  // Fill remaining slots via shuffled round-robin
+  let offset = 0;
+  while (selected.length < count) {
+    const idx =
+      dateHash(month, day, 1000 + offset) % pool.length;
+    offset++;
+    if (usedIndices.has(idx)) continue;
+    const entry = pool[idx];
+    // Prefer entries from under-represented regions/professions
+    if (
+      usedRegions.size < regions.length &&
+      usedRegions.has(entry.region) &&
+      usedProfessions.has(entry.profession)
+    ) {
+      // skip if we can still diversify
+      if (offset < pool.length * 2) continue;
+    }
+    selected.push(entry);
+    usedIndices.add(idx);
+    usedRegions.add(entry.region);
+    usedProfessions.add(entry.profession);
+  }
+
+  return selected;
+}
+
 /** Everyone born on the given month/day, across all decades. */
 export function celebritiesForDate(month: number, day: number): Celebrity[] {
-  return CELEBRITIES.filter((c) => c.month === month && c.day === day);
+  const primary = CELEBRITIES.filter((c) => c.month === month && c.day === day);
+
+  if (primary.length >= 4) return primary;
+
+  // Exclude any primary slugs from supplementary candidates to avoid duplicates
+  const primarySlugs = new Set(
+    primary.map((c) => c.wiki ?? c.name.replace(/ /g, "_")),
+  );
+  const slug = (s: SupplementaryCelebrity) => s.name.replace(/ /g, "_");
+
+  // Prefer same-date supplementary entries, then fall back to the global pool
+  const datePool = SUPPLEMENTARY_POOL.filter(
+    (s) => s.month === month && s.day === day && !primarySlugs.has(slug(s)),
+  );
+  const needed = 4 - primary.length;
+
+  // Grab as many same-date candidates as possible first
+  const datePicked = datePool.length > 0
+    ? diversitySelect(month, day, datePool, Math.min(needed, datePool.length))
+    : [];
+
+  const remaining = needed - datePicked.length;
+  let globalPicked: SupplementaryCelebrity[] = [];
+  if (remaining > 0) {
+    // Exclude anyone already picked or in the primary
+    const usedNames = new Set(
+      [...datePicked, ...primary].map((c) => c.name.toLowerCase()),
+    );
+    const globalPool = SUPPLEMENTARY_POOL.filter(
+      (s) => !primarySlugs.has(slug(s)) && !usedNames.has(s.name.toLowerCase()),
+    );
+    globalPicked = diversitySelect(month, day, globalPool, remaining);
+  }
+
+  return [
+    ...primary,
+    ...datePicked.map(supplementToCelebriant),
+    ...globalPicked.map(supplementToCelebriant),
+  ];
 }
 
 export function regionsPresent(): CelebrityRegion[] {
