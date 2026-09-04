@@ -9,7 +9,7 @@ import { useLocale } from "@/lib/i18n/client";
 
 export function SiteFooter() {
   const year = new Date().getUTCFullYear();
-  const { dict, tSign } = useLocale();
+  const { dict, tSign, locale } = useLocale();
   const columns = [
     {
       title: dict.nav.horoscopes,
@@ -75,7 +75,7 @@ export function SiteFooter() {
                 <li key={s.slug}>
                   <Link
                     href={`/horoscope/${s.slug}`}
-                    title={`${tSign(s.slug)} — ${formatDateRange(s)}`}
+                    title={`${tSign(s.slug)} — ${formatDateRange(s, locale)}`}
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-line-soft text-sm text-muted transition-colors hover:border-gold/50 hover:text-gold"
                   >
                     <span aria-hidden="true">{s.glyph}</span>

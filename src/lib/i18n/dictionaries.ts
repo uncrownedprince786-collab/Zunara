@@ -27,6 +27,7 @@ export const en = {
     desc: "A distilled reading of each sign's core archetype and the professional arenas where that energy expresses itself most naturally.",
     archetypeLabel: "Core archetype",
     careerLabel: "Career directions",
+    cta: "Explore All Cosmic Facts →",
     signs: {
       aries: { arch: "Leader / Fighter / Athlete", career: "Entrepreneurship · Engineering · The military · Competitive sport" },
       taurus: { arch: "Builder / Provider / Sensualist", career: "Finance · Real estate · Culinary arts · Agriculture" },
@@ -208,6 +209,12 @@ export const en = {
     theTwelve: "The twelve signs",
     backToTop: "Back to top",
     skipToContent: "Skip to content",
+    pills: "Pills",
+    drivingPlacements: "Driving placements",
+    steadySky: "The sky is steady today.",
+    noTightAspects: "No tight major aspects right now.",
+    makeTodayEasy: "Make today a little easier on yourself.",
+    selectSign: "Select {sign}",
   },
   home: {
     heroTitle: "Written in the stars.",
@@ -318,9 +325,140 @@ export const en = {
     selectSignTwo: "Select sign two",
     twoSignsMesh: "Choose two signs to reveal how they mesh.",
     theVerdict: "The verdict",
+    originsTitle: "Origins & mythology",
+    coreArchetypeTitle: "Core archetype",
+    careerArenasTitle: "Career arenas",
     superpowersTitle: "Your superpowers",
     watchOutForTitle: "Watch out for",
     cosmicFunFactTitle: "Cosmic fun fact",
+    elements: {
+      Fire: "Passion, ambition, creative spark. Fire signs lead with courage and ignite every room they enter.",
+      Earth: "Stability, patience, sensory wisdom. Earth signs build what lasts and ground every vision.",
+      Air: "Intellect, connection, social fluency. Air signs carry ideas between people and make conversations sing.",
+      Water: "Intuition, empathy, emotional depth. Water signs feel what others cannot name and heal through feeling.",
+    },
+    weaknesses: {
+      aries: "Impulsive · Impatient · Confrontational",
+      taurus: "Stubborn · Possessive · Resistant to change",
+      gemini: "Scattered · Superficial · Indecisive",
+      cancer: "Moody · Overly sensitive · Clingy",
+      leo: "Arrogant · Dramatic · Attention-seeking",
+      virgo: "Critical · Anxious · Overthinking",
+      libra: "Indecisive · People-pleasing · Avoidant of conflict",
+      scorpio: "Jealous · Secretive · Intense",
+      sagittarius: "Tactless · Restless · Overconfident",
+      capricorn: "Rigid · Unforgiving · Work-obsessed",
+      aquarius: "Detached · Rebellious · Emotionally distant",
+      pisces: "Escapist · Overly trusting · Victim mentality",
+    },
+    compat: {
+      Fire: {
+        same: "Fire + Fire: Explosive energy, fierce loyalty, and endless adventure. Can burn bright or burn out.",
+        best: "Fire + Air: Air feeds the flame. Intellectual stimulation meets passionate action.",
+        challenging: "Fire + Water: Steam. Intense emotional dynamics that demand patience from both sides.",
+      },
+      Earth: {
+        same: "Earth + Earth: Unshakable trust, shared goals, and a deep sense of security.",
+        best: "Earth + Water: Water nourishes Earth. Emotional depth grounds practical ambition.",
+        challenging: "Earth + Air: Different tempos. Earth wants roots; Air wants wings.",
+      },
+      Air: {
+        same: "Air + Air: Endless conversation, shared curiosity, and intellectual fireworks.",
+        best: "Air + Fire: Fire ignites Air. Bold ideas meet passionate execution.",
+        challenging: "Air + Earth: Earth wants proof; Air wants possibility. Patience bridges the gap.",
+      },
+      Water: {
+        same: "Water + Water: Profound emotional understanding, almost psychic connection.",
+        best: "Water + Earth: Earth holds Water. Sensitivity meets stability in a safe container.",
+        challenging: "Water + Fire: Emotion meets impulse. Both must learn the other's language.",
+      },
+    },
+    signs: {
+      aries: {
+        mythology:
+          "Aries takes its name from the golden ram of Greek myth, whose fleece became the stuff of legend after it rescued the siblings Phrixus and Helle from a jealous stepmother. In the sky, the constellation recalls the courage of a creature that acted without hesitation when lives were at stake — an impulse the sign inherits whole.",
+        coreArchetype:
+          "The instinctive initiator who leads with courage and acts before the moment passes, trusting bold motion over careful deliberation.",
+        careerArenas: "Emergency medicine · Military command · Competitive athletics · Startup entrepreneurship",
+      },
+      taurus: {
+        mythology:
+          "Taurus traces to the great white bull Zeus became to carry the Phoenician princess Europa across the sea to Crete — an act of irresistible, patient force. The constellation endures overhead as a reminder that true power often moves slowly, and beauty and strength are not opposites.",
+        coreArchetype:
+          "The steadfast guardian of beauty and value, who builds enduring wealth through patience, taste, and an unshakeable refusal to be rushed.",
+        careerArenas: "Wealth management · Luxury brand direction · Gastronomy & viticulture · Landscape architecture",
+      },
+      gemini: {
+        mythology:
+          "Gemini commemorates Castor and Pollux, the twin sons of Leda — one mortal, one divine — bound so tightly in loyalty that when Castor died, Pollux begged Zeus to let them share immortality among the stars. The sign carries that duality: intellect and wit woven with an aching need for connection.",
+        coreArchetype:
+          "The quicksilver messenger who gathers ideas, translates between worlds, and turns curiosity into fluent, sparkling communication.",
+        careerArenas: "Broadcast journalism · Public relations · Linguistics & translation · Strategic consulting",
+      },
+      cancer: {
+        mythology:
+          "Cancer is linked to the giant crab Heracles crushed during his battle with the Hydra, set among the stars by Hera in honour of its loyal, futile bravery. The sign inherits that devotion: small against the world, yet unwilling to retreat from those it loves.",
+        coreArchetype:
+          "The tender protector who shields what matters most, reading emotional undercurrents with uncanny precision and nurturing through fierce, quiet devotion.",
+        careerArenas: "Child psychology · Heritage conservation · Paediatric care · Culinary arts",
+      },
+      leo: {
+        mythology:
+          "Leo embodies the Nemean Lion, a beast whose golden fur no weapon could pierce, slain by Heracles as the first of his twelve labours. Set in the heavens, the constellation recalls not just ferocity but radiance — the Sun-ruled sign of warmth, sovereignty, and creative fire that refuses to dim.",
+        coreArchetype:
+          "The radiant sovereign who commands attention through generosity and creative fire, turning every space into a stage and every person into an audience worth captivating.",
+        careerArenas: "Creative direction · Performing arts · Executive leadership · Brand stewardship",
+      },
+      virgo: {
+        mythology:
+          "Virgo is often identified with Demeter, goddess of the harvest, or her daughter Persephone — figures of discernment, cycle, and quiet, sustaining labour. The constellation rises at the turning of the seasons, a reminder that precision and care are what keep the world fed.",
+        coreArchetype:
+          "The meticulous artisan who refines raw material into something useful and elegant, finding purpose in precision, service, and the pursuit of quiet excellence.",
+        careerArenas: "Clinical research · Editorial & publishing · Data science · Nutritional medicine",
+      },
+      libra: {
+        mythology:
+          "Libra's scales are sometimes linked to Astraea, the last immortal to leave Earth during the Iron Age, carrying the balance of justice back to the sky. The sign inherits her civilising mission: the pursuit of harmony, equity, and aesthetic refinement in a world perpetually off-balance.",
+        coreArchetype:
+          "The elegant mediator who seeks equilibrium in every relationship and space, wielding charm, fairness, and an unerring eye for what is beautiful and just.",
+        careerArenas: "International diplomacy · Fashion & interior design · Corporate law · Art direction",
+      },
+      scorpio: {
+        mythology:
+          "Scorpio recalls the scorpion that slew Orion after the great hunter boasted he would kill every beast on Earth — a small creature that humbled the mightiest. The constellation warns that depth, secrecy, and strategic patience can overcome raw power every time.",
+        coreArchetype:
+          "The relentless investigator who peers beneath surfaces, masters the art of transformation, and wields emotional intensity as both weapon and medicine.",
+        careerArenas: "Forensic science · Psychiatric practice · Venture capital · Crisis management",
+      },
+      sagittarius: {
+        mythology:
+          "Sagittarius depicts Chiron, the wise centaur who mentored Achilles, Asclepius, and Jason — a being caught between animal instinct and higher learning. The constellation aims its arrow perpetually forward, towards horizons of knowledge, faith, and meaning beyond the familiar.",
+        coreArchetype:
+          "The restless philosopher-explorer who turns every horizon into a classroom, guided by unshakeable optimism and a hunger for truth wider than any single life can hold.",
+        careerArenas: "International affairs · Academic research · Travel writing · Theological studies",
+      },
+      capricorn: {
+        mythology:
+          "Capricorn's sea-goat descends from Pan, who leapt into the Nile to escape the monster Typhon, transforming his lower half into a fish while keeping his horns and beard above water. The constellation embodies that dual nature: earthbound ambition fused with an instinct for navigating unseen depths.",
+        coreArchetype:
+          "The disciplined architect who converts ambition into legacy, climbing steadily through strategy, restraint, and an unwavering commitment to mastery over time.",
+        careerArenas: "Corporate governance · Urban planning · Public policy · Institutional banking",
+      },
+      aquarius: {
+        mythology:
+          "Aquarius is traced to Ganymede, the Trojan prince so beautiful that Zeus sent an eagle to carry him to Olympus to serve as cupbearer to the gods — an act of divine abduction in the name of a higher purpose. The sign inherits that forward gaze: revolutionary, humanitarian, and answerable only to the future.",
+        coreArchetype:
+          "The visionary rebel who challenges convention in service of collective progress, thinking in decades when others think in days and valuing originality above approval.",
+        careerArenas: "Emerging technology · Environmental science · Civic activism · Aerospace engineering",
+      },
+      pisces: {
+        mythology:
+          "Pisces commemorates the fish that carried Aphrodite and her son Eros to safety when they fled the Titan Typhon by diving into the sea. The constellation's twin fish, bound yet swimming in opposite directions, mirror the sign's gift for holding the real and the transcendent in a single, delicate embrace.",
+        coreArchetype:
+          "The empathic dreamer who dissolves the boundary between self and other, translating invisible feeling into art, music, and acts of radical compassion.",
+        careerArenas: "Film & cinema · Marine biology · Spiritual guidance · Pharmaceutical research",
+      },
+    },
   },
   about: {
     kicker: "The publication",
@@ -366,12 +504,159 @@ export const en = {
     desc: "Live from astronomical ephemerides: meteor showers, eclipses, oppositions and lunar phases worth stepping outside for.",
     disclaimer:
       "Event data is updated from astronomical almanacs and refreshed automatically. Always check a local sky guide before heading out.",
+    activeMonth: "Showing",
     meteorShower: "Meteor shower",
     eclipse: "Eclipse",
     opposition: "Opposition",
     conjunction: "Conjunction",
     lunarPhase: "Lunar phase",
     skyEvent: "Sky event",
+    events: {
+      quadrantids: {
+        title: "Quadrantids Meteor Shower · Peak Night",
+        desc: "One of the year's strongest and briefest showers, peaking for a few hours in the northern sky.",
+      },
+      fullMoonJan: {
+        title: "Full Moon",
+        desc: "The first full Moon of the year, rising at sunset and staying up through the night.",
+      },
+      newMoonJan: {
+        title: "New Moon",
+        desc: "The darkest nights of January, ideal for deep-sky observing and a quiet reset.",
+      },
+      fullMoonFeb: {
+        title: "Full Moon",
+        desc: "A full Moon rising as the Sun sets, fully lit and easy to spot through the winter sky.",
+      },
+      newMoonFeb: {
+        title: "New Moon",
+        desc: "A dark-sky window for observing faint galaxies and nebulae.",
+      },
+      fullMoonMar: {
+        title: "Full Moon",
+        desc: "A bright full Moon climbing high through the early-spring sky.",
+      },
+      vernalEquinox: {
+        title: "Vernal Equinox",
+        desc: "Day and night are nearly equal; the astronomical start of spring in the northern hemisphere.",
+      },
+      newMoonMar: {
+        title: "New Moon",
+        desc: "A great night for stargazing with the Moon out of the way.",
+      },
+      fullMoonApr: {
+        title: "Full Moon · Pink Moon",
+        desc: "A full Moon rising near the horizon, magnified by the Moon illusion.",
+      },
+      newMoonApr: {
+        title: "New Moon",
+        desc: "The darkest night of the lunar cycle — perfect for deep-sky observing.",
+      },
+      lyrids: {
+        title: "Lyrids Meteor Shower · Peak Night",
+        desc: "Up to 20 meteors per hour radiate from Lyra; best after midnight at a dark site.",
+      },
+      etaAquariids: {
+        title: "Eta Aquariids Meteor Shower · Peak Night",
+        desc: "Fast meteors left by Halley's Comet, best in the pre-dawn hours.",
+      },
+      fullMoonMay: {
+        title: "Full Moon · Flower Moon",
+        desc: "May's full Moon, a bright sentinel over the lengthening evenings.",
+      },
+      newMoonMay: {
+        title: "New Moon",
+        desc: "A dark-sky window for faint objects through the late-spring nights.",
+      },
+      summerSolstice: {
+        title: "Summer Solstice",
+        desc: "The longest day of the year in the northern hemisphere — the astronomical start of summer.",
+      },
+      fullMoonJun: {
+        title: "Full Moon · Strawberry Moon",
+        desc: "June's full Moon, low and warm-tinted on the northern horizon.",
+      },
+      newMoonJun: {
+        title: "New Moon",
+        desc: "A dark window for observing the Milky Way and its many open clusters.",
+      },
+      fullMoonJul: {
+        title: "Full Moon · Buck Moon",
+        desc: "July's full Moon, a brilliant evening anchor of the summer sky.",
+      },
+      newMoonJul: {
+        title: "New Moon",
+        desc: "A dark night ideal for photographing the star-filled summer sky.",
+      },
+      perseids: {
+        title: "Perseids Meteor Shower · Peak Night",
+        desc: "The year's most popular shower, with up to 100 meteors an hour at a dark site.",
+      },
+      newMoonAug: {
+        title: "New Moon",
+        desc: "A Moon-free peak for the Perseids — an ideal night for meteor watching.",
+      },
+      fullMoonAug: {
+        title: "Full Moon · Sturgeon Moon",
+        desc: "August's full Moon, riding high through the warm nights.",
+      },
+      newMoonSep: {
+        title: "New Moon",
+        desc: "A dark-sky evening perfect for glimpsing galaxies and the autumn Milky Way.",
+      },
+      autumnalEquinox: {
+        title: "Autumnal Equinox",
+        desc: "Day and night are nearly equal again; the astronomical start of autumn in the north.",
+      },
+      harvestMoon: {
+        title: "Full Moon · Harvest Moon",
+        desc: "The famous Harvest Moon, rising soon after sunset for several nights in a row.",
+      },
+      newMoonOct: {
+        title: "New Moon",
+        desc: "Dark evenings return — a superb window for deep-sky observing.",
+      },
+      orionids: {
+        title: "Orionids Meteor Shower · Peak Night",
+        desc: "Swift meteors from Halley's Comet radiating from Orion, best after midnight.",
+      },
+      huntersMoon: {
+        title: "Full Moon · Hunter's Moon",
+        desc: "October's full Moon, bright and low, marking the heart of autumn.",
+      },
+      newMoonNov: {
+        title: "New Moon",
+        desc: "A moonless night across the month, great for faint autumn objects.",
+      },
+      leonids: {
+        title: "Leonids Meteor Shower · Peak Night",
+        desc: "One of the fastest annual showers, best in the hours before dawn.",
+      },
+      beaverMoon: {
+        title: "Full Moon · Beaver Moon",
+        desc: "November's full Moon, a cold bright companion to the lengthening nights.",
+      },
+      newMoonDec: {
+        title: "New Moon",
+        desc: "Dark December nights return — a superb window for winter constellations.",
+      },
+      geminids: {
+        title: "Geminids Meteor Shower · Peak Night",
+        desc: "Often the year's richest shower, with slow, bright meteors and fireballs.",
+      },
+      winterSolstice: {
+        title: "Winter Solstice",
+        desc: "The shortest day of the year in the north — the astronomical start of winter.",
+      },
+      ursids: {
+        title: "Ursids Meteor Shower · Peak Night",
+        desc: "A modest shower radiating from Ursa Minor around the winter solstice.",
+      },
+      coldMoon: {
+        title: "Full Moon · Cold Moon",
+        desc: "December's full Moon rising near the winter solstice nights.",
+      },
+    },
   },
   celebrities: {
     kicker: "Born under today's stars",
@@ -380,6 +665,26 @@ export const en = {
     fullProfile: "Full profile",
     previous: "Previous celebrities",
     next: "Next celebrities",
+    occupations: {
+      Author: "Author",
+      Actor: "Actor",
+      "Racing driver": "Racing driver",
+      Singer: "Singer",
+      "Actor & director": "Actor & director",
+      "Composer & actor": "Composer & actor",
+      Dancer: "Dancer",
+      "Basketball player": "Basketball player",
+      "Civil rights activist": "Civil rights activist",
+      "Royal patron": "Royal patron",
+    },
+    regions: {
+      Hollywood: "Hollywood",
+      Bollywood: "Bollywood",
+      "K-Pop": "K-Pop",
+      Thai: "Thai",
+      Sports: "Sports",
+      Global: "Global",
+    },
   },
   footer: {
     tagline:
@@ -401,6 +706,7 @@ export const ur: Dict = {
     desc: "ہر برج کے بنیادی کردار اور ان پیشوں کا خلاصہ جن میں یہ توانائی سب سے زیادہ قدرتی انداز میں اظہار پاتی ہے۔",
     archetypeLabel: "بنیادی کردار",
     careerLabel: "پیشہ",
+    cta: "تمام کائناتی خصائل دیکھیں →",
     signs: {
       aries: { arch: "رہنما / جنگجو / کھلاڑی", career: "کاروبار · انجینئرنگ · فوج · کھیل" },
       taurus: { arch: "معمار / کفیل / محسوس کرنے والا", career: "مالیات · جائیداد · کھانا پکانا · زراعت" },
@@ -582,6 +888,12 @@ export const ur: Dict = {
     theTwelve: "بارہ برج",
     backToTop: "اوپر جائیں",
     skipToContent: "براہ راست مواد پر جائیں",
+    pills: "پلز",
+    drivingPlacements: "اہم مقامات",
+    steadySky: "آج آسمان پرسکون ہے۔",
+    noTightAspects: "اس وقت کوئی مضبوط پہلو نہیں بن رہا۔",
+    makeTodayEasy: "آج کا دن اپنے لیے آسان بنائیں۔",
+    selectSign: "{sign} منتخب کریں",
   },
   home: {
     heroTitle: "ستاروں میں لکھا ہوا۔",
@@ -692,9 +1004,140 @@ export const ur: Dict = {
     selectSignTwo: "دوسرا برج منتخب کریں",
     twoSignsMesh: "ملاپ دیکھنے کے لیے دو برج منتخب کریں۔",
     theVerdict: "حتمی تجزیہ",
+    originsTitle: "اصول اور افسانے",
+    coreArchetypeTitle: "بنیادی کردار",
+    careerArenasTitle: "پیشہ ورانہ شعبے",
     superpowersTitle: "آپ کی سپر پاورز",
     watchOutForTitle: "احتیاط کے پہلو",
     cosmicFunFactTitle: "دلچسپ فلکیاتی حقیقت",
+    elements: {
+      Fire: "جذبہ، عزم، تخلیقی چنگاری۔ آتشی برج ہمت سے رہنمائی کرتے ہیں اور ہر کمرے کو روشن کر دیتے ہیں۔",
+      Earth: "استحکام، صبر، حسی حکمت۔ زمینی برج وہ بناتے ہیں جو پائیدار ہے اور ہر تصور کو زمین سے جوڑتے ہیں۔",
+      Air: "فہم، رشتہ، معاشرتی روانی۔ ہوائی برج خیالات لوگوں کے درمیان لے کر چلتے ہیں اور گفتگو کو گیت بناتے ہیں۔",
+      Water: " دیانتداری، ہمدردی، جذباتی گہرائی۔ پانی کے برج وہ محسوس کرتے ہیں جو دوسروں نام نہیں دے سکتے۔",
+    },
+    weaknesses: {
+      aries: "بے قراری · جلد بازی · م对面ہ طرز",
+      taurus: "ضد پذیری · ملکیت · تبدیلی سے انکار",
+      gemini: "بکھرے ہوئے · سطحی · فیصلہ نہ کر پانے والے",
+      cancer: "جذباتی · بہت زیادہ حساس · چپکے سے چپکے",
+      leo: "کبر · ناٹک · توجہ طلب",
+      virgo: "تنقید · بے چینی · بہت زیادہ سوچنا",
+      libra: "فیصلہ نہ کر پانے والے · لوگوں کو خوش کرنے والے · تصادم سے بھاگنے والے",
+      scorpio: "حسد · رازداری · شدید",
+      sagittarius: "بے رحمی · بے چینی · بہت زیادہ اعتماد",
+      capricorn: "سخت · معاف نہ کرنے والے · صرف کام",
+      aquarius: "علیحدگی · سرکشی · جذباتی فاصلہ",
+      pisces: "بھاگنا · بہت زیادہ یقین · ہمدردی",
+    },
+    compat: {
+      Fire: {
+        same: "آتشی + آتشی: دھماکہ آور توانائی، بے خوف وفاداری اور بے پایان مہم۔",
+        best: "آتشی + ہوائی: ہوا آگ کو بھڑکاتی ہے۔ فکری تحریک اور جذبے سے عمل ملتے ہیں۔",
+        challenging: "آتشی + پانی: بھاپ۔ شدید جذباتی م dynamics جن میں دونوں طرف صبر ضروری ہے۔",
+      },
+      Earth: {
+        same: "زمینی + زمینی: ہم عنصر اعتماد، مشترکہ مقاصد اور گہرا سکون۔",
+        best: "زمینی + پانی: پانی زمین کو سیراب کرتا ہے۔ جذباتی گہرائی عملی عزم کو مضبوط کرتی ہے۔",
+        challenging: "زمینی + ہوائی: مختلف تیمپو۔ زمینی کو جڑیں چاہیئں، ہوائی کو پر۔",
+      },
+      Air: {
+        same: "ہوائی + ہوائی: بے پایان گفتگو، مشترکہ دلچسپی اور فکری چمک۔",
+        best: "ہوائی + آتشی: آگ ہوا کو جلاتی ہے۔ بولد خیالات اور جذبے سے عمل ملتے ہیں۔",
+        challenging: "ہوائی + زمینی: زمینی کو ثبوت چاہیے، ہوائی کو ممکنات۔ صبر فاصلہ کو پا لیتا ہے۔",
+      },
+      Water: {
+        same: "پانی + پانی: گہرا جذباتی سمجھوتا، تقریباً دل کا مutaabaqat۔",
+        best: "پانی + زمینی: زمین پانی کو سہارا دیتا ہے۔ حساسیت اور استحکام محفوظ کنٹینر میں ملتے ہیں۔",
+        challenging: "پانی + آتشی: جذبات بمقابلہ بے قراری۔ دونوں کو دوسرے کی زبان سیکھنی ہوگی۔",
+      },
+    },
+    signs: {
+      aries: {
+        mythology:
+          "حمل کا نام یونانی افسانوں میں سنہری بیڑے سے لیا گیا ہے جس نے اپنے بچوں فریکسوس اور ہیل کو نایافہ ماں سے بچایا۔ آسمان پر یہ برج ہمت اور بلا دریغ عمل کی یاد دلاتا ہے۔",
+        coreArchetype:
+          "فطری طور پر قیادت کرنے والا، جو ہمت سے آگے بڑھتا ہے اور لمحے کو ضائع ہونے نہیں دیتا۔",
+        careerArenas: "ایمرجنسی طب · فوجی قیادت · مسابتی کھیل · ابتدائی کاروبار",
+      },
+      taurus: {
+        mythology:
+          "ثور زیوس کے انڈیس سفید بیل کی عکاسی کرتا ہے جو خوبصورت یورپا کو سمندر پار لے گیا۔ یہ برج آہستہ لیکن مضبوط طاقت کی یاد دلاتا ہے۔",
+        coreArchetype:
+          "خلفدار حکمران جو صبر، ذوق اور مضبوطی سے دولت اور خوبصورتی کی حفاظت کرتا ہے۔",
+        careerArenas: "مالیات · شاندار برانڈز · کھانا پکانا · لینڈ اسکیپ ڈیزائن",
+      },
+      gemini: {
+        mythology:
+          "جوزا دو بھائیوں کاسٹر اور پولاکس کی یاد میں ہے — ایک فانی اور ایک غیر فانی — جن کی محبّت نے انہیں ستاروں تک پہنچایا۔",
+        coreArchetype:
+          "تیز ذہن خبررسان جو خیالات جمع کرتا ہے اور دنیاؤں کے درمیان رشتہ قائم کرتا ہے۔",
+        careerArenas: "نیوز جرنلزم · پبلک ریلیشنز · زبانیات · حکمت عملی",
+      },
+      cancer: {
+        mythology:
+          "سرطان سمندری کیکڑے کی کہانی ہے جس نے ہریکلیس کی لڑائی میں بہادری سے ثابت کی اپنی وفاداری۔",
+        coreArchetype:
+          "نرم دل محافظ جو جذباتی ہلاؤ کو پکڑتا ہے اور خاموش محبّت سے جوانوں کی حفاظت کرتا ہے۔",
+        careerArenas: "بچوں کی نفسیات · ثقافتی تحفظ · بچوں کی طب · کھانا پکانا",
+      },
+      leo: {
+        mythology:
+          "اسد نیمین لیون کی یاد میں ہے — جس کی سنہری کھال پر کوئی ہتھیار کام نہ کرتا تھا۔ یہ سورج کا برج ہے جو گرمی اور خلاقیت کی نشانی ہے۔",
+        coreArchetype:
+          "جگمگاتا بادشاہ جو عطاء اور خلاق آگ سے توجہ حاصل کرتا ہے۔",
+        careerArenas: "تخلیقی قیادت · فنون پیشہ · اعلیٰ قیادت · برانڈ حکمرانی",
+      },
+      virgo: {
+        mythology:
+          "سنبلہ دیمیٹر یا پرسیفون کی عکاسی ہے جو فصلوں کی حکمت اور خاموش خدمات کی نمائندگی کرتی ہے۔",
+        coreArchetype:
+          "باریک بین فنکار جو خام کو مفید اور خوبصورت میں بدلتا ہے، دقّت اور خاموش بہترینت میں مقصد تلاش کرتا ہے۔",
+        careerArenas: "طبی تحقیق · تحریر و اشاعت · ڈیٹا سائنس · غذائیت طب",
+      },
+      libra: {
+        mythology:
+          "میزان اسٹریا کی عکاسی کرتا ہے جو انصاف کا ترازو لے کر آسمان پر واپس آ گئی۔ یہ ہماہنگی اور خوبصورتی کی تلاش کا برج ہے۔",
+        coreArchetype:
+          "nwazat daar میانجی جو ہر رشتے میں توازن تلاش کرتا ہے، خوبصورتی اور انصاف کی خاطر۔",
+        careerArenas: "بین الاقوامی ثالثی · فیشن ڈیزائن · کارپوریٹ قانون · آرٹ ڈائریکشن",
+      },
+      scorpio: {
+        mythology:
+          "عقرب اس بچھے کی کہانی ہے جس نے عظیم شکاری اوریون کو شکست دی — چھوٹی مخلوق نے طاقتور کو جیتا۔",
+        coreArchetype:
+          "کائنی تلاش کار جو سطح کے نیچے جھانکتا ہے، تبدیلی کی فنیت میں ماہر ہے اور جذباتی شدت کو ہتھیار اور دوا دونوں بناتا ہے۔",
+        careerArenas: "ဖောင်းဒ် سائنس · نفسیاتی علاج · وینچر کیپیٹل · بحران کا انتظام",
+      },
+      sagittarius: {
+        mythology:
+          "قوس چائرن کی عکاسی کرتا ہے — حکیم سینٹر جس نے ہیروز کو تربیت دی۔ یہ ہمیشہ اگلے افق کی طرف نشانہ لگاتا ہے۔",
+        coreArchetype:
+          "بے قرار فلسفی مسافر جو ہر افق کو کلاس روم بناتا ہے، خوشی اور حقیقت کی بھوک سے م界第一。",
+        careerArenas: "بین الاقوامی معاملات · اکادمیک تحقیق · سفر نامہ نگاری · دینی مطالعات",
+      },
+      capricorn: {
+        mythology:
+          "جدی پین کی عکاسی کرتا ہے جو ٹائیفون سے بھاگتے ہوئے دریائے نیل میں کود گیا۔ یہ زمینی عزم اور پوشیدہ گہرائی کا امتزاج ہے۔",
+        coreArchetype:
+          "ضابطہ مند معمار جو عزم کو میراث میں بدلتا ہے، حکمت عملی اور خود سازی کے عمل سے آہستہ آہستہ چڑھتا ہے۔",
+        careerArenas: "کارپوریٹ حکمرانی · شہری منصوبہ بندی · عوامی پالیسی · بینکنگ",
+      },
+      aquarius: {
+        mythology:
+          "دلو گینیمیڈ کی کہانی ہے — جمالیت کے پیاسے شاہزادے جسے زیوس نے عقاب بھیج کر المٰی پر لے گیا۔ یہ مستقبل کا برج ہے۔",
+        coreArchetype:
+          "مستقبل نگار باغی جو معاشرتی ترقی کے لیے روایت کو چیلنج کرتا ہے، سالوں کے لیے سوچتا ہے۔",
+        careerArenas: "نئی ٹیکنالوجی · ماحولیاتی سائنس · شہری حركت · فضائیات",
+      },
+      pisces: {
+        mythology:
+          "حوت اس مچھلی کی یاد میں ہے جس نے افرودیٹ اور اروس کو سیپھن سے بچایا۔ دو مچھلیاں مختلف سمتوں میں تیرتی ہیں — حقیقت اور روحانیت کا امتزاج۔",
+        coreArchetype:
+          "ہمدرد خواب بین جو خود اور دوسروں کی حد کو ملا کر انوکھی روحانیت پیدا کرتا ہے۔",
+        careerArenas: "فلم سازی · سمندری حیاتیات · روحانی ہدایت · ادویاتی تحقیق",
+      },
+    },
   },
   about: {
     kicker: "رسالہ",
@@ -740,12 +1183,51 @@ export const ur: Dict = {
     desc: "فلکیاتی ڈیٹا سے حاصل کردہ — شہابِ ثاقب کی بارشیں، گرہن، سیاروی تقابل اور قمری منازل۔",
     disclaimer:
       "یہ اعداد و شمار فلکیاتی جنتریوں سے خودکار طور پر تازہ کیے جاتے ہیں۔ باہر نکلنے سے پہلے ہمیشہ مقامی موسمی حالات دیکھ لیں۔",
+    activeMonth: "دکھا رہا ہے",
     meteorShower: "شہابِ ثاقب کی بارش",
     eclipse: "گرہن",
     opposition: "تقابل (Opposition)",
     conjunction: "قران (Conjunction)",
     lunarPhase: "قمری مرحلہ",
     skyEvent: "فلکیاتی واقعہ",
+    events: {
+      quadrantids: { title: "کواڈرنٹائڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "سال کی سب سے مضبوط اور مختصر بارشوں میں سے ایک، شمالی آسمان میں چند گھنٹوں میں اعلیٰ۔" },
+      fullMoonJan: { title: "پورا چاند", desc: "سال کا پہلا پورا چاند، غروب آفتاب کے ساتھ اٹھتا ہے اور رات بھر آسمان میں رہتا ہے۔" },
+      newMoonJan: { title: "نیا چاند", desc: "جنوری کی سب سے تاریک راتیں، گہرے آسمان کے مشاہدے اور خاموش آغاز کے لیے مثالی۔" },
+      fullMoonFeb: { title: "پورا چاند", desc: "سورج کے غروب کے ساتھ اٹھنے والا پورا چاند، مکمل روشن اور سردی کے آسمان میں آسانی سے نظر آنے والا۔" },
+      newMoonFeb: { title: "نیا چاند", desc: "کمزور کہکشاؤں اور نیبیولاؤں کے مشاہدے کے لیے تاریک آسمان کا دروازہ۔" },
+      fullMoonMar: { title: "پورا چاند", desc: "ابھرتی سردی کے آسمان میں اوپر چڑھتا چمکدار پورا چاند۔" },
+      vernalEquinox: { title: "بہاری اعتدال", desc: "دن اور رات تقریباً برابر؛ شمالی نصف کرہ میں بہار کا فلکیاتی آغاز۔" },
+      newMoonMar: { title: "نیا چاند", desc: "چاند کے بغیر ستاروں کو دیکھنے کی شاندار رات۔" },
+      fullMoonApr: { title: "پورا چاند · گلابی چاند", desc: "افق کے قریب اٹھتا پورا چاند، چاند کے وہم سے بڑا ہوا۔" },
+      newMoonApr: { title: "نیا چاند", desc: "قمری دور کی سب سے تاریک رات — گہرے آسمان کے مشاہدے کے لیے بہترین۔" },
+      lyrids: { title: "لائراڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "لائرہ سے نکلنے والے فی گھنٹہ 20 تک شہاب ثاقب، آدھی رات کے بعد بہترین۔" },
+      etaAquariids: { title: "اےٹا اکواریڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "ہیلی کے دمے سے بچے تیز شہاب ثاقب، سحر سے پہلے کے اوقات میں بہترین۔" },
+      fullMoonMay: { title: "پورا چاند · پھولوں کا چاند", desc: "مئی کا پورا چاند، بڑھتی شاموں پر ایک چمکدار پہردار۔" },
+      newMoonMay: { title: "نیا چاند", desc: "دیر سے بہار کی راتوں میں کمزور اشیاء کے لیے تاریک آسمان کا دروازہ۔" },
+      summerSolstice: { title: "گرمیوں کا اعتدال", desc: "شمالی نصف کرہ میں سال کا سب سے لمبا دن — گرمیوں کا فلکیاتی آغاز۔" },
+      fullMoonJun: { title: "پورا چاند · سٹرابیری چاند", desc: "جون کا پورا چاند، شمالی افق پر کم اور گرم رنگ کا۔" },
+      newMoonJun: { title: "نیا چاند", desc: "کاکشی پٹھ اور اس کے کئی کھلے گچھوں کے مشاہدے کے لیے تاریک دروازہ۔" },
+      fullMoonJul: { title: "پورا چاند · باک چاند", desc: "جولائی کا پورا چاند، گرمیوں کی شام کا شاندار ستون۔" },
+      newMoonJul: { title: "نیا چاند", desc: "ستاروں سے بھرے گرمیوں کے آسمان کی تصویر کشی کے لیے مثالی تاریک رات۔" },
+      perseids: { title: "پرسیڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "سال کی سب سے مقبول بارش، تاریک مقام پر فی گھنٹہ 100 تک شہاب ثاقب۔" },
+      newMoonAug: { title: "نیا چاند", desc: "پرسیڈز کے لیے چاند کے بغیر اعلیٰ — شہابِ ثاقب دیکھنے کی مثالی رات۔" },
+      fullMoonAug: { title: "پورا چاند · اسٹرجن چاند", desc: "اگست کا پورا چاند، گرم راتوں میں اونچا سوار۔" },
+      newMoonSep: { title: "نیا چاند", desc: "خزاں کے کاکشی پٹھ اور کہکشاؤں کو دیکھنے کی شاندار تاریک شام۔" },
+      autumnalEquinox: { title: "خزاں کا اعتدال", desc: "دن اور رات دوبارہ تقریباً برابر؛ شمال میں خزاں کا فلکیاتی آغاز۔" },
+      harvestMoon: { title: "پورا چاند · فصل کا چاند", desc: "مشہور فصل کا چاند، غروب کے فوراً بعد کئی راتوں تک اٹھتا ہے۔" },
+      newMoonOct: { title: "نیا چاند", desc: "تاریک شامیں واپس آئیں — گہرے آسمان کے مشاہدے کی شاندار کھڑکی۔" },
+      orionids: { title: "آریونائیڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "آریون سے نکلنے والے ہیلی کے دمے کے تیز شہاب ثاقب، آدھی رات کے بعد بہترین۔" },
+      huntersMoon: { title: "پورا چاند · شکاری کا چاند", desc: "اکتوبر کا پورا چاند، چمکدار اور کم، خزاں کے دل کی نشانی۔" },
+      newMoonNov: { title: "نیا چاند", desc: "مہینے بھر بے چاند رات، خزاں کے کمزور اشیاء کے لیے بہترین۔" },
+      leonids: { title: "لیونائیڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "سالانہ تیز ترین بارشوں میں سے ایک، سحر سے پہلے کے اوقات میں بہترین۔" },
+      beaverMoon: { title: "پورا چاند · بیور چاند", desc: "نومبر کا پورا چاند، بڑھتی راتوں کا سرد چمکدار ساتھی۔" },
+      newMoonDec: { title: "نیا چاند", desc: "دسمبر کی تاریک راتیں واپس آئیں — سردی کے تارکوں کی شاندار کھڑکی۔" },
+      geminids: { title: "جمینائیڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "اکثر سال کی سب سے بھرپور بارش، سست، چمکدار شہاب ثاقب اور آگ کے گولے۔" },
+      winterSolstice: { title: "سردیوں کا اعتدال", desc: "شمال میں سال کا سب سے مختصر دن — سردیوں کا فلکیاتی آغاز۔" },
+      ursids: { title: "ارسائیڈز شہابِ ثاقب کی بارش · اعلیٰ رات", desc: "سردیوں کے اعتدال کے قریب ارسا مائنر سے نکلنے والی ایک معمولی بارش۔" },
+      coldMoon: { title: "پورا چاند · سرد چاند", desc: "دسمبر کا پورا چاند سردیوں کے اعتدال کی راتوں کے قریب اٹھتا ہے۔" },
+    },
   },
   celebrities: {
     kicker: "آج کے ستاروں تلے پیدا ہونے والے",
@@ -754,6 +1236,26 @@ export const ur: Dict = {
     fullProfile: "مکمل پروفائل",
     previous: "پچھلی شخصیات",
     next: "اگلی شخصیات",
+    occupations: {
+      Author: "مصنف",
+      Actor: "اداکار",
+      "Racing driver": "ریسنگ ڈرائیور",
+      Singer: "گلوکار",
+      "Actor & director": "اداکار و ڈائریکٹر",
+      "Composer & actor": "موسیقار و اداکار",
+      Dancer: "نर्तک",
+      "Basketball player": "باسکٹ بال کھلاڑی",
+      "Civil rights activist": "شہری حقوق کارکن",
+      "Royal patron": "شاہی حامی",
+    },
+    regions: {
+      Hollywood: "ہالی وڈ",
+      Bollywood: "بولی وڈ",
+      "K-Pop": "کے پاپ",
+      Thai: "تھائی",
+      Sports: "کھیل",
+      Global: "عالمی",
+    },
   },
   footer: {
     tagline:
@@ -773,6 +1275,7 @@ export const ar: Dict = {
     desc: "قراءة مختصرة للطابع الجوهري لكل برج والمجالات المهنية التي تتجلى فيها هذه الطاقة بشكل طبيعي.",
     archetypeLabel: "الطابع الجوهري",
     careerLabel: "التوجهات المهنية",
+    cta: "استكشف جميع الحقائق الكونية ←",
     signs: {
       aries: { arch: "قائد / مقاتل / رياضي", career: "ريادة الأعمال · الهندسة · الجيش · الرياضة" },
       taurus: { arch: "باني / معيل / حسّاس", career: "المالية · العقارات · فنون الطهي · الزراعة" },
@@ -954,6 +1457,12 @@ export const ar: Dict = {
     theTwelve: "الأبراج الاثنا عشر",
     backToTop: "إلى الأعلى",
     skipToContent: "انتقل إلى المحتوى الرئيسي",
+    pills: "نقاط",
+    drivingPlacements: "المواقع المؤثرة",
+    steadySky: "السماء مستقرة اليوم.",
+    noTightAspects: "لا توجد أوجه رئيسية حادة الآن.",
+    makeTodayEasy: "اجعل يومك أسهل على نفسك قليلاً.",
+    selectSign: "اختر {sign}",
   },
   home: {
     heroTitle: "مكتوب في النجوم.",
@@ -1064,9 +1573,140 @@ export const ar: Dict = {
     selectSignTwo: "اختر البرج الثاني",
     twoSignsMesh: "اختر برجين للكشف عن مستوى توافقهما.",
     theVerdict: "النتيجة النهائية",
+    originsTitle: "الأصول والأساطير",
+    coreArchetypeTitle: "الطابع الجوهري",
+    careerArenasTitle: "المجالات المهنية",
     superpowersTitle: "نقاط قوتك الخارقة",
     watchOutForTitle: "نقاط يجب الانتباه لها",
     cosmicFunFactTitle: "حقيقة فلكية ممتعة",
+    elements: {
+      Fire: "الشغف، الطموح، الشرارة الإبداعية. تقود أبراج النار بالشجاعة وتُشعل كل غرفة يدخلونها.",
+      Earth: "الثبات، الصبر، الحكمة الحسية. تبني أبراج الأرض ما يدوم وتقّرّر كل رؤية.",
+      Air: "العقل، التواصل، الطلاقة الاجتماعية. تحمل أبراج الهواء الأفكار بين الناس وتجعل المحادثات تغني.",
+      Water: "الحدس، التعاطف، العمق العاطفي. تشعر أبراج الماء بما لا يستطيع الآخرون تسميته وتشفي بالشعور.",
+    },
+    weaknesses: {
+      aries: "اندفاع · انزعاج · مواجهة",
+      taurus: "عناد · ملكية · مقاومة للتغيير",
+      gemini: "تشتت · سطحية · تردد",
+      cancer: "مزاجية · حساسية مفرطة · لصق",
+      leo: "غرور · درامية · طلب الاهتمام",
+      virgo: "نقد · قلق · تفكير مفرط",
+      libra: "تردد · إرضاء الناس · تجنب الصدام",
+      scorpio: "غيرة · سرية · حدة",
+      sagittarius: " Lack of tact · قلق · ثقة مفرطة",
+      capricorn: "صلابة · عدم مغفرة · الهوس بالعمل",
+      aquarius: "انفصال · تمرد · بعد عاطفي",
+      pisces: "هروب · ثقة مفرطة · عقلية الضحية",
+    },
+    compat: {
+      Fire: {
+        same: "نار + نار: طاقة متفجرة، ولاء حاد ومغامرة لا نهائية.",
+        best: "نار + هواء: الهواء يُطعم النار. الاستثارة الفكرية تلتقي بالعمل الشغوف.",
+        challenging: "نار + ماء: بخار. ديناميكيات عاطفية حادة تتطلب الصبر من الطرفين.",
+      },
+      Earth: {
+        same: "تراب + تراب: ثقة لا تتزعزع، أهداف مشتركة وأمان عميق.",
+        best: "تراب + ماء: الماء يروي الأرض. العمق العاطفي يُرسّخ الطموح العملي.",
+        challenging: "تراب + هواء: إيقاعات مختلفة. التراب يريد جذوراً؛ الهواء يريد أجنحة.",
+      },
+      Air: {
+        same: "هواء + هواء: محادثة لا نهائية، فضول مشترك ومקובעات فكرية.",
+        best: "هواء + نار: النار تُشعل الهواء. أفكار جريئة تلتقي بالتنفيذ الشغوف.",
+        challenging: "هواء + تراب: التراب يريد الدليل؛ الهواء يريد الإمكانيات. الصبر يسد الفجوة.",
+      },
+      Water: {
+        same: "ماء + ماء: فهم عاطفي عميق، تقريباً اتصال نفسي.",
+        best: "ماء + تراب: التراب يحمل الماء. الحساسية تلتقي بالاستقرار في حاوية آمنة.",
+        challenging: "ماء + نار: العاطفة تلتقي بالاندفاع. كلاهما يجب أن يتعلم لغة الآخر.",
+      },
+    },
+    signs: {
+      aries: {
+        mythology:
+          "يأخذ الحمل اسمه من الكبش الذهبي في الأساطير اليونانية الذي أنقذ الأختين فريكسوس وهيل من زوجة أبيتهما القاسية. يذكرنا الحمل بالشجاعة والجرأة في التصرف دون تردد.",
+        coreArchetype:
+          "المبادر الفطري الذي يقود بشجاعة ويتصرف قبل أن يضيع اللحظة، ويثق بالحركة الجريئة فوق التردد الحذر.",
+        careerArenas: "الطوارئ · القيادة العسكرية · الرياضة التنافسية · ريادة الأعمال",
+      },
+      taurus: {
+        mythology:
+          "يرتبط الثور بالأسطورة التي انتحل فيها زيوس شكل ثور أبيض ليقل الأميرة الفينيقية أوروبا عبر البحر. يمثل هذا البرج القوة البطيئة والجمال الذي لا يُقهر.",
+        coreArchetype:
+          "الحارس الثابت للجمال والقيمة، الذي يبني ثروة دائمة بالصبر والذوق والرفض القاطع للإسراع.",
+        careerArenas: "إدارة الثروات · توجيه العلامات الفاخرة · فنون الطهي · هندسة المناظر الطبيعية",
+      },
+      gemini: {
+        mythology:
+          "يحيي التوأم ذكرى قاستور وبوليكس — أحدهما بشري والآخر إلهي — مرتبطان بloyaltyǔ مطلقة حتى شاركا الخلود معاً بين النجوم.",
+        coreArchetype:
+          "الرسول السريع الذي يجمع الأفكار ويترجم بين العوالم ويحوّل الفضول إلى اتصال سلس ولامع.",
+        careerArenas: "الصحافة الإذاعية · العلاقات العامة · اللسانيات · الاستشارات الاستراتيجية",
+      },
+      cancer: {
+        mythology:
+          "يرتبط السرطان بالسرطان العملاق الذي دهسه هرقل أثناء قتال الهيدرا، ووضعته هيرا بين النجوم تكريماً لوفائه الشجاع.",
+        coreArchetype:
+          "الحارس الرقيق الذي يحمي ما هو أغلى، ويرسّب التيارات العاطفية بدقة غير عادية ويتغذى بالحب الصامت.",
+        careerArenas: "心理学 الأطفال · الحفاظ على التراث · رعاية الأطفال · فنون الطهي",
+      },
+      leo: {
+        mythology:
+          "يمثل الأسد أسد نيميا الذي لا يخترقه سلاح، قتله هرقل كأول من أطواره الاثني عشر. يجسّد البرج السني البريق والسيادة الإبداعية.",
+        coreArchetype:
+          "السيّد المشرق الذي يخطف الأنظار بالكرم والنار الإبداعية، ويحوّل كل مسرحاً وإلى كل شخص يستحق الإبهار.",
+        careerArenas: "التوجيه الإبداعي · الفنون الأدائية · القيادة التنفيذية · إدارة العلامات التجارية",
+      },
+      virgo: {
+        mythology:
+          "يُعرف العذراء أحياناً بالديميتر إلهة الحصاد أو ابنتها بيرسيفون، رمزين للدقة والدورة المستمرة والعمل الصامت الم sustentateur.",
+        coreArchetype:
+          "الحرفي الدقيق الذي يصقل الخام إلى شيء مفيد وأنيق، ويعثر على الغاية في الإتقان والخدمة والتميّز الصامت.",
+        careerArenas: "البحث السريري · التحرير والنشر · علم البيانات · التغذية العلاجية",
+      },
+      libra: {
+        mythology:
+          "ترتبط الميزان بال Balance التي حملتها أستريا آخر إله غادر الأرض في العصر الحديدي، حاملةً ميزان العدالة إلى السماء.",
+        coreArchetype:
+          "الوساط الأنيق الذي يسعى إلى التوازن في كل علاقة ومكان، ويسخدم السحر والإنصاف والذوق الجمالي الرفيع.",
+        careerArenas: "الدبلوماسية الدولية · تصميم الأزياء والديكور · القانونorporate · توجيه الفنون",
+      },
+      scorpio: {
+        mythology:
+          "يذكر العقرب السرطان الذي قتل الصياد العظيم أوريون بعد أن تفاخر بأنه سيقتل كل وحش على الأرض — درس في أن العمق يتفوق على القوة الظاهرة.",
+        coreArchetype:
+          "المحقق الذي لا يكلّف الذي يحدّق تحت الأسطح ويحكم فن التحول ويستخدم العاطفة الجياشة كسلاح ودواء.",
+        careerArenas: "العلوم forensische · الطب النفسي · رأس المال المغامر · إدارة الأزمات",
+      },
+      sagittarius: {
+        mythology:
+          "يمثل القوس كايرون — الهيبوسير الذي درّس أخيل وأسكولبيوس وجايسون — كائن وسط الحيوانية والتعلّم الأعلى.",
+        coreArchetype:
+          "الفيلسوف الرحّال المتفائل الذي يحوّل كل أفق إلى قاعة دراسة، مدفوعاً بال pewnością والجهد نحو الحقيقة الأرحب.",
+        careerArenas: "الشؤون الدولية · البحث الأكاديمي · كتابة السفر · الدراسات اللاهوتية",
+      },
+      capricorn: {
+        mythology:
+          "يرتبط الجدي بالmartin من بان الذي قفز إلى النيل هارباً من تايفون، فتحول نصفه إلى سمك وأبقى رأسه وقرنيه فوق الماء — جسر بين الطموح الأرضي والعمق الخفي.",
+        coreArchetype:
+          "المهندس المنضبط الذي يحوّل الطموح إلى إرث، يتسلّق بثبات عبر الحكمة والتحكم والتفاني في الإتقان عبر الزمن.",
+        careerArenas: "الحوكمةorporate · تخطيط المدن · السياسة العامة · المصارف المؤسسية",
+      },
+      aquarius: {
+        mythology:
+          "يرتبط الدلو بغانيميد الأمير الطروادي الذي حمله نسر إلى أوليمبس ليكون ساقي الآلهة — اختطاف إلهي من أجل غرض أعلى.",
+        coreArchetype:
+          "المتعطّل المبدع الذي يتحدى العرف من أجل التقدم الجماعي، يفكر بالعقود حين يفكر الآخرون بالأيام.",
+        careerArenas: "التكنولوجيا الناشئة · علوم البيئة · النشاط المدني · هندسة الطيران",
+      },
+      pisces: {
+        mythology:
+          "يحيي الحوت ذكرة السمكة التي حملت أفروديت وإروس إلى الأمان حين فرا من تايفون بالغوص في البحر — دمج بين الواقع والمقدس.",
+        coreArchetype:
+          "الحالم المتعاطف الذي يذيب الحدود بين الذات والآخر، ويترجم الإحساس الخفي إلى فن وموسيقى ورحمة جذرية.",
+        careerArenas: "صناعة السينما · علم الأحياء البحرية · التوجيه الروحي · البحث الدوائي",
+      },
+    },
   },
   about: {
     kicker: "النشرة",
@@ -1112,12 +1752,51 @@ export const ar: Dict = {
     desc: "بيانات حية من التقاويم الفلكية — زخات الشهب، الكسوف، الخسوف، التقابل، ومراحل القمر.",
     disclaimer:
       "يتم تحديث هذه البيانات تلقائياً من المراصد الفلكية. تحقق دائماً من دقة السماء المحلية والطقس قبل الرصد.",
+    activeMonth: "عرض",
     meteorShower: "زخة شهب",
     eclipse: "كسوف / خسوف",
     opposition: "تقابل كوكبي",
     conjunction: "اقتران كوكبي",
     lunarPhase: "طور قمري",
     skyEvent: "حدث فلكي",
+    events: {
+      quadrantids: { title: "زخة شهب الكلدانين · ليلة الذروة", desc: "واحدة من أقوى وأقصر الزخات في السنة، تبلغ ذروتها لبضع ساعات في السماء الشمالية." },
+      fullMoonJan: { title: "بدر", desc: "أول بدر في السنة، يصعد عند الغروب ويبقى طوال الليل." },
+      newMoonJan: { title: "محاق", desc: "أدكن ليالي يناير، مثالية للمراقبة السماوية والإعادة الهدئة." },
+      fullMoonFeb: { title: "بدر", desc: "بدر يصعد مع غروب الشمس، مضاء بالكامل وسهل الملاحظة في سماء الشتاء." },
+      newMoonFeb: { title: "محاق", desc: "نافذة سماء مظلمة لمراقبة المجرات والسدم الخافتة." },
+      fullMoonMar: { title: "بدر", desc: "بدر ساطع يصعد عالياً في سماء الربيع المبكر." },
+      vernalEquinox: { title: "الاعتدال الربيعي", desc: "الليل والنهار متساويان تقريباً؛ البداية الفلكية للربيع في نصف الكرة الشمالي." },
+      newMoonMar: { title: "محاق", desc: "ليلة رائعة لمراقبة النجوم مع اختفاء القمر." },
+      fullMoonApr: { title: "بدر · البدر الوردي", desc: "بدر يصعد قرب الأفق، مكبر بوهم القمر." },
+      newMoonApr: { title: "محاق", desc: "أدكن ليلة في الدورة القمرية — مثالية للمراقبة السماوية العميقة." },
+      lyrids: { title: "زخة شهب اليراعات · ليلة الذروة", desc: "حتى 20 شهاباً في الساعة تنبعث من اليراع، أفضل ما بعد منتصف الليل في موقع مظلم." },
+      etaAquariids: { title: "زخة شهب إيتا الدلو · ليلة الذروة", desc: "شهابات سريعة من ذيل كوميت هالي، أفضل في ساعات ما قبل الفجر." },
+      fullMoonMay: { title: "بدر · بدر الزهور", desc: "بدر مايو، حارس ساطع فوق المساءات المتطاولة." },
+      newMoonMay: { title: "محاق", desc: "نافذة سماء مظلمة لل objects الخافتة عبر ليالي الربيع المتأخر." },
+      summerSolstice: { title: "انقلاب الصيف", desc: "أطول يوم في السنة في نصف الكرة الشمالي — البداية الفلكية للصيف." },
+      fullMoonJun: { title: "بدر · بدر الفراولة", desc: "بدر يونيو، منخفض ومحمر على الأفق الشمالي." },
+      newMoonJun: { title: "محاق", desc: "نافذة مظلمة لمراقبة درب التبانة وكثباتها المفتوحة العديدة." },
+      fullMoonJul: { title: "بدر · بدر الأيل", desc: "بدر يوليو، مرسى ساهر مشرق لسماء الصيف." },
+      newMoonJul: { title: "محاق", desc: "ليلة مظلمة مثالية لتصوير السماء الصيفية المليئة بالنجوم." },
+      perseids: { title: "زخة شهب البرشاويات · ليلة الذروة", desc: "الأكثر شعبية في السنة، مع ما يصل إلى 100 شهاب في الساعة في موقع مظلم." },
+      newMoonAug: { title: "محاق", desc: "ذروة بدون قمر للبرشاويات — ليلة مثالية لمراقبة الشهاب." },
+      fullMoonAug: { title: "بدر · بدر السمكة", desc: "بدر أغسطس، يرتفع عالياً عبر الليالي الدافئة." },
+      newMoonSep: { title: "محاق", desc: "مساء سماء مظلمة مثالية لمراقبة المجرات ودرب التبانة الخريفية." },
+      autumnalEquinox: { title: "انقلاب الخريف", desc: "الليل والنهار متساويان مرة أخرى؛ البداية الفلكية للخريف في الشمال." },
+      harvestMoon: { title: "بدر · بدر الحصاد", desc: "بدر الحصاد الشهير، يصعد قريباً بعد غروب الشمس لعدة ليالي متتالية." },
+      newMoonOct: { title: "محاق", desc: "المساءات المظلمة تعود — نافذة رائعة للمراقبة السماوية العميقة." },
+      orionids: { title: "زخة شهب الجبار · ليلة الذروة", desc: "شهابات سريعة من ذيل كوميت هالي تنبعث من الجبار، أفضل بعد منتصف الليل." },
+      huntersMoon: { title: "بدر · بدر الصياد", desc: "بدر أكتوبر، ساطع ومنخفض، يميز قلب الخريف." },
+      newMoonNov: { title: "محاق", desc: "ليلة بلا قمر طوال الشهر، رائعة لل objects الخريفية الخافتة." },
+      leonids: { title: "زخة شهب الأسد · ليلة الذروة", desc: "واحدة من أسرع الزخات السنوية، أفضل في ساعات ما قبل الفجر." },
+      beaverMoon: { title: "بدر · بدر القندس", desc: "بدر نوفمبر، رفيق ساطع بارد للمساءات المتطاولة." },
+      newMoonDec: { title: "محاق", desc: "ليالي ديسمبر المظلمة تعود — نافذة رائعة لنجوم الشتاء." },
+      geminids: { title: "زخة شهب التوائم · ليلة الذروة", desc: "غالباً أغنى زخة في السنة، مع شهابات بطيئة ساطعة وكرات نارية." },
+      winterSolstice: { title: "انقلاب الشتاء", desc: "أقصر يوم في السنة في الشمال — البداية الفلكية للشتاء." },
+      ursids: { title: "زخة شهب الدب الأصغر · ليلة الذروة", desc: "زخة متواضعة تنبعث من الدب الأصغر حول انقلاب الشتاء." },
+      coldMoon: { title: "بدر · بدر البارد", desc: "بدر ديسمبر يصعد قرب ليالي انقلاب الشتاء." },
+    },
   },
   celebrities: {
     kicker: "مواليد تحت نجوم اليوم",
@@ -1126,6 +1805,26 @@ export const ar: Dict = {
     fullProfile: "الملف الكامل",
     previous: "السابقون",
     next: "التالون",
+    occupations: {
+      Author: "كاتب",
+      Actor: "ممثل",
+      "Racing driver": "سائق سباق",
+      Singer: "مغني",
+      "Actor & director": "ممثل ومخرج",
+      "Composer & actor": "ملحن وممثل",
+      Dancer: "راقص",
+      "Basketball player": "لاعب كرة سلة",
+      "Civil rights activist": "ناشط حقوقي",
+      "Royal patron": "راعٍ ملكي",
+    },
+    regions: {
+      Hollywood: "هوليوود",
+      Bollywood: "بوليود",
+      "K-Pop": "كيبوب",
+      Thai: "تايلندي",
+      Sports: "رياضة",
+      Global: "عالمي",
+    },
   },
   footer: {
     tagline:
@@ -1145,6 +1844,7 @@ export const es: Dict = {
     desc: "Una lectura condensada del arquetipo central de cada signo y los ámbitos profesionales donde esa energía se expresa de forma más natural.",
     archetypeLabel: "Arquetipo central",
     careerLabel: "Trayectorias profesionales",
+    cta: "Explorar todos los hechos cósmicos →",
     signs: {
       aries: { arch: "Líder / Luchador / Deportista", career: "Emprendimiento · Ingeniería · Ejército · Deporte" },
       taurus: { arch: "Constructor / Proveedor / Sensual", career: "Finanzas · Inmuebles · Artes culinarias · Agricultura" },
@@ -1326,6 +2026,12 @@ export const es: Dict = {
     theTwelve: "Los doce signos",
     backToTop: "Volver arriba",
     skipToContent: "Saltar al contenido principal",
+    pills: "Píldoras",
+    drivingPlacements: "Posiciones determinantes",
+    steadySky: "El cielo está estable hoy.",
+    noTightAspects: "No hay aspectos mayores ajustados ahora.",
+    makeTodayEasy: "Haz que hoy sea un poco más fácil para ti.",
+    selectSign: "Seleccionar {sign}",
   },
   home: {
     heroTitle: "Escrito en las estrellas.",
@@ -1436,9 +2142,140 @@ export const es: Dict = {
     selectSignTwo: "Selecciona el segundo signo",
     twoSignsMesh: "Elige dos signos para descubrir cómo conectan.",
     theVerdict: "El veredicto",
+    originsTitle: "Orígenes y mitología",
+    coreArchetypeTitle: "Arquetipo central",
+    careerArenasTitle: "Ámbitos profesionales",
     superpowersTitle: "Tus superpoderes",
     watchOutForTitle: "Puntos a cuidar",
     cosmicFunFactTitle: "Dato cósmico curioso",
+    elements: {
+      Fire: "Pasión, ambición, chispa creativa. Los signos de Fuego lideran con coraje y encienden cada lugar que visitan.",
+      Earth: "Estabilidad, paciencia, sabiduría sensorial. Los signos de Tierra construyen lo que perdura y sostienen cada visión.",
+      Air: "Intelecto, conexión, fluidez social. Los signos de Aire llevan ideas entre las personas y hacen que las conversaciones canten.",
+      Water: "Intuición, empatía, profundidad emocional. Los signos de Agua sienten lo que otros no pueden nombrar y sanan a través del sentimiento.",
+    },
+    weaknesses: {
+      aries: "Impulsivo · Impaciente · Confrontativo",
+      taurus: "Testarudo · posesivo · resistente al cambio",
+      gemini: "Disperso · superficial · indeciso",
+      cancer: "Malhumorado · demasiado sensible · dependiente",
+      leo: "Arrogante · dramático · buscador de atención",
+      virgo: "Crítico · ansioso · demasiado pensador",
+      libra: "Indeciso · complaciente · evita conflictos",
+      scorpio: "Celoso · reservado · intenso",
+      sagittarius: "Sin tacto · inquieto · sobreconfiado",
+      capricorn: "Rígido · implacable · obsesionado con el trabajo",
+      aquarius: "Distante · rebelde · emocionalmente distante",
+      pisces: "Evasivo · demasiado confiado · mentalidad de víctima",
+    },
+    compat: {
+      Fire: {
+        same: "Fuego + Fuego: Energía explosiva, lealtad fiera y aventura interminable.",
+        best: "Fuego + Aire: El Aire alimenta la llama. Estimulación intelectual encuentra acción apasionada.",
+        challenging: "Fuego + Agua: Vapor. Dinámicas emocionales intensas que requieren paciencia de ambos lados.",
+      },
+      Earth: {
+        same: "Tierra + Tierra: Confianza inquebrantable, metas compartidas y un profundo sentido de seguridad.",
+        best: "Tierra + Agua: El Agua nutre la Tierra. La profundidad emocional afianza la ambición práctica.",
+        challenging: "Tierra + Aire: Diferentes ritmos. La Tierra quiere raíces; el Aire quiere alas.",
+      },
+      Air: {
+        same: "Aire + Aire: Conversación interminable, curiosidad compartida y fuegos artificiales intelectuales.",
+        best: "Aire + Fuego: El Fuego enciende el Aire. Ideas audaces encuentran ejecución apasionada.",
+        challenging: "Aire + Tierra: La Tierra quiere pruebas; el Aire quiere posibilidades. La paciencia tiende un puente.",
+      },
+      Water: {
+        same: "Agua + Agua: Comprensión emocional profunda, casi una conexión psíquica.",
+        best: "Agua + Tierra: La Tierra sostiene al Agua. La sensibilidad encuentra estabilidad en un contenedor seguro.",
+        challenging: "Agua + Fuego: La emoción encuentra impulso. Ambos deben aprender el idioma del otro.",
+      },
+    },
+    signs: {
+      aries: {
+        mythology:
+          "Aries toma su nombre del carnero dorado de la mitología griega, cuyo vellón se convirtió en leyenda tras salvar a los hermanos Frixo y Hele de una madrastra celosa. La constelación recuerda la valentía de actuar sin vacilación cuando las vidas están en juego.",
+        coreArchetype:
+          "El iniciador instintivo que lidera con coraje y actúa antes de que el momento pase, confiando en el movimiento audaz sobre la deliberación cuidadosa.",
+        careerArenas: "Medicina de urgencias · Mando militar · Atletismo competitivo · Emprendimiento",
+      },
+      taurus: {
+        mythology:
+          "Tauro se remonta al gran toro blanco en el que Zeus se transformó para llevar a la princesa fenicia Europa a través del mar hasta Creta — una fuerza irresistible y paciente. La constelación perdura como recordatorio de que la verdadera potencia a menudo se mueve despacio.",
+        coreArchetype:
+          "El guardián firme de la belleza y el valor, que construye riqueza duradera mediante paciencia, gusto y una negativa inquebrantable a ser apresurado.",
+        careerArenas: "Gestión patrimonial · Dirección de marcas de lujo · Gastronomía y viticultura · Arquitectura paisajista",
+      },
+      gemini: {
+        mythology:
+          "Géminis conmemora a los gemelos Cástor y Pólux — uno mortal, otro divino — unidos por un lazo tan profundo que compartieron la inmortalidad entre las estrellas. El signo hereda esa dualidad: ingenio y conexión.",
+        coreArchetype:
+          "El mensajero veloz que recoge ideas, traduce entre mundos y convierte la curiosidad en comunicación fluida y brillante.",
+        careerArenas: "Periodismo · Relaciones públicas · Lingüística y traducción · Consultoría estratégica",
+      },
+      cancer: {
+        mythology:
+          "Cáncer se vincula al cangrejo gigante que Heracles aplastó durante su batalla con la Hidra, colocado entre las estrellas por Hera en honor a su lealtad valiente pero inútil.",
+        coreArchetype:
+          "El protector tierno que resguarda lo más importante, leyendo corrientes emocionales con precisión sobrenatural y nutriendo con devoción silenciosa y feroz.",
+        careerArenas: "Psicología infantil · Conservación del patrimonio · Pediatría · Artes culinarias",
+      },
+      leo: {
+        mythology:
+          "Leo encarna al León de Nemea, cuya piel dorada ningún arma podía penetrar, derrotado por Heracles en su primer trabajo. La constelación recuerda no solo ferocidad sino resplandor — el signo solar del calor, la soberanía y el fuego creativo.",
+        coreArchetype:
+          "El soberano radiante que comanda atención mediante generosidad y fuego creativo, convirtiendo cada espacio en escena.",
+        careerArenas: "Dirección creativa · Artes escénicas · Liderazgo ejecutivo · Gestión de marca",
+      },
+      virgo: {
+        mythology:
+          "La Virgo se asocia con Deméter, diosa de la cosecha, o su hija Perséfone — figuras de discernimiento, ciclo y trabajo sostenido y silencioso. La constelación asciende en el turno de las estaciones.",
+        coreArchetype:
+          "El artesano meticuloso que refina la materia prima en algo útil y elegante, encontrando propósito en la precisión, el servicio y la excelencia silenciosa.",
+        careerArenas: "Investigación clínica · Edición y publicación · Ciencia de datos · Nutrición clínica",
+      },
+      libra: {
+        mythology:
+          "La Libra se vincula a Astrea, la última inmortal en abandonar la Tierra durante la Edad de Hierro, llevando la balanza de la justicia de regreso al cielo.",
+        coreArchetype:
+          "El mediador elegante que busca el equilibrio en cada relación y espacio, empuñando encanto, equidad y un ojo infalible por lo bello y justo.",
+        careerArenas: "Diplomacia internacional · Diseño de moda e interiores · Derecho corporativo · Dirección artística",
+      },
+      scorpio: {
+        mythology:
+          "Escorpio recuerda al escorpión que derribó a Orion tras vanagloriarse este de matar a todas las bestias — una criatura pequeña que humilló al más poderoso.",
+        coreArchetype:
+          "El investigador incansable que mira bajo las superficies, domina el arte de la transformación y empuña la intensidad emocional como arma y medicina.",
+        careerArenas: "Ciencia forense · Psiquiatría · Capital de riesgo · Gestión de crisis",
+      },
+      sagittarius: {
+        mythology:
+          "Sagitario representa a Quirón, el sabio centauro que mentoreó a Aquiles, Asclepio y Jasón — un ser entre instinto animal y aprendizaje superior.",
+        coreArchetype:
+          "El filósofo-explorador inquieto que convierte cada horizonte en aula, guiado por optimismo inquebrantable y hambre de verdad más amplia que cualquier vida.",
+        careerArenas: "Asuntos internacionales · Investigación académica · Crónica de viajes · Estudios teológicos",
+      },
+      capricorn: {
+        mythology:
+          "El Capricornio desciende de Pan, que saltó al Nilo para escapar de Tifón, transformando su mitad inferior en pez. El signo encarna esa naturaleza dual: ambición terrenal y profundidad instintiva.",
+        coreArchetype:
+          "El arquitecto disciplinado que convierte la ambición en legado, escalando con estrategia, contención y compromiso inquebrantable con la maestría.",
+        careerArenas: "Gobernanza corporativa · Planificación urbana · Política pública · Banca institucional",
+      },
+      aquarius: {
+        mythology:
+          "Acuario se remonta a Ganimedes, el príncipe troyano cuya belleza llevó a Zeus a enviar un águila para llevarlo al Olimpo como copero de los dioses — un rapto divino en nombre de un propósito superior.",
+        coreArchetype:
+          "El visionario rebelde que desafía la convención al servicio del progreso colectivo, pensando en décadas cuando otros piensan en días.",
+        careerArenas: "Tecnología emergente · Ciencias ambientales · Activismo cívico · Ingeniería aeroespacial",
+      },
+      pisces: {
+        mythology:
+          "Piscis conmemora al pez que llevó a Afrodita y Eros a salvo huyendo de Tifón al sumergirse en el mar. Los dos peces unidos pero nadando en direcciones opuestas reflejan la capacidad del signo de abrazar lo real y lo trascendente.",
+        coreArchetype:
+          "El soñador empático que disuelve la frontera entre el yo y el otro, traduciendo el sentimiento invisible en arte, música y compasión radical.",
+        careerArenas: "Cine · Biología marina · Guía espiritual · Investigación farmacéutica",
+      },
+    },
   },
   about: {
     kicker: "La publicación",
@@ -1484,12 +2321,51 @@ export const es: Dict = {
     desc: "En directo desde efemérides astronómicas: lluvias de meteoros, eclipses, oposiciones y fases lunares para disfrutar al aire libre.",
     disclaimer:
       "Los datos de eventos se actualizan automáticamente desde almanaques astronómicos. Consulta siempre las condiciones locales antes de salir.",
+    activeMonth: "Mostrando",
     meteorShower: "Lluvia de meteoros",
     eclipse: "Eclipse",
     opposition: "Oposición",
     conjunction: "Conjunción",
     lunarPhase: "Fase lunar",
     skyEvent: "Evento celeste",
+    events: {
+      quadrantids: { title: "Lluvia de meteoros Cuadrántidas · Noche de máxima", desc: "Una de las lluvias más fuertes y breves del año, alcanzando su pico en unas pocas horas en el cielo del norte." },
+      fullMoonJan: { title: "Luna llena", desc: "La primera luna llena del año, que se alza al atardecer y permanece durante la noche." },
+      newMoonJan: { title: "Luna nueva", desc: "Las noches más oscuras de enero, ideales para la observación del cielo profundo y un reinicio tranquilo." },
+      fullMoonFeb: { title: "Luna llena", desc: "Una luna llena que se alza con la puesta del sol, completamente iluminada y fácil de ver en el cielo invernal." },
+      newMoonFeb: { title: "Luna nueva", desc: "Una ventana de cielo oscuro para observar galaxias y nebulosas débiles." },
+      fullMoonMar: { title: "Luna llena", desc: "Una brillante luna llena que asciende alto en el cielo de principios de primavera." },
+      vernalEquinox: { title: "Equinoccio vernal", desc: "El día y la noche son casi iguales; el inicio astronómico de la primavera en el hemisferio norte." },
+      newMoonMar: { title: "Luna nueva", desc: "Una gran noche para observar las estrellas con la luna fuera del camino." },
+      fullMoonApr: { title: "Luna llena · Luna rosa", desc: "Una luna llena que se alza cerca del horizonte, magnificada por la ilusión lunar." },
+      newMoonApr: { title: "Luna nueva", desc: "La noche más oscura del ciclo lunar — perfecta para la observación del cielo profundo." },
+      lyrids: { title: "Lluvia de meteoros Líridas · Noche de máxima", desc: "Hasta 20 meteoros por hora radian de Lyra; mejor después de medianoche en un sitio oscuro." },
+      etaAquariids: { title: "Lluvia de meteoros Eta Acuáridas · Noche de máxima", desc: "Meteors rápidos dejados por el cometa Halley, mejores en las horas previas al amanecer." },
+      fullMoonMay: { title: "Luna llena · Luna de flores", desc: "La luna llena de mayo, un centinela brillante sobre las tardes que se alargan." },
+      newMoonMay: { title: "Luna nueva", desc: "Una ventana de cielo oscuro para objetos débiles durante las noches tardías de primavera." },
+      summerSolstice: { title: "Solsticio de verano", desc: "El día más largo del año en el hemisferio norte — el inicio astronómico del verano." },
+      fullMoonJun: { title: "Luna llena · Luna de fresa", desc: "La luna llena de junio, baja y de tono cálido en el horizonte norte." },
+      newMoonJun: { title: "Luna nueva", desc: "Una ventana oscura para observar la Vía Láctea y sus muchos cúmulos abiertos." },
+      fullMoonJul: { title: "Luna llena · Luna del ciervo", desc: "La luna llena de julio, un brillante anclaje vernal del cielo estival." },
+      newMoonJul: { title: "Luna nueva", desc: "Una noche oscura ideal para fotografiar el cielo estival lleno de estrellas." },
+      perseids: { title: "Lluvia de meteoros Perseidas · Noche de máxima", desc: "La lluvia más popular del año, con hasta 100 meteoros por hora en un sitio oscuro." },
+      newMoonAug: { title: "Luna nueva", desc: "Un pico sin luna para las Perseidas — una noche ideal para ver meteoros." },
+      fullMoonAug: { title: "Luna llena · Luna del esturión", desc: "La luna llena de agosto, cabalgando alto a través de las noches cálidas." },
+      newMoonSep: { title: "Luna nueva", desc: "Una velada de cielo oscuro perfecta para vislumbrar galaxias y la Vía Láctea otoñal." },
+      autumnalEquinox: { title: "Equinoccio otoñal", desc: "El día y la noche son casi iguales otra vez; el inicio astronómico del otoño en el norte." },
+      harvestMoon: { title: "Luna llena · Luna de cosecha", desc: "La famosa Luna de cosecha, que se alza pronto después del atardecer durante varias noches seguidas." },
+      newMoonOct: { title: "Luna nueva", desc: "Las tardes oscuras regresan — una ventana superb para la observación del cielo profundo." },
+      orionids: { title: "Lluvia de meteoros Oriónidas · Noche de máxima", desc: "Meteors rápidos del cometa Halley radian de Orión, mejores después de medianoche." },
+      huntersMoon: { title: "Luna llena · Luna del cazador", desc: "La luna llena de octubre, brillante y baja, marcando el corazón del otoño." },
+      newMoonNov: { title: "Luna nueva", desc: "Una noche sin luna durante todo el mes, genial para objetos otoñales débiles." },
+      leonids: { title: "Lluvia de meteoros Leónidas · Noche de máxima", desc: "Una de las lluvias anuales más rápidas, mejores en las horas antes del amanecer." },
+      beaverMoon: { title: "Luna llena · Luna del castor", desc: "La luna llena de noviembre, un compañero brillante y frío de las noches que se alargan." },
+      newMoonDec: { title: "Luna nueva", desc: "Las noches oscuras de diciembre regresan — una ventana superb para constelaciones invernales." },
+      geminids: { title: "Lluvia de meteoros Gemínidas · Noche de máxima", desc: "A menudo la lluvia más rica del año, con meteoros lentos, brillantes y bolas de fuego." },
+      winterSolstice: { title: "Solsticio de invierno", desc: "El día más corto del año en el norte — el inicio astronómico del invierno." },
+      ursids: { title: "Lluvia de meteoros Úrsidas · Noche de máxima", desc: "Una lluvia modesta que radia de la Osa Menor alrededor del solsticio de invierno." },
+      coldMoon: { title: "Luna llena · Luna fría", desc: "La luna llena de diciembre que se alza cerca de las noches del solsticio de invierno." },
+    },
   },
   celebrities: {
     kicker: "Nacidos bajo las estrellas de hoy",
@@ -1498,6 +2374,26 @@ export const es: Dict = {
     fullProfile: "Perfil completo",
     previous: "Anteriores",
     next: "Siguientes",
+    occupations: {
+      Author: "Escritor",
+      Actor: "Actor",
+      "Racing driver": "Piloto de carreras",
+      Singer: "Cantante",
+      "Actor & director": "Actor y director",
+      "Composer & actor": "Compositor y actor",
+      Dancer: "Bailarín",
+      "Basketball player": "Baloncestista",
+      "Civil rights activist": "Activista por los derechos civiles",
+      "Royal patron": "Patrón real",
+    },
+    regions: {
+      Hollywood: "Hollywood",
+      Bollywood: "Bollywood",
+      "K-Pop": "K-Pop",
+      Thai: "Tailandés",
+      Sports: "Deportes",
+      Global: "Global",
+    },
   },
   footer: {
     tagline:
@@ -1517,6 +2413,7 @@ export const zh: Dict = {
     desc: "对每个星座核心原型及其能量最自然彰显的职业领域的精要解读。",
     archetypeLabel: "核心原型",
     careerLabel: "职业方向",
+    cta: "探索所有宇宙事实 →",
     signs: {
       aries: { arch: "领袖 / 斗士 / 运动员", career: "创业 · 工程 · 军旅 · 体育运动" },
       taurus: { arch: "建造者 / 供养者 / 感官者", career: "金融 · 房地产 · 烹饪 · 农业" },
@@ -1698,6 +2595,12 @@ export const zh: Dict = {
     theTwelve: "十二星座",
     backToTop: "返回顶部",
     skipToContent: "跳至主要内容",
+    pills: "要点",
+    drivingPlacements: "主导星位",
+    steadySky: "今日星空平稳。",
+    noTightAspects: "目前没有紧密的主要相位。",
+    makeTodayEasy: "让今天对自己轻松一点。",
+    selectSign: "选择 {sign}",
   },
   home: {
     heroTitle: "写在星辰之中。",
@@ -1807,9 +2710,140 @@ export const zh: Dict = {
     selectSignTwo: "选择第二个星座",
     twoSignsMesh: "选择两个星座，即可揭晓它们的相容性分析。",
     theVerdict: "相容性综合判定",
+    originsTitle: "起源与神话",
+    coreArchetypeTitle: "核心原型",
+    careerArenasTitle: "职业领域",
     superpowersTitle: "专属天赋与强项",
     watchOutForTitle: "性格短板与留意",
     cosmicFunFactTitle: "趣味天文事实",
+    elements: {
+      Fire: "激情、雄心、创意火花。火象星座以勇气引领，点燃每一个他们进入的空间。",
+      Earth: "稳定、耐心、感官智慧。土象星座建造持久之物，为每一个愿景奠定基础。",
+      Air: "智慧、连接、社交流畅。风象星座在人与人之间传递思想，让对话如歌。",
+      Water: "直觉、同理、情感深度。水象星座感受他人无法命名之物，以感受治愈。",
+    },
+    weaknesses: {
+      aries: "冲动 · 急躁 · 好对抗",
+      taurus: "固执 · 占有欲强 · 抗拒改变",
+      gemini: "散漫 · 浅薄 · 犹豫不决",
+      cancer: "情绪化 · 过度敏感 · 黏人",
+      leo: "傲慢 · 戏剧化 · 求关注",
+      virgo: "挑剔 · 焦虑 · 过度思虑",
+      libra: "犹豫不决 · 讨好他人 · 回避冲突",
+      scorpio: "嫉妒 · 神秘 · 极端",
+      sagittarius: "直率 · 坐立不安 · 过度自信",
+      capricorn: "死板 · 不容人 · 工作狂",
+      aquarius: "疏离 · 叛逆 · 情感距离",
+      pisces: "逃避现实 · 轻信 · 受害者心态",
+    },
+    compat: {
+      Fire: {
+        same: "火象 + 火象：爆发性能量、炽热忠诚和无尽冒险。",
+        best: "火象 + 风象：风助火势。智性激发遇上热情行动。",
+        challenging: "火象 + 水象：蒸汽。强烈的情感动态需要双方的耐心。",
+      },
+      Earth: {
+        same: "土象 + 土象：坚不可摧的信任、共同目标和深层安全感。",
+        best: "土象 + 水象：水润土。情感深度为务实的雄心奠定根基。",
+        challenging: "土象 + 风象：节奏不同。土要根，风要翼。",
+      },
+      Air: {
+        same: "风象 + 风象：无尽的对话、共享的好奇心和智识烟花。",
+        best: "风象 + 火象：火点燃风。大胆想法遇上激情执行。",
+        challenging: "风象 + 土象：土要证据，风要可能。耐心弥合差距。",
+      },
+      Water: {
+        same: "水象 + 水象：深刻的情感理解，几乎是心灵感应般的连接。",
+        best: "水象 + 土象：土承载水。敏感与稳定在一个安全的容器中相遇。",
+        challenging: "水象 + 火象：情感遇上冲动。双方都必须学习对方的语言。",
+      },
+    },
+    signs: {
+      aries: {
+        mythology:
+          "白羊座得名于希腊神话中的金毛公羊，它将弗里克索斯和赫勒从恶毒继母的手中救出。星座铭记了那种在危急时刻毫不犹豫挺身而出的勇气，这正是白羊座与生俱来的冲动。",
+        coreArchetype:
+          "本能的开拓者，以勇气领航，在转瞬即逝的机会面前果断行动，信赖果敢的冲劲胜过审慎的权衡。",
+        careerArenas: "急诊医学 · 军事指挥 · 竞技体育 · 创业",
+      },
+      taurus: {
+        mythology:
+          "金牛座源自宙斯化身为白色公牛，将腓尼基公主欧罗巴渡海带往克里特岛的故事。星座长存天际，提醒世人真正的力量往往缓慢而坚定，美丽与力量从不矛盾。",
+        coreArchetype:
+          "坚定的美与价值守护者，凭借耐心、品味和拒绝被催促的意志，构筑持久的财富。",
+        careerArenas: "财富管理 · 奢侈品牌运营 · 美食与葡萄酒 · 景观建筑",
+      },
+      gemini: {
+        mythology:
+          "双子座纪念卡斯托耳与波吕杜克斯这对孪生兄弟——一为凡人，一为神祇——彼此间的深厚羁绊使他们共享了星辰间的永生。星座承载着这一双重性：才智与联结。",
+        coreArchetype:
+          "敏捷的信使，汇聚思想、翻译不同世界，将好奇心化为流畅灵动的沟通。",
+        careerArenas: "新闻传媒 · 公共关系 · 语言学与翻译 · 战略咨询",
+      },
+      cancer: {
+        mythology:
+          "巨蟹座关联赫拉克勒斯与九头蛇战斗中被碾碎的巨蟹，赫拉将它置于星空以表彰其忠诚的英勇。星座继承了这份守护之心：在世界面前虽渺小，却绝不退缩。",
+        coreArchetype:
+          "温柔的守护者，以超凡的直觉读懂情感暗流，以沉默而炽烈的爱意滋养所珍视的一切。",
+        careerArenas: "儿童心理学 · 文化遗产保护 · 儿科医疗 · 烹饪艺术",
+      },
+      leo: {
+        mythology:
+          "狮子座化身为涅墨亚雄狮——刀枪不入的金色猛兽，赫拉克勒斯十二项功绩中的首战。星座不仅铭记其勇猛，更映射太阳之光：温暖、王权与不灭的创造之火。",
+        coreArchetype:
+          "光芒四射的王者，以慷慨与创造之火吸引众人目光，将每个空间化为舞台。",
+        careerArenas: "创意总监 · 表演艺术 · 企业高管 · 品牌管理",
+      },
+      virgo: {
+        mythology:
+          "处女座常与谷物女神得墨忒耳或其女珀耳塞福涅相关联，象征着辨识力、循环与安静而持久的劳作。星座在季节交替时升起，提醒世人正是精细与呵护养育了万物。",
+        coreArchetype:
+          "精益求精的匠人，将原材料打磨为实用而优雅之物，在精确、服务与低调的卓越中找到使命。",
+        careerArenas: "临床研究 · 编辑出版 · 数据科学 · 营养医学",
+      },
+      libra: {
+        mythology:
+          "天秤座有时与阿斯特赖亚相关——她是铁器时代最后一位离开人间的神祇，将正义的天秤带回星空。星座继承了她的文明使命：在失衡的世界中追寻和谐、公平与美学。",
+        coreArchetype:
+          "优雅的调停者，在每段关系与空间中寻求平衡，以魅力、公正和对美与正义的精准眼光化解纷争。",
+        careerArenas: "国际外交 · 时装与室内设计 · 公司法务 · 艺术指导",
+      },
+      scorpio: {
+        mythology:
+          "天蝎座铭记那只杀死猎户座俄里翁的蝎子——猎户曾夸口要消灭世间一切猛兽，却被一只小生灵击败。星座告诫世人：深度、隐忍与策略性耐心终能战胜蛮力。",
+        coreArchetype:
+          "永不止步的探秘者，洞察表象之下的真实，精通蜕变的艺术，将炽烈的情感化为武器与良药。",
+        careerArenas: "法医学 · 精神科诊疗 · 风险投资 · 危机管理",
+      },
+      sagittarius: {
+        mythology:
+          "射手座描绘的是贤明的人马喀戎——他教导了阿喀琉斯、阿斯克勒庇俄斯和伊阿宋。星座之箭永远瞄准前方，朝向知识、信仰与超越已知的广阔地平线。",
+        coreArchetype:
+          "不安分的哲人探险家，将每个地平线化为课堂，以不可动摇的乐观与对超越生命局限之真理的渴望为指引。",
+        careerArenas: "国际事务 · 学术研究 · 旅行写作 · 神学研究",
+      },
+      capricorn: {
+        mythology:
+          "摩羯座源自牧神潘——为逃避提丰而跳入尼罗河，下半身化为鱼而头角犹存。星座体现了这种双重本质：尘世的雄心与直觉深处的隐秘力量交织。",
+        coreArchetype:
+          "自律的建筑师，以策略、克制和对精进的坚定承诺，将雄心转化为传世遗产。",
+        careerArenas: "企业治理 · 城市规划 · 公共政策 · 机构银行",
+      },
+      aquarius: {
+        mythology:
+          "水瓶座追溯至伽倪墨得斯——绝美的特洛伊王子被宙斯遣鹰接至奥林匹斯为众神斟酒，一场以更高使命为名的神圣劫持。星座承袭了那向前凝望的目光：革命性的、人道主义的、只为未来负责。",
+        coreArchetype:
+          "远见卓识的反叛者，以集体进步的名义挑战常规，在他人以天计时以十年计。",
+        careerArenas: "前沿科技 · 环境科学 · 公民行动主义 · 航空航天工程",
+      },
+      pisces: {
+        mythology:
+          "双鱼座纪念那条在提丰来袭时将阿芙罗狄忒和厄洛斯载入海中安全避难的鱼。双鱼相随却游向不同方向，映射了这个星座将现实与超越融为一体的能力。",
+        coreArchetype:
+          "共情的造梦者，在自我与他人之间消弭边界，将无形的情感转化为艺术、音乐与彻底的慈悲。",
+        careerArenas: "电影制作 · 海洋生物学 · 灵性指导 · 药物研发",
+      },
+    },
   },
   about: {
     kicker: "刊物",
@@ -1854,12 +2888,51 @@ export const zh: Dict = {
     title: "近期天象事件",
     desc: "来源于权威天文历表——流星雨、日月食、行星冲日及月相变化，值得您走出户外仰望星空。",
     disclaimer: "天象数据根据天文星历自动刷新。外出观星前请务必确认当地天气与可见度。",
+    activeMonth: "正在显示",
     meteorShower: "流星雨",
     eclipse: "日月食",
     opposition: "行星冲日",
     conjunction: "行星相合",
     lunarPhase: "月相变化",
     skyEvent: "天象活动",
+    events: {
+      quadrantids: { title: "象限仪座流星雨 · 极大期之夜", desc: "全年最强且最短暂的流星雨之一，在北方天空中数小时内达到极大。" },
+      fullMoonJan: { title: "满月", desc: "年度首轮满月，日落时升起，整夜高悬天际。" },
+      newMoonJan: { title: "新月", desc: "一月最黑暗的夜晚，适合深空观测与安静的重新开始。" },
+      fullMoonFeb: { title: "满月", desc: "伴随日落升起的满月，完全照亮，在冬季夜空中易于观测。" },
+      newMoonFeb: { title: "新月", desc: "观测暗弱星系和星云的黑暗天空窗口。" },
+      fullMoonMar: { title: "满月", desc: "早春天空中高悬的明亮满月。" },
+      vernalEquinox: { title: "春分", desc: "昼夜几乎等长；北半球天文学春季的开始。" },
+      newMoonMar: { title: "新月", desc: "月隐之时，绝佳的观星之夜。" },
+      fullMoonApr: { title: "满月 · 粉红月", desc: "靠近地平线升起的满月，因月球幻觉而显得更大。" },
+      newMoonApr: { title: "新月", desc: "月相周期中最黑暗的夜晚——非常适合深空观测。" },
+      lyrids: { title: "天琴座流星雨 · 极大期之夜", desc: "每小时最多可达20颗流星，辐射点在天琴座，午夜后观测最佳。" },
+      etaAquariids: { title: "宝瓶座η流星雨 · 极大期之夜", desc: "哈雷彗星留下的快速流星，黎明前几小时观测最佳。" },
+      fullMoonMay: { title: "满月 · 花月", desc: "五月的满月，在渐长的夜晚中如明亮的哨兵。" },
+      newMoonMay: { title: "新月", desc: "暮春夜晚观测暗弱天体的黑暗窗口。" },
+      summerSolstice: { title: "夏至", desc: "北半球全年最长的一天——天文学夏季的开始。" },
+      fullMoonJun: { title: "满月 · 草莓月", desc: "六月的满月，在北方地平线上低悬且带暖色调。" },
+      newMoonJun: { title: "新月", desc: "观测银河及其众多疏散星团的黑暗窗口。" },
+      fullMoonJul: { title: "满月 · 鹿角月", desc: "七月的满月，夏季夜空中璀璨的晚间锚点。" },
+      newMoonJul: { title: "新月", desc: "非常适合拍摄布满繁星的夏季夜空的黑暗之夜。" },
+      perseids: { title: "英仙座流星雨 · 极大期之夜", desc: "全年最受欢迎的流星雨，在暗处每小时可达100颗流星。" },
+      newMoonAug: { title: "新月", desc: "英仙座流星雨期间无月之夜——观测流星的理想之夜。" },
+      fullMoonAug: { title: "满月 · 鲶鱼月", desc: "八月的满月，在温暖的夜晚高悬天际。" },
+      newMoonSep: { title: "新月", desc: "非常适合一瞥星系和秋季银河的黑暗天空傍晚。" },
+      autumnalEquinox: { title: "秋分", desc: "昼夜再次接近等长；北半球天文学秋季的开始。" },
+      harvestMoon: { title: "满月 · 丰收月", desc: "著名的丰收月，在日落后不久连续数夜升起。" },
+      newMoonOct: { title: "新月", desc: "暗夜傍晚回归——深空观测的绝佳窗口。" },
+      orionids: { title: "猎户座流星雨 · 极大期之夜", desc: "来自哈雷彗星的快速流星，辐射点在猎户座，午夜后观测最佳。" },
+      huntersMoon: { title: "满月 · 猎人月", desc: "十月的满月，明亮而低悬，标志着深秋的到来。" },
+      newMoonNov: { title: "新月", desc: "整月无月之夜，适合观测暗弱的秋季天体。" },
+      leonids: { title: "狮子座流星雨 · 极大期之夜", desc: "年度最快的流星雨之一，黎明前几小时观测最佳。" },
+      beaverMoon: { title: "满月 · 海狸月", desc: "十一月的满月，渐长夜晚中清冷明亮的伴侣。" },
+      newMoonDec: { title: "新月", desc: "十二月的暗夜回归——观测冬季星座的绝佳窗口。" },
+      geminids: { title: "双子座流星雨 · 极大期之夜", desc: "通常是全年最丰富的流星雨，有缓慢、明亮的流星和火流星。" },
+      winterSolstice: { title: "冬至", desc: "北半球全年最短的一天——天文学冬季的开始。" },
+      ursids: { title: "小熊座流星雨 · 极大期之夜", desc: "冬至前后辐射点在小熊座的一场规模不大的流星雨。" },
+      coldMoon: { title: "满月 · 寒月", desc: "十二月的满月，在冬至之夜附近升起。" },
+    },
   },
   celebrities: {
     kicker: "诞生于今日星光之下",
@@ -1868,6 +2941,26 @@ export const zh: Dict = {
     fullProfile: "完整档案",
     previous: "上一批",
     next: "下一批",
+    occupations: {
+      Author: "作家",
+      Actor: "演员",
+      "Racing driver": "赛车手",
+      Singer: "歌手",
+      "Actor & director": "演员兼导演",
+      "Composer & actor": "作曲家兼演员",
+      Dancer: "舞者",
+      "Basketball player": "篮球运动员",
+      "Civil rights activist": "民权活动家",
+      "Royal patron": "皇室赞助人",
+    },
+    regions: {
+      Hollywood: "好莱坞",
+      Bollywood: "宝莱坞",
+      "K-Pop": "韩流",
+      Thai: "泰星",
+      Sports: "体育",
+      Global: "全球",
+    },
   },
   footer: {
     tagline:

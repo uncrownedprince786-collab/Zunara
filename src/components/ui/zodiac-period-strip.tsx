@@ -23,7 +23,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
   const [canScroll, setCanScroll] = useState(false);
   const [hasPrev, setHasPrev] = useState(false);
   const [hasNext, setHasNext] = useState(false);
-  const { tSign, dir } = useLocale();
+  const { tSign, dir, locale } = useLocale();
 
   const measure = useCallback(() => {
     const el = trackRef.current;
@@ -130,7 +130,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
                     {tSign(sign.slug)}
                   </span>
                   <span className="hidden text-[0.62rem] text-subdued/70 lg:block">
-                    {formatDateRange(sign)}
+                    {formatDateRange(sign, locale)}
                   </span>
                 </Link>
               );

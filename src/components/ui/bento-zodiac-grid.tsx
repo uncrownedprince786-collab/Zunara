@@ -80,7 +80,7 @@ function MetricPill({ area, strength }: MetricPillProps) {
  * and visual metric pills.
  */
 export function BentoZodiacGrid() {
-  const { t, tSign, tArea } = useLocale();
+  const { t, tSign, tArea, locale } = useLocale();
   const snapshot = snapshotForToday();
   const changes = computeChanges(new Date(), snapshot);
 
@@ -148,7 +148,7 @@ export function BentoZodiacGrid() {
                       {tSign(sign.slug)}
                     </span>
                     <span className="mt-1 block truncate text-[0.7rem] text-subdued">
-                      {formatDateRange(sign)}
+                      {formatDateRange(sign, locale)}
                     </span>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ export function BentoZodiacGrid() {
                     {t("horoscope.activeTheme", "Today's theme")}
                   </p>
                   <p className="mt-0.5 line-clamp-2 text-[0.78rem] italic leading-5 text-starlight/90">
-                    {result?.signals?.headline ?? "The sky is steady today."}
+                    {result?.signals?.headline ?? t("common.steadySky", "The sky is steady today.")}
                   </p>
                 </div>
 

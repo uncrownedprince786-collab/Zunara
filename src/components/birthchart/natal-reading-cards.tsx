@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import type { NatalReadings } from "@/lib/natal/types";
+import { useLocale } from "@/lib/i18n/client";
 
 const ICONS: Record<string, ReactNode> = {
   love: (
@@ -35,6 +36,7 @@ interface ReadingCardProps {
 }
 
 function ReadingCard({ reading }: ReadingCardProps) {
+  const { t } = useLocale();
   return (
     <div className="glass rounded-2xl p-6 flex flex-col gap-3">
       <div className="flex items-center gap-3">
@@ -46,7 +48,7 @@ function ReadingCard({ reading }: ReadingCardProps) {
       </div>
       <p className="text-sm leading-6 text-starlight/90">{reading.body}</p>
       <details className="text-xs text-muted border-t border-white/5 pt-3">
-        <summary className="cursor-pointer select-none mb-1">Driving placements</summary>
+        <summary className="cursor-pointer select-none mb-1">{t("common.drivingPlacements", "Driving placements")}</summary>
         <ul className="space-y-1 pl-4 list-disc">
           {reading.drivers.map((d, i) => (
             <li key={i}>{d}</li>

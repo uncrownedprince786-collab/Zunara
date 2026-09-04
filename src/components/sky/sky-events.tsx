@@ -200,8 +200,8 @@ export function SkyEvents() {
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col px-5 py-4">
-                    <h3 className="font-display text-base font-semibold leading-snug text-p-ink">{e.title}</h3>
-                    <p className="mt-2 line-clamp-3 flex-1 text-sm leading-6 text-p-muted">{e.description}</p>
+                    <h3 className="font-display text-base font-semibold leading-snug text-p-ink">{e.titleKey ? t(e.titleKey, e.title) : e.title}</h3>
+                    <p className="mt-2 line-clamp-3 flex-1 text-sm leading-6 text-p-muted">{e.descKey ? t(e.descKey, e.description) : e.description}</p>
                     <Link
                       href={resolveUrl(e)}
                       target="_blank"

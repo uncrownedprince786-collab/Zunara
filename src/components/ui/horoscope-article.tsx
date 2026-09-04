@@ -270,7 +270,7 @@ function WhyForecast({ result }: { result: HoroscopeResult }) {
               ))}
             </ul>
           ) : (
-            <p className="mt-3 text-sm text-p-muted">No tight major aspects right now.</p>
+            <p className="mt-3 text-sm text-p-muted">{t("common.noTightAspects", "No tight major aspects right now.")}</p>
           )}
         </div>
       </div>
@@ -396,7 +396,7 @@ export function HoroscopeArticle({
               signName: signLocalizedName,
               periodLabel: label,
               hook: result.glance.overall,
-              move: result.glance.bestMove ?? "Make today a little easier on yourself.",
+              move: result.glance.bestMove ?? t("common.makeTodayEasy", "Make today a little easier on yourself."),
               areas: result.signals.areas,
               path,
             }}

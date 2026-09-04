@@ -104,9 +104,7 @@ function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
     month: "long",
     day: "numeric",
     timeZone: "UTC",
-  }).format(Date.UTC(2000, celebrity.month - 1, celebrity.day));
-
-  return (
+  }).format(Date.UTC(2000, celebrity.month - 1, celebrity.day));  return (
     <div className="group relative flex min-w-[19rem] max-w-[19rem] flex-col overflow-hidden rounded-2xl border border-gold/20 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 sm:min-w-[22rem] sm:max-w-[22rem]">
       <div
         aria-hidden="true"
@@ -117,9 +115,9 @@ function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
         <PortraitAvatar celebrity={celebrity} sign={sign} />
         <div className="min-w-0">
           <h3 className="truncate font-display text-xl text-starlight">{celebrity.name}</h3>
-          <p className="mt-0.5 text-sm text-muted">{celebrity.profession}</p>
+          <p className="mt-0.5 text-sm text-muted">{t(`celebrities.occupations.${celebrity.profession}`, celebrity.profession)}</p>
           <span className={`mt-2 inline-block rounded-full border px-2.5 py-0.5 text-[0.62rem] font-medium tracking-wide ${regionStyle}`}>
-            {celebrity.region}
+            {t(`celebrities.regions.${celebrity.region}`, celebrity.region)}
           </span>
         </div>
       </div>

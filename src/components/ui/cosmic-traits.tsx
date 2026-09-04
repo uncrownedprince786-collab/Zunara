@@ -3,6 +3,7 @@
 import { useLocale } from "@/lib/i18n/client";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
+import Link from "next/link";
 import { elementText } from "./element";
 
 /**
@@ -78,6 +79,15 @@ export function CosmicTraits() {
               </dl>
             </article>
           ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            href="/cosmic-facts"
+            className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-8 py-3 text-sm font-medium text-gold-deep backdrop-blur-sm transition-colors hover:bg-gold/20 hover:border-gold/60"
+          >
+            {t("traits.cta", "Explore All Cosmic Facts →")}
+          </Link>
         </div>
       </div>
     </section>

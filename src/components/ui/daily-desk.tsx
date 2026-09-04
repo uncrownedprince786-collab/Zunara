@@ -73,7 +73,7 @@ export function DailyDesk() {
                   />
                   <div>
                     <p className="font-display text-lg leading-none text-starlight">{tSign(sign.slug)}</p>
-                    <p className="mt-1 text-xs text-subdued">{formatDateRange(sign)}</p>
+                    <p className="mt-1 text-xs text-subdued">{formatDateRange(sign, locale)}</p>
                   </div>
                 </div>
                 <span aria-hidden className="text-gold opacity-0 transition-opacity group-hover:opacity-100">

@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { MeteorShower } from "@/components/ui/meteor-shower";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { SITE, absoluteUrl } from "@/lib/seo/site";
 import { LocaleProvider } from "@/lib/i18n/client";
 
@@ -104,12 +105,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <LocaleProvider>
-          <MeteorShower />
+          <ErrorBoundary fallback={null}>
+            <MeteorShower />
+          </ErrorBoundary>
           <a href="#main-content" className="skip-link">Skip to content</a>
-          <SiteHeader />
-          <main id="main-content" className="flex-1">{children}</main>
-          <SiteFooter />
-          <BackToTop />
+          <ErrorBoundary>
+            <SiteHeader />
+          </ErrorBoundary>
+          <main id="main-content" className="flex-1">
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
+          </main>
+          <ErrorBoundary>
+            <SiteFooter />
+          </ErrorBoundary>
+          <ErrorBoundary fallback={null}>
+            <BackToTop />
+          </ErrorBoundary>
         </LocaleProvider>
       </body>
     </html>

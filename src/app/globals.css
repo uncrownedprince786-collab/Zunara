@@ -125,9 +125,17 @@ html {
   overflow-x: clip;
 }
 
-body {
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
   background: var(--z-bg-ambient);
-  background-attachment: fixed;
+  z-index: -2;
+  pointer-events: none;
+}
+
+body {
+  background: transparent;
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

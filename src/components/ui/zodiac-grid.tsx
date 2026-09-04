@@ -9,7 +9,7 @@ import { useLocale } from "@/lib/i18n/client";
 const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
 export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
-  const { tSign, tElement, tModality } = useLocale();
+  const { tSign, tElement, tModality, locale } = useLocale();
 
   return (
     <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3 lg:grid-cols-4">
@@ -38,7 +38,7 @@ export function ZodiacGrid({ hrefFor }: { hrefFor: (slug: string) => string }) {
           />
           <div>
             <span className="block font-display text-xl text-starlight">{tSign(sign.slug)}</span>
-            <span className="mt-0.5 block text-xs text-subdued">{formatDateRange(sign)}</span>
+            <span className="mt-0.5 block text-xs text-subdued">{formatDateRange(sign, locale)}</span>
           </div>
           <div className="flex items-center gap-2 text-[0.62rem] uppercase tracking-[0.18em] text-subdued">
             <span className={elementText(sign.element)}>{tElement(sign.element)}</span>

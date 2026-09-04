@@ -234,9 +234,11 @@ export function zodiacForDate(year: number, month: number, day: number): ZodiacS
   return ZODIAC_SIGNS[9];
 }
 
-export function formatDateRange(sign: ZodiacSign): string {
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  return `${monthNames[sign.dateRange.startMonth - 1]} ${sign.dateRange.startDay} – ${monthNames[sign.dateRange.endMonth - 1]} ${sign.dateRange.endDay}`;
+export function formatDateRange(sign: ZodiacSign, locale?: string): string {
+  const monthFmt = new Intl.DateTimeFormat(locale || "en", { month: "long" }).format;
+  const startMonth = monthFmt(new Date(2000, sign.dateRange.startMonth - 1, 1));
+  const endMonth = monthFmt(new Date(2000, sign.dateRange.endMonth - 1, 1));
+  return `${startMonth} ${sign.dateRange.startDay} – ${endMonth} ${sign.dateRange.endDay}`;
 }
 
 export const SIGN_DEGREE = (slug: string, degree: number): string => {

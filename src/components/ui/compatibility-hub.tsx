@@ -30,7 +30,7 @@ function SignPicker({
   value: string | null;
   onChange: (slug: string) => void;
 }) {
-  const { tSign, tElement, tPlanet } = useLocale();
+  const { t, tSign, tElement, tPlanet } = useLocale();
   const current = ZODIAC_SIGNS.find((s) => s.slug === value);
 
   return (
@@ -45,7 +45,7 @@ function SignPicker({
               type="button"
               onClick={() => onChange(sign.slug)}
               aria-pressed={active}
-              aria-label={`Select ${tSign(sign.slug)}`}
+              aria-label={t("common.selectSign", "Select {sign}").replace("{sign}", tSign(sign.slug))}
               className={`flex items-center justify-center gap-1.5 rounded-lg border px-2 py-2 transition-all duration-200 ${
                 active
                   ? "border-gold/60 bg-gold/10 text-gold"

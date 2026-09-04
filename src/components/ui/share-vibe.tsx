@@ -26,7 +26,7 @@ export function ShareVibe({ data }: { data: ShareVibeData }) {
   const lines = [
     `✨ ${data.signName} — ${t("horoscope.shareTitle", "Today's Vibe")} ${data.periodLabel}`,
     `"${data.hook}"`,
-    `Pills: ${pills}`,
+    `${t("common.pills", "Pills")}: ${pills}`,
     `${t("horoscope.yourMove", "Your move")}: ${data.move}`,
     `Zunara 🔭 ${absoluteUrl(data.path)}`,
   ];

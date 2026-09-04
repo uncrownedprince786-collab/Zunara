@@ -8,72 +8,30 @@ import { elementText } from "@/components/ui/element";
 import { CompatibilityHub } from "@/components/ui/compatibility-hub";
 import { useLocale } from "@/lib/i18n/client";
 
-const ELEMENT_POWER: Record<Element, { glyph: string; color: string; signs: string[]; desc: string }> = {
+const ELEMENT_POWER: Record<Element, { glyph: string; color: string; signs: string[] }> = {
   Fire: {
     glyph: "△",
     color: "text-fire",
     signs: ZODIAC_SIGNS.filter((s) => s.element === "Fire").map((s) => s.slug),
-    desc: "Passion, ambition, creative spark. Fire signs lead with courage and ignite every room they enter.",
   },
   Earth: {
     glyph: "▧",
     color: "text-earth",
     signs: ZODIAC_SIGNS.filter((s) => s.element === "Earth").map((s) => s.slug),
-    desc: "Stability, patience, sensory wisdom. Earth signs build what lasts and ground every vision.",
   },
   Air: {
     glyph: "⬦",
     color: "text-air",
     signs: ZODIAC_SIGNS.filter((s) => s.element === "Air").map((s) => s.slug),
-    desc: "Intellect, connection, social fluency. Air signs carry ideas between people and make conversations sing.",
   },
   Water: {
     glyph: "⧫",
     color: "text-water",
     signs: ZODIAC_SIGNS.filter((s) => s.element === "Water").map((s) => s.slug),
-    desc: "Intuition, empathy, emotional depth. Water signs feel what others cannot name and heal through feeling.",
   },
 };
 
 const ELEMENTS = ["Fire", "Earth", "Air", "Water"] as const;
-
-const WEAKNESSES: Record<string, string[]> = {
-  aries: ["Impulsive", "Impatient", "Confrontational"],
-  taurus: ["Stubborn", "Possessive", "Resistant to change"],
-  gemini: ["Scattered", "Superficial", "Indecisive"],
-  cancer: ["Moody", "Overly sensitive", "Clingy"],
-  leo: ["Arrogant", "Dramatic", "Attention-seeking"],
-  virgo: ["Critical", "Anxious", "Overthinking"],
-  libra: ["Indecisive", "People-pleasing", "Avoidant of conflict"],
-  scorpio: ["Jealous", "Secretive", "Intense"],
-  sagittarius: ["Tactless", "Restless", "Overconfident"],
-  capricorn: ["Rigid", "Unforgiving", "Work-obsessed"],
-  aquarius: ["Detached", "Rebellious", "Emotionally distant"],
-  pisces: ["Escapist", "Overly trusting", "Victim mentality"],
-};
-
-const COMPAT: Record<Element, { same: string; best: string; challenging: string }> = {
-  Fire: {
-    same: "Fire + Fire: Explosive energy, fierce loyalty, and endless adventure. Can burn bright or burn out.",
-    best: "Fire + Air: Air feeds the flame. Intellectual stimulation meets passionate action.",
-    challenging: "Fire + Water: Steam. Intense emotional dynamics that demand patience from both sides.",
-  },
-  Earth: {
-    same: "Earth + Earth: Unshakable trust, shared goals, and a deep sense of security.",
-    best: "Earth + Water: Water nourishes Earth. Emotional depth grounds practical ambition.",
-    challenging: "Earth + Air: Different tempos. Earth wants roots; Air wants wings.",
-  },
-  Air: {
-    same: "Air + Air: Endless conversation, shared curiosity, and intellectual fireworks.",
-    best: "Air + Fire: Fire ignites Air. Bold ideas meet passionate execution.",
-    challenging: "Air + Earth: Earth wants proof; Air wants possibility. Patience bridges the gap.",
-  },
-  Water: {
-    same: "Water + Water: Profound emotional understanding, almost psychic connection.",
-    best: "Water + Earth: Earth holds Water. Sensitivity meets stability in a safe container.",
-    challenging: "Water + Fire: Emotion meets impulse. Both must learn the other's language.",
-  },
-};
 
 export function CosmicFactsClient() {
   const [selected, setSelected] = useState<ZodiacSign | null>(null);
@@ -179,7 +137,7 @@ export function CosmicFactsClient() {
                       <span className={`text-2xl ${data.color}`}>{data.glyph}</span>
                       <h3 className={`font-display text-xl font-semibold ${data.color}`}>{tElement(el)}</h3>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-muted">{data.desc}</p>
+                    <p className="mt-3 text-sm leading-6 text-muted">{t(`cosmicFacts.elements.${el}`, "")}</p>
                     <ul className="mt-4 space-y-1.5">
                       {data.signs.map((slug) => (
                         <li key={slug} className="text-sm text-p-ink">{tSign(slug)}</li>
@@ -199,9 +157,13 @@ export function CosmicFactsClient() {
 function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void }) {
   const { t, tSign, tElement, tModality, tPlanet } = useLocale();
   const funFact = funFactForSign(sign.slug);
-  const compat = COMPAT[sign.element];
-  const weaknesses = WEAKNESSES[sign.slug] ?? [];
   const sameElement = ZODIAC_SIGNS.filter((s) => s.element === sign.element && s.slug !== sign.slug).map((s) => s.slug);
+
+  const weaknessesRaw = t(`cosmicFacts.weaknesses.${sign.slug}`, "");
+  const weaknesses = weaknessesRaw ? weaknessesRaw.split(" · ") : [];
+  const compatSame = t(`cosmicFacts.compat.${sign.element}.same`, "");
+  const compatBest = t(`cosmicFacts.compat.${sign.element}.best`, "");
+  const compatChallenging = t(`cosmicFacts.compat.${sign.element}.challenging`, "");
 
   return (
     <section className="mx-auto max-w-3xl px-4 pb-16 sm:px-6" aria-label={`${tSign(sign.slug)} cosmic profile`}>
@@ -262,6 +224,37 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
             </div>
           </div>
 
+          <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+              {t("cosmicFacts.originsTitle", "Origins & mythology")}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-p-ink">
+              {t(`cosmicFacts.signs.${sign.slug}.mythology`, "")}
+            </p>
+          </div>
+
+          <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+              {t("cosmicFacts.coreArchetypeTitle", "Core archetype")}
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-p-ink">
+              {t(`cosmicFacts.signs.${sign.slug}.coreArchetype`, "")}
+            </p>
+          </div>
+
+          <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+              {t("cosmicFacts.careerArenasTitle", "Career arenas")}
+            </h3>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(t(`cosmicFacts.signs.${sign.slug}.careerArenas`, "") || "").split(" · ").filter(Boolean).map((arena) => (
+                <span key={arena} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-p-ink">
+                  {arena}
+                </span>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
               <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
@@ -308,15 +301,15 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
             <div className="mt-4 space-y-4">
               <div>
                 <p className="text-xs font-semibold text-p-muted uppercase tracking-wide">{t("common.sameElement", "Same element")}</p>
-                <p className="mt-1 text-sm leading-6 text-p-ink">{compat.same}</p>
+                <p className="mt-1 text-sm leading-6 text-p-ink">{compatSame}</p>
               </div>
               <div className="border-t border-p-line pt-4">
                 <p className="text-xs font-semibold text-p-muted uppercase tracking-wide">{t("common.bestPairing", "Best pairing")}</p>
-                <p className="mt-1 text-sm leading-6 text-p-ink">{compat.best}</p>
+                <p className="mt-1 text-sm leading-6 text-p-ink">{compatBest}</p>
               </div>
               <div className="border-t border-p-line pt-4">
                 <p className="text-xs font-semibold text-p-muted uppercase tracking-wide">{t("common.challengingPairing", "Challenging pairing")}</p>
-                <p className="mt-1 text-sm leading-6 text-p-ink">{compat.challenging}</p>
+                <p className="mt-1 text-sm leading-6 text-p-ink">{compatChallenging}</p>
               </div>
             </div>
             {sameElement.length > 0 && (
