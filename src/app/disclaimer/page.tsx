@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import { PaperArticle, PaperSection } from "@/components/ui/paper-article";
+import { absoluteUrl } from "@/lib/seo/site";
+import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Astrology Disclaimer",
   description: "Zunara's astrology and entertainment disclaimer.",
+  alternates: { canonical: absoluteUrl("/disclaimer") },
+  ...shareMeta(
+    absoluteUrl("/disclaimer"),
+    "Astrology Disclaimer | Zunara",
+    "Zunara's astrology and entertainment disclaimer.",
+  ),
 };
 
 export default function DisclaimerPage() {

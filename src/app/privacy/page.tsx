@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import { PaperArticle, PaperSection } from "@/components/ui/paper-article";
+import { absoluteUrl } from "@/lib/seo/site";
+import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "Zunara's privacy policy.",
+  alternates: { canonical: absoluteUrl("/privacy") },
+  ...shareMeta(
+    absoluteUrl("/privacy"),
+    "Privacy Policy | Zunara",
+    "Zunara's privacy policy.",
+  ),
 };
 
 export default function PrivacyPage() {

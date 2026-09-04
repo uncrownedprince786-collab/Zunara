@@ -28,8 +28,55 @@ export default function HoroscopeIndexPage() {
     { type: "yearly", labelKey: "horizons.thisYear", descKey: "horizons.yearlyDesc" },
   ] as const;
 
+  const faq = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What is my horoscope today?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Choose your zodiac sign on Zunara to read a daily forecast calculated from the real current positions of the Sun, Moon and planets.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "How are Zunara horoscopes calculated?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Every planetary position is computed deterministically from the VSOP87 astronomical model and IAU precession models — the same class of models used in published ephemerides. Positions and aspects are never invented.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What are the twelve zodiac signs?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius and Pisces.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What is the difference between a sun sign and a rising sign?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Your sun sign reflects your core identity. Your rising (ascendant) sign is the sign rising on the eastern horizon at your exact birth time and place, and shapes how you present to the world.",
+              },
+            },
+          ],
+        }),
+      }}
+    />
+  );
+
   return (
     <div className="constellation-bg pb-20">
+      {faq}
       <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <div className="flex justify-center">

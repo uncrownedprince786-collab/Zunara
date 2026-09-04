@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ASTROLOGY_TOPICS } from "@/lib/astrology/topics";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 
@@ -22,6 +23,9 @@ export default function AstrologyIndexPage() {
     <div className="constellation-bg">
       <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
+          <div className="flex justify-center">
+            <Breadcrumbs items={[{ label: "Astrology", href: "/astrology" }]} />
+          </div>
           <p className="kicker">The knowledge base</p>
           <h1 className="mt-4 font-display text-4xl text-starlight sm:text-6xl">
             The Astronomy of Astrology

@@ -188,3 +188,75 @@ describe("readings", () => {
     expect(new Set(all.map((r) => r.key)).size).toBe(4);
   });
 });
+
+const SIGNS = [
+  "aries","taurus","gemini","cancer","leo","virgo",
+  "libra","scorpio","sagittarius","capricorn","aquarius","pisces",
+];
+
+describe("verification matrix (5 reference natal cases)", () => {
+  // Exact UTC instants: noon UTC, with observer at New York.
+  const CASES: { label: string; year: number; month: number; day: number }[] = [
+    { label: "1995-03-21", year: 1995, month: 3, day: 21 },
+    { label: "1988-11-12", year: 1988, month: 11, day: 12 },
+    { label: "2001-07-04", year: 2001, month: 7, day: 4 },
+    { label: "1975-01-15", year: 1975, month: 1, day: 15 },
+    { label: "2010-09-30", year: 2010, month: 9, day: 30 },
+  ];
+
+  it.each(CASES)(
+    "produces a valid, deterministic full chart for $label",
+    ({ year, month, day }) => {
+      const input: BirthInput = {
+        year, month, day,
+        hour12: 12, minute: 0, ampm: "PM",
+        timeKnown: true,
+        latitude: NYC.latitude, longitude: NYC.longitude,
+        placeName: "New York, USA",
+      };
+      const cfg = validateBirth(input);
+      expect(cfg.ok).toBe(true);
+      const a = computeNatalChart(cfg.config!.date, NYC, { timeAssumed: false });
+      const b = computeNatalChart(cfg.config!.date, NYC, { timeAssumed: false });
+
+      // Big three all map to real signs with valid longitudes.
+      expect(SIGNS).toContain(a.bigThree.sun.sign);
+      expect(SIGNS).toContain(a.bigThree.moon.sign);
+      expect(SIGNS).toContain(a.bigThree.ascendant);
+      expect(a.bigThree.sun.longitude).toBeGreaterThanOrEqual(0);
+      expect(a.bigThree.moon.longitude).toBeLessThan(360);
+
+      // All ten bodies present and deterministic across runs.
+      expect(a.planets).toHaveLength(10);
+      a.planets.forEach((p, i) => {
+        expect(p.longitude).toBeCloseTo(b.planets[i].longitude, 5);
+        expect(p.sign).toBe(b.planets[i].sign);
+      });
+
+      // Ascendant + houses deterministic.
+      expect(a.houses.ascendantLongitude).toBeCloseTo(b.houses.ascendantLongitude, 5);
+
+      // Every reading renders real, substantial copy.
+      const all = [a.readings.love, a.readings.career, a.readings.wealth, a.readings.life];
+      for (const r of all) {
+        expect(r.body.length).toBeGreaterThan(40);
+        expect(r.body).not.toContain("TODO");
+        expect(r.body).not.toContain("lorem");
+      }
+      expect(a.engineVersion).toBe(b.engineVersion);
+    },
+  );
+
+  it("resolves the historical sign boundaries within the matrix", () => {
+    const sunSigns = CASES.map(({ year, month, day }) => {
+      const date = new Date(Date.UTC(year, month - 1, day, 12, 0, 0, 0));
+      const planets = natalPlanets(date);
+      return planets.find((p) => p.key === "sun")!.sign;
+    });
+    expect(sunSigns[0]).toBe("aries");       // 1995-03-21
+    expect(sunSigns[1]).toBe("scorpio");     // 1988-11-12
+    expect(sunSigns[2]).toBe("cancer");      // 2001-07-04
+    expect(sunSigns[3]).toBe("capricorn");   // 1975-01-15
+    expect(sunSigns[4]).toBe("libra");       // 2010-09-30
+  });
+});

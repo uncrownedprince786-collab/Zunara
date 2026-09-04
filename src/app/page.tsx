@@ -13,7 +13,9 @@ import { LocaleText } from "@/components/ui/locale-text";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
 import { SkyEvents } from "@/components/sky/sky-events";
 import { CelebrityBirthdays } from "@/components/ui/celebrity-birthdays";
+import { CosmicTraits } from "@/components/ui/cosmic-traits";
 import { SITE } from "@/lib/seo/site";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 function todayDate(): string {
   return new Intl.DateTimeFormat("en", {
@@ -26,6 +28,12 @@ function todayDate(): string {
 }
 
 export const revalidate = 3600;
+
+export const metadata = pageMetadata(
+  "/",
+  "Zunara — Written in the Stars",
+  "Premium editorial astrology publication. Mathematically calculated daily, weekly, monthly and yearly horoscopes for all twelve zodiac signs, grounded in real astronomical data.",
+);
 
 export default function HomePage() {
   const date = todayDate();
@@ -198,6 +206,9 @@ export default function HomePage() {
 
       {/* ---- Born under today's stars ---- */}
       <CelebrityBirthdays />
+
+      {/* ---- Cosmic traits & career directions ---- */}
+      <CosmicTraits />
 
       {/* ---- Horizons ---- */}
       <section className="border-y border-white/[0.08] bg-white/[0.02] backdrop-blur-xl saturate-180">

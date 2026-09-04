@@ -84,9 +84,48 @@ function displayDate(iso: string, locale: string): { month: string; text: string
   return { month, text };
 }
 
+function eventTime(e: SkyEvent): number {
+  const d = new Date(e.start === e.start.slice(0, 10) ? `${e.start}T00:00:00Z` : e.start);
+  return Number.isNaN(d.getTime()) ? Number.POSITIVE_INFINITY : d.getTime();
+}
+
+/**
+ * Zero-maintenance month rollover: pick the current UTC month while it still
+ * has upcoming events; if it has none remaining, roll over to the next month.
+ * Deterministic and unit-testable. Returns the active month (1-12) and that
+ * month's events sorted oldest-first.
+ */
+export function selectActiveMonthEvents(
+  events: SkyEvent[],
+  now: Date,
+): { month: number; events: SkyEvent[] } {
+  const year = now.getUTCFullYear();
+  const nowTs = now.getTime();
+
+  const upcoming = events
+    .filter((e) => {
+      const t = eventTime(e);
+      return t >= nowTs - 86400000; // include today's events
+    })
+    .sort((a, b) => eventTime(a) - eventTime(b));
+
+  for (let i = 0; i < 2; i++) {
+    const start = Date.UTC(year, now.getUTCMonth() + i, 1);
+    const end = Date.UTC(year, now.getUTCMonth() + i + 1, 1);
+    const monthEvents = upcoming.filter(
+      (e) => eventTime(e) >= start && eventTime(e) < end,
+    );
+    if (monthEvents.length > 0) {
+      return { month: now.getUTCMonth() + i + 1, events: monthEvents };
+    }
+  }
+  // No events in either month: fall back to the very next single event.
+  return { month: now.getUTCMonth() + 1, events: upcoming.slice(0, 1) };
+}
+
 export function SkyEvents() {
   const { t, locale } = useLocale();
-  const [events, setEvents] = useState<SkyEvent[]>(FALLBACK_EVENTS);
+  const [state, setState] = useState(() => selectActiveMonthEvents(FALLBACK_EVENTS, new Date()));
 
   function categoryLabel(category: string | undefined): string {
     switch (category) {
@@ -106,13 +145,9 @@ export function SkyEvents() {
         const res = await fetch("https://space-calendar.lukekorth.com/feed.json?c=meteor-showers,eclipses,oppositions,conjunctions,moon-phases");
         if (!res.ok) return;
         const data = (await res.json()) as { events?: SkyEvent[] };
-        const now = Date.now();
-        const upcoming = (data.events ?? [])
-          .filter((e) => new Date(e.start === e.start.slice(0, 10) ? `${e.start}T00:00:00Z` : e.start).getTime() >= now)
-          .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-          .slice(0, 4);
-        if (active && upcoming.length > 0) {
-          setEvents(upcoming);
+        const selected = selectActiveMonthEvents(data.events ?? [], new Date());
+        if (active && selected.events.length > 0) {
+          setState(selected);
         }
       } catch {
         // use fallbacks
@@ -121,6 +156,12 @@ export function SkyEvents() {
     load();
     return () => { active = false; };
   }, []);
+
+  const events = state.events.slice(0, 4);
+  const monthName = new Intl.DateTimeFormat(locale, {
+    month: "long",
+    timeZone: "UTC",
+  }).format(Date.UTC(2000, state.month - 1, 1));
 
   return (
     <section
@@ -139,6 +180,9 @@ export function SkyEvents() {
           </h2>
           <p className="mt-3 max-w-xl leading-7 text-muted">
             {t("skyEvents.desc", "Live from astronomical ephemerides — meteor showers, eclipses, oppositions and lunar phases worth stepping outside for.")}
+          </p>
+          <p className="mt-1 text-sm text-subdued">
+            {t("skyEvents.activeMonth", "Showing")} {monthName}
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

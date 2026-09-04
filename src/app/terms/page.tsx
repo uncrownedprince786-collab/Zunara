@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import { PaperArticle, PaperSection } from "@/components/ui/paper-article";
+import { absoluteUrl } from "@/lib/seo/site";
+import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Zunara's terms of service.",
+  alternates: { canonical: absoluteUrl("/terms") },
+  ...shareMeta(
+    absoluteUrl("/terms"),
+    "Terms of Service | Zunara",
+    "Zunara's terms of service.",
+  ),
 };
 
 export default function TermsPage() {

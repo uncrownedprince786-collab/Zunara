@@ -67,9 +67,12 @@ const C: Array<
   { month: 4, day: 12, name: "Andy García", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Andy_Garcia_at_the_2026_Cannes_Film_Festival_03.jpg/330px-Andy_Garcia_at_the_2026_Cannes_Film_Festival_03.jpg", profession: "Actor", region: "Hollywood", star: "A magnetic leading man whose presence elevates every ensemble." },
   { month: 4, day: 21, name: "Iggy Pop", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Iggy_Pop_door_Dirk_Annemans_2025_03_%28cropped%29.png/330px-Iggy_Pop_door_Dirk_Annemans_2025_03_%28cropped%29.png", profession: "Singer", region: "Global", star: "The godfather of punk whose raw energy never dimmed." },
   { month: 4, day: 22, name: "Jack Nicholson", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Jack_Nicholson_2002.jpg/330px-Jack_Nicholson_2002.jpg", profession: "Actor", region: "Hollywood", star: "An icon of the silver screen whose grin can charm and unsettle in equal measure." },
+  { month: 4, day: 23, name: "John Cena", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/John_Cena_July_2018.jpg/330px-John_Cena_July_2018.jpg", profession: "Wrestler & actor", region: "Sports", star: "A wrestling megastar whose never-give-up mantra transcended the ring into Hollywood." },
+  { month: 4, day: 23, name: "William Shakespeare", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Shakespeare.jpg/330px-Shakespeare.jpg", profession: "Playwright & poet", region: "Global", star: "The Bard, whose words gave the English language more than a thousand phrases." },
   { month: 4, day: 25, name: "Renée Zellweger", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Ren%C3%A9e_Zellweger_Berlinale_2010_%28cropped%29.jpg/330px-Ren%C3%A9e_Zellweger_Berlinale_2010_%28cropped%29.jpg", profession: "Actor", region: "Hollywood", star: "An Oscar-winning actress whose transformations are the stuff of legend." },
 
   // ---- May ----
+  { month: 5, day: 2, name: "The Rock", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Dwayne_%22The_Rock%22_Johnson_at_the_2024_BAFTA%27s_%28cropped%29.jpg/330px-Dwayne_%22The_Rock%22_Johnson_at_the_2024_BAFTA%27s_%28cropped%29.jpg", profession: "Wrestler & actor", region: "Sports", star: "From People's Champion to global superstar, the rock that lifted an entire genre of entertainment.", wiki: "Dwayne_Johnson" },
   { month: 5, day: 4, name: "Audrey Hepburn", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/AudreyKHepburn.jpg/330px-AudreyKHepburn.jpg", profession: "Actor", region: "Hollywood", star: "An eternal style icon whose elegance and humanitarian heart still shine." },
   { month: 5, day: 6, name: "George Clooney", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/George_Clooney_Jay_Kelly-19_%28cropped%29.jpg/330px-George_Clooney_Jay_Kelly-19_%28cropped%29.jpg", profession: "Actor & director", region: "Hollywood", star: "Hollywood's smoothest operator, equally at home behind the camera and in humanitarian work." },
   { month: 5, day: 14, name: "Cate Blanchett", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Cate_Blanchett-63298_%28cropped_2%29.jpg/330px-Cate_Blanchett-63298_%28cropped_2%29.jpg", profession: "Actor", region: "Hollywood", star: "A chameleon of the craft whose range seems without limit." },
@@ -90,6 +93,7 @@ const C: Array<
   { month: 7, day: 18, name: "Nelson Mandela", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Nelson_Mandela_1994.jpg/330px-Nelson_Mandela_1994.jpg", profession: "Statesman", region: "Global", star: "A global leader whose forgiveness turned a prison sentence into a nation's freedom." },
   { month: 7, day: 25, name: "Matt LeBlanc", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Matt_LeBlanc%2C_Arqiva_British_Academy_Television_Awards%2C_2013.jpg/330px-Matt_LeBlanc%2C_Arqiva_British_Academy_Television_Awards%2C_2013.jpg", profession: "Actor", region: "Hollywood", star: "A sitcom legend whose humor made friendship a global religion." },
   { month: 7, day: 26, name: "Sandra Bullock", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Sandra_Bullock_at_The_Egyptian_Theatre_2024.jpg/330px-Sandra_Bullock_at_The_Egyptian_Theatre_2024.jpg", profession: "Actor", region: "Hollywood", star: "An Oscar-winning actress equally brilliant in comedy and drama." },
+  { month: 7, day: 31, name: "J. K. Rowling", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/J._K._Rowling_2010.jpg/330px-J._K._Rowling_2010.jpg", profession: "Author", region: "Global", star: "The author who conjured a world of magic that captivated an entire generation.", wiki: "J._K._Rowling" },
 
   // ---- August ----
   { month: 8, day: 5, name: "Neil Armstrong", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Neil_Armstrong_pose.jpg/330px-Neil_Armstrong_pose.jpg", profession: "Astronaut", region: "Global", star: "The first human to set foot on the Moon — a small step that became a giant leap for all." },
@@ -122,6 +126,7 @@ const C: Array<
   // ---- November ----
   { month: 11, day: 2, name: "Kendall Jenner", image: "https://upload.wikimedia.org/wikipedia/commons/5/54/Kendall_Jenner_for_Adanola_2_%28cropped%29.jpg", profession: "Model", region: "Global", star: "A supermodel whose effortless cool defined a new generation of fashion." },
   { month: 11, day: 9, name: "Carl Sagan", image: "https://upload.wikimedia.org/wikipedia/commons/b/be/Carl_Sagan_Planetary_Society.JPG", profession: "Astronomer", region: "Global", star: "The astronomer who made the cosmos feel personal and infinitely wondrous." },
+  { month: 11, day: 7, name: "Marie Curie", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Marie_Curie_c._1920s.jpg/330px-Marie_Curie_c._1920s.jpg", profession: "Physicist & chemist", region: "Global", star: "The pioneer of radioactivity whose persistence won two Nobel Prizes across two sciences.", wiki: "Marie_Curie" },
   { month: 11, day: 11, name: "Leonardo DiCaprio", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/LeoPTABFI191125-28_%28cropped%29.jpg/330px-LeoPTABFI191125-28_%28cropped%29.jpg", profession: "Actor", region: "Hollywood", star: "An actor of restless ambition and a dedicated advocate for the planet." },
   { month: 11, day: 17, name: "Sophie Marceau", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Sophie_Marceau_Cabourg_2012.jpg/330px-Sophie_Marceau_Cabourg_2012.jpg", profession: "Actor", region: "Global", star: "A French screen icon whose elegance spans the Atlantic." },
   { month: 11, day: 22, name: "Scarlett Johansson", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Scarlett_Johansson-8588.jpg/330px-Scarlett_Johansson-8588.jpg", profession: "Actor", region: "Hollywood", star: "A versatile star equally commanding in comic blockbusters and intimate drama." },
@@ -149,4 +154,28 @@ export function regionsPresent(): CelebrityRegion[] {
   const set = new Set<CelebrityRegion>();
   for (const c of CELEBRITIES) set.add(c.region);
   return Array.from(set);
+}
+
+export type CelebrityIndustry =
+  | "Acting"
+  | "Music"
+  | "Sports"
+  | "Wrestling"
+  | "Literature"
+  | "Science";
+
+const INDUSTRY_MATCH: Record<CelebrityIndustry, RegExp> = {
+  Acting: /actor|actress|model|filmmaker|director/i,
+  Music: /sing|rapper|composer|music|rap|pop|soul|rock|idol|vocal|producer/i,
+  Sports: /sport|basketball|football|snowboard|racer|baseball|tennis|soccer|athlet|box|cricket|golf|swim/i,
+  Wrestling: /wrestl/i,
+  Literature: /author|writer|poet|novel|playwright/i,
+  Science: /physicist|astronomer|astronaut|scientist|engineer|chemist|inventor/i,
+};
+
+/** Every industry that at least one celebrity in the hub represents. */
+export function industriesPresent(): CelebrityIndustry[] {
+  return (Object.keys(INDUSTRY_MATCH) as CelebrityIndustry[]).filter((industry) =>
+    CELEBRITIES.some((c) => INDUSTRY_MATCH[industry].test(c.profession)),
+  );
 }

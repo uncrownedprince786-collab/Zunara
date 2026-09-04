@@ -416,3 +416,52 @@ The product is production-ready when:
 - **RTL Layout Engine:** Logical CSS properties (`start-`, `end-`, `ps-`, `pe-`, `text-start`, `ms-`, `me-`) ensure dropdowns, carousels, forms, and cards mirror smoothly without overlapping.
 - **Dedicated Route:** `/birthchart` provides an interactive high-precision birth chart calculator supporting all 5 languages.
 
+---
+
+## 39. Supervisor Sprint #16: Final Production Readiness Audit & Feature Enhancements
+
+All 9 tasks completed. Deploy: `git push origin master:main` → Vercel auto-build → live `https://zunara.vercel.app`. Verification: `npx tsc --noEmit` clean, `npx eslint src` clean, `npx vitest run` → **132 passed** (113 baseline + 19 new), `npx next build` succeeds (all routes static/SSG).
+
+### Task 1 — Dynamic Celestial Events Horizon (`src/components/sky/sky-events.tsx`)
+- Exported pure helper `selectActiveMonthEvents(events, now): { month, events }` (testable, no prop-drilling).
+- Keeps the current UTC month while it still has ≥1 upcoming event (includes today via `t >= nowTs - 86400000`); rolls to the next month if the current has none; falls back to the single next event.
+- Fixed local/UTC date-boundary bug using pure `Date.UTC()` month boundaries (`monthEvents.ts` helper). `SkyEvents` state + fetch both use the helper.
+- Tests 6/6 (`sky-events.test.ts`): month selection, rollover, fallback, boundary windows.
+
+### Task 2 — Celebrity Hub Sync & Diversity (`src/lib/content/celebrities.ts`)
+- Verified UTC sync (each entry uses `Date.UTC` guarded day ambiguity) and `showArrows = count > 3` rule.
+- Added 6 entries: John Cena (Apr 23), William Shakespeare (Apr 23), The Rock (May 2), J.K. Rowling (Jul 31), Marie Curie (Nov 7), plus existing coverage.
+- Added `CelebrityIndustry` type + `industriesPresent()` with `INDUSTRY_MATCH` regexes (Wrestler/actor, Playwright/poet, etc.).
+- Tests 3/3 (`celebrities.test.ts`): industry diversity, duplicate-slug check, current-date lookup.
+
+### Task 3 — Birth Chart Engine Verification (`src/lib/natal/natal.test.ts`)
+- Added `describe("verification matrix (5 reference natal cases)")`: 1995-03-21, 1988-11-12, 2001-07-04, 1975-01-15, 2010-09-30.
+- Asserts deterministic full charts + sun-sign boundary correctness (Aries/Scorpio/Cancer/Capricorn/Libra). 24 natal tests pass.
+
+### Task 4 — Cosmic Traits & Career Directions (`src/components/ui/cosmic-traits.tsx`)
+- New glass-card client section mapping all 12 signs via `ZODIAC_SIGNS` + `ZodiacSymbol` + `elementText`.
+- Added `traits` i18n block to **all 5 languages** (kicker/title/desc/archetypeLabel/careerLabel + `signs.{sign}.arch/career`).
+- Wired into `src/app/page.tsx` after `<CelebrityBirthdays/>`.
+
+### Task 5 — Content / Menu Polish
+- Applied user-confirmed nav professionalization to all 5 languages: Birth Chart→'Natal Engine', Horoscopes→'Daily Horoscopes', Cosmic Traits & Facts→'Zodiac Intelligence', The Astronomy→'Cosmic Events' (1:1; footer uses `dict.nav.*` so it propagates).
+- Stripped 14 EN em-dashes to professional punctuation. Non-EN em-dashes left untouched (valid typography; mojibake risk).
+
+### Task 6 — Language Audit (`src/lib/i18n/dictionaries.test.ts`)
+- 4/4 tests: identical key trees across all 5 locales, non-empty leaf values, RTL dir check (ur/ar), `traits` block presence. `Dict = typeof en` + `dictionaries: Record<Locale, Dict>` enforce structural parity at typecheck.
+
+### Task 7 — SEO / AI Ranking Overhaul + Schema.org
+- **Homepage** (`page.tsx`): added page-level `metadata` export (canonical + OG/twitter) via `pageMetadata("/", …)`.
+- **Breadcrumbs:** added `<Breadcrumbs>` to `/astrology` and `/cosmic-facts`.
+- **Legal pages** (`privacy`, `terms`, `disclaimer`): added absolute canonical + `shareMeta` (OG/twitter).
+- **Sitemap:** added `/birthchart` (priority 0.8).
+- **AI snippets:** added **FAQPage** JSON-LD to `/horoscope` index (4 Q&A covering common query intents).
+- **Dead code deployed:** `JsonLd` component now used on `/birthchart` as `WebApplication` schema (was previously unused).
+
+### Task 8 — Mobile Viewport + Meteor Animation
+- Viewport already correct (`width: device-width` in `layout.tsx`); `meteor-field` is `position: fixed; inset:0` with `z-index:-1` (never causes scroll).
+- Added defensive `overflow-x: clip` on `html` in `globals.css` to prevent stray horizontal scrollbars on 320-430px viewports (leaves vertical scroll + sticky intact).
+
+### Task 9 — Cleanup, Docs, Deploy
+- Full verification green (tsc/eslint/vitest 132/build). This `brain.md` section updated. Committed + pushed `master → main`.
+

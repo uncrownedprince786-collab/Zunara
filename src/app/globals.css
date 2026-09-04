@@ -118,6 +118,11 @@
 html {
   scroll-behavior: smooth;
   color-scheme: dark;
+  /* Guard against stray horizontal scrollbars on narrow (320-430px) viewports.
+     Fixed decorations (meteor canvas, ambient glow) can momentarily exceed the
+     layout width before the browser clamps them; overflow-x: clip prevents any
+     horizontal panning while leaving vertical scrolling fully intact. */
+  overflow-x: clip;
 }
 
 body {
