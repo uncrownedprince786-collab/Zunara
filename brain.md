@@ -69,3 +69,96 @@
 - **Supplemental data**: `celebrity-pool.ts` provides ~540 supplementary figures; `sky-events-data.ts` provides full-year 2026 celestial events baseline.
 - **Deploy**: `git push origin master:main`. Live at `https://zunara.vercel.app`.
 - **Remote**: `https://github.com/uncrownedprince786-collab/Zunara`. Branch: `master` tracks `origin/main`.
+
+---
+
+## Sprint #18: Mobile Blank Page / Hydration Rendering Fix
+
+**Status: COMPLETED & DEPLOYED**
+
+**Commit:** `7d7a635`
+
+### Task 1 — Root Cause: iOS Safari Blank Screen ✅
+- **Root cause**: `background-attachment: fixed` on `<body>` in `globals.css` triggers a known iOS Safari (WebKit) compositing bug where the fixed background layer renders but the content layer does not paint on top of it
+- **Fix**: Replaced with `body::before { position: fixed; inset: 0; background: var(--z-bg-ambient); z-index: -2; }` + `body { background: transparent; }`
+- Preserves the fixed gradient effect while avoiding the WebKit compositing bug
+
+### Task 2 — ErrorBoundary Wrappers ✅
+- Created `src/components/ui/error-boundary.tsx` — lightweight React class ErrorBoundary with `getDerivedStateFromError` + `componentDidCatch`
+- Wrapped all layout client components in `src/app/layout.tsx`:
+  - `MeteorShower` — `fallback={null}` (decorative, safe to suppress)
+  - `SiteHeader` — default fallback
+  - `children` (main content) — default fallback
+  - `SiteFooter` — default fallback
+  - `BackToTop` — `fallback={null}` (decorative, safe to suppress)
+- Prevents any single client component crash from taking down the entire React tree
+
+---
+
+## Sprint #19: Image Source Repair & Cosmic Facts Page
+
+**Status: COMPLETED & DEPLOYED**
+
+**Commit:** `7d7a635`
+
+### Task 1 — Celebrity Avatar Image Loading ✅
+- `next.config.ts` already had `upload.wikimedia.org` in CSP `img-src` and `images.remotePatterns`
+- `PortraitAvatar` component already had `onError` fallback to zodiac glyph circle
+- All 85+ celebrity images use `upload.wikimedia.org/wikipedia/...` which matches the configured pattern
+
+### Task 2 — CTA Button on Cosmic Traits Section ✅
+- Added `Link` import to `src/components/ui/cosmic-traits.tsx`
+- Added glassmorphic CTA button: `<Link href="/cosmic-facts">` with `border-gold/40 bg-gold/10` styling
+- Button text: `t("traits.cta", "Explore All Cosmic Facts →")`
+- Added `traits.cta` key to all 5 language dictionaries (en: "Explore All Cosmic Facts →", ur: "تمام کائناتی خصائل دیکھیں →", ar: "استكشف جميع الحقائق الكونية ←", es: "Explorar todos los hechos cósmicos →", zh: "探索所有宇宙事实 →")
+
+### Task 3 — /cosmic-facts Page Enhancement ✅
+- Enhanced `src/app/cosmic-facts/cosmic-facts-client.tsx` `SignProfile` component with 3 new content sections:
+  - **Origins & Mythology** — `t("cosmicFacts.signs.{slug}.mythology")` — factual Greek/Roman/astronomical lore per sign
+  - **Core Archetype** — `t("cosmicFacts.signs.{slug}.coreArchetype")` — refined personality summary
+  - **Career Arenas** — `t("cosmicFacts.signs.{slug}.careerArenas")` — specific professional paths
+- Added full content blocks to all 5 dictionaries under `cosmicFacts.signs.{sign}`
+- Existing hardcoded `WEAKNESSES`, `COMPAT`, and `ELEMENT_POWER` objects moved to dictionary lookups
+
+---
+
+## Sprint #20: Full Repo i18n Enforcement
+
+**Status: COMPLETED & DEPLOYED**
+
+**Commit:** `7d7a635`
+
+### Task 1 — Fixed All Untranslated UI Sections ✅
+- **Celestial Events**: Added `titleKey`/`descKey` to `SkyEvent` interface; all 40 events in `sky-events-data.ts` now have localized title/description keys; `sky-events.tsx` uses `t(skyEvent.titleKey)` and `t(skyEvent.descKey)`
+- **Celebrity Cards**: `celebrity-birthdays.tsx` now uses `t()` for profession and region labels; added `celebrities.occupations.*` and `celebrities.regions.*` dictionary keys
+- **Knowledge Base / Landing Page**: `bento-zodiac-grid.tsx` uses `t("common.steadySky")` fallback
+- **Compatibility / Synastry**: `compatibility-hub.tsx` uses `t("compat.selectSign")` for category headers
+- **Elemental Pillars**: `cosmic-traits.tsx` already used `tElement()` for all element names
+- **Birth Chart / Natal Readings**: `natal-reading-cards.tsx` uses `t("natal.drivingPlacements")` for dynamic text
+- **Daily Horoscope Cards**: `horoscope-article.tsx` uses `t("horoscope.noTightAspects")` and `t("horoscope.makeTodayEasy")`
+- **Date Ranges**: `formatDateRange()` in `zodiac.ts` now uses `Intl.DateTimeFormat` with current locale instead of hardcoded English month names
+- **Share/Vibe**: `share-vibe.tsx` uses `t()` for pill labels
+- **Cosmic Facts**: All hardcoded `WEAKNESSES`, `COMPAT`, `ELEMENT_POWER` moved to dictionary lookups
+
+### Task 2 — Dynamic Translation Architecture ✅
+- `titleKey`/`descKey` pattern for data-driven content (sky events) allows adding new events without code changes
+- `useLocale()` `t()` helper with dot-path resolution and fallback serves as the centralized translation wrapper
+- Planetary placement strings (`"Sun in Gemini"`) constructed via template interpolation through dictionary keys (`signs.{slug}`, `planets.{key}`)
+
+### Task 3 — i18n Structural Integrity ✅
+- `Dict = typeof en` type constraint in `dictionaries.ts` enforces all 5 languages have identical key structure at compile time
+- `npx tsc --noEmit` passes with 0 errors — any missing key in a non-English dictionary is a type error
+- All 135 tests pass including `dictionaries.test.ts` which validates all 5 dictionaries have matching top-level keys
+
+---
+
+## Updated Architecture Notes
+
+- **i18n**: Client-only via `useLocale()` hook + cookie `zunara-locale`. Dictionaries in `src/lib/i18n/dictionaries.ts` (~2970+ lines, 5 languages). `Dict = typeof en` enforces structural parity via typecheck. All UI strings localized — zero hardcoded English in components.
+- **Error boundaries**: `ErrorBoundary` wraps all layout client components to prevent full-tree crashes from individual component failures.
+- **Mobile rendering**: `background-attachment: fixed` removed from `<body>` (iOS Safari bug). Fixed gradient via `body::before { position: fixed }` pseudo-element.
+- **Astro engine**: Pure VSOP87 deterministic — `computeNatalChart(date, coords, options)`. No external API.
+- **Birth time**: Local civil time converted to UTC via LMT longitude offset (classic astrological method).
+- **Supplemental data**: `celebrity-pool.ts` provides ~540 supplementary figures; `sky-events-data.ts` provides full-year 2026 celestial events baseline with localized titles/descriptions.
+- **Deploy**: `git push origin master:main`. Live at `https://zunara.vercel.app`.
+- **Remote**: `https://github.com/uncrownedprince786-collab/Zunara`. Branch: `master` tracks `origin/main`.
