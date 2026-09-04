@@ -19,8 +19,6 @@ import { longitudeToSign } from "@/lib/astronomy/astro";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import type { BirthCoordinates, NatalHouses } from "./types";
 
-const OBLIQUITY_DEFAULT = 23.4392911;
-
 /** Mean obliquity of the ecliptic (IAU 1980), in degrees, at a given UTC date. */
 export function meanObliquity(date: Date): number {
   // Julian centuries from J2000.0 epoch.

@@ -10,7 +10,7 @@ interface BirthFormProps {
 }
 
 export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
-  const { t, dict } = useLocale();
+  const { t } = useLocale();
   const [input, setInput] = useState<BirthInput>({
     year: new Date().getUTCFullYear() - 25,
     month: 6,

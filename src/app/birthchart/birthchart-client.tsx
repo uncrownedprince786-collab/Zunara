@@ -11,7 +11,6 @@ import { VitruvianHero } from "@/components/ui/vitruvian-hero";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { useLocale } from "@/lib/i18n/client";
-import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 export function BirthchartClient() {
@@ -56,10 +55,6 @@ export function BirthchartClient() {
       setIsLoading(false);
     }
   };
-
-  const sunSignData = chart ? ZODIAC_SIGNS.find((s) => s.slug === chart.bigThree.sun.sign) : null;
-  const moonSignData = chart ? ZODIAC_SIGNS.find((s) => s.slug === chart.bigThree.moon.sign) : null;
-  const risingSignData = chart ? ZODIAC_SIGNS.find((s) => s.slug === chart.bigThree.ascendant) : null;
 
   return (
     <div className="constellation-bg pb-24">
@@ -111,9 +106,13 @@ export function BirthchartClient() {
               <button
                 type="button"
                 onClick={() => setShowEditForm(true)}
-                className="rounded-full border border-white/15 bg-white/[0.05] px-5 py-2.5 text-xs font-medium text-starlight backdrop-blur-md transition-colors hover:border-gold/40 hover:text-gold"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-5 py-2.5 text-xs font-medium text-starlight backdrop-blur-md transition-colors hover:border-gold/40 hover:text-gold"
               >
-                ✎ {t("birthchart.formTitle", "Modify Details")}
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                <span>{t("birthchart.formTitle", "Modify Details")}</span>
               </button>
             </div>
 

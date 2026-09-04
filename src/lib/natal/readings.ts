@@ -111,7 +111,6 @@ export function buildReadings(
   }
 
   const sunHouse = houseOf(ascIndex, SIGN_INDEX[sun.sign]);
-  const moonHouse = houseOf(ascIndex, SIGN_INDEX[moon.sign]);
   const venusHouse = houseOf(ascIndex, SIGN_INDEX[venus.sign]);
   const marsHouse = houseOf(ascIndex, SIGN_INDEX[mars.sign]);
   const jupiterHouse = houseOf(ascIndex, SIGN_INDEX[jupiter.sign]);
