@@ -63,10 +63,13 @@
 
 ## Architecture Notes
 
-- **i18n**: Client-only via `useLocale()` hook + cookie `zunara-locale`. Dictionaries in `src/lib/i18n/dictionaries.ts` (~1900 lines, 5 languages). `Dict = typeof en` enforces structural parity via typecheck.
+- **i18n**: Client-only via `useLocale()` hook + cookie `zunara-locale`. Dictionaries in `src/lib/i18n/dictionaries.ts` (~2970+ lines, 5 languages). `Dict = typeof en` enforces structural parity via typecheck. All UI strings localized — zero hardcoded English in components.
+- **Error boundaries**: `ErrorBoundary` wraps all layout client components to prevent full-tree crashes from individual component failures.
+- **Mobile rendering**: `background-attachment: fixed` removed from `<body>` (iOS Safari bug). Background gradient applied to `html` element directly — no pseudo-elements that could interfere with the meteor canvas stacking.
+- **Celebrity images**: Native `<img loading="lazy">` loads directly from Wikimedia thumbnails, bypassing Vercel's failing image optimization proxy. `onError` fallback to zodiac glyph.
 - **Astro engine**: Pure VSOP87 deterministic — `computeNatalChart(date, coords, options)`. No external API.
 - **Birth time**: Local civil time converted to UTC via LMT longitude offset (classic astrological method).
-- **Supplemental data**: `celebrity-pool.ts` provides ~540 supplementary figures; `sky-events-data.ts` provides full-year 2026 celestial events baseline.
+- **Supplemental data**: `celebrity-pool.ts` provides ~540 supplementary figures; `sky-events-data.ts` provides full-year 2026 celestial events baseline with localized titles/descriptions.
 - **Deploy**: `git push origin master:main`. Live at `https://zunara.vercel.app`.
 - **Remote**: `https://github.com/uncrownedprince786-collab/Zunara`. Branch: `master` tracks `origin/main`.
 
@@ -76,12 +79,12 @@
 
 **Status: COMPLETED & DEPLOYED**
 
-**Commit:** `7d7a635`
+**Commit:** `7d7a635` → `f92d677` (hotfix)
 
 ### Task 1 — Root Cause: iOS Safari Blank Screen ✅
 - **Root cause**: `background-attachment: fixed` on `<body>` in `globals.css` triggers a known iOS Safari (WebKit) compositing bug where the fixed background layer renders but the content layer does not paint on top of it
-- **Fix**: Replaced with `body::before { position: fixed; inset: 0; background: var(--z-bg-ambient); z-index: -2; }` + `body { background: transparent; }`
-- Preserves the fixed gradient effect while avoiding the WebKit compositing bug
+- **Fix v1**: Replaced with `body::before { position: fixed; inset: 0; background: var(--z-bg-ambient); z-index: -2; }` + `body { background: transparent; }`
+- **Fix v2 (hotfix `f92d677`)**: `body::before` with `position: fixed; z-index: -2` caused a secondary WebKit stacking context bug that hid the `.meteor-field` canvas (`z-index: -1`). Replaced with `html { background: var(--z-bg-ambient); }` + `body { background: transparent; }` — no pseudo-element, no stacking conflict.
 
 ### Task 2 — ErrorBoundary Wrappers ✅
 - Created `src/components/ui/error-boundary.tsx` — lightweight React class ErrorBoundary with `getDerivedStateFromError` + `componentDidCatch`
@@ -99,12 +102,13 @@
 
 **Status: COMPLETED & DEPLOYED**
 
-**Commit:** `7d7a635`
+**Commit:** `7d7a635` → `f92d677` (hotfix)
 
 ### Task 1 — Celebrity Avatar Image Loading ✅
 - `next.config.ts` already had `upload.wikimedia.org` in CSP `img-src` and `images.remotePatterns`
 - `PortraitAvatar` component already had `onError` fallback to zodiac glyph circle
-- All 85+ celebrity images use `upload.wikimedia.org/wikipedia/...` which matches the configured pattern
+- **Fix v1**: Used `next/image` — but Vercel's image optimization proxy fails for Wikimedia URLs (returns 403/429)
+- **Fix v2 (hotfix `f92d677`)**: Replaced `next/image` with native `<img loading="lazy" decoding="async">` for celebrity avatars. Loads directly from Wikimedia thumbnails without proxy. `onError` fallback preserved.
 
 ### Task 2 — CTA Button on Cosmic Traits Section ✅
 - Added `Link` import to `src/components/ui/cosmic-traits.tsx`
