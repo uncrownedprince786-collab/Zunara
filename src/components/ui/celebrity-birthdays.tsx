@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import {
   celebritiesForDate,
   type Celebrity,
@@ -73,15 +72,15 @@ function PortraitAvatar({
   return (
     <div className="relative h-16 w-16 shrink-0">
       <div className="absolute inset-0 overflow-hidden rounded-full border border-white/10">
-        <Image
+        <img
           src={celebrity.image}
           alt={celebrity.name}
           width={120}
           height={120}
-          quality={80}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover"
           onError={() => setFailed(true)}
-          sizes="120px"
         />
       </div>
       <span
