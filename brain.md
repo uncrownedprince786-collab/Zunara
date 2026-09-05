@@ -280,6 +280,7 @@ Root-caused and fixed after Sprint #23 deploys. Verified: `tsc --noEmit` 0 error
 - Removed `display: none` for `prefers-reduced-motion` from `.meteor-field` (the JS already no-ops, leaving the canvas transparent) — the sky is present on mobile/tablet/desktop.
 - Mobile perf: DPR capped at 1.25 (<768px) vs 1.5, `MAX_CONCURRENT` 3 vs 4, hero glow radius 15 vs 22 — fewer painted pixels and gradient fills on phones.
 - `.constellation-bg` is a transparent gradient so meteors still show through page heroes.
+- **Regression found & fixed (`9e7e783`):** the same hotfix added `bg-slate-50 dark:bg-slate-950` (OPAQUE) on `<main>` inside the z-10 layer, which silently painted over the z-0 sky canvas across the whole viewport — meteors were hidden again everywhere. Fix: `dark:bg-transparent` on `<main>` so the fixed canvas shows through the content column in the site's target dark mode, while light mode keeps its solid `bg-slate-50` safety net and `text-slate-900/dark:text-slate-100` keeps text legible on the near-black ambient canvas.
 
 ## Technical & UI/UX Architectural Audit (SSOT)
 
