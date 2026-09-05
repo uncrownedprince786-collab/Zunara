@@ -15,10 +15,17 @@ import {
 export type { Locale, Dict };
 
 export function readLocaleCookie(): Locale {
+  // Strictly guarded: in Private/Incognito mode, hardened webviews and some
+  // embedded browsers, touching `document.cookie` (or decoding a malformed
+  // value) can throw a SecurityError. Any failure must degrade to English
+  // rather than crash the request or blank the tree.
   try {
-    if (typeof document === "undefined" || typeof document.cookie !== "string") return DEFAULT_LOCALE;
+    if (typeof document === "undefined" || typeof document.cookie !== "string") {
+      return DEFAULT_LOCALE;
+    }
     const match = document.cookie.match(/(?:^|;\s*)zunara-locale=([^;]*)/);
-    const val = match ? decodeURIComponent(match[1]) : DEFAULT_LOCALE;
+    if (!match) return DEFAULT_LOCALE;
+    const val = decodeURIComponent(match[1]);
     return isLocale(val) ? val : DEFAULT_LOCALE;
   } catch {
     return DEFAULT_LOCALE;
@@ -43,6 +50,45 @@ export function resolveDictPath(dict: Dict, path: string, fallback = ""): string
     return fallback || path;
   }
   return typeof cur === "string" ? cur : fallback || path;
+}
+
+/** Like {@link resolveDictPath} but returns "" on a miss (never the raw path). */
+function resolveStrict(dict: Dict | undefined, path: string): string {
+  if (!path || typeof path !== "string" || !dict) return "";
+  const parts = path.split(".");
+  let cur: unknown = dict;
+  for (const part of parts) {
+    if (!part) return "";
+    if (cur && typeof cur === "object") {
+      const rec = cur as Record<string, unknown>;
+      if (Object.prototype.hasOwnProperty.call(rec, part)) {
+        cur = rec[part];
+        continue;
+      }
+    }
+    return "";
+  }
+  return typeof cur === "string" ? cur : "";
+}
+
+/**
+ * Translation resolution that can never emit blank/invisible text:
+ * active-locale dict → English dict → caller fallback → the raw path (which is
+ * at least visible). During store transitions or an incomplete dict, this
+ * renders a readable string instead of an empty span.
+ */
+function resolveWithFallback(
+  dict: Dict | undefined,
+  english: Dict | undefined,
+  path: string,
+  fallback: string,
+): string {
+  return (
+    resolveStrict(dict, path) ||
+    resolveStrict(english, path) ||
+    fallback ||
+    path
+  );
 }
 
 export interface LocaleContextValue {
@@ -134,6 +180,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const value = useMemo<LocaleContextValue>(() => {
     // Always fall back to English if the active locale's dict is unavailable.
     const dict = dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
+    const english = dictionaries[DEFAULT_LOCALE];
     const safeSigns = dict?.signs ?? (dictionaries[DEFAULT_LOCALE]?.signs ?? {});
     const safeElements = dict?.elements ?? (dictionaries[DEFAULT_LOCALE]?.elements ?? {});
     const safeModalities = dict?.modalities ?? (dictionaries[DEFAULT_LOCALE]?.modalities ?? {});
@@ -147,7 +194,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       dir = "ltr";
     }
 
-    const t = (path: string, fallback = "") => resolveDictPath(dict, path, fallback);
+    const t = (path: string, fallback = "") => resolveWithFallback(dict, english, path, fallback);
     const tSign = (slug: string) => {
       try {
         if (!slug) return slug;
@@ -231,11 +278,12 @@ export function useLocale(): LocaleContextValue {
   const ctx = useContext(LocaleContext);
   if (!ctx) {
     const fallbackDict = dictionaries[DEFAULT_LOCALE] ?? ({} as Dict);
+    const english = dictionaries[DEFAULT_LOCALE];
     return {
       locale: DEFAULT_LOCALE,
       dir: "ltr",
       dict: fallbackDict,
-      t: (path: string, fallback = "") => resolveDictPath(fallbackDict, path, fallback),
+      t: (path: string, fallback = "") => resolveWithFallback(fallbackDict, english, path, fallback),
       tSign: (slug: string) => {
         try {
           if (!slug) return slug;

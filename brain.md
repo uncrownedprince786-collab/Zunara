@@ -262,3 +262,21 @@ Delivered as Sprint #23a (celebrity cache) plus the final roadmap gap features (
 - Post-merge integration fixes for #1–#3: the `.ics` import name mismatch (`exportTransitICS` → `generateTransitICS`, 2 call sites) and folding not applied to `VEVENT` content lines (now every `SUMMARY/DESCRIPTION/LOCATION/DT*` line is `foldLine`-folded).
 - `/sky-map` and `/daily-transit` remain statically generated; the canvas re-renders client-side every 60s and on pointer events.
 - #1–#3 new copy still uses inline English + `t()` fallbacks (dictionaries untouched); a later i18n pass can localize `skyMap.*`, `dailyTransit.*` and `skyEvents` export labels across all 5 locales.
+
+## Hotfix: Mobile Language Crash, Hydration/Cookie Safety & Meteor Shower Visibility
+
+Root-caused and fixed after Sprint #23 deploys. Verified: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` 92/92 static pages. Deployed following `94b534a`.
+
+### Language switching & incognito crash (`src/lib/i18n/client.tsx`)
+- Cookie reads are fully guarded: `readLocaleCookie` wraps `document.cookie` access AND `decodeURIComponent` in try-catch, so Private/Incognito SecurityErrors degrade to `DEFAULT_LOCALE` instead of crashing. Cookie write in the locale effect was already try-caught.
+- New `resolveStrict` (returns `""` on miss, never the raw path) + `resolveWithFallback` = active-locale dict → English dict → caller fallback → raw path. `t()` can no longer emit empty/invisible spans during store transitions or a momentarily-incomplete dict. `resolveDictPath` unchanged for compat (`locale-text.tsx`).
+- `LocaleProvider`/`useLocale` render non-blank always; the provider’s `t` and the hook fallback both use the English-fallback chain. `useSyncExternalStore` untouched: `getServerSnapshot = DEFAULT_LOCALE` + `hydrated` effect already keep SSR/client in lockstep so language changes never blank the tree.
+
+### High-contrast base classes (`src/app/layout.tsx`)
+- `<main>` now carries `text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950` so RTL/text-orientation changes (`dir='rtl'`, `lang=ar`) always inherit an explicit legible base — no invisible/transparent text against background layers. Dark mode (`prefers-color-scheme: dark`, the site’s target) resolves to `slate-950`/`slate-100`, indistinguishable from the existing ink canvas.
+
+### Meteor shower layout & mobile perf (`meteor-shower.tsx`, `globals.css`)
+- Root cause of invisible meteors: `.meteor-field` was `z-index: -1` and `<html>` paints an OPAQUE ambient background (`--z-bg-ambient`) — the canvas rendered *behind* the page background everywhere. Changed to `fixed inset-0 z-index: 0` and wrapped all content in a `relative z-10` layer in `layout.tsx`, so meteors are visible over the dark canvas but behind header/main/footer, on all viewport sizes.
+- Removed `display: none` for `prefers-reduced-motion` from `.meteor-field` (the JS already no-ops, leaving the canvas transparent) — the sky is present on mobile/tablet/desktop.
+- Mobile perf: DPR capped at 1.25 (<768px) vs 1.5, `MAX_CONCURRENT` 3 vs 4, hero glow radius 15 vs 22 — fewer painted pixels and gradient fills on phones.
+- `.constellation-bg` is a transparent gradient so meteors still show through page heroes.

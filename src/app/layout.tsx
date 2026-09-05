@@ -108,21 +108,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ErrorBoundary fallback={null}>
             <MeteorShower />
           </ErrorBoundary>
-          <a href="#main-content" className="skip-link">Skip to content</a>
-          <ErrorBoundary>
-            <SiteHeader />
-          </ErrorBoundary>
-          <main id="main-content" className="flex-1">
+          {/* Relative z-10 layer keeps all interactive content above the fixed
+              sky canvas (z-0) while the meteors stay visually behind it on the
+              dark canvas background. */}
+          <div className="relative z-10 flex w-full flex-1 flex-col">
+            <a href="#main-content" className="skip-link">Skip to content</a>
             <ErrorBoundary>
-              {children}
+              <SiteHeader />
             </ErrorBoundary>
-          </main>
-          <ErrorBoundary>
-            <SiteFooter />
-          </ErrorBoundary>
-          <ErrorBoundary fallback={null}>
-            <BackToTop />
-          </ErrorBoundary>
+            <main
+              id="main-content"
+              className="flex-1 text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950"
+            >
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+            </main>
+            <ErrorBoundary>
+              <SiteFooter />
+            </ErrorBoundary>
+            <ErrorBoundary fallback={null}>
+              <BackToTop />
+            </ErrorBoundary>
+          </div>
         </LocaleProvider>
       </body>
     </html>

@@ -58,11 +58,18 @@ export function MeteorShower() {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    // Cap devicePixelRatio harder on phones: lower backing-store resolution
+    // means far fewer canvas pixels to paint per frame (biggest win for mobile).
+    let small = width < 768;
+    const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.25 : 1.5);
+    // Stay GPU-cheap on small screens: fewer concurrent streaks and lighter
+    // hero residue keep battery drain and jank in check on phones.
+    const MAX_CONCURRENT = small ? 3 : 4;
 
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
+      small = width < 768;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -112,9 +119,6 @@ export function MeteorShower() {
     }
     // First pattern fires almost immediately so the sky feels alive on load.
     let nextPattern = 0.4;
-
-    // More concurrent streaks allowed: double-streak + shower clusters + hero.
-    const MAX_CONCURRENT = 4;
 
     /** One isolated, accelerated meteor sweep per cycle. */
     function spawn(isHero: boolean, speedBoost = 1, angle?: number) {
@@ -173,16 +177,17 @@ export function MeteorShower() {
       const fadeOut = tailRatio > 0.72 ? 1 - (tailRatio - 0.72) / 0.28 : 1;
       const alpha = Math.max(0, fadeIn * fadeOut);
 
-      // Head glow.
+      // Head glow (radius tuned down on phones to keep gradient fills cheap).
       if (m.hue === "hero") {
-        const g = c.createRadialGradient(x, y, 0, x, y, 22);
+        const glowR = small ? 15 : 22;
+        const g = c.createRadialGradient(x, y, 0, x, y, glowR);
         g.addColorStop(0, `rgba(255,255,255,${0.95 * alpha})`);
         g.addColorStop(0.35, `rgba(255,232,140,${0.5 * alpha})`);
         g.addColorStop(0.7, `rgba(108,92,231,${0.22 * alpha})`);
         g.addColorStop(1, `rgba(108,92,231,0)`);
         c.fillStyle = g;
         c.beginPath();
-        c.arc(x, y, 22, 0, Math.PI * 2);
+        c.arc(x, y, glowR, 0, Math.PI * 2);
         c.fill();
       }
 
