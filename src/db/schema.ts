@@ -66,7 +66,21 @@ export const systemHealth = pgTable("system_health", {
   recorded_at: timestamp("recorded_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/**
+ * Pre-calculated "Famous Birthdays Today" cache. A daily cron fetches the
+ * upcoming day's top Wikipedians from Wikidata and writes a structured payload
+ * per `MM-DD` key so the home page can serve profiles with zero latency and
+ * never hit the live API on the request path.
+ */
+export const celebrityCache = pgTable("celebrity_cache", {
+  dateKey: text("date_key").primaryKey(),
+  payload: jsonb("payload").notNull(),
+  source: text("source").notNull().default("wikidata"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+});
+
 export type ZodiacSignRow = typeof zodiacSigns.$inferSelect;
 export type HoroscopeRow = typeof horoscopes.$inferSelect;
 export type GenerationJobRow = typeof generationJobs.$inferSelect;
 export type PlanetarySnapshotRow = typeof planetarySnapshots.$inferSelect;
+export type CelebrityCacheRow = typeof celebrityCache.$inferSelect;

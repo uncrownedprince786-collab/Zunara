@@ -6,6 +6,7 @@ import { validateBirth, type BirthInput } from "@/lib/natal/validate";
 import type { NatalChart } from "@/lib/natal/types";
 import { buildLifeGuidance } from "@/lib/natal/guidance";
 import { upcomingTransits } from "@/lib/natal/transits";
+import { saveNatalProfile } from "@/lib/natal/storage";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { ChartWheel } from "@/components/birthchart/chart-wheel";
 import { NatalReadingCards } from "@/components/birthchart/natal-reading-cards";
@@ -74,6 +75,9 @@ export function BirthchartClient() {
       );
       setChart(computed);
       setShowEditForm(false);
+      // Persist the validated profile so /daily-transit (and other personal
+      // tools) can load the same birth details without re-entry.
+      saveNatalProfile(input);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to calculate birth chart");
     } finally {

@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { computeNatalChart } from "@/lib/natal/natal";
 import { validateBirth } from "@/lib/natal/validate";
 import { dailyTransitInsights, daySummary } from "@/lib/transits/daily-transits";
+import { loadNatalProfile, clearNatalProfile } from "@/lib/natal/storage";
+import {
+  upcomingTransits,
+  type TransitForecast,
+} from "@/lib/natal/transits";
+import { generateTransitICS } from "@/lib/calendar/ics-generator";
 import type { BirthInput } from "@/lib/natal/validate";
 import type { NatalChart } from "@/lib/natal/types";
 import type { DailyInsight } from "@/lib/transits/daily-transits";
@@ -26,6 +32,27 @@ function parseLocal(dateStr: string): Date {
   return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
+function computeFor(input: BirthInput, dateStr: string) {
+  const result = validateBirth(input);
+  if (!result.ok || !result.config) {
+    throw new Error("Please check the form inputs.");
+  }
+  const c = computeNatalChart(
+    result.config.date,
+    { latitude: input.latitude, longitude: input.longitude },
+    { timeAssumed: result.config.timeAssumed },
+  );
+  const at = parseLocal(dateStr);
+  const transits = dailyTransitInsights(c, at);
+  const label = new Intl.DateTimeFormat("en", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(at);
+  return { chart: c, insights: transits.insights, summary: daySummary(c, transits), label };
+}
+
 export function DailyTransitClient() {
   const [chart, setChart] = useState<NatalChart | null>(null);
   const [insights, setInsights] = useState<DailyInsight[]>([]);
@@ -34,27 +61,60 @@ export function DailyTransitClient() {
   const [dateStr, setDateStr] = useState<string>(todayLocal);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [savedName, setSavedName] = useState<string | null>(null);
+  const [forecast, setForecast] = useState<TransitForecast[]>([]);
+
+  // On mount, auto-load the persisted birth profile (saved from /birthchart)
+  // and compute transits against those houses without requiring re-entry.
+  useEffect(() => {
+    const profile = loadNatalProfile();
+    if (!profile) {
+      setShowForm(true);
+      return;
+    }
+    setSavedName(profile.placeName || "saved profile");
+    try {
+      const result = computeFor(profile, todayLocal());
+      setChart(result.chart);
+      setInsights(result.insights);
+      setSummary(result.summary);
+      setDayLabel(result.label);
+      const at = parseLocal(todayLocal());
+      setForecast(upcomingTransits(result.chart, at));
+    } catch {
+      setShowForm(true);
+    }
+  }, []);
 
   const handleSubmit = async (input: BirthInput) => {
     setIsLoading(true);
     setError(null);
     try {
       await new Promise((r) => setTimeout(r, 500));
-      const result = validateBirth(input);
-      if (!result.ok) {
-        setError("Please check the form inputs.");
-        return;
-      }
-      const c = computeNatalChart(
-        result.config!.date,
-        { latitude: input.latitude, longitude: input.longitude },
-        { timeAssumed: result.config!.timeAssumed },
-      );
+      const result = computeFor(input, dateStr);
+      setChart(result.chart);
+      setInsights(result.insights);
+      setSummary(result.summary);
+      setDayLabel(result.label);
       const at = parseLocal(dateStr);
-      const transits = dailyTransitInsights(c, at);
-      setChart(c);
+      setForecast(upcomingTransits(result.chart, at));
+      setSavedName(input.placeName || "saved profile");
+      setShowForm(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to compute today's transit.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDateChange = (value: string) => {
+    setDateStr(value);
+    if (chart) {
+      const at = parseLocal(value);
+      const transits = dailyTransitInsights(chart, at);
       setInsights(transits.insights);
-      setSummary(daySummary(c, transits));
+      setSummary(daySummary(chart, transits));
       setDayLabel(
         new Intl.DateTimeFormat("en", {
           weekday: "long",
@@ -63,17 +123,70 @@ export function DailyTransitClient() {
           day: "numeric",
         }).format(at),
       );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to compute today's transit.");
-    } finally {
-      setIsLoading(false);
     }
+  };
+
+  const handleChangeProfile = () => {
+    clearNatalProfile();
+    setSavedName(null);
+    setChart(null);
+    setInsights([]);
+    setForecast([]);
+    setShowForm(true);
+  };
+
+  const icsEvents = useMemo(
+    () =>
+      forecast.map((f) => ({
+        title: `${f.transitBody} ${f.aspectName} ${f.targetBody}`,
+        start: f.peak,
+        end: f.end,
+        description: f.note,
+      })),
+    [forecast],
+  );
+
+  const handleExportICS = () => {
+    if (icsEvents.length === 0) return;
+    const text = generateTransitICS(icsEvents);
+    const blob = new Blob([text], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "zunara-transits.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-24 sm:px-6">
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <BirthForm onSubmit={handleSubmit} isLoading={isLoading} />
+        {showForm ? (
+          <BirthForm onSubmit={handleSubmit} isLoading={isLoading} />
+        ) : (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+              Active profile
+            </p>
+            <p className="text-base font-medium text-starlight">
+              {savedName ?? "Saved profile"}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              Your saved birth details are loaded automatically — no re-entry
+              needed. Transits are computed against your exact natal houses.
+            </p>
+            <button
+              type="button"
+              onClick={handleChangeProfile}
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-4 py-2 text-xs font-medium text-starlight transition-colors hover:border-gold/40 hover:text-gold"
+            >
+              Change saved profile
+            </button>
+          </div>
+        )}
+
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
           <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
             Transit date (local)
@@ -81,7 +194,7 @@ export function DailyTransitClient() {
           <input
             type="date"
             value={dateStr}
-            onChange={(e) => e.target.value && setDateStr(e.target.value)}
+            onChange={(e) => e.target.value && handleDateChange(e.target.value)}
             className="w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-2.5 text-sm text-starlight outline-none focus:border-gold"
           />
           <p className="mt-4 text-sm leading-6 text-muted">
@@ -110,9 +223,21 @@ export function DailyTransitClient() {
           </div>
 
           <div>
-            <h2 className="font-display text-2xl text-starlight">
-              Planets through your houses
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="font-display text-2xl text-starlight">
+                Planets through your houses
+              </h2>
+              {icsEvents.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleExportICS}
+                  className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-medium text-gold-deep transition-colors hover:bg-gold/20"
+                >
+                  Export to Calendar (.ics)
+                  <span aria-hidden>&darr;</span>
+                </button>
+              )}
+            </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {insights.map((ins) => {
                 const meta = getCelestialBody(ins.transitBody);
@@ -139,6 +264,37 @@ export function DailyTransitClient() {
               })}
             </div>
           </div>
+
+          {forecast.length > 0 && (
+            <div>
+              <h2 className="font-display text-2xl text-starlight">
+                Upcoming transits to export
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+                Add the next significant aspects to your calendar. From "Export to
+                Calendar", the .ics file opens in Google Calendar, Apple Calendar or Outlook.
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {forecast.map((f) => (
+                  <div key={f.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <div className="flex items-center gap-2">
+                      <PlanetSymbol body={f.transitBody} size="sm" className="text-gold" decorative />
+                      <span className="text-xs font-medium text-starlight">
+                        {f.transitBody} {f.aspectName}
+                      </span>
+                      <PlanetSymbol body={f.targetBody} size="sm" className="text-cosmic" decorative />
+                      <span className="text-xs text-muted">{f.targetBody}</span>
+                    </div>
+                    <p className="mt-2 text-xs text-muted">
+                      Peak {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(f.peak)}
+                      {" · ends "}
+                      {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(f.end)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

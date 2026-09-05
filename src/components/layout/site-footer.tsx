@@ -38,6 +38,7 @@ export function SiteFooter() {
       links: [
         { label: t("footer.synastry", "Synastry"), href: "/synastry" },
         { label: t("footer.dailyTransit", "Daily Transit"), href: "/daily-transit" },
+        { label: t("footer.skyMap", "Night Sky Map"), href: "/sky-map" },
         { label: t("footer.retrogrades", "Retrogrades"), href: "/retrograde" },
         { label: t("footer.ephemeris", "Ephemeris"), href: "/ephemeris" },
         { label: t("footer.library", "Library"), href: "/library" },

@@ -228,3 +228,37 @@ Built as two parallel sub-agent builds then integrated under one commit. Full ve
 - New-route i18n uses inline `t(key, "English fallback")` only — `dictionaries.ts` untouched (language-audit test still green); a future pass can localize new keys across all 5 locales.
 - Only integration fix needed after the two parallel builds: a `BodyKey` vs `NatalBodyKey` cast in `transits.ts:236-237` (node keys excluded from the natal map).
 - Retrograde tracker tests are the slowest (~8.6s) due to grid scans; keep horizons bounded for CI.
+
+## Sprint #23: Celebrity Cron Cache, Birth-Sync, Calendar Export & Interactive Sky Map
+
+Delivered as Sprint #23a (celebrity cache) plus the final roadmap gap features (#1–#3). Full verification: `tsc --noEmit` 0 errors, `vitest` 243/243 (27 files), `next build` success. Deployed following `b17eb33`.
+
+### #1 Persistent local birth-chart sync
+- `src/lib/natal/storage.ts` — guarded `localStorage` profile under key `zunara_natal_profile` (`saveNatalProfile` / `loadNatalProfile` / `clearNatalProfile`, `hasStorage()` never throws, strict shape validation on read). `"use client"`.
+- `birthchart-client.tsx` persists the validated `BirthInput` on every successful chart cast.
+- `daily-transit-client.tsx` auto-loads the saved profile on mount (computes the day's transits without re-entry) and adds a "Change saved profile" card + toggle (clears storage, returns to form).
+- Test: `src/lib/natal/storage.test.ts` (round-trip, clear, corrupted JSON, no-storage guards).
+
+### #2 Exportable `.ics` calendar engines
+- `src/lib/calendar/ics-generator.ts` — pure RFC 5545 generator: `generateTransitICS(events, opts)` → `BEGIN:VCALENDAR…END:VCALENDAR`; UTC `DTSTART/DTEND` (Z-suffix), `UID`, `DTSTAMP`, `SUMMARY/DESCRIPTION/LOCATION` escaping, 75-octet folding (`foldLine`), 2h default event length. Google/Apple/Outlook import compatible.
+- "Export to Calendar (.ics)" buttons download the generated file on `/daily-transit` (upcoming transits) and the sky-events section (selectable upcoming events).
+- Test: `src/lib/calendar/ics-generator.test.ts` (envelope, UTC stamps, default/supplied ends, escaping, folding).
+
+### #3 Interactive 2D/canvas night sky map
+- `src/lib/astronomy/sky-map.ts` — pure AE wrapper: `bodySkyPoint` via `AE.Equator(body, date, obs, true, true)` + `AE.Horizon(…, "normal")` for apparent azimuth/altitude; `starSkyPoint` for a curated 16-star catalogue (Sirius, Polaris, Vega, Antares…); `computeSkyBodies(observer, date)` returns planets (Sun–Saturn), Moon and only-above-horizon bright stars.
+- `src/components/astronomy/sky-map-canvas.tsx` — responsive HTML5 canvas azimuthal dome (horizon/alt rings, meridian spokes, cardinal labels, glow for Sun/Moon/planets, starfield), pointer-tap tooltip with name + az/alt, DPI-aware.
+- `src/app/sky-map/` — route with location card (lat/long inputs, seeds from saved birth profile via `loadNatalProfile`, 60s time refresh), canvas panel, legend. Footer "Astronomy" column now includes "Night Sky Map" (`footer.skyMap` fallback label).
+- Tests: `src/lib/astronomy/sky-map.test.ts` (body/star presence, az/alt range validity, Polaris ≈ observer latitude, single-body determinism).
+
+### #23a Celebrity 3-tier cron cache
+- `src/db/schema.ts` + `repository.ts` — `celebrityCache` table (`dateKey`, `payload`, `TTL`/`fetchedAt`, guarded `CREATE TABLE IF NOT EXISTS`), `ensureCelebrityCacheTable` / `upsertCelebrityCache` / `getCelebrityCache`.
+- `src/lib/celebrities/` — `categories.ts` (9 paged hubs + labels), `wikidata.ts` (SPARQL + `Special:FilePath?width=330` images + sitelinks), `resolver.ts` (3-tier: L1 DB cache 26h → L2 live Wikidata via injected deps → L3 static fallback).
+- `src/app/api/cron/daily-celebrities/route.ts` — `POST` guarded by `CRON_SECRET`, ensures today + tomorrow UTC `MM-DD` entries, writes static-fallback when live returns empty, records `recordHealth("celebrities-cron")`. `vercel.json` adds `"0 22 * * *"`.
+- UI — `celebrity-birthdays.tsx` (server wrapper) + `celebrity-birthdays-view.tsx` (client cards: portrait, sitelinks chip, category chip).
+- i18n — `celebrities.{liveSource,sitelinks,categories.*}` keys added to all 5 locales (parity preserved).
+- Migration `drizzle/0001_celebrity_cache.sql` + snapshot. Tests: `categories.test.ts`, `wikidata.test.ts`, `resolver.test.ts`.
+
+### Notes
+- Post-merge integration fixes for #1–#3: the `.ics` import name mismatch (`exportTransitICS` → `generateTransitICS`, 2 call sites) and folding not applied to `VEVENT` content lines (now every `SUMMARY/DESCRIPTION/LOCATION/DT*` line is `foldLine`-folded).
+- `/sky-map` and `/daily-transit` remain statically generated; the canvas re-renders client-side every 60s and on pointer events.
+- #1–#3 new copy still uses inline English + `t()` fallbacks (dictionaries untouched); a later i18n pass can localize `skyMap.*`, `dailyTransit.*` and `skyEvents` export labels across all 5 locales.

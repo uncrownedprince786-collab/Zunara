@@ -13,6 +13,7 @@ import {
   calculateSkyEvents,
   mergeSkyEventSources,
 } from "@/lib/content/sky-events-calculated";
+import { generateTransitICS } from "@/lib/calendar/ics-generator";
 
 export type { SkyEvent } from "@/lib/content/sky-events-data";
 
@@ -173,6 +174,27 @@ export function SkyEvents() {
     timeZone: "UTC",
   }).format(Date.UTC(2000, state.month - 1, 1));
 
+  function handleExportICS() {
+    if (events.length === 0) return;
+    const text = generateTransitICS(
+      events.map((e) => ({
+        title: e.titleKey ? t(e.titleKey, e.title) : e.title,
+        start: new Date(`${e.start}`),
+        description: e.descKey ? t(e.descKey, e.description) : e.description,
+      })),
+      { name: "Zunara Sky Events" },
+    );
+    const blob = new Blob([text], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "zunara-sky-events.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <section
       aria-labelledby="sky-events-heading"
@@ -194,6 +216,20 @@ export function SkyEvents() {
           <p className="mt-1 text-sm text-subdued">
             {t("skyEvents.activeMonth", "Showing")} {monthName}
           </p>
+
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={handleExportICS}
+              className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-medium text-gold-deep transition-colors hover:bg-gold/20"
+            >
+              Export to Calendar (.ics)
+              <span aria-hidden>&darr;</span>
+            </button>
+            <span className="text-xs text-subdued">
+              Adds these events to Google Calendar, Apple Calendar or Outlook.
+            </span>
+          </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {events.map((e) => {

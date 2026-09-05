@@ -22,6 +22,10 @@ export interface Celebrity {
   wiki?: string;
   /** Portrait thumbnail (Wikimedia Commons) */
   image?: string;
+  /** Editorial category slug from the dynamic taxonomy (see candidates/categories). */
+  category?: string;
+  /** Global popularity metric: number of language sitelinks on Wikidata. */
+  sitelinks?: number;
 }
 
 const C: Array<

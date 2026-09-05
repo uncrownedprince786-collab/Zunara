@@ -1,5 +1,6 @@
+import { sql } from "drizzle-orm";
 import { getDb } from "./index";
-import { horoscopes, generationJobs, systemHealth, planetarySnapshots } from "./schema";
+import { horoscopes, generationJobs, systemHealth, planetarySnapshots, celebrityCache } from "./schema";
 import type { GeneratedHoroscope } from "../lib/horoscope/generate";
 import type { PeriodType } from "../lib/calendar/periods";
 
@@ -129,4 +130,65 @@ export async function getLatestJob() {
   if (!db) return null;
   const rows = await db.select().from(generationJobs).orderBy(generationJobs.started_at).limit(1);
   return rows[0] ?? null;
+}
+
+/**
+ * Idempotent schema bootstrap for the celebrity cache table. The app has no
+ * migration runner at runtime, so the table is created lazily with a guarded
+ * `CREATE TABLE IF NOT EXISTS` before any cache read or write. Mirrors the
+ * resilience pillar: out-of-the-box behaviour even before migrations are pushed.
+ */
+let celebrityTableGuaranteed: Promise<boolean> | null = null;
+
+export function ensureCelebrityCacheTable(): Promise<boolean> {
+  if (!celebrityTableGuaranteed) {
+    celebrityTableGuaranteed = (async () => {
+      const db = getDb();
+      if (!db) return false;
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS celebrity_cache (
+          date_key text PRIMARY KEY,
+          payload jsonb NOT NULL,
+          source text NOT NULL DEFAULT 'wikidata',
+          updated_at timestamp with time zone NOT NULL
+        )
+      `);
+      return true;
+    })();
+  }
+  return celebrityTableGuaranteed;
+}
+
+export async function upsertCelebrityCache(
+  dateKey: string,
+  payload: object,
+  source: string,
+): Promise<boolean> {
+  const db = getDb();
+  if (!db) return false;
+  await ensureCelebrityCacheTable();
+  await db
+    .insert(celebrityCache)
+    .values({ dateKey, payload, source, updatedAt: new Date() })
+    .onConflictDoUpdate({
+      target: celebrityCache.dateKey,
+      set: { payload, source, updatedAt: new Date() },
+    });
+  return true;
+}
+
+export async function getCelebrityCache(
+  dateKey: string,
+): Promise<{ payload: unknown; source: string; updatedAt: Date } | null> {
+  const db = getDb();
+  if (!db) return null;
+  await ensureCelebrityCacheTable();
+  const rows = await db
+    .select()
+    .from(celebrityCache)
+    .where(sql`${celebrityCache.dateKey} = ${dateKey}`)
+    .limit(1);
+  const row = rows[0];
+  if (!row) return null;
+  return { payload: row.payload as unknown, source: row.source, updatedAt: row.updatedAt };
 }
