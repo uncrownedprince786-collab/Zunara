@@ -202,3 +202,29 @@
 ### Verification ✅
 - `npx tsc --noEmit`: 0 errors. `npx vitest run`: 155/155. `npx next build`: success.
 - Deployed via `git push origin master:main` (`db07342..c5f64d9`).
+
+---
+
+## Sprint #22: Natal Life-Guidance Engine + All-in-One Astronomy Toolbox
+
+Built as two parallel sub-agent builds then integrated under one commit. Full verification: `tsc --noEmit` 0 errors, `vitest` 207/207 (21 files), `next build` success. Deployed `b62e1dc..679dd09`.
+
+### Natal Life-Guidance Engine (birth-chart page restructure)
+- `src/lib/natal/age.ts` — `exactAge(birth, at)` calendar-aware step-down (Feb 29 / Jan 31 safe) → `{years, months, days, totalDays, label}`.
+- `src/lib/natal/life-phases.ts` — Saturn-return window (8° orb, lap-unwrap monthly scan, horizon ~36y), quarter-life window (~24–26), progressed-Moon sign + next sign-change (secondary rate = natal Moon `speed` deg/day × age in days), and `lifeMilestones()` (max 5, missing Moon skipped).
+- `src/lib/natal/guidance.ts` — `buildLifeGuidance(chart)` → exactly 4 plain-English sections citing real placements: Personality (Sun + Ascendant), Love (Venus + 7th-house cusp via whole-sign `cusps[6]`), Career (10th-house cusp `cusps[9]` + Saturn), Inner (Moon + `cusps[3]`).
+- `src/lib/natal/transits.ts` — `upcomingTransits(chart, at, opts)` samples real ephemeris weekly over the horizon; run-based window detection (≥2 contiguous samples, fast bodies need ≥2-day span), significance sort (outer-planet → angle/10th-house targets), `<maxEntries` sorted by peak. `TransitForecast {start, peak, end, area, note}` with `ASPECT_ORBS` and `areaFor` (10th-house planets → career).
+- UI: `age-header.tsx` (Big Three glyphs + exact age + next-milestone chip), `life-pillars.tsx` (ARIA tablist, 4 pillars), `trend-timeline.tsx` (vertical timeline, aspect badge mirroring AspectsPanel). `birthchart-client.tsx` reordered: AgeHeader → Wheel → LifePillars → TrendTimeline → AspectsPanel → NatalReadingCards → technical table; `at` reference effect-set per chart (hydration-safe).
+
+### All-in-One Astronomy Toolbox
+- **Synastry** — `src/lib/compatibility/synastry.ts`: two `BirthInput`s → two `computeNatalChart` charts → real-angle cross-aspects (orb consts: conj/opp/trine/square 8°, sextile 6°); four scored dimensions (Emotional Connection, Communication, Attraction, Long-Term Stability) each with plain-English aspect interpretations citing signs + hard-clamped scores (30–98), overall = mean. Route `/synastry` (two reusable `BirthForm`s + score bars).
+- **Daily Transit** — `src/lib/transits/daily-transits.ts`: real-time `computePosition` overlay on the natal chart, whole-sign houses relative to Ascendant, per-body plain-English insight (transitBody × HOUSE_THEMES) + a strongest-signal day summary (uses `houses.ascendantLongitude`/`midheavenLongitude`). Route `/daily-transit`.
+- **Retrograde tracker** — `src/lib/retrograde/tracker.ts`: daily `.retrograde`-flag grid scan over a 180-day horizon per planet (mercury→pluto), windows contiguity-grouped, station dates refined to ~6h precision; `tabulateRetrogrades()` (ordered by next start, per-planet hype-free behavioral advice + strength) + `liveSkyStats()` (counts, planets-by-sign, next retro). Route `/retrograde`.
+- **Ephemeris** — `/ephemeris` client feed: date navigator, all bodies + lunar nodes via `computeSnapshot` (nodes return `null` from `computePosition` — AE has no node body), sign/degree/element/motion table + one-line day caption.
+- **Glossary + knowledge base** — `src/lib/content/glossary.ts` (36 plain-English terms, 7 categories, `seeAlso`), accessible `AstroTerm` popover (`src/components/ui/astro-tooltip.tsx`, Escape/outside dismiss). Routes: `/library` (glossary `<details>` + cards), `/library/planets` (bodies via `CELESTIAL_BODIES`), `/library/signs` (12 signs via `getZodiacSign`), `/library/nodes` (node meaning + live positions in a client chip).
+- Footer: new "Astronomy" column (`/synastry`, `/daily-transit`, `/retrograde`, `/ephemeris`, `/library`), grid `sm:grid-cols-2 lg:grid-cols-3`. Header nav untouched.
+
+### Notes
+- New-route i18n uses inline `t(key, "English fallback")` only — `dictionaries.ts` untouched (language-audit test still green); a future pass can localize new keys across all 5 locales.
+- Only integration fix needed after the two parallel builds: a `BodyKey` vs `NatalBodyKey` cast in `transits.ts:236-237` (node keys excluded from the natal map).
+- Retrograde tracker tests are the slowest (~8.6s) due to grid scans; keep horizons bounded for CI.
