@@ -46,6 +46,16 @@ const ELEMENT_BG: Record<ZodiacSign["element"], string> = {
   Water: "from-water/15 to-nebula/40",
 };
 
+function initialsOf(name: string): string {
+  return name
+    .replace(/[^a-zA-Z0-9' .-]/g, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.replace(/[^a-zA-Z]/g, "").charAt(0).toUpperCase())
+    .join("");
+}
+
 function PortraitAvatar({
   celebrity,
   sign,
@@ -58,6 +68,7 @@ function PortraitAvatar({
   const bg = ELEMENT_BG[sign.element];
 
   if (!celebrity.image || failed) {
+    const monogram = initialsOf(celebrity.name) || "★";
     return (
       <div className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10">
         <div
@@ -68,8 +79,14 @@ function PortraitAvatar({
           aria-hidden="true"
           className={`pointer-events-none absolute -right-3 -top-3 h-10 w-10 rounded-full bg-gradient-to-br ${glow} to-transparent blur-xl`}
         />
-        <span className={`font-display text-lg font-semibold ${ELEMENT_RING[sign.element]}`}>
-          <ZodiacSymbol sign={sign.slug} size={24} label={sign.name} />
+        <span className={`font-display text-base font-bold ${ELEMENT_RING[sign.element]}`}>
+          {monogram}
+        </span>
+        <span
+          aria-hidden="true"
+          className="absolute bottom-1 end-1 text-[0.55rem] leading-none opacity-70"
+        >
+          <ZodiacSymbol sign={sign.slug} size={14} label={sign.name} />
         </span>
       </div>
     );
@@ -85,6 +102,7 @@ function PortraitAvatar({
           height={120}
           loading="lazy"
           decoding="async"
+          referrerPolicy="no-referrer"
           className="h-full w-full object-cover"
           onError={() => setFailed(true)}
         />

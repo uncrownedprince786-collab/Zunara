@@ -6,7 +6,7 @@ import { validateBirth, type BirthInput } from "@/lib/natal/validate";
 import type { NatalChart } from "@/lib/natal/types";
 import { buildLifeGuidance } from "@/lib/natal/guidance";
 import { upcomingTransits } from "@/lib/natal/transits";
-import { saveNatalProfile } from "@/lib/natal/storage";
+import { saveNatalProfile, loadNatalProfile } from "@/lib/natal/storage";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { ChartWheel } from "@/components/birthchart/chart-wheel";
 import { NatalReadingCards } from "@/components/birthchart/natal-reading-cards";
@@ -23,18 +23,28 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 export function BirthchartClient() {
   const { t, tSign, tPlanet } = useLocale();
 
-  const [chart, setChart] = useState<NatalChart | null>(() => {
-    try {
-      const d = new Date("1995-06-21T12:00:00Z");
-      return computeNatalChart(d, { latitude: 40.7128, longitude: -74.006 }, { timeAssumed: false });
-    } catch {
-      return null;
-    }
-  });
+  const [chart, setChart] = useState<NatalChart | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showEditForm, setShowEditForm] = useState(false);
+
+  // On mount, restore a previously saved profile (from this page or
+  // /daily-transit) so returning visitors see their real chart instead of a
+  // placeholder birth date. When no profile exists the form is shown.
+  useEffect(() => {
+    const profile = loadNatalProfile();
+    if (!profile) return;
+    const result = validateBirth(profile);
+    if (!result.ok || !result.config) return;
+    setChart(
+      computeNatalChart(
+        result.config.date,
+        { latitude: profile.latitude, longitude: profile.longitude },
+        { timeAssumed: result.config.timeAssumed },
+      ),
+    );
+  }, []);
 
   // One `at` reference per chart so the life-phase and transit engines stay
   // stable (and reproducible) for the lifetime of a chart result. Initialised

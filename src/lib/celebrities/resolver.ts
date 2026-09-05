@@ -100,20 +100,31 @@ export async function resolveCelebritiesForDate(
     }
   }
 
-  // Level 2 — live Wikidata fallback (only with a store or an injected fetcher).
+  // Level 2 — live Wikidata fallback. Only runs when a cache store is
+  // configured (DB-backed production) or a fetcher was explicitly injected,
+  // so static builds and local environments never accidentally hammer the
+  // Wikidata endpoint during render.
   const live = deps.fetchLive ?? fetchWikidataBirthdayCelebrities;
-  try {
-    const people = await live(month, day);
-    if (people.length > 0) {
-      try {
-        await store?.set(key, people as unknown as object, "wikidata");
-      } catch {
-        // Write-through is best-effort; the payload still serves the request.
+  const allowLive = Boolean(store) || Boolean(deps.fetchLive);
+  if (allowLive) {
+    try {
+      const people = await live(month, day);
+      if (people.length > 0) {
+        try {
+          await store?.set(key, people as unknown as object, "wikidata");
+        } catch {
+          // Write-through is best-effort; the payload still serves the request.
+        }
+        // Top up a sparse live result with the curated same-date pool so the
+        // grid never renders a single lonely card.
+        const staticPeople = celebritiesForDate(month, day);
+        const usedUrls = new Set(people.map((p) => p.url));
+        const merged = [...people, ...staticPeople.filter((p) => !usedUrls.has(p.url))];
+        return { people: merged.slice(0, 12), source: "live" };
       }
-      return { people, source: "live" };
+    } catch {
+      // Fall through to the static tier.
     }
-  } catch {
-    // Fall through to the static tier.
   }
 
   // Level 3 — offline static dataset.
