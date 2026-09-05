@@ -9,6 +9,7 @@ import { ENGINE_VERSION_NUMBER } from "@/lib/astronomy/astro";
 import { natalPlanets } from "./planets";
 import { housesAt } from "./houses";
 import { buildReadings } from "./readings";
+import { computeAspects } from "./aspects";
 import type { BirthCoordinates, NatalChart, NatalPlanet } from "./types";
 
 export const NOON_ASSUMPTION_NOTE =
@@ -30,6 +31,7 @@ export function computeNatalChart(
   if (!sun || !moon) {
     throw new Error("natal: constellation reduced — sun/moon unavailable");
   }
+  const aspects = computeAspects(planets);
   const readings = buildReadings(planets, houses.ascendant);
 
   return {
@@ -38,6 +40,7 @@ export function computeNatalChart(
     timeNote: options.timeAssumed ? NOON_ASSUMPTION_NOTE : "",
     bigThree: { sun, moon, ascendant: houses.ascendant },
     planets,
+    aspects,
     houses,
     readings,
     engineVersion: ENGINE_VERSION_NUMBER,

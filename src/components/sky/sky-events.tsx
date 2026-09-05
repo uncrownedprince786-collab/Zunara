@@ -9,6 +9,10 @@ import {
   EVENT_GUIDES,
   type SkyEvent,
 } from "@/lib/content/sky-events-data";
+import {
+  calculateSkyEvents,
+  mergeSkyEventSources,
+} from "@/lib/content/sky-events-calculated";
 
 export type { SkyEvent } from "@/lib/content/sky-events-data";
 
@@ -115,7 +119,15 @@ export function selectActiveMonthEvents(
 
 export function SkyEvents() {
   const { t, locale } = useLocale();
-  const [state, setState] = useState(() => selectActiveMonthEvents(FALLBACK_EVENTS, new Date()));
+  const [state, setState] = useState(() => {
+    const now = new Date();
+    // Live feed data is unknown at render time, so the initial merge is
+    // fallback (named lunar moons, curated peaks) + freshly computed phases.
+    return selectActiveMonthEvents(
+      mergeSkyEventSources([], calculateSkyEvents(now), FALLBACK_EVENTS),
+      now,
+    );
+  });
 
   function categoryLabel(category: string | undefined): string {
     switch (category) {
@@ -134,10 +146,16 @@ export function SkyEvents() {
       try {
         const res = await fetch("https://space-calendar.lukekorth.com/feed.json?c=meteor-showers,eclipses,oppositions,conjunctions,moon-phases");
         const data = (res.ok ? await res.json() : {}) as { events?: SkyEvent[] };
-        // Merge the live feed with the reliable full-year baseline so a sparse,
-        // empty or unreachable feed never leaves the section blank.
-        const merged = [...(data.events ?? []), ...FALLBACK_EVENTS];
-        const selected = selectActiveMonthEvents(merged, new Date());
+        const now = new Date();
+        // Merge the live feed, the freshly computed rolling calendar and the
+        // full-year baseline so a sparse, empty or unreachable feed never
+        // leaves the section blank — first source wins per date+category.
+        const merged = mergeSkyEventSources(
+          data.events ?? [],
+          calculateSkyEvents(now),
+          FALLBACK_EVENTS,
+        );
+        const selected = selectActiveMonthEvents(merged, now);
         if (active && selected.events.length > 0) {
           setState(selected);
         }
@@ -166,9 +184,9 @@ export function SkyEvents() {
           className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(108,92,231,0.28)_0%,transparent_70%)] blur-2xl"
         />
         <div className="relative">
-          <p className="kicker">{t("skyEvents.kicker", "The sky ahead")}</p>
+          <p className="kicker">{t("skyEvents.kicker", "Upcoming Sky Events")}</p>
           <h2 id="sky-events-heading" className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
-            {t("skyEvents.title", "Upcoming celestial events")}
+            {t("skyEvents.title", "Upcoming Sky Events")}
           </h2>
           <p className="mt-3 max-w-xl leading-7 text-muted">
             {t("skyEvents.desc", "Live from astronomical ephemerides — meteor showers, eclipses, oppositions and lunar phases worth stepping outside for.")}

@@ -243,47 +243,44 @@ function diversitySelect(
   return selected;
 }
 
-/** Everyone born on the given month/day, across all decades. */
+/**
+ * Everyone born on the given month/day only.
+ *
+ * Strict date filtering: matches are pulled from the primary list plus the
+ * same-date entries of the supplementary pool. Entries from other dates are
+ * never surfaced, so a visitor on any day always sees people who genuinely
+ * share that birthday.
+ */
 export function celebritiesForDate(month: number, day: number): Celebrity[] {
   const primary = CELEBRITIES.filter((c) => c.month === month && c.day === day);
 
-  if (primary.length >= 4) return primary;
+  if (primary.length >= 6) return primary;
 
-  // Exclude any primary slugs from supplementary candidates to avoid duplicates
+  // Exclude primary slugs and names from supplementary candidates to avoid duplicates
   const primarySlugs = new Set(
     primary.map((c) => c.wiki ?? c.name.replace(/ /g, "_")),
   );
+  const usedNames = new Set(primary.map((c) => c.name.toLowerCase()));
   const slug = (s: SupplementaryCelebrity) => s.name.replace(/ /g, "_");
 
-  // Prefer same-date supplementary entries, then fall back to the global pool
+  // Same-date supplementary entries only.
   const datePool = SUPPLEMENTARY_POOL.filter(
-    (s) => s.month === month && s.day === day && !primarySlugs.has(slug(s)),
+    (s) =>
+      s.month === month &&
+      s.day === day &&
+      !primarySlugs.has(slug(s)) &&
+      !usedNames.has(s.name.toLowerCase()),
   );
-  const needed = 4 - primary.length;
 
-  // Grab as many same-date candidates as possible first
-  const datePicked = datePool.length > 0
-    ? diversitySelect(month, day, datePool, Math.min(needed, datePool.length))
-    : [];
+  const slots = 6 - primary.length;
+  const picked = diversitySelect(
+    month,
+    day,
+    datePool,
+    Math.min(slots, datePool.length),
+  );
 
-  const remaining = needed - datePicked.length;
-  let globalPicked: SupplementaryCelebrity[] = [];
-  if (remaining > 0) {
-    // Exclude anyone already picked or in the primary
-    const usedNames = new Set(
-      [...datePicked, ...primary].map((c) => c.name.toLowerCase()),
-    );
-    const globalPool = SUPPLEMENTARY_POOL.filter(
-      (s) => !primarySlugs.has(slug(s)) && !usedNames.has(s.name.toLowerCase()),
-    );
-    globalPicked = diversitySelect(month, day, globalPool, remaining);
-  }
-
-  return [
-    ...primary,
-    ...datePicked.map(supplementToCelebriant),
-    ...globalPicked.map(supplementToCelebriant),
-  ];
+  return [...primary, ...picked.map(supplementToCelebriant)];
 }
 
 export function regionsPresent(): CelebrityRegion[] {

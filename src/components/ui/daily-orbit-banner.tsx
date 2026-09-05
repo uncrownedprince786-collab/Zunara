@@ -15,7 +15,7 @@ const PROMO_SIGNS = ["aries", "leo", "libra", "pisces"] as const;
 export function DailyOrbitBanner() {
   const { dict } = useLocale();
   return (
-    <section aria-label="Your daily orbit" className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
+    <section aria-label="Today's horoscope" className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
       <div className="cosmic-glow flex items-center gap-4 rounded-xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-sm sm:p-5">
         <div className="flex shrink-0 items-center justify-center gap-3">
           {PROMO_SIGNS.map((slug) => (

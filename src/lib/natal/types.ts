@@ -43,6 +43,29 @@ export interface BirthCoordinates {
   longitude: number;
 }
 
+export type NatalAspectType =
+  | "conjunction"
+  | "sextile"
+  | "square"
+  | "trine"
+  | "opposition";
+
+export interface NatalAspect {
+  /** First body of the pair */
+  a: NatalBodyKey;
+  /** Second body of the pair */
+  b: NatalBodyKey;
+  type: NatalAspectType;
+  /** Actual angular separation in degrees [0, 180] */
+  angle: number;
+  /** Deviation from the exact aspect angle in degrees */
+  orb: number;
+  /** True when the faster body is closing in on the exact aspect */
+  applying: boolean;
+  /** Deterministic short interpretation citing both placements */
+  interpretation: string;
+}
+
 export interface NatalChart {
   /** Exact UTC ISO string of the birth instant used */
   utcTime: string;
@@ -58,6 +81,8 @@ export interface NatalChart {
   };
   /** All ten planets */
   planets: NatalPlanet[];
+  /** Major transit aspects between the ten bodies */
+  aspects: NatalAspect[];
   /** Ascendant/Midheaven + 12 Whole-Sign house cusps */
   houses: NatalHouses;
   /** Derived predetermined life readings */

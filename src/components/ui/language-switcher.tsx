@@ -7,9 +7,13 @@ import { useLocale } from "@/lib/i18n/client";
 export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
   const { locale, setLocale } = useLocale();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
+  // Hydration guard: `mounted` flips true only after first client render, so
+  // the label never mismatches between server and client (causing a blank screen).
   useEffect(() => {
+    setMounted(true);
     function onPress(e: MouseEvent | TouchEvent) {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
         setOpen(false);
@@ -24,11 +28,14 @@ export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
   }, []);
 
   function select(next: Locale) {
-    setLocale(next);
-    setOpen(false);
+    try {
+      setLocale(next);
+    } finally {
+      setOpen(false);
+    }
   }
 
-  const current = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
+  const current = (LOCALES.find((l) => l.code === locale) ?? LOCALES[0]) as (typeof LOCALES)[number];
 
   return (
     <div ref={rootRef} className="relative">
@@ -46,7 +53,7 @@ export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
             <path d="M3 12h18M12 3a15.5 15.5 0 0 1 0 18M12 3a15.5 15.5 0 0 0 0 18" />
           </svg>
         </span>
-        <span>{current.label}</span>
+        <span>{mounted ? current.label : LOCALES[0].label}</span>
         <span aria-hidden="true" className="text-[0.6rem]">{open ? "▲" : "▼"}</span>
       </button>
       {open && (

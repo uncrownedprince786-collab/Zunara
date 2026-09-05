@@ -21,7 +21,7 @@ export default function CosmicFactsPage() {
     <div className="constellation-bg">
       <div className="mx-auto max-w-5xl px-4 pt-14 sm:px-6">
         <div className="flex justify-center">
-          <Breadcrumbs items={[{ label: "Zodiac Intelligence", href: "/cosmic-facts" }]} />
+          <Breadcrumbs items={[{ label: "Horoscopes & Signs", href: "/cosmic-facts" }]} />
         </div>
       </div>
       <CosmicFactsClient />

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useEffect, useSyncExternalStore, useState, type ReactNode } from "react";
 import {
   type Locale,
   type Dict,
@@ -15,21 +15,32 @@ import {
 export type { Locale, Dict };
 
 export function readLocaleCookie(): Locale {
-  if (typeof document === "undefined") return DEFAULT_LOCALE;
-  const match = document.cookie.match(/(?:^|;\s*)zunara-locale=([^;]*)/);
-  const val = match ? decodeURIComponent(match[1]) : DEFAULT_LOCALE;
-  return isLocale(val) ? val : DEFAULT_LOCALE;
+  try {
+    if (typeof document === "undefined" || typeof document.cookie !== "string") return DEFAULT_LOCALE;
+    const match = document.cookie.match(/(?:^|;\s*)zunara-locale=([^;]*)/);
+    const val = match ? decodeURIComponent(match[1]) : DEFAULT_LOCALE;
+    return isLocale(val) ? val : DEFAULT_LOCALE;
+  } catch {
+    return DEFAULT_LOCALE;
+  }
 }
 
 export function resolveDictPath(dict: Dict, path: string, fallback = ""): string {
+  if (!path || typeof path !== "string" || !dict) return fallback || path;
   const parts = path.split(".");
   let cur: unknown = dict;
   for (const part of parts) {
-    if (cur && typeof cur === "object" && part in (cur as Record<string, unknown>)) {
-      cur = (cur as Record<string, unknown>)[part];
-    } else {
-      return fallback || path;
+    // Defensive optional-chaining-style traversal: never throw on a missing
+    // segment — always fall through to the caller's fallback or the raw path.
+    if (!part) return fallback || path;
+    if (cur && typeof cur === "object") {
+      const rec = cur as Record<string, unknown>;
+      if (Object.prototype.hasOwnProperty.call(rec, part)) {
+        cur = rec[part];
+        continue;
+      }
     }
+    return fallback || path;
   }
   return typeof cur === "string" ? cur : fallback || path;
 }
@@ -80,60 +91,122 @@ function applyStore(next: Locale) {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
+  // Hydration safety: the module store only carries the SSR/initial (English)
+  // locale until the component mounts. `hydrated` flips to true in an effect so
+  // the client locale (from cookie) can be applied without a render mismatch.
+  const [hydrated, setHydrated] = useState(false);
   const locale = useSyncExternalStore(subscribeStore, getSnapshot, getServerSnapshot);
 
-  // Restore saved language after mount
+  // Restore saved language from cookie only AFTER first client mount (hydration).
   useEffect(() => {
+    setHydrated(true);
     const saved = readLocaleCookie();
     if (saved !== DEFAULT_LOCALE) {
       applyStore(saved);
     }
   }, []);
 
-  // Sync choice cookie + <html dir/lang>
+  // Sync choice cookie + <html dir/lang> only after hydration.
   useEffect(() => {
-    const dir = getLocaleDir(locale);
-    const htmlLang = LOCALES.find((l) => l.code === locale)?.htmlLang ?? "en";
-    document.documentElement.lang = htmlLang;
-    document.documentElement.dir = dir;
-    document.body.dir = dir;
-    document.cookie = `${LOCALE_COOKIE}=${encodeURIComponent(locale)}; path=/; max-age=31536000; samesite=lax`;
-  }, [locale]);
+    if (!hydrated) return;
+    let dir: "ltr" | "rtl";
+    let htmlLang: string;
+    try {
+      dir = getLocaleDir(locale);
+      htmlLang = LOCALES.find((l) => l.code === locale)?.htmlLang ?? "en";
+    } catch {
+      dir = "ltr";
+      htmlLang = "en";
+    }
+    const el = document.documentElement;
+    if (el) {
+      el.lang = htmlLang;
+      el.dir = dir;
+    }
+    if (document.body) document.body.dir = dir;
+    try {
+      document.cookie = `${LOCALE_COOKIE}=${encodeURIComponent(locale)}; path=/; max-age=31536000; samesite=lax`;
+    } catch {
+      /* cookie write failure is non-fatal */
+    }
+  }, [locale, hydrated]);
 
   const value = useMemo<LocaleContextValue>(() => {
-    const currentDict = dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
-    const dir = getLocaleDir(locale);
+    // Always fall back to English if the active locale's dict is unavailable.
+    const dict = dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
+    const safeSigns = dict?.signs ?? (dictionaries[DEFAULT_LOCALE]?.signs ?? {});
+    const safeElements = dict?.elements ?? (dictionaries[DEFAULT_LOCALE]?.elements ?? {});
+    const safeModalities = dict?.modalities ?? (dictionaries[DEFAULT_LOCALE]?.modalities ?? {});
+    const safePlanets = dict?.planets ?? (dictionaries[DEFAULT_LOCALE]?.planets ?? {});
+    const safeHorizons = dict?.horizons ?? (dictionaries[DEFAULT_LOCALE]?.horizons ?? {});
+    const safeAreas = dict?.areas ?? (dictionaries[DEFAULT_LOCALE]?.areas ?? {});
+    let dir: "ltr" | "rtl";
+    try {
+      dir = getLocaleDir(locale);
+    } catch {
+      dir = "ltr";
+    }
 
-    const t = (path: string, fallback = "") => resolveDictPath(currentDict, path, fallback);
+    const t = (path: string, fallback = "") => resolveDictPath(dict, path, fallback);
     const tSign = (slug: string) => {
-      const lower = slug.toLowerCase() as keyof Dict["signs"];
-      return currentDict.signs[lower] ?? slug;
+      try {
+        if (!slug) return slug;
+        const lower = slug.toLowerCase() as keyof typeof safeSigns;
+        return safeSigns[lower] ?? slug;
+      } catch {
+        return slug;
+      }
     };
     const tElement = (element: string) => {
-      const key = (element.charAt(0).toUpperCase() + element.slice(1).toLowerCase()) as keyof Dict["elements"];
-      return currentDict.elements[key] ?? element;
+      try {
+        if (!element) return element;
+        const key = (element.charAt(0).toUpperCase() + element.slice(1).toLowerCase()) as keyof typeof safeElements;
+        return safeElements[key] ?? element;
+      } catch {
+        return element;
+      }
     };
     const tModality = (modality: string) => {
-      const key = (modality.charAt(0).toUpperCase() + modality.slice(1).toLowerCase()) as keyof Dict["modalities"];
-      return currentDict.modalities[key] ?? modality;
+      try {
+        if (!modality) return modality;
+        const key = (modality.charAt(0).toUpperCase() + modality.slice(1).toLowerCase()) as keyof typeof safeModalities;
+        return safeModalities[key] ?? modality;
+      } catch {
+        return modality;
+      }
     };
     const tPlanet = (key: string) => {
-      const pKey = key.toLowerCase() as keyof Dict["planets"];
-      return currentDict.planets[pKey] ?? key;
+      try {
+        if (!key) return key;
+        const pKey = key.toLowerCase() as keyof typeof safePlanets;
+        return safePlanets[pKey] ?? key;
+      } catch {
+        return key;
+      }
     };
     const tHorizon = (horizon: string) => {
-      const hKey = horizon.toLowerCase() as keyof Dict["horizons"];
-      return currentDict.horizons[hKey] ?? horizon;
+      try {
+        if (!horizon) return horizon;
+        const hKey = horizon.toLowerCase() as keyof typeof safeHorizons;
+        return safeHorizons[hKey] ?? horizon;
+      } catch {
+        return horizon;
+      }
     };
     const tArea = (area: string) => {
-      const aKey = area.toLowerCase() as keyof Dict["areas"];
-      return currentDict.areas[aKey] ?? area;
+      try {
+        if (!area) return area;
+        const aKey = area.toLowerCase() as keyof typeof safeAreas;
+        return safeAreas[aKey] ?? area;
+      } catch {
+        return area;
+      }
     };
 
     return {
       locale,
       dir,
-      dict: currentDict,
+      dict,
       t,
       tSign,
       tElement,
@@ -157,18 +230,60 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 export function useLocale(): LocaleContextValue {
   const ctx = useContext(LocaleContext);
   if (!ctx) {
-    const fallbackDict = dictionaries[DEFAULT_LOCALE];
+    const fallbackDict = dictionaries[DEFAULT_LOCALE] ?? ({} as Dict);
     return {
       locale: DEFAULT_LOCALE,
       dir: "ltr",
       dict: fallbackDict,
       t: (path: string, fallback = "") => resolveDictPath(fallbackDict, path, fallback),
-      tSign: (slug: string) => fallbackDict.signs[slug.toLowerCase() as keyof Dict["signs"]] ?? slug,
-      tElement: (el: string) => fallbackDict.elements[el as keyof Dict["elements"]] ?? el,
-      tModality: (m: string) => fallbackDict.modalities[m as keyof Dict["modalities"]] ?? m,
-      tPlanet: (p: string) => fallbackDict.planets[p as keyof Dict["planets"]] ?? p,
-      tHorizon: (h: string) => fallbackDict.horizons[h as keyof Dict["horizons"]] ?? h,
-      tArea: (a: string) => fallbackDict.areas[a as keyof Dict["areas"]] ?? a,
+      tSign: (slug: string) => {
+        try {
+          if (!slug) return slug;
+          return fallbackDict.signs?.[slug.toLowerCase() as keyof Dict["signs"]] ?? slug;
+        } catch {
+          return slug;
+        }
+      },
+      tElement: (el: string) => {
+        try {
+          if (!el) return el;
+          return fallbackDict.elements?.[el as keyof Dict["elements"]] ?? el;
+        } catch {
+          return el;
+        }
+      },
+      tModality: (m: string) => {
+        try {
+          if (!m) return m;
+          return fallbackDict.modalities?.[m as keyof Dict["modalities"]] ?? m;
+        } catch {
+          return m;
+        }
+      },
+      tPlanet: (p: string) => {
+        try {
+          if (!p) return p;
+          return fallbackDict.planets?.[p as keyof Dict["planets"]] ?? p;
+        } catch {
+          return p;
+        }
+      },
+      tHorizon: (h: string) => {
+        try {
+          if (!h) return h;
+          return fallbackDict.horizons?.[h as keyof Dict["horizons"]] ?? h;
+        } catch {
+          return h;
+        }
+      },
+      tArea: (a: string) => {
+        try {
+          if (!a) return a;
+          return fallbackDict.areas?.[a as keyof Dict["areas"]] ?? a;
+        } catch {
+          return a;
+        }
+      },
       setLocale: applyStore,
     };
   }

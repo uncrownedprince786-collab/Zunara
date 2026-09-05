@@ -195,7 +195,7 @@ export function CelebrityBirthdays() {
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="flex items-end justify-between border-b border-line-soft pb-5">
         <div>
-          <p className="kicker">{t("celebrities.kicker", "Born under today's stars")}</p>
+          <p className="kicker">{t("celebrities.kicker", "Famous birthdays today")}</p>
           <h2 className="mt-3 font-display text-3xl text-starlight sm:text-4xl">
             {dateLabel}
           </h2>

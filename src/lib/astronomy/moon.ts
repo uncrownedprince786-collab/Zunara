@@ -1,8 +1,8 @@
+import * as AE from "astronomy-engine";
 import { computePosition } from "./astro";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 
 export const SYNODIC_MONTH = 29.53058867;
-const KNOWN_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14, 0);
 
 export interface MoonPhaseResult {
   age: number;
@@ -11,11 +11,23 @@ export interface MoonPhaseResult {
   name: string;
 }
 
+/**
+ * Precise lunar phase from the true geocentric sun–moon elongation.
+ *
+ * `AE.MoonPhase` returns the elongation in degrees (0 = New Moon, 180 = Full
+ * Moon), which is fully sufficient to derive the age, cycle fraction and
+ * illuminated fraction of the disc without relying on a synodic-month
+ * approximation line.
+ */
 export function moonPhase(date: Date = new Date()): MoonPhaseResult {
-  const days = (date.getTime() - KNOWN_NEW_MOON) / 86400000;
-  const age = ((days % SYNODIC_MONTH) + SYNODIC_MONTH) % SYNODIC_MONTH;
-  const phase = age / SYNODIC_MONTH;
-  const illumination = Math.round((1 - Math.cos(phase * 2 * Math.PI)) / 2 * 100);
+  const elongation = AE.MoonPhase(date);
+  const phase = elongation / 360;
+
+  // Illuminated fraction of the visible disc: (1 − cos θ) / 2.
+  const illumination = Math.round(
+    (1 - Math.cos((elongation * Math.PI) / 180)) / 2 * 100,
+  );
+  const age = phase * SYNODIC_MONTH;
 
   let name: string;
   if (phase < 0.0625) name = "New Moon";

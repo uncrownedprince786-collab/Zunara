@@ -7,6 +7,7 @@ import type { NatalChart } from "@/lib/natal/types";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { ChartWheel } from "@/components/birthchart/chart-wheel";
 import { NatalReadingCards } from "@/components/birthchart/natal-reading-cards";
+import { AspectsPanel } from "@/components/birthchart/aspects-panel";
 import { VitruvianHero } from "@/components/ui/vitruvian-hero";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
@@ -33,10 +34,12 @@ export function BirthchartClient() {
     setIsLoading(true);
     setError(null);
     try {
+      // Brief "casting" beat so the calculating state is perceptible before the
+      // (fast, deterministic) engine paints the new chart.
+      await new Promise((r) => setTimeout(r, 600));
       const result = validateBirth(input);
       if (!result.ok) {
         setError("Please check the form inputs.");
-        setIsLoading(false);
         return;
       }
       const computed = computeNatalChart(
@@ -94,7 +97,13 @@ export function BirthchartClient() {
 
         {/* Chart View */}
         {chart && !showEditForm && (
-          <div className="mt-12 space-y-12">
+          <div key={chart.utcTime} className="animate-z-rise mt-12 space-y-12">
+            {isLoading && (
+              <div role="status" aria-live="polite" className="flex items-center gap-3 rounded-xl border border-gold/25 bg-gold/5 px-4 py-3 text-sm text-gold">
+                <span aria-hidden className="z-spinner h-4 w-4 rounded-full border-2 border-gold/30 border-t-gold" />
+                {t("birthchart.calculating", "Calculating coordinates...")}
+              </div>
+            )}
             {/* Header Status Bar */}
             <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl sm:flex-row sm:items-center">
               <div>
@@ -229,6 +238,9 @@ export function BirthchartClient() {
                 </table>
               </div>
             </div>
+
+            {/* Transit Aspects */}
+            <AspectsPanel chart={chart} />
 
             {/* Core Readings */}
             <div>
