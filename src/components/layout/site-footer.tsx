@@ -9,7 +9,7 @@ import { useLocale } from "@/lib/i18n/client";
 
 export function SiteFooter() {
   const year = new Date().getUTCFullYear();
-  const { dict, tSign, locale } = useLocale();
+  const { dict, tSign, t, locale } = useLocale();
   const columns = [
     {
       title: dict.nav.horoscopes,
@@ -33,6 +33,16 @@ export function SiteFooter() {
         { label: dict.nav.disclaimer, href: "/disclaimer" },
       ],
     },
+    {
+      title: t("footer.astronomy", "Astronomy"),
+      links: [
+        { label: t("footer.synastry", "Synastry"), href: "/synastry" },
+        { label: t("footer.dailyTransit", "Daily Transit"), href: "/daily-transit" },
+        { label: t("footer.retrogrades", "Retrogrades"), href: "/retrograde" },
+        { label: t("footer.ephemeris", "Ephemeris"), href: "/ephemeris" },
+        { label: t("footer.library", "Library"), href: "/library" },
+      ],
+    },
   ];
 
   return (
@@ -49,7 +59,7 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <div className="grid flex-1 gap-8 sm:grid-cols-2">
+          <div className="grid flex-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {columns.map((col) => (
               <nav key={col.title} aria-label={col.title}>
                 <p className="kicker">{col.title}</p>

@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { computeNatalChart } from "@/lib/natal/natal";
 import { validateBirth, type BirthInput } from "@/lib/natal/validate";
 import type { NatalChart } from "@/lib/natal/types";
+import { buildLifeGuidance } from "@/lib/natal/guidance";
+import { upcomingTransits } from "@/lib/natal/transits";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { ChartWheel } from "@/components/birthchart/chart-wheel";
 import { NatalReadingCards } from "@/components/birthchart/natal-reading-cards";
 import { AspectsPanel } from "@/components/birthchart/aspects-panel";
+import { AgeHeader } from "@/components/birthchart/age-header";
+import { LifePillars } from "@/components/birthchart/life-pillars";
+import { TrendTimeline } from "@/components/birthchart/trend-timeline";
 import { VitruvianHero } from "@/components/ui/vitruvian-hero";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
@@ -29,6 +34,23 @@ export function BirthchartClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showEditForm, setShowEditForm] = useState(false);
+
+  // One `at` reference per chart so the life-phase and transit engines stay
+  // stable (and reproducible) for the lifetime of a chart result. Initialised
+  // in an effect to avoid server/client hydration mismatch.
+  const [at, setAt] = useState<Date | null>(null);
+  useEffect(() => {
+    setAt(new Date());
+  }, [chart?.utcTime]);
+
+  const guidance = useMemo(
+    () => (chart && at ? buildLifeGuidance(chart) : null),
+    [chart, at],
+  );
+  const forecast = useMemo(
+    () => (chart && at ? upcomingTransits(chart, at) : null),
+    [chart, at],
+  );
 
   const handleSubmit = async (input: BirthInput) => {
     setIsLoading(true);
@@ -104,6 +126,8 @@ export function BirthchartClient() {
                 {t("birthchart.calculating", "Calculating coordinates...")}
               </div>
             )}
+            {/* Age + Big Three + next milestone */}
+            {at && <AgeHeader chart={chart} at={at} />}
             {/* Header Status Bar */}
             <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl sm:flex-row sm:items-center">
               <div>
@@ -190,6 +214,59 @@ export function BirthchartClient() {
               </div>
             </div>
 
+            {/* Life Guidance */}
+            {guidance && (
+              <section aria-labelledby="life-guidance-heading">
+                <div className="mb-6">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+                    {t("birthchart.guidanceKicker", "Life phases & guidance")}
+                  </p>
+                  <h2 id="life-guidance-heading" className="mt-2 font-display text-2xl text-starlight">
+                    {t("birthchart.guidanceTitle", "Life Guidance")}
+                  </h2>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
+                    {t(
+                      "birthchart.guidanceIntro",
+                      "Four plain-English pillars built strictly from your real placements: Sun and rising personality, Venus and 7th-house love, 10th-house and Saturn career, and Moon and 4th-house inner foundation."
+                    )}
+                  </p>
+                </div>
+                <LifePillars sections={guidance} />
+              </section>
+            )}
+
+            {/* Upcoming Transits */}
+            {forecast && (
+              <section aria-labelledby="transits-heading">
+                <div className="mb-6">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+                    {t("birthchart.transitsKicker", "Forecasts from real motion")}
+                  </p>
+                  <h2 id="transits-heading" className="mt-2 font-display text-2xl text-starlight">
+                    {t("birthchart.transitsTitle", "Upcoming Transits")}
+                  </h2>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">
+                    {t(
+                      "birthchart.transitsIntro",
+                      "The next major planetary aspects to your natal chart, sampled from real ephemeris motion over the coming months. No predictions — just geometry dated to the day."
+                    )}
+                  </p>
+                </div>
+                <TrendTimeline forecast={forecast} />
+              </section>
+            )}
+
+            {/* Transit Aspects */}
+            <AspectsPanel chart={chart} />
+
+            {/* Core Readings */}
+            <div>
+              <h2 className="font-display text-2xl text-starlight mb-6">
+                {t("birthchart.readingsHeading", "Core Interpretations")}
+              </h2>
+              <NatalReadingCards readings={chart.readings} />
+            </div>
+
             {/* Planetary Placements Table */}
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden backdrop-blur-xl">
               <div className="p-6 border-b border-white/10">
@@ -237,17 +314,6 @@ export function BirthchartClient() {
                   </tbody>
                 </table>
               </div>
-            </div>
-
-            {/* Transit Aspects */}
-            <AspectsPanel chart={chart} />
-
-            {/* Core Readings */}
-            <div>
-              <h2 className="font-display text-2xl text-starlight mb-6">
-                {t("birthchart.readingsHeading", "Core Interpretations")}
-              </h2>
-              <NatalReadingCards readings={chart.readings} />
             </div>
 
             {/* Method Note */}
