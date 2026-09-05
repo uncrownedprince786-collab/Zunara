@@ -166,3 +166,39 @@
 - **Supplemental data**: `celebrity-pool.ts` provides ~540 supplementary figures; `sky-events-data.ts` provides full-year 2026 celestial events baseline with localized titles/descriptions.
 - **Deploy**: `git push origin master:main`. Live at `https://zunara.vercel.app`.
 - **Remote**: `https://github.com/uncrownedprince786-collab/Zunara`. Branch: `master` tracks `origin/main`.
+
+---
+
+## Sprint #21: Natal Aspects, Strict Birthdays, Dynamic Sky Events
+
+### Task 1 — Natal Transit Aspects Engine ✅
+- New `src/lib/natal/aspects.ts`: `computeAspects(planets, orbs)` produces the 5 major aspects (conjunction/sextile/square/trine/opposition) with default orbs, per-pair tightest match only, orbit-influenced exclusions, and deterministic interpretations from body gloss + aspect theme.
+- **Applying/separating is analytic, not stepped**: `isApplying` differentiates the distance-to-exact on the folded separation axis (`u = min(s, 360−s)`), so fast-moving bodies (the Moon, ~12°/day) can't be misclassified by a coarse Euler step. See `aspects.ts` docs.
+- `NatalChart` gains a required `aspects: NatalAspect[]` field (`src/lib/natal/types.ts`); `computeNatalChart` wires it in `natal.ts`.
+- `AspectsPanel` (`src/components/birthchart/aspects-panel.tsx`): responsive table — bodies with glyphs, colored aspect badges (`@/components/ui/planet-symbol` + `dict.aspects.*` labels), orb, applying/separating chip, interpretation.
+- Birth-chart client: 600 ms "casting" beat so the calculating state paints, a spinner while regenerating, and a `key={chart.utcTime}` remount with `.animate-z-rise` for the chart fade-in.
+- Tests: `aspects.test.ts` (9) — zero-separation conjunction, square, 180° wrap opposition, orb exclusion, pair uniqueness, applying/separating, determinism, custom orbs, interpretation sanity.
+
+### Task 2 — Strict Celebrity Birthdays ✅
+- Root cause of the Sep-5 leak: `celebritiesForDate` filled shortfall from a **global supplementary pool of any date**, surfacing Feb/Mar names on unrelated days.
+- `celebritiesForDate(month, day)` is now strictly `month === m && day === d` for both primary and supplementary pools (deduped, capped at 6, same `diversitySelect`). Removed the global-pool fallback entirely.
+- `celebrities.test.ts` rewritten: new invariant = every returned person is genuinely born on the requested date (checked across all 366 days), ≤6 per date, explicit no-cross-date leak assertions, determinism kept.
+- Avatar rendering kept on native `<img>` + zodiac `onError` fallback (no `next/image`).
+
+### Task 3 — Nav Copy Simplification ✅
+- "Natal Engine" → "Birth Chart"; "Zodiac Intelligence" → "Horoscopes & Signs"; "Your daily orbit" → "Today's Horoscope"; "Born under today's stars" → "Famous Birthdays Today"; "The sky ahead" / "Upcoming celestial events" → "Upcoming Sky Events".
+- Applied across all 5 locales (`nav.*`, `common.yourDailyOrbit`, `home.upcomingEvents`/`bornTodayKicker`, `skyEvents.kicker`/`title`, `celebrities.kicker`) plus hardcoded breadcrumb (`cosmic-facts/page.tsx`), aria-label (`daily-orbit-banner.tsx`) and `t()` fallbacks. `dictionaries.test.ts` language-audit still green.
+
+### Task 4 — Precise Moon Phase (Elongation + SVG Terminator) ✅
+- `moonPhase()` now uses `AE.MoonPhase(date)` (true geocentric sun–moon elongation) instead of the synodic-month approximation; same `{age, phase, illumination, name}` shape.
+- `moon-phase.tsx` redrawn with math-correct SVG: the terminator is the arc `x = cosθ·√(R²−y²)` — an ellipse with horizontal semi-axis `R·|cosθ|` — rendered as a limb + terminator path so crescents hug the correct limb and gibbous phases bulge the right way. Gradient-lit disc + radial `useId`-namespaced gradient, dim base for earthshine.
+
+### Task 5 — Dynamic Sky Events Calculator ✅
+- New `src/lib/content/sky-events-calculated.ts`: `calculateSkyEvents(now)` computes the four principal lunar phases via `AE.SearchMoonQuarter`/`NextMoonQuarter` and the seasonal points via `AE.SearchSunLongitude` (0/90/180/270) in a rolling ~75-day horizon — no annual table to refresh.
+- Localized via existing keys: `phases.*`/`phases.phaseHints.*` for quarters, `skyEvents.events.{vernalEquinox,summerSolstice,autumnalEquinox,winterSolstice}.*` for seasonal points.
+- `mergeSkyEventSources(...sources)` first-wins dedupes by `date|category`; `sky-events.tsx` merges live feed → calculated → full-2026 baseline (order by priority: live > baseline > computed), so named moons like "Full Moon · Harvest Moon" win over the generic computed entry on the same night.
+- Tests: `sky-events-calculated.test.ts` (9) — horizon bounds, seasonal + phase discovery for a fixed date, sorting, categories, determinism, merge priority/dedup.
+
+### Verification ✅
+- `npx tsc --noEmit`: 0 errors. `npx vitest run`: 155/155. `npx next build`: success.
+- Deployed via `git push origin master:main` (`db07342..c5f64d9`).
