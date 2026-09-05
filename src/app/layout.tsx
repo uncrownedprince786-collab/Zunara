@@ -118,7 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </ErrorBoundary>
             <main
               id="main-content"
-              className="flex-1 text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950"
+              className="flex-1 text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-transparent"
             >
               <ErrorBoundary>
                 {children}
