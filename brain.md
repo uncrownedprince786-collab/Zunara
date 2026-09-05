@@ -280,3 +280,71 @@ Root-caused and fixed after Sprint #23 deploys. Verified: `tsc --noEmit` 0 error
 - Removed `display: none` for `prefers-reduced-motion` from `.meteor-field` (the JS already no-ops, leaving the canvas transparent) — the sky is present on mobile/tablet/desktop.
 - Mobile perf: DPR capped at 1.25 (<768px) vs 1.5, `MAX_CONCURRENT` 3 vs 4, hero glow radius 15 vs 22 — fewer painted pixels and gradient fills on phones.
 - `.constellation-bg` is a transparent gradient so meteors still show through page heroes.
+
+## Technical & UI/UX Architectural Audit (SSOT)
+
+Frozen snapshot after `9c94851` (Sprint #23 + hotfix). Verified against source: header/nav, footer, root layout, home page, horoscope sign layout, i18n client/store, celeb cron, media, engines. Re-verified build: `tsc --noEmit` 0, `vitest` 243/243, `next build` 92/92 static.
+
+### 1. Recently implemented features & routes
+
+**Natal Guidance Engine** (`/birthchart`, restructured Sprint #22)
+- `age.ts` → `exactAge()` calendar-safe (Feb 29 / Jan 31) `{years,months,days,totalDays,label}`.
+- `life-phases.ts` → Saturn-return window (8° orb, lap-unwrap, ~36y), quarter-life (~24–26y), progressed Moon with secondary-rate sign-change date; `lifeMilestones()` (max 5).
+- `guidance.ts` → `buildLifeGuidance()` = exactly 4 pillars (Personality, Love, Career, Inner) citing real placements.
+- `transits.ts` → `upcomingTransits()` weekly ephemeris sampling, run-window detection, significance sort (outer→angle/10th-house), `TransitForecast{start,peak,end,area,note}`.
+- UI order on page: AgeHeader → Wheel + Big Three/House Cusps → LifePillars (ARIA tabs) → TrendTimeline (12–24m) → AspectsPanel → NatalReadingCards → placements table → method note. `at` reference effect-set per chart for hydration-safe engines.
+
+**Synastry** (`/synastry`) — `src/lib/compatibility/synastry.ts`: two `BirthInput`s → two `computeNatalChart` (VSOP87) → real-angle cross-aspects (conj/opp/trine/square 8°, sextile 6°) → 4 clamped dimensions (Emotional, Communication, Attraction, Stability, 30–98) + overall mean; two `BirthForm`s + score bars.
+
+**Daily Transit** (`/daily-transit`) — `daily-transits.ts`: `computePosition` overlay on natal whole-sign houses per Ascendant; per-body plain-English insight + strongest-signal `daySummary` (uses asc/mc longitudes). Sprint #23: auto-loads saved `localStorage` profile on mount ("Change saved profile" toggle) + ".ics export" for upcoming transits.
+
+**Retrograde Tracker & Live Sky Stats** (`/retrograde`) — `tracker.ts`: daily retrograde-flag grid scan (~180d), contiguity groups, ~6h station fix-ups, `tabulateRetrogrades()` (next start, hype-free advice + strength) and `liveSkyStats()` (counts, planets-by-sign, next retro).
+
+**Interactive Daily Ephemeris** (`/ephemeris`) — date navigator + `computeSnapshot` table (10 bodies + lunar nodes — nodes return `null` from `computePosition`, AE has no node body), sign/degree/element/motion, day caption.
+
+**Glossary & Knowledge Base** (`/library`) — `glossary.ts` (36 terms, 7 categories, `seeAlso`), `AstroTerm` popover (Escape/outside dismiss). Routes: `/library`, `/library/planets`, `/library/signs`, `/library/nodes`.
+
+**i18n Dictionary System + Client Locale Store** — `dictionaries.ts` (5 locales en|ur|ar|es|zh, `Dict = typeof en` parity enforced by `dictionaries.test.ts`), `client.tsx` module-level external store (`useSyncExternalStore`, `getServerSnapshot=DEFAULT`, hydrated effect), cookie `zunara-locale`; `t/tSign/tElement/tModality/tPlanet/tHorizon/tArea`. `resolveWithFallback` (locale → English → fallback → path) never emits blank/raw-key text.
+
+**Recent roadmap gaps (Sprint #23)** — celebrity 3-tier cron cache, persistent birth-chart sync (`storage.ts`), `.ics` export (`ics-generator.ts`), `/sky-map` canvas (`sky-map.ts` + `sky-map-canvas.tsx`).
+
+### 2. UI/UX & navigation architecture
+
+**Root layout** (`layout.tsx`): `<html lang=en color-scheme:dark>` → body `bg-ink text-starlight` → JSON-LD → `LocaleProvider` → `<ErrorBoundary><MeteorShower/></ErrorBoundary>` → `relative z-10 flex-1` wrapper: skip-link, header, `<main id=main-content>` (high-contrast `text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950`), footer, BackToTop. The z-10 wrapper keeps the fixed z-0 sky canvas behind all interactive content.
+
+**Header** (`site-header.tsx` + `site-nav.tsx`): sticky top `z-40`, h-16 max-w-6xl. Left: VitruvianMark + wordmark. Right: 5 primary links (Horoscopes, Birth Chart, Horoscopes & Signs, Cosmic Events, About) with active underline (`isActive` prefix match), desktop `md:flex`, mobile hamburger → absolute dropdown `top-16 z-50 bg-ink/95 backdrop-blur` with 5 links + auto-close. `LanguageSwitcher` always visible at header right (mounted-guarded label; RTL badge on ur/ar).
+
+**Footer** (`site-footer.tsx`): brand + tagline block; 3 link columns (`sm:grid-cols-2 lg:grid-cols-3`): Horoscopes (all signs + 4 horizon links via aries paths), Publication (birth chart / astrology / cosmic facts / about / privacy / terms / disclaimer), Astronomy (synastry / daily-transit / sky-map / retrograde / ephemeris / library). Beneath: 12 zodiac glyph circular chips (`formatDateRange` title), copyright, second `LanguageSwitcher`.
+
+**Page-level visual hierarchy**:
+- Home: masthead (HeroVisual + Vitruvian watermark) → DailyOrbitBanner → "The sky tonight" (Sun sign + MoonSignCard + Planetary bulletin panel) → Twelve Signs (BentoZodiacGrid) → SkyEvents (live feed merge, export .ics button) → CelebrityBirthdays (cached cards) → CosmicTraits → Horizons (4 cards) → Method + element grid.
+- `/horoscope/[sign]` layout: constellation bg → starfield strip → sign header (glyph coin, kicker element·modality·ruler, name, date range) → QuickNavigation (SignNav) → PeriodTabs (Today/Weekly/Monthly/Yearly underline tabs, `aria-current`) → content. All 12 signs static (`generateStaticParams`).
+- `/birthchart`: hero → BirthForm full-width → chart view (AgeHeader → wheel grid → life guidance → transits timeline → aspects → readings → table).
+- Tool routes (`/synastry`, `/daily-transit`, `/retrograde`, `/ephemeris`, `/sky-map`): centered breadcrumb + kicker + `font-display` H1 masthead + `constellation-bg`; body client grid `lg:grid-cols-2` / `[360px_1fr]`.
+
+**Ambient layer**: `.meteor-field` `fixed inset-0 z-0 pointer-events-none translateZ(0)`, DPR 1.25/1.5, 3–4 meteors, heroes disabled on reduced motion via JS no-op (no CSS `display:none`); `.constellation-bg` transparent gradients; html root paints opaque `--z-bg-ambient` — so meteors now render above root bg but below the z-10 content layer on all breakpoints.
+
+### 3. Core feature data logic map
+
+| Feature | Use case | Engine / data source | State / output |
+|---|---|---|---|
+| Horoscopes (daily→yearly) | 12 signs × 4 horizons | `astrology/signals.ts`, `changes.ts`, `engine` on `computeSnapshot` | `HoroscopeResult` w/ life-area signals (0-100), strongest themes, changes, 30-second + "your move" copy |
+| Birth chart | natal chart + life guidance | `natal/`: `validate` (LMT UTC offset = −λ/15h), `natal` (computeNatalChart), aspects, guidance, transits | `NatalChart{planets,bigThree,houses,aspects,readings,utcTime}`; persisted `BirthInput` → `localStorage` `zunara_natal_profile` |
+| Synastry | two-chart compatibility | `compatibility/synastry.ts` angles | 4 scored dims + overall |
+| Daily transit | personal day overlay | `transits/daily-transits.ts` on `computePosition` | `DailyInsight[]` + `daySummary` |
+| Retrogrades | current/upcoming stations | `retrograde/tracker.ts` grid scan | `tabulateRetrogrades()`, `liveSkyStats()` |
+| Ephemeris | daily sky table | `astronomy/astro.ts` `computeSnapshot` (AE `computePosition`, VSOP87) | positions + aspects + motion |
+| Sky map | locational star dome | `astronomy/sky-map.ts` AE `Equator`+`Horizon`; 16-star catalogue | alt/az body list → canvas |
+| Celebrity birthdays | today's famous people | 3-tier: DB cache (26h) → Wikidata SPARQL (`Special:FilePath?width=330`, sitelinks) → static; cron `0 22 * * *` `Bearer CRON_SECRET` + `recordHealth` | `Celebrity[]` cards; cache table `celebrityCache` keyed `MM-DD` |
+| Glossary | learn astro terms | `content/glossary.ts` | `AstroTerm` popover tooltips |
+| i18n | 5-locale UI | `dictionaries.ts` parity + client store + cookie | `t()` chain, `dir/lang` on `<html>` |
+
+### 4. Pending gaps & roadmap
+
+- **Incognito/mobile language switch** — DONE (hotfix `9c94851`): cookie try/catch, `resolveWithFallback`, high-contrast `<main>`.
+- **Meteor Shower layout** — DONE (same hotfix): z-index root-cause fixed, reduced-motion JS no-op, mobile perf tuning.
+- **Persistent local natal storage** — DONE (Sprint #23): `storage.ts` + auto-load in `/daily-transit` + birthchart persist.
+- **Exportable `.ics`** — DONE (Sprint #23): `ics-generator.ts` RFC 5545 + buttons on daily-transit & sky-events.
+- **Interactive `/sky-map`** — DONE (Sprint #23): AE alt/az, hover tooltips, footer link.
+- **3-tier celeb cron cache** — DONE (Sprint #23): route + DB + resolver + `vercel.json` schedule + i18n keys.
+- Remaining opportunities (not blocking): localize Sprint #22/#23 route copy across all 5 dicts (currently inline English + `t()` fallbacks); hydrate `dictionaries.ts` with `skyMap.*`, `dailyTransit.*`, `skyEvents` export labels; consider light-mode contrast of `text-p-ink` glass cards if OS light (site is dark-only by design, `color-scheme: dark`).
