@@ -348,3 +348,24 @@ Frozen snapshot after `9c94851` (Sprint #23 + hotfix). Verified against source: 
 - **Interactive `/sky-map`** — DONE (Sprint #23): AE alt/az, hover tooltips, footer link.
 - **3-tier celeb cron cache** — DONE (Sprint #23): route + DB + resolver + `vercel.json` schedule + i18n keys.
 - Remaining opportunities (not blocking): localize Sprint #22/#23 route copy across all 5 dicts (currently inline English + `t()` fallbacks); hydrate `dictionaries.ts` with `skyMap.*`, `dailyTransit.*`, `skyEvents` export labels; consider light-mode contrast of `text-p-ink` glass cards if OS light (site is dark-only by design, `color-scheme: dark`).
+
+## Live Bugfix: Birth Chart Phantom Date, Famous Birthdays Grid & Sky-Events Nav (`b3d762e`)
+
+Deployed after the SPARQL audit. Verified: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green (incl. new `/sky-events` static route).
+
+### Birth chart showed a date the user never entered (`birthchart-client.tsx`)
+- `chart` initial state was a hardcoded 1995 placeholder, so the page painted a full chart before any input. Now `chart` starts `null`; on mount it restores the saved `loadNatalProfile()` from `storage.ts` (validated via `validateBirth` then `computeNatalChart`) for returning visitors, otherwise the Birth Form is shown. `handleSubmit` persists the entered profile with `saveNatalProfile` so `/daily-transit` shares the same details.
+
+### Famous Birthdays dense grid (server path unchanged, cron pre-fetch = SSOT)
+- Production serves the pre-calculated cron cache (SPARQL, sitelink-ranked) with zero latency; the static `celebrity-pool.ts` remains **fallback-only** (emergency/offline, no DB).
+- `resolver.ts`: Level-2 live Wikidata fetch is now gated (`allowLive = Boolean(store) || Boolean(deps.fetchLive)`), so static builds and local renders never hammer Wikimedia. Live results are topped up with the curated same-date pool (dedupe by `url`, cap `slice(0,12)`, source `"live"`) so a sparse live set never renders a single lonely card. All test fixtures (store/fetcher-injected) still pass.
+- `celebrity-birthdays-view.tsx`: new `initialsOf()` monogram + small `ZodiacSymbol` fallback inside `PortraitAvatar` when a profile has no image or the image errors; `<img>` gets `referrerPolicy="no-referrer"`; RTL-aware arrow scrolling preserved.
+
+### Nav & missing route (`site-nav.tsx`, `src/app/sky-events/page.tsx`)
+- Header "Cosmic Events" href was `/astrology` (a route that does not exist) → now points to the real `/sky-events` page (created: metadata canonicals, breadcrumb, masthead).
+- New **Tools** menu in the header (desktop popover with outside-click/Escape close + mobile group link list) → Synastry, Daily Transit, Sky Map, using inline `t(key, "English fallback")` because the 5-locale dicts only define `nav.astronomy`.
+
+### Pipeline decision (per product direction): cron pre-fetch is the single celebrity pipeline
+- Confirmed already shipped: `/api/cron/daily-celebrities` runs `0 22 * * *` UTC (daily, before midnight), prefetches today+tomorrow via **Wikidata SPARQL** (`ORDER BY DESC(?sitelinks)` = top globally ranked, category round-robin, Commons `Special:FilePath?width=330`), upserts `celebrity_cache` keyed `MM-DD`; resolver reads it cache-first (26h TTL), live only as gated fallback, static only as emergency fallback. `vercel.json`, DB repo, CRON_SECRET guard, `recordHealth` all verified.
+- **Static pool maintenance is stopped** — no hand-enrichment of `celebrity-pool.ts`.
+- ⚠️ Known data-quality note (from the one-off SPARQL audit, not fixed by design): ~190 of 624 static entries are mis-dated vs Wikidata (e.g. Spielberg 4/10→12/18, Clapton 1/6→3/30, Queen Victoria 5/17→5/24) and most dates have only 1–2 entries (today 9/5 = Raquel Welch only in fallback). Static only affects no-DB/dev/emergency renders — production serves corrected, IMAGE-bearing Wikidata profiles. If offline fidelity ever matters, regenerate the pool from the same SPARQL query rather than hand-curating.
