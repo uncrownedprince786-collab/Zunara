@@ -400,6 +400,31 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #26: Free geocoding everywhere, expanded legal disclaimer, 3D night-sky dome (`11eab96`)
+
+Verification: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green (home + `/sky-map` prerender the 3D client island cleanly).
+
+Goal: give every location/place field a free, accurate address lookup; harden the legal disclaimer; turn the flat sky map into a 3D model anyone understands — delivered in three parallel tracks (done ASAP). Working tree hygiene: the user's unrelated uncommitted hydration work (`astro.ts startOfUtcDay`, `moon-sign-card`, `sky-events`, `bento-zodiac-grid`, `daily-orbit-banner`, `globals.css`, `next.config.ts`, `api/cron/daily`, `planet-symbol`, `zodiac-symbol`) was left uncommitted.
+
+### Track 1 — Verified-place geocoding (free, accurate, never misleading)
+- New `src/lib/geo/geocoding.ts`: shared **Nominatim/OpenStreetMap** client (free, no key) — `COOLDOWN_MS=1000` 1 req/s throttle, `debounce()` helper (callers use 350ms), `MIN_QUERY_LENGTH=3`, typed `PlaceSuggestion {id,label,name,latitude,longitude,type,country}`, `searchPlaces(q)` returns `{query,results}` so stale responses are dropped, `PlaceProvenance = "verified" | "manual"`, and a required `OSM_ATTRIBUTION` constant.
+- **Accuracy rule:** coordinates only ever change from an explicit suggestion pick or manual entry — free text typed into a field never silently moves the point; every UI shows OSM attribution and a provenance line ("Coordinates verified from the selected place." / "Coordinates below were entered manually…").
+- `birth-form.tsx` (covers birthchart, daily-transit, synastry — it was already the site's only geocoding consumer, refactored onto the shared lib) and `sky-map-client.tsx` (observation point) both got remote autocomplete + provenance + attribution. Manual lat/long edits on the sky map flip provenance to manual.
+
+### Track 2 — Legal disclaimer shield
+- `src/app/disclaimer/page.tsx` rewritten ("Disclaimer & Risk Disclosure") with 11 `PaperSection`s: entertainment/reflection only (astrology is symbolic, not science, even though positions come from real astronomical data); not medical/legal/financial/navigational advice; no accuracy guarantee (VSOP87-based positions, 12:00 noon default for unknown birth time, user-entered data); third-party data accuracy (Wikidata celebrities, OSM/Nominatim, Wikimedia); not for navigation/safety; user responsibility for inputs; privacy (localStorage only, Nominatim geocoding note); third-party licensing/attribution; changes; limitation of liability; contact `hello@zunara.today`.
+
+### Track 3 — 3D night-sky dome
+- `src/components/astronomy/sky-map-canvas.tsx` rebuilt on **Three.js** (`three@0.185.1` + `@types/three@0.185.4` added). Interface unchanged: `SkyMapCanvas({ observer, date?, className? })`, `"use client"`, same wrapper/`aria-label`/`role`.
+- Scene: vertical-gradient sky dome, ~2600 procedural ambient stars, glowing horizon ring + translucent ground disc, N/E/S/W cardinal labels, gold zenith marker, 30°/60° altitude rings. Real bodies from `computeSkyBodies(observer, at)` (alt ≥ −2°) placed at true alt/az (`pos=(cos alt·sin az, sin alt, −cos alt·cos az)`, north = −Z); sun/moon/planet glow sprites sized by magnitude for stars; projected name labels via Canvas2D overlay.
+- Interaction: `OrbitControls` (origin target, `maxPolarAngle 0.9π`, zoom 0.9–4.2, damping, no pan), idle auto-rotate that pauses on interaction and resumes after 4s; hover/tap raycast tooltip (glyph, name, Az/Alt, mag for stars); WebGL-unavailable fallback message.
+- SSR-safe: renderer/scene/canvas textures built only inside `useEffect`; render phase only computes `computeSkyBodies` (pure). Full cleanup (rAF, controls, ResizeObserver, listeners, geometries/materials dispose), DPR capped at 2.
+- `skyMap.hoverHint` updated across all 5 locales to mention drag ("Drag to rotate the sky · hover or tap a body…").
+
+### Verification & deploy
+- `tsc --noEmit` clean post-reconciliation (incl. three types); `vitest` 243/243; `next build` green — `/sky-map` and home prerender fine with three.js.
+- Staged only this sprint's 8 files (geocoding lib, birth-form, sky-map-client, sky-map-canvas, disclaimer, dictionaries hoverHint, package(lock).json); pushed `3f7d17a..11eab96 master -> main`.
+
 ## Sprint #25: Tools surfaced on the pages, Tools menu removed, plain-English sky explainers (`1591a69`)
 
 Verification: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green.
