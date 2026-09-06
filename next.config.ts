@@ -29,7 +29,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://upload.wikimedia.org https://commons.wikimedia.org",
       "font-src 'self' data:",
-      "connect-src 'self'",
+      "connect-src 'self' https://nominatim.openstreetmap.org",
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
