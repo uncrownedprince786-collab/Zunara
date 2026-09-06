@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useLocale } from "@/lib/i18n/client";
 import { validateBirth, type BirthInput, YEAR_RANGE } from "@/lib/natal/validate";
+import {
+  searchPlaces,
+  debounce,
+  OSM_ATTRIBUTION,
+  type PlaceSuggestion,
+  type PlaceProvenance,
+} from "@/lib/geo/geocoding";
 
 interface BirthFormProps {
   onSubmit: (data: BirthInput) => void;
@@ -24,44 +31,37 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
     placeName: "New York, USA",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof BirthInput, string>>>({});
-  const [placeSuggestions, setPlaceSuggestions] = useState<{
-    place_id: string;
-    display_name: string;
-    lat: string;
-    lon: string;
-  }[]>([]);
+  const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [provenance, setProvenance] = useState<PlaceProvenance>("manual");
+  const searchSeq = useRef(0);
 
   const handleChange = useCallback((key: keyof BirthInput, value: unknown) => {
     setInput((prev) => ({ ...prev, [key]: value }));
+    if (key === "latitude" || key === "longitude") setProvenance("manual");
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
   }, [errors]);
 
-  const handlePlaceSearch = useCallback(async (query: string) => {
-    if (query.length < 3) {
-      setPlaceSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`,
-        { headers: { "User-Agent": "ZunaraAstrology/1.0" } },
-      );
-      const data = await res.json();
-      setPlaceSuggestions(data);
-      setShowSuggestions(data.length > 0);
-    } catch {
-      setPlaceSuggestions([]);
-      setShowSuggestions(false);
-    }
+  /** Debounced + throttled Nominatim lookup; drops stale queries. */
+  const runSearch = useCallback(async (query: string) => {
+    const seq = ++searchSeq.current;
+    const { query: resolved, results } = await searchPlaces(query);
+    if (seq !== searchSeq.current) return;
+    setPlaceSuggestions(results);
+    setShowSuggestions(resolved.length >= 3 && results.length > 0);
   }, []);
 
+  const debouncedSearch = useMemo(
+    () => debounce((q: string) => void runSearch(q), 350),
+    [runSearch],
+  );
+
   const selectPlace = useCallback(
-    (place: { display_name: string; lat: string; lon: string }) => {
-      handleChange("placeName", place.display_name);
-      handleChange("latitude", parseFloat(place.lat));
-      handleChange("longitude", parseFloat(place.lon));
+    (place: PlaceSuggestion) => {
+      handleChange("placeName", place.label);
+      handleChange("latitude", place.latitude);
+      handleChange("longitude", place.longitude);
+      setProvenance("verified");
       setPlaceSuggestions([]);
       setShowSuggestions(false);
     },
@@ -244,9 +244,9 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
           value={input.placeName}
           onChange={(e) => {
             handleChange("placeName", e.target.value);
-            handlePlaceSearch(e.target.value);
+            debouncedSearch(e.target.value);
           }}
-          onFocus={() => handlePlaceSearch(input.placeName || "")}
+          onFocus={() => void runSearch(input.placeName || "")}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 250)}
           placeholder="e.g., London, United Kingdom"
           className="w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-3 text-sm text-starlight outline-none transition-colors focus:border-gold"
@@ -256,15 +256,24 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
           <ul className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#111222] shadow-2xl backdrop-blur-xl">
             {placeSuggestions.map((p) => (
               <li
-                key={p.place_id}
+                key={p.id}
                 onMouseDown={() => selectPlace(p)}
                 className="cursor-pointer px-4 py-2.5 text-sm text-starlight transition-colors hover:bg-gold/15 hover:text-gold"
               >
-                {p.display_name}
+                {p.label}
               </li>
             ))}
           </ul>
         )}
+        <p className="mt-1.5 text-[0.68rem] leading-4 text-subdued">
+          Pick a suggestion to set exact coordinates.
+        </p>
+        <p className="mt-0.5 text-[0.65rem] leading-4 text-subdued">
+          {provenance === "verified"
+            ? "Coordinates verified from the selected place."
+            : "Coordinates below were entered manually — the chart uses them as-is."}
+        </p>
+        <p className="mt-1 text-[0.65rem] leading-4 text-subdued">{OSM_ATTRIBUTION}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

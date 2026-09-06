@@ -449,7 +449,7 @@ export const en = {
     manualHint:
       "Enter latitude/longitude for your location (or use the saved profile) and the dome re-positions instantly.",
     shownFor: "Shown for {place} · The map refreshes every minute.",
-    hoverHint: "Hover or tap a body to see its azimuth and altitude. Only objects above the horizon are shown.",
+    hoverHint: "Drag to rotate the sky · hover or tap a body to see its azimuth and altitude. Only objects above the horizon are shown.",
     legendPlanet: "Planet",
     legendSun: "Sun",
     legendMoon: "Moon",
@@ -1298,7 +1298,7 @@ export const ur: Dict = {
     manualHint:
       "اپنے مقام کے لیے عرض/طول بلد درج کریں (یا محفوظ پروفائل استعمال کریں) اور نقشہ فوراً دوبارہ کھینچا جاتا ہے۔",
     shownFor: "دکھایا جا رہا ہے: {place} · نقشہ ہر منٹ میں تازہ ہوتا ہے۔",
-    hoverHint: "کسی جرم پر ہوور یا ٹیپ کریں تاکہ اس کی سمتِ اشارہ اور بلندی دیکھیں۔ صرف افق سے اوپر والے اجرام دکھائے جاتے ہیں۔",
+    hoverHint: "آسمان کو گھمانے کے لیے گھسیٹیں · کسی جرم پر ہوور یا ٹیپ کریں تاکہ اس کی سمتِ اشارہ اور بلندی دیکھیں۔ صرف افق سے اوپر والے اجرام دکھائے جاتے ہیں۔",
     legendPlanet: "سیارہ",
     legendSun: "سورج",
     legendMoon: "چاند",
@@ -2037,7 +2037,7 @@ export const ar: Dict = {
     manualHint:
       "أدخل خطوط الطول/العرض لموقعك (أو استخدم الملف المحفوظ) وسيعاد رسم القبة فوراً.",
     shownFor: "تعرض {place} · تُحدَّث الخريطة كل دقيقة.",
-    hoverHint: "مرّر أو انقر على أي جرم لترى سمت وارتفاعه. تُعرض الأجرام فوق الأفق فقط.",
+    hoverHint: "اسحب لتدوير السماء · مرّر أو انقر على أي جرم لترى سمت وارتفاعه. تُعرض الأجرام فوق الأفق فقط.",
     legendPlanet: "كوكب",
     legendSun: "الشمس",
     legendMoon: "القمر",
@@ -2776,7 +2776,7 @@ export const es: Dict = {
     manualHint:
       "Introduce latitud/longitud de tu ubicación (o usa tu perfil guardado) y el cielo se redibuja al instante.",
     shownFor: "Mostrando {place} · El mapa se refresca cada minuto.",
-    hoverHint: "Desplázate o toca cualquier objeto para ver su azimut y altitud. Solo se muestran objetos sobre el horizonte.",
+    hoverHint: "Arrastra para girar el cielo · desplázate o toca cualquier objeto para ver su azimut y altitud. Solo se muestran objetos sobre el horizonte.",
     legendPlanet: "Planeta",
     legendSun: "Sol",
     legendMoon: "Luna",
@@ -3512,7 +3512,7 @@ export const zh: Dict = {
       "坐标已从你保存的出生档案中获取——可自由修改，星图立即重绘。",
     manualHint: "输入你所在位置的纬度/经度（或使用已保存档案），星图将立即重绘。",
     shownFor: "正在显示：{place} · 星图每分钟刷新。",
-    hoverHint: "悬停或点击任意天体，查看其方位角与高度。仅显示地平线以上的天体。",
+    hoverHint: "拖动旋转天空 · 悬停或点击任意天体，查看其方位角与高度。仅显示地平线以上的天体。",
     legendPlanet: "行星",
     legendSun: "太阳",
     legendMoon: "月亮",

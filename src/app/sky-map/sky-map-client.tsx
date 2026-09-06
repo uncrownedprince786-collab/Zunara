@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SkyMapCanvas } from "@/components/astronomy/sky-map-canvas";
 import type { ObserverPoint } from "@/lib/astronomy/sky-map";
 import { loadNatalProfile } from "@/lib/natal/storage";
 import { useLocale } from "@/lib/i18n/client";
+import {
+  searchPlaces,
+  debounce,
+  OSM_ATTRIBUTION,
+  type PlaceSuggestion,
+  type PlaceProvenance,
+} from "@/lib/geo/geocoding";
 
 function subst(tpl: string, vars: Record<string, string>): string {
   return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
@@ -19,6 +26,10 @@ export function SkyMapClient() {
   const [place, setPlace] = useState(DEFAULT_PLACE);
   const [now, setNow] = useState<Date>(() => new Date());
   const [usingProfile, setUsingProfile] = useState(false);
+  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [provenance, setProvenance] = useState<PlaceProvenance>("manual");
+  const searchSeq = useRef(0);
 
   // Seed coordinates from the persisted birth profile when available.
   useEffect(() => {
@@ -26,8 +37,35 @@ export function SkyMapClient() {
     if (profile && Number.isFinite(profile.latitude) && Number.isFinite(profile.longitude)) {
       setObserver({ latitude: profile.latitude, longitude: profile.longitude, height: 10 });
       setPlace(profile.placeName || t("dailyTransit.savedProfileLocation", "saved profile location"));
+      setProvenance("verified");
       setUsingProfile(true);
     }
+  }, []);
+
+  const runSearch = useMemo(() => {
+    let seq = 0;
+    return async (query: string) => {
+      const current = ++seq;
+      const { query: resolved, results } = await searchPlaces(query);
+      if (current !== seq) return;
+      setSuggestions(results);
+      setShowSuggestions(resolved.length >= 3 && results.length > 0);
+    };
+  }, []);
+
+  const debouncedSearch = useMemo(
+    () => debounce((q: string) => void runSearch(q), 350),
+    [runSearch],
+  );
+
+  const selectPlace = useMemo(() => {
+    return (p: PlaceSuggestion) => {
+      setPlace(p.label);
+      setObserver((prev) => ({ ...prev, latitude: p.latitude, longitude: p.longitude }));
+      setProvenance("verified");
+      setSuggestions([]);
+      setShowSuggestions(false);
+    };
   }, []);
 
   // Keep the map honest to the current moment.
@@ -49,13 +87,38 @@ export function SkyMapClient() {
           <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
             {t("skyMap.observationPoint", "Observation point")}
           </label>
-          <input
-            type="text"
-            value={place}
-            onChange={(e) => setPlace(e.target.value)}
-            placeholder={t("skyMap.cityLabel", "City or label")}
-            className="w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-2.5 text-sm text-starlight outline-none focus:border-gold"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={place}
+              onChange={(e) => {
+                setPlace(e.target.value);
+                setProvenance("manual");
+                debouncedSearch(e.target.value);
+              }}
+              onFocus={() => void runSearch(place || "")}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 250)}
+              placeholder={t("skyMap.cityLabel", "City or label")}
+              className="w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-2.5 text-sm text-starlight outline-none focus:border-gold"
+              autoComplete="off"
+            />
+            {showSuggestions && suggestions.length > 0 && (
+              <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#111222] shadow-2xl backdrop-blur-xl">
+                {suggestions.map((p) => (
+                  <li
+                    key={p.id}
+                    onMouseDown={() => selectPlace(p)}
+                    className="cursor-pointer px-3 py-2 text-sm text-starlight transition-colors hover:bg-gold/15 hover:text-gold"
+                  >
+                    {p.label}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <p className="mt-1.5 text-[0.68rem] leading-4 text-subdued">
+            Pick a suggestion to set exact coordinates for the map.
+          </p>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-muted mb-1">{t("skyMap.latitude", "Latitude")}</label>
@@ -65,9 +128,10 @@ export function SkyMapClient() {
                 min={-90}
                 max={90}
                 value={Number(observer.latitude.toFixed(4))}
-                onChange={(e) =>
-                  setObserver({ ...observer, latitude: Number(e.target.value) })
-                }
+                onChange={(e) => {
+                  setObserver({ ...observer, latitude: Number(e.target.value) });
+                  setProvenance("manual");
+                }}
                 className="w-full rounded-xl border border-white/10 bg-ink/80 px-3 py-2 text-sm text-starlight outline-none focus:border-gold"
               />
             </div>
@@ -79,9 +143,10 @@ export function SkyMapClient() {
                 min={-180}
                 max={180}
                 value={Number(observer.longitude.toFixed(4))}
-                onChange={(e) =>
-                  setObserver({ ...observer, longitude: Number(e.target.value) })
-                }
+                onChange={(e) => {
+                  setObserver({ ...observer, longitude: Number(e.target.value) });
+                  setProvenance("manual");
+                }}
                 className="w-full rounded-xl border border-white/10 bg-ink/80 px-3 py-2 text-sm text-starlight outline-none focus:border-gold"
               />
             </div>
@@ -94,6 +159,12 @@ export function SkyMapClient() {
           <p className="mt-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-xs leading-5 text-muted">
             {subst(t("skyMap.shownFor", "Shown for {place}. The map refreshes every minute."), { place: placeLabel })}
           </p>
+          <p className="mt-2 text-[0.65rem] leading-4 text-subdued">
+            {provenance === "verified"
+              ? "Coordinates verified from the selected place."
+              : "Coordinates entered manually — the map uses them as-is."}
+          </p>
+          <p className="mt-0.5 text-[0.65rem] leading-4 text-subdued">{OSM_ATTRIBUTION}</p>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
