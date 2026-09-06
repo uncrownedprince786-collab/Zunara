@@ -14,8 +14,11 @@ import { MoonSignCard } from "@/components/ui/moon-sign-card";
 import { SkyEvents } from "@/components/sky/sky-events";
 import { CelebrityBirthdays } from "@/components/ui/celebrity-birthdays";
 import { CosmicTraits } from "@/components/ui/cosmic-traits";
+import { SkyMapClient } from "@/app/sky-map/sky-map-client";
+import { DailyTransitClient } from "@/app/daily-transit/daily-transit-client";
 import { SITE } from "@/lib/seo/site";
 import { pageMetadata } from "@/lib/seo/metadata";
+import { plainRetro, plainAspect } from "@/lib/content/sky-plain";
 
 function todayDate(): string {
   return new Intl.DateTimeFormat("en", {
@@ -141,6 +144,10 @@ export default function HomePage() {
               <MoonSignCard />
               <div className="paper-panel rounded-lg p-6">
                 <p className="kicker"><LocaleText path="home.planetaryBulletin" fallback="Planetary bulletin" /></p>
+                <p className="mt-1 text-xs leading-5 text-subdued">
+                  In plain words: “retrograde” is an illusion — the planet only appears to move
+                  backwards from Earth; it is a signal to slow down and review.
+                </p>
                 <dl className="mt-5 space-y-3">
                   {retro.length > 0 ? (
                     retro.map((p) => (
@@ -148,7 +155,10 @@ export default function HomePage() {
                         <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
                         <dd className="text-sm text-p-ink">
                           <span className="font-medium"><LocaleText path={`planets.${p.key}`} fallback={p.key} /></span>
-                          <span className="text-p-muted"> <LocaleText path="home.retrogradeIn" fallback="retrograde in" /> <LocaleText path={`signs.${p.sign}`} fallback={p.sign} /></span>
+                          <span className="text-p-muted"> <LocaleText path="home.retrogradeIn" fallback="retrograde in" /> <LocaleText path={`signs.${p.sign}`} fallback={p.sign} /> <span className="font-medium text-gold-deep">℞</span></span>
+                          <p className="mt-1 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                            In plain words: {plainRetro(p.key, p.sign)}
+                          </p>
                         </dd>
                       </div>
                     ))
@@ -158,6 +168,9 @@ export default function HomePage() {
                       <dd className="text-sm text-p-ink">
                         <span className="font-medium"><LocaleText path="home.noRetrogrades" fallback="No retrogrades" /></span>
                         <span className="text-p-muted"> — <LocaleText path="home.allPlanetsDirect" fallback="all planets direct today" /></span>
+                        <p className="mt-1 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                          In plain words: no planets are backtracking right now — momentum is on your side.
+                        </p>
                       </dd>
                     </div>
                   )}
@@ -174,6 +187,9 @@ export default function HomePage() {
                           {", " + transit.orb.toFixed(1) + "° "}
                           <LocaleText path="aspects.orb" fallback="orb" />
                         </span>
+                        <p className="mt-1 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                          In plain words: {plainAspect(transit.name, transit.bodyA, transit.bodyB, transit.orb)}
+                        </p>
                       </dd>
                     </div>
                   )}
@@ -181,6 +197,36 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ---- Night sky map, live ---- */}
+      <section className="border-y border-white/[0.08] bg-white/[0.02] backdrop-blur-xl saturate-180">
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <p className="kicker"><LocaleText path="home.skyMapKicker" fallback="Live from your corner of the planet" /></p>
+          <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
+            <LocaleText path="home.skyMapTitle" fallback="See the sky right now" />
+          </h2>
+          <p className="mt-4 max-w-2xl leading-7 text-muted">
+            <LocaleText path="home.skyMapSubtitle" fallback="An interactive map of where the Sun, Moon, planets and the brightest stars sit above you at this moment — plotted from precise astronomy, from your own coordinates." />
+          </p>
+          <div className="mt-10">
+            <SkyMapClient />
+          </div>
+        </div>
+      </section>
+
+      {/* ---- Daily transit, personalised ---- */}
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <p className="kicker"><LocaleText path="home.dailyTransitKicker" fallback="Your personal sky" /></p>
+        <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
+          <LocaleText path="home.dailyTransitTitle" fallback="Your day under the planets" />
+        </h2>
+        <p className="mt-4 max-w-2xl leading-7 text-muted">
+          <LocaleText path="home.dailyTransitSubtitle" fallback="Enter your birth details — or reuse the chart you saved on the birth-chart tool — and get a plain-English read of which life topics the planets are touching for you today." />
+        </p>
+        <div className="mt-10">
+          <DailyTransitClient />
         </div>
       </section>
 

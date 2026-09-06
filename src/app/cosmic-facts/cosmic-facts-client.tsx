@@ -6,6 +6,7 @@ import { funFactForSign } from "@/lib/content/funfacts";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { elementText } from "@/components/ui/element";
 import { CompatibilityHub } from "@/components/ui/compatibility-hub";
+import { SynastryClient } from "@/app/synastry/synastry-client";
 import { useLocale } from "@/lib/i18n/client";
 
 const ELEMENT_POWER: Record<Element, { glyph: string; color: string; signs: string[] }> = {
@@ -107,6 +108,19 @@ export function CosmicFactsClient() {
         </p>
         <div className="mt-10">
           <CompatibilityHub />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-4 sm:px-6">
+        <p className="kicker text-center">{t("cosmicFacts.synastryKicker", "Two charts, one bond")}</p>
+        <h2 className="mx-auto mt-3 max-w-2xl text-center font-display text-3xl text-starlight">
+          {t("cosmicFacts.synastryTitle", "Synastry — how you two fit")}
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-center leading-7 text-muted">
+          {t("cosmicFacts.synastrySubtitle", "Sign compatibility is the fun glance — this is the deep dive. Enter two real birth details and see how the charts cross-reference across four relationship dimensions, scored from the actual planetary angles.")}
+        </p>
+        <div className="mt-10">
+          <SynastryClient />
         </div>
       </section>
 
