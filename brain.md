@@ -399,3 +399,33 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Server-rendered tool-page mastheads (kicker/H1/desc) + breadcrumbs (no server-side i18n infra; consistent with the site).
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
+
+## Sprint #25: Tools surfaced on the pages, Tools menu removed, plain-English sky explainers (`1591a69`)
+
+Verification: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green.
+
+Goal: make the tools' interactive power one scroll away instead of hidden behind a header popover, and make the live-sky jargon legible to a first-time reader. (.gitignore/staged-diff note: the working tree had unrelated uncommitted user changes — `next.config.ts` Wikimedia `commons.wikimedia.org` + `pathname /**` for images, `api/cron/daily` `revalidatePath("/")` so the home ISR date rolls over daily, `globals.css` RTL-safe `.skip-link` clip pattern, and JSX backtick `<title>` interpolations — these were left uncommitted.)
+
+### Navigation simplification
+- **Removed the header "Tools ▾" menu entirely** from `site-nav.tsx` (desktop popover + mobile subsection + `nav.tools` label usage; `useRef`/`useEffect` outside-click wiring deleted). Header is now just: Home (logo) · Horoscopes · Birth Chart · Cosmic Facts · Sky Events · About.
+- Standalone routes `/synastry`, `/daily-transit`, `/sky-map` still exist (footer links + canonical SEO preserved) but are no longer the primary discovery path.
+
+### Tools moved into the flow (saving a click)
+- **Synastry → cosmic-facts page**, as a new section directly below the "Zodiac compatibility" (How two signs mesh) hub and before the Elemental forces panel: kicker/title/subtitle + `<SynastryClient />` embedded. Bigger-font framing: "Sign compatibility is the fun glance — this is the deep dive."
+- **Sky Map → home page**, new full-width section immediately after "The current sky" (kicker "Live from your corner of the planet"), `<SkyMapClient />` embedded.
+- **Daily Transit → home page**, section right after Sky Map (kicker "Your personal sky"), `<DailyTransitClient />` embedded — reads the saved birth-chart profile, falls back to its birth form for new visitors.
+- New dict keys (parity across en|ur|ar|es|zh): `home.skyMapKicker/Title/Subtitle`, `home.dailyTransitKicker/Title/Subtitle`, `cosmicFacts.synastryKicker/Title/Subtitle`.
+
+### Plain-English explainers (`src/lib/content/sky-plain.ts`)
+New pure-data helper rendering "In plain words" sentences for the non-technical reader (English editorial copy by design, matching the glossary scope decision):
+- Sign frames (12) e.g. cancer → "the sign of home, family and deep feeling".
+- Lunar phases (8) e.g. Waning Crescent → "a calm, restful pause before the next cycle".
+- Planet themes (8) e.g. saturn → "structure, limits, time and responsibility".
+- Aspect relations (5) e.g. sextile → "a friendly, helpful angle — the energies cooperate and open doors".
+- `plainMoon`, `plainRetro`, `plainAspect` compose them.
+- **Moon card** (`moon-sign-card.tsx`): appended a second muted line under the existing `24% illuminated — …` caption.
+- **Planetary bulletin** (`page.tsx`): a lead primer under the kicker explains "retrograde" in one sentence; each retrograde row gained a `℞` mark + its own explainer line; the no-retrograde fallback and the headline aspect row (with orb closeness wording like "almost exactly aligned, so the effect is unusually strong") each got one too.
+
+### Verification & deploy
+- `tsc --noEmit` clean; `vitest` 243/243; `next build` green (home now prerenders the embedded clients as client islands under ISR).
+- Pushed `6734e16..1591a69 master -> main`.
