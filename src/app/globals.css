@@ -451,13 +451,26 @@ body {
   }
 }
 
-/* ---------------- Accessibility: skip link ---------------- */
+/* ---------------- Accessibility: skip link ----------------
+   Hidden off-canvas with the clip() visually-hidden pattern — never a
+   large negative offset like `left: -9999px`. Under `dir="rtl"` a
+   -9999px element is measured from the right edge, inflating the
+   document's horizontal scroll width to ~10000px and shoving every
+   visible element off-screen (a fully blank RTL layout). The clip
+   pattern occupies 1px and adds zero overflow in any direction, and
+   `inset-inline-start` keeps focus placement correct in both LTR/RTL. */
 .skip-link {
   position: absolute;
-  left: -9999px;
   top: 0;
+  inset-inline-start: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
   z-index: 100;
-  padding: 0.5rem 1rem;
   background: var(--color-gold);
   color: var(--z-bg);
   font-weight: 600;
@@ -465,7 +478,15 @@ body {
   text-decoration: none;
 }
 .skip-link:focus {
-  left: 1rem;
+  top: 0.5rem;
+  inset-inline-start: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  overflow: visible;
+  clip: auto;
+  clip-path: none;
+  border-radius: 6px;
 }
 
 /* ---------------- Print stylesheet ---------------- */

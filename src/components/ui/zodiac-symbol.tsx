@@ -161,7 +161,7 @@ export function ZodiacSymbol({
           <circle key={i} cx={part.cx} cy={part.cy} r={part.r} />
         ),
       )}
-      <title>{glyph} {aria}</title>
+      <title>{`${glyph} ${aria}`}</title>
     </svg>
   );
 }

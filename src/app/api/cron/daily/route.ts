@@ -58,6 +58,13 @@ export async function POST(request: Request) {
     }
   }
 
+  // The public home page is date-sensitive (hero date + the "famous birthdays
+  // today" section) but renders under ISR (`revalidate = 3600`). On a
+  // low-traffic day nothing triggers a background regeneration, so its cache
+  // can keep serving yesterday's date. The daily UTC rollover always runs
+  // here, so refresh "/" on every run to keep the visible date current.
+  revalidatePath("/");
+
   const allOk = results.length > 0 && results.every((r) => r.ok);
   return NextResponse.json(
     {

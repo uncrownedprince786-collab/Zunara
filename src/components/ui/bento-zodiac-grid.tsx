@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
-import { snapshotForToday } from "@/lib/astronomy/astro";
+import { computeSnapshot, startOfUtcDay } from "@/lib/astronomy/astro";
 import { getHoroscopeContent } from "@/lib/horoscope/read";
 import { computeChanges } from "@/lib/astrology/changes";
 import { ZodiacSymbol } from "./zodiac-symbol";
@@ -81,8 +81,11 @@ function MetricPill({ area, strength }: MetricPillProps) {
  */
 export function BentoZodiacGrid() {
   const { t, tSign, tArea, locale } = useLocale();
-  const snapshot = snapshotForToday();
-  const changes = computeChanges(new Date(), snapshot);
+  // Stable UTC-day reference so the server prerender and the client hydration
+  // compute identical positions/signals (no hydration mismatch).
+  const today = startOfUtcDay();
+  const snapshot = computeSnapshot(today);
+  const changes = computeChanges(today, snapshot);
 
   return (
     <div>
@@ -108,7 +111,7 @@ export function BentoZodiacGrid() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {ZODIAC_SIGNS.map((sign, i) => {
-          const result = getHoroscopeContent(sign.slug, "daily", new Date(), snapshot);
+          const result = getHoroscopeContent(sign.slug, "daily", today, snapshot);
           const areas = result?.signals?.areas ?? [];
           const strongest = areas.find((a) => a.present);
 

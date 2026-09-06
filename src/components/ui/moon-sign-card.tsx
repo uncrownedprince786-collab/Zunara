@@ -1,6 +1,7 @@
 "use client";
 
 import { moonPhase, moonSign } from "@/lib/astronomy/moon";
+import { startOfUtcDay } from "@/lib/astronomy/astro";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { useLocale } from "@/lib/i18n/client";
 import { plainMoon } from "@/lib/content/sky-plain";
@@ -25,8 +26,10 @@ function subst(tpl: string, vars: Record<string, string>): string {
  */
 export function MoonSignCard() {
   const { t, tSign } = useLocale();
-  const sign = moonSign();
-  const phase = moonPhase();
+  // Stable UTC-day reference so server prerender and client hydration agree.
+  const today = startOfUtcDay();
+  const sign = moonSign(today);
+  const phase = moonPhase(today);
 
   if (!sign) return null;
 

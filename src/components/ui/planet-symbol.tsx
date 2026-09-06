@@ -95,7 +95,7 @@ export function PlanetSymbol({
       {paths.map((d, i) => (
         <path key={i} d={d} />
       ))}
-      {!decorative && <title>{celestial.glyph} {aria}</title>}
+      {!decorative && <title>{`${celestial.glyph} ${aria}`}</title>}
     </svg>
   );
 }

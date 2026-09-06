@@ -351,3 +351,19 @@ export function computeSnapshot(date: Date, includeNodes = true): PlanetarySnaps
 export function snapshotForToday(includeNodes = true): PlanetarySnapshot {
   return computeSnapshot(new Date(), includeNodes);
 }
+
+/**
+ * Start of the current UTC day (00:00:00 UTC). This is a *stable* "today"
+ * reference: it evaluates to the same instant whether it runs during the
+ * server prerender or later during client hydration on the same UTC date.
+ * Client components that render "today's" sky (moon, snapshot, daily signals)
+ * must derive their date from this instead of `new Date()` — otherwise the
+ * few minutes/hours between prerender and hydration shift planetary positions
+ * and produce a React hydration mismatch (which forces a full client re-render
+ * of the tree and can flash blank on mobile).
+ */
+export function startOfUtcDay(now: Date = new Date()): Date {
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+  );
+}

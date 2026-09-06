@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { MoonPhaseWidget } from "@/components/ui/moon-phase";
+import { startOfUtcDay } from "@/lib/astronomy/astro";
 import { useLocale } from "@/lib/i18n/client";
 
 const PROMO_SIGNS = ["aries", "leo", "libra", "pisces"] as const;
@@ -39,7 +40,7 @@ export function DailyOrbitBanner() {
           </p>
         </div>
         <div className="hidden shrink-0 sm:block">
-          <MoonPhaseWidget />
+          <MoonPhaseWidget date={startOfUtcDay()} />
         </div>
         <Link
           href="/horoscope"

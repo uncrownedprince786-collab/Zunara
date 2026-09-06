@@ -13,6 +13,7 @@ import {
   calculateSkyEvents,
   mergeSkyEventSources,
 } from "@/lib/content/sky-events-calculated";
+import { startOfUtcDay } from "@/lib/astronomy/astro";
 import { generateTransitICS } from "@/lib/calendar/ics-generator";
 
 export type { SkyEvent } from "@/lib/content/sky-events-data";
@@ -121,7 +122,11 @@ export function selectActiveMonthEvents(
 export function SkyEvents() {
   const { t, locale } = useLocale();
   const [state, setState] = useState(() => {
-    const now = new Date();
+    // Stable UTC-day reference: the lazy initializer runs during both the
+    // server prerender and the client's first render, so it must be
+    // deterministic across that gap to avoid a hydration mismatch. The live
+    // feed + exact "now" are applied after mount in the effect below.
+    const now = startOfUtcDay();
     // Live feed data is unknown at render time, so the initial merge is
     // fallback (named lunar moons, curated peaks) + freshly computed phases.
     return selectActiveMonthEvents(
