@@ -225,7 +225,7 @@ Built as two parallel sub-agent builds then integrated under one commit. Full ve
 - Footer: new "Astronomy" column (`/synastry`, `/daily-transit`, `/retrograde`, `/ephemeris`, `/library`), grid `sm:grid-cols-2 lg:grid-cols-3`. Header nav untouched.
 
 ### Notes
-- New-route i18n uses inline `t(key, "English fallback")` only — `dictionaries.ts` untouched (language-audit test still green); a future pass can localize new keys across all 5 locales.
+- New-route i18n uses inline `t(key, "English fallback")` only — `dictionaries.ts` untouched (language-audit test still green); a future pass can localize new keys across all 5 locales. <span style="color:green">DONE in Sprint #24 — all tool routes now read fully translated dict keys across en|ur|ar|es|zh.</span>
 - Only integration fix needed after the two parallel builds: a `BodyKey` vs `NatalBodyKey` cast in `transits.ts:236-237` (node keys excluded from the natal map).
 - Retrograde tracker tests are the slowest (~8.6s) due to grid scans; keep horizons bounded for CI.
 
@@ -261,7 +261,7 @@ Delivered as Sprint #23a (celebrity cache) plus the final roadmap gap features (
 ### Notes
 - Post-merge integration fixes for #1–#3: the `.ics` import name mismatch (`exportTransitICS` → `generateTransitICS`, 2 call sites) and folding not applied to `VEVENT` content lines (now every `SUMMARY/DESCRIPTION/LOCATION/DT*` line is `foldLine`-folded).
 - `/sky-map` and `/daily-transit` remain statically generated; the canvas re-renders client-side every 60s and on pointer events.
-- #1–#3 new copy still uses inline English + `t()` fallbacks (dictionaries untouched); a later i18n pass can localize `skyMap.*`, `dailyTransit.*` and `skyEvents` export labels across all 5 locales.
+- #1–#3 new copy still uses inline English + `t()` fallbacks (dictionaries untouched); a later i18n pass can localize `skyMap.*`, `dailyTransit.*` and `skyEvents` export labels across all 5 locales. <span style="color:green">DONE in Sprint #24.</span>
 
 ## Hotfix: Mobile Language Crash, Hydration/Cookie Safety & Meteor Shower Visibility
 
@@ -348,7 +348,7 @@ Frozen snapshot after `9c94851` (Sprint #23 + hotfix). Verified against source: 
 - **Exportable `.ics`** — DONE (Sprint #23): `ics-generator.ts` RFC 5545 + buttons on daily-transit & sky-events.
 - **Interactive `/sky-map`** — DONE (Sprint #23): AE alt/az, hover tooltips, footer link.
 - **3-tier celeb cron cache** — DONE (Sprint #23): route + DB + resolver + `vercel.json` schedule + i18n keys.
-- Remaining opportunities (not blocking): localize Sprint #22/#23 route copy across all 5 dicts (currently inline English + `t()` fallbacks); hydrate `dictionaries.ts` with `skyMap.*`, `dailyTransit.*`, `skyEvents` export labels; consider light-mode contrast of `text-p-ink` glass cards if OS light (site is dark-only by design, `color-scheme: dark`).
+- Remaining opportunities (not blocking): localize Sprint #22/#23 route copy across all 5 dicts (currently inline English + `t()` fallbacks); hydrate `dictionaries.ts` with `skyMap.*`, `dailyTransit.*`, `skyEvents` export labels; consider light-mode contrast of `text-p-ink` glass cards if OS light (site is dark-only by design, `color-scheme: dark`). <span style="color:green">Localization DONE in Sprint #24 — only the optional light-mode contrast check remains.</span>
 
 ## Live Bugfix: Birth Chart Phantom Date, Famous Birthdays Grid & Sky-Events Nav (`b3d762e`)
 
@@ -370,3 +370,32 @@ Deployed after the SPARQL audit. Verified: `tsc --noEmit` 0 errors, `vitest` 243
 - Confirmed already shipped: `/api/cron/daily-celebrities` runs `0 22 * * *` UTC (daily, before midnight), prefetches today+tomorrow via **Wikidata SPARQL** (`ORDER BY DESC(?sitelinks)` = top globally ranked, category round-robin, Commons `Special:FilePath?width=330`), upserts `celebrity_cache` keyed `MM-DD`; resolver reads it cache-first (26h TTL), live only as gated fallback, static only as emergency fallback. `vercel.json`, DB repo, CRON_SECRET guard, `recordHealth` all verified.
 - **Static pool maintenance is stopped** — no hand-enrichment of `celebrity-pool.ts`.
 - ⚠️ Known data-quality note (from the one-off SPARQL audit, not fixed by design): ~190 of 624 static entries are mis-dated vs Wikidata (e.g. Spielberg 4/10→12/18, Clapton 1/6→3/30, Queen Victoria 5/17→5/24) and most dates have only 1–2 entries (today 9/5 = Raquel Welch only in fallback). Static only affects no-DB/dev/emergency renders — production serves corrected, IMAGE-bearing Wikidata profiles. If offline fidelity ever matters, regenerate the pool from the same SPARQL query rather than hand-curating.
+
+## Sprint #24: Tool Routes Fully Localized (5 locales) (`71b475b`)
+
+Deployed after the meteor animation fix (`9e7e783`). Verification: `tsc --noEmit` 0 errors, `vitest` 243/243 (27 files, incl. the one-by-one locale completeness audit), `next build` green.
+
+Closes the last localization gap from Sprint #22/#23: the tool-route copy that previously rendered via inline English `t(key, "fallback")` now reads fully translated dict keys.
+
+### i18n additions to `dictionaries.ts` (en|ur|ar|es|zh parity, `Dict = typeof en`)
+- `nav`: `tools`, `synastry`, `dailyTransit`, `skyMap` (auto-wired into the existing header Tools menu).
+- `common`: `and`, `date`, `direct`, `retrograde` + table columns `colPlanet`/`colSign`/`colDegree`/`colLongitude`/`colElement`/`colMotion`/`colStatus`/`colStart`/`colEnd`/`colStrength`/`colAdvice`.
+- `birthchart`: `modifyDetails` (edit button — `formTitle` was never meant for modify), `computedFor` (`{date} · VSOP87 Engine {version}`), `checkForm`, `calcFailed`, `ageSection`, `exactAgeLabel`, `nextMilestoneLabel`, `guidanceKicker/Title/Intro`, `guidanceTabs`, `pillar.{personality,love,career,inner}`, `transitsKicker/Title/Intro/None`, `formSubtitle` (birth-form subtitle), `birthLocationLabel` reworded to "Birthplace (City, Country)" in all locales.
+- `skyEvents`: `exportLabel`, `exportHint`.
+- New sections inserted before each locale's `cosmicFacts`: `synastry`, `dailyTransit` (incl. `houseLabel` "House {n}" / `transiting` / `peakEnds` templates), `retrograde` (stats + `strength.{mild,moderate,intense}` + per-planet tracker + table), `ephemeris` (day nav, `onDate`/`retroNone`/`retroSome`/`sunIn` caption, `retroMarker`), `skyMap` (observation point, seeded/manual hints, `shownFor` refresh note, hover hint, legend labels).
+
+### Component wiring (all through `useLocale()` + a local `subst()` `{var}` template helper)
+- `synastry-client.tsx` — names/placeholders, compute button + states, errors, score + footnote, terms paragraph (leads/tails keep inline `AstroTerm` tooltips, joined with `common.and`), orbital text via `subst`, aspect badges via `t(\`aspects.${asp.aspectName}\`)`.
+- `daily-transit-client.tsx` — saved/active profile card, hints, glossary note (AstroTerm dropped intentionally), date label/hint, house chips via `houseLabel {n}`, "transiting {sign}", forecast cards with `tPlanet` + localized aspect names + `peakEnds`; `Intl.DateTimeFormat` now uses the active locale; `computeFor`/`handleDateChange` thread `t`/`locale`.
+- `retrograde-client.tsx` — stat cards (`ofTracked {count}`, startsOn, none-in-window), computed-at footnote, per-planet tracker title/desc, column headers (`common.col*`), row badges (retrograde now/upcoming/direct), `inSign {sign}`, strength labels, computing loader; date formatting locale-aware. Map callback renamed `t`→`row` to avoid shadowing the translator.
+- `ephemeris-client.tsx` — prev/next day buttons, `common.date` label, table headers, body/sign/element rows via `tPlanet`/`tSign`/`tElement`, motion badge (`retroMarker`/`common.direct`), locale-aware day caption via new keys.
+- `sky-map-client.tsx` — observation point, city/placeholder, lat/long labels, seeded vs manual hints, live refresh note (`shownFor {place}`), hover hint, legend labels; `toLocaleString(locale, …)` for the clock; seeded place defaults via `dailyTransit.savedProfileLocation`.
+- `sky-events.tsx` — export button + hint now read `skyEvents.exportLabel`/`exportHint`.
+- `birthchart-client.tsx` — modify button uses `modifyDetails`, computed-for line via `computedFor`, error strings via `checkForm`/`calcFailed`, table headers + retrograde/direct badges via `common.*`.
+- `birth-form.tsx` — subtitle via new `formSubtitle`.
+- Already correct (no change needed): `age-header.tsx`, `life-pillars.tsx`, `trend-timeline.tsx` had referenced these keys with English fallbacks from birthchart work.
+
+### Scope kept English by design (not localized)
+- Server-rendered tool-page mastheads (kicker/H1/desc) + breadcrumbs (no server-side i18n infra; consistent with the site).
+- Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
+- Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
