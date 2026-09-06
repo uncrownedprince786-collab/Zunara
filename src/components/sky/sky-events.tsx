@@ -223,11 +223,11 @@ export function SkyEvents() {
               onClick={handleExportICS}
               className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-medium text-gold-deep transition-colors hover:bg-gold/20"
             >
-              Export to Calendar (.ics)
+              {t("skyEvents.exportLabel", "Export to Calendar (.ics)")}
               <span aria-hidden>&darr;</span>
             </button>
             <span className="text-xs text-subdued">
-              Adds these events to Google Calendar, Apple Calendar or Outlook.
+              {t("skyEvents.exportHint", "Adds these events to Google Calendar, Apple Calendar or Outlook.")}
             </span>
           </div>
 

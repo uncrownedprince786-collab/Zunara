@@ -20,6 +20,10 @@ import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { useLocale } from "@/lib/i18n/client";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
+function subst(tpl: string, vars: Record<string, string>): string {
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+}
+
 export function BirthchartClient() {
   const { t, tSign, tPlanet } = useLocale();
 
@@ -72,7 +76,7 @@ export function BirthchartClient() {
       await new Promise((r) => setTimeout(r, 600));
       const result = validateBirth(input);
       if (!result.ok) {
-        setError("Please check the form inputs.");
+        setError(t("birthchart.checkForm", "Please check the form inputs."));
         return;
       }
       const computed = computeNatalChart(
@@ -89,7 +93,7 @@ export function BirthchartClient() {
       // tools) can load the same birth details without re-entry.
       saveNatalProfile(input);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to calculate birth chart");
+      setError(e instanceof Error ? e.message : t("birthchart.calcFailed", "Failed to calculate birth chart"));
     } finally {
       setIsLoading(false);
     }
@@ -149,7 +153,7 @@ export function BirthchartClient() {
                   {tSign(chart.bigThree.sun.sign)} {t("birthchart.sunSign", "Sun")} · {tSign(chart.bigThree.moon.sign)} {t("birthchart.moonSign", "Moon")} · {tSign(chart.bigThree.ascendant)} {t("birthchart.ascendant", "Rising")}
                 </p>
                 <p className="mt-1 text-xs text-muted">
-                  Computed for {new Date(chart.utcTime).toUTCString()} · VSOP87 Engine {chart.engineVersion}
+                  {subst(t("birthchart.computedFor", "Computed for {date} · VSOP87 Engine {version}"), { date: new Date(chart.utcTime).toUTCString(), version: chart.engineVersion })}
                 </p>
               </div>
               <button
@@ -161,7 +165,7 @@ export function BirthchartClient() {
                   <path d="M12 20h9" />
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
-                <span>{t("birthchart.formTitle", "Modify Details")}</span>
+                <span>{t("birthchart.modifyDetails", "Modify Details")}</span>
               </button>
             </div>
 
@@ -292,10 +296,10 @@ export function BirthchartClient() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/5 bg-white/[0.02] text-start text-xs font-semibold uppercase tracking-wider text-muted">
-                      <th className="p-4 text-start">Planet</th>
-                      <th className="p-4 text-start">Sign</th>
-                      <th className="p-4 text-start">Degree</th>
-                      <th className="p-4 text-start">Motion</th>
+                      <th className="p-4 text-start">{t("common.colPlanet", "Planet")}</th>
+                      <th className="p-4 text-start">{t("common.colSign", "Sign")}</th>
+                      <th className="p-4 text-start">{t("common.colDegree", "Degree")}</th>
+                      <th className="p-4 text-start">{t("common.colMotion", "Motion")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -318,9 +322,9 @@ export function BirthchartClient() {
                         </td>
                         <td className="p-4">
                           {p.retrograde ? (
-                            <span className="rounded bg-gold/15 px-2 py-0.5 text-xs font-semibold text-gold">Rx Retrograde</span>
+                            <span className="rounded bg-gold/15 px-2 py-0.5 text-xs font-semibold text-gold">{t("common.retrograde", "Retrograde")}</span>
                           ) : (
-                            <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-400">Direct</span>
+                            <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-400">{t("common.direct", "Direct")}</span>
                           )}
                         </td>
                       </tr>

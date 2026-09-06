@@ -17,7 +17,11 @@ import type { DailyInsight } from "@/lib/transits/daily-transits";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { getCelestialBody } from "@/lib/astronomy/bodies";
-import { AstroTerm } from "@/components/ui/astro-tooltip";
+import { useLocale } from "@/lib/i18n/client";
+
+function subst(tpl: string, vars: Record<string, string>): string {
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+}
 
 function todayLocal(): string {
   const now = new Date();
@@ -32,10 +36,15 @@ function parseLocal(dateStr: string): Date {
   return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
-function computeFor(input: BirthInput, dateStr: string) {
+function computeFor(
+  input: BirthInput,
+  dateStr: string,
+  t: (path: string, fallback?: string) => string,
+  locale: string,
+) {
   const result = validateBirth(input);
   if (!result.ok || !result.config) {
-    throw new Error("Please check the form inputs.");
+    throw new Error(t("dailyTransit.checkForm", "Please check the form inputs."));
   }
   const c = computeNatalChart(
     result.config.date,
@@ -44,7 +53,7 @@ function computeFor(input: BirthInput, dateStr: string) {
   );
   const at = parseLocal(dateStr);
   const transits = dailyTransitInsights(c, at);
-  const label = new Intl.DateTimeFormat("en", {
+  const label = new Intl.DateTimeFormat(locale, {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -54,6 +63,7 @@ function computeFor(input: BirthInput, dateStr: string) {
 }
 
 export function DailyTransitClient() {
+  const { t, tSign, tPlanet, locale } = useLocale();
   const [chart, setChart] = useState<NatalChart | null>(null);
   const [insights, setInsights] = useState<DailyInsight[]>([]);
   const [dayLabel, setDayLabel] = useState("");
@@ -73,9 +83,9 @@ export function DailyTransitClient() {
       setShowForm(true);
       return;
     }
-    setSavedName(profile.placeName || "saved profile");
+    setSavedName(profile.placeName || t("dailyTransit.savedProfile", "Saved profile"));
     try {
-      const result = computeFor(profile, todayLocal());
+      const result = computeFor(profile, todayLocal(), t, locale);
       setChart(result.chart);
       setInsights(result.insights);
       setSummary(result.summary);
@@ -92,17 +102,17 @@ export function DailyTransitClient() {
     setError(null);
     try {
       await new Promise((r) => setTimeout(r, 500));
-      const result = computeFor(input, dateStr);
+      const result = computeFor(input, dateStr, t, locale);
       setChart(result.chart);
       setInsights(result.insights);
       setSummary(result.summary);
       setDayLabel(result.label);
       const at = parseLocal(dateStr);
       setForecast(upcomingTransits(result.chart, at));
-      setSavedName(input.placeName || "saved profile");
+      setSavedName(input.placeName || t("dailyTransit.savedProfile", "Saved profile"));
       setShowForm(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to compute today's transit.");
+      setError(e instanceof Error ? e.message : t("dailyTransit.computeFailed", "Failed to compute today's transit."));
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +126,7 @@ export function DailyTransitClient() {
       setInsights(transits.insights);
       setSummary(daySummary(chart, transits));
       setDayLabel(
-        new Intl.DateTimeFormat("en", {
+        new Intl.DateTimeFormat(locale, {
           weekday: "long",
           year: "numeric",
           month: "long",
@@ -168,28 +178,27 @@ export function DailyTransitClient() {
         ) : (
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
-              Active profile
+              {t("dailyTransit.activeProfile", "Active profile")}
             </p>
             <p className="text-base font-medium text-starlight">
-              {savedName ?? "Saved profile"}
+              {savedName ?? t("dailyTransit.savedProfile", "Saved profile")}
             </p>
             <p className="mt-2 text-sm leading-6 text-muted">
-              Your saved birth details are loaded automatically — no re-entry
-              needed. Transits are computed against your exact natal houses.
+              {t("dailyTransit.savedProfileHint", "Your saved birth details are loaded automatically — no re-entry needed. Transits are computed against your exact natal houses.")}
             </p>
             <button
               type="button"
               onClick={handleChangeProfile}
               className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-4 py-2 text-xs font-medium text-starlight transition-colors hover:border-gold/40 hover:text-gold"
             >
-              Change saved profile
+              {t("dailyTransit.changeProfile", "Change saved profile")}
             </button>
           </div>
         )}
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
           <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
-            Transit date (local)
+            {t("dailyTransit.transitDate", "Transit date (local)")}
           </label>
           <input
             type="date"
@@ -198,12 +207,10 @@ export function DailyTransitClient() {
             className="w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-2.5 text-sm text-starlight outline-none focus:border-gold"
           />
           <p className="mt-4 text-sm leading-6 text-muted">
-            Pick any date to see how that day&rsquo;s planets land in your chart. Results use
-            the same whole-sign house layout as your birth chart.
+            {t("dailyTransit.transitDateHint", "Pick any date to see how that day\u2019s planets land in your chart. Results use the same whole-sign house layout as your birth chart.")}
           </p>
           <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-sm leading-6 text-muted">
-            A <AstroTerm term="Transit" /> is a planet&rsquo;s current position against your
-            birth chart. It highlights topics, not events.
+            {t("dailyTransit.transitGlossary", "A Transit is a planet\u2019s current position against your birth chart. It highlights topics, not events.")}
           </div>
           {error && (
             <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
@@ -225,7 +232,7 @@ export function DailyTransitClient() {
           <div>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl text-starlight">
-                Planets through your houses
+                {t("dailyTransit.planetsInHouses", "Planets through your houses")}
               </h2>
               {icsEvents.length > 0 && (
                 <button
@@ -233,7 +240,7 @@ export function DailyTransitClient() {
                   onClick={handleExportICS}
                   className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-medium text-gold-deep transition-colors hover:bg-gold/20"
                 >
-                  Export to Calendar (.ics)
+                  {t("skyEvents.exportLabel", "Export to Calendar (.ics)")}
                   <span aria-hidden>&darr;</span>
                 </button>
               )}
@@ -241,7 +248,6 @@ export function DailyTransitClient() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {insights.map((ins) => {
                 const meta = getCelestialBody(ins.transitBody);
-                const ordinal = ins.house === 1 ? "1st" : ins.house === 2 ? "2nd" : ins.house === 3 ? "3rd" : `${ins.house}th`;
                 return (
                   <div
                     key={ins.transitBody}
@@ -250,12 +256,12 @@ export function DailyTransitClient() {
                     <div className="flex items-center gap-2.5">
                       <PlanetSymbol body={ins.transitBody} size="sm" className="text-gold" decorative />
                       <span className="font-medium text-starlight">{meta.name}</span>
-                      <span className="ml-auto font-mono text-xs text-muted">{ordinal} house</span>
+                      <span className="ml-auto font-mono text-xs text-muted">{subst(t("dailyTransit.houseLabel", "House {n}"), { n: String(ins.house) })}</span>
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <ZodiacSymbol sign={ins.transitSign} size="sm" />
                       <span className="text-xs text-muted">
-                        transiting {ins.transitSign}
+                        {subst(t("dailyTransit.transiting", "transiting {sign}"), { sign: tSign(ins.transitSign) })}
                       </span>
                     </div>
                     <p className="mt-3 text-sm leading-6 text-p-ink">{ins.note}</p>
@@ -268,11 +274,10 @@ export function DailyTransitClient() {
           {forecast.length > 0 && (
             <div>
               <h2 className="font-display text-2xl text-starlight">
-                Upcoming transits to export
+                {t("dailyTransit.upcomingTransits", "Upcoming transits to export")}
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-                Add the next significant aspects to your calendar. From "Export to
-                Calendar", the .ics file opens in Google Calendar, Apple Calendar or Outlook.
+                {t("dailyTransit.exportHint", "Add the next significant aspects to your calendar. From \"Export to Calendar\", the .ics file opens in Google Calendar, Apple Calendar or Outlook.")}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {forecast.map((f) => (
@@ -280,15 +285,16 @@ export function DailyTransitClient() {
                     <div className="flex items-center gap-2">
                       <PlanetSymbol body={f.transitBody} size="sm" className="text-gold" decorative />
                       <span className="text-xs font-medium text-starlight">
-                        {f.transitBody} {f.aspectName}
+                        {tPlanet(f.transitBody)} {t(`aspects.${f.aspectName}`, f.aspectName)}
                       </span>
                       <PlanetSymbol body={f.targetBody} size="sm" className="text-cosmic" decorative />
-                      <span className="text-xs text-muted">{f.targetBody}</span>
+                      <span className="text-xs text-muted">{tPlanet(f.targetBody)}</span>
                     </div>
                     <p className="mt-2 text-xs text-muted">
-                      Peak {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(f.peak)}
-                      {" · ends "}
-                      {new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(f.end)}
+                      {subst(t("dailyTransit.peakEnds", "Peak {start} · ends {end}"), {
+                        start: new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(f.peak),
+                        end: new Intl.DateTimeFormat(locale, { month: "short", day: "numeric" }).format(f.end),
+                      })}
                     </p>
                   </div>
                 ))}

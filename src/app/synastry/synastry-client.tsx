@@ -8,6 +8,11 @@ import type { SynastryAspect, SynastryResult } from "@/lib/compatibility/synastr
 import type { BirthInput } from "@/lib/natal/validate";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { AstroTerm } from "@/components/ui/astro-tooltip";
+import { useLocale } from "@/lib/i18n/client";
+
+function subst(tpl: string, vars: Record<string, string>): string {
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+}
 
 const ASPECT_COLOR: Record<string, string> = {
   conjunction: "border-gold/25 bg-gold/10 text-gold",
@@ -23,6 +28,7 @@ interface PersonEntry {
 }
 
 export function SynastryClient() {
+  const { t } = useLocale();
   const [personA, setPersonA] = useState<PersonEntry | null>(null);
   const [personB, setPersonB] = useState<PersonEntry | null>(null);
   const [nameA, setNameA] = useState("");
@@ -45,10 +51,10 @@ export function SynastryClient() {
       );
       setResult(res);
       if (!res.ok) {
-        setError(res.errors.personA ?? res.errors.personB ?? "Please check the birth details.");
+        setError(res.errors.personA ?? res.errors.personB ?? t("synastry.checkDetails", "Please check the birth details."));
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to compute compatibility.");
+      setError(e instanceof Error ? e.message : t("synastry.computeFailed", "Failed to compute compatibility."));
     } finally {
       setIsLoading(false);
     }
@@ -59,34 +65,34 @@ export function SynastryClient() {
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
-            Person A name (optional)
+            {t("synastry.personAName", "Person A name (optional)")}
           </label>
           <input
             type="text"
             value={nameA}
             onChange={(e) => setNameA(e.target.value)}
-            placeholder="e.g. Alex"
+            placeholder={t("synastry.namePlaceholder", "e.g. Alex")}
             className="mb-4 w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-2.5 text-sm text-starlight outline-none focus:border-gold"
           />
           <BirthForm
             isLoading={isLoading}
-            onSubmit={(birth) => setPersonA({ name: nameA.trim() || "Person A", birth })}
+            onSubmit={(birth) => setPersonA({ name: nameA.trim() || t("synastry.personA", "Person A"), birth })}
           />
         </div>
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
-            Person B name (optional)
+            {t("synastry.personBName", "Person B name (optional)")}
           </label>
           <input
             type="text"
             value={nameB}
             onChange={(e) => setNameB(e.target.value)}
-            placeholder="e.g. Sam"
+            placeholder={t("synastry.namePlaceholder", "e.g. Sam")}
             className="mb-4 w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-2.5 text-sm text-starlight outline-none focus:border-gold"
           />
           <BirthForm
             isLoading={isLoading}
-            onSubmit={(birth) => setPersonB({ name: nameB.trim() || "Person B", birth })}
+            onSubmit={(birth) => setPersonB({ name: nameB.trim() || t("synastry.personB", "Person B"), birth })}
           />
         </div>
       </div>
@@ -99,10 +105,10 @@ export function SynastryClient() {
           className="inline-flex items-center gap-2 rounded-xl bg-gold px-10 py-3.5 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading
-            ? "Computing compatibility..."
+            ? t("synastry.computing", "Computing compatibility...")
             : canCompute
-              ? "Compute Compatibility"
-              : "Enter both birth details first"}
+              ? t("synastry.compute", "Compute Compatibility")
+              : t("synastry.enterBoth", "Enter both birth details first")}
         </button>
         {error && (
           <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
@@ -118,7 +124,7 @@ export function SynastryClient() {
               {result.data.personA.name} &amp; {result.data.personB.name}
             </h2>
             <p className="mt-2 text-sm text-muted">
-              Overall compatibility score
+              {t("synastry.overallScore", "Overall compatibility score")}
             </p>
             <div className="mt-4 h-4 w-full overflow-hidden rounded-full border border-white/10 bg-white/[0.05]">
               <div
@@ -128,9 +134,7 @@ export function SynastryClient() {
             </div>
             <p className="mt-3 font-display text-4xl text-gold">{result.data.overallScore}<span className="text-xl text-muted">/100</span></p>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-muted">
-              Based on the real angular relationships between the personal planets in the
-              two charts. This is a descriptive score of how the charts interact, not a
-              claim about the success or failure of any relationship.
+              {t("synastry.scoreFootnote", "Based on the real angular relationships between the personal planets in the two charts. This is a descriptive score of how the charts interact, not a claim about the success or failure of any relationship.")}
             </p>
           </div>
 
@@ -158,15 +162,21 @@ export function SynastryClient() {
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm leading-6 text-muted backdrop-blur-xl">
             <p>
-              New to the terms? The <AstroTerm term="Conjunction" />,{" "}
-              <AstroTerm term="Trine" />, <AstroTerm term="Square" />,{" "}
-              <AstroTerm term="Opposition" /> and <AstroTerm term="Sextile" /> are the major{" "}
-              <AstroTerm term="Aspects" />. This whole calculation is a form of{" "}
-              <AstroTerm term="Synastry" />.
+              {t("synastry.termsLead", "New to the terms? The")}{" "}
+              <AstroTerm term="Conjunction" />
+              {", "}
+              <AstroTerm term="Trine" />
+              {", "}
+              <AstroTerm term="Square" />
+              {", "}
+              <AstroTerm term="Opposition" />{" "}
+              {t("common.and", "and")}{" "}
+              <AstroTerm term="Sextile" />{" "}
+              {t("synastry.termsTail", "are the major Aspects. This whole calculation is a form of Synastry.")}
             </p>
             <p className="mt-3">
               <Link href="/library" className="text-gold hover:underline">
-                Browse the full Library glossary →
+                {t("synastry.browseLibrary", "Browse the full Library glossary →")}
               </Link>
             </p>
           </div>
@@ -177,8 +187,9 @@ export function SynastryClient() {
 }
 
 function AspectRow({ asp }: { asp: SynastryAspect }) {
+  const { t } = useLocale();
   const badge = ASPECT_COLOR[asp.aspectName] ?? "border-white/10 bg-white/[0.03] text-muted";
-  const word = ASPECT_WORD[asp.aspectName] ?? asp.aspectName;
+  const word = t(`aspects.${asp.aspectName}`, ASPECT_WORD[asp.aspectName] ?? asp.aspectName);
   return (
     <li className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
       <div className="flex items-center gap-3">
@@ -189,7 +200,7 @@ function AspectRow({ asp }: { asp: SynastryAspect }) {
         <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${badge}`}>
           {word}
         </span>
-        <span className="ml-auto font-mono text-xs text-muted">orb {asp.orb.toFixed(1)}°</span>
+        <span className="ml-auto font-mono text-xs text-muted">{subst(t("synastry.orb", "orb {orb}°"), { orb: asp.orb.toFixed(1) })}</span>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted">{asp.interpretation}</p>
     </li>

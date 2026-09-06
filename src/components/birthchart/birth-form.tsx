@@ -100,7 +100,7 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
           {t("birthchart.formTitle", "Enter Birth Details")}
         </h2>
         <p className="mt-1 text-sm text-muted">
-          {t("birthchart.subtitle", "Precision planetary positions · Whole-Sign houses · Deterministic readings")}
+          {t("birthchart.formSubtitle", "Precision planetary positions · Whole-Sign houses · Deterministic readings")}
         </p>
       </div>
 

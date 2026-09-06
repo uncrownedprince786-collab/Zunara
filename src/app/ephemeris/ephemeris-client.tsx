@@ -7,6 +7,11 @@ import { getZodiacSign } from "@/lib/zodiac/zodiac";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import type { BodyKey } from "@/lib/astronomy/bodies";
+import { useLocale } from "@/lib/i18n/client";
+
+function subst(tpl: string, vars: Record<string, string>): string {
+  return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+}
 
 const NODE_KEYS: Array<BodyKey> = ["northNode", "southNode"];
 
@@ -42,25 +47,38 @@ function parseLocal(dateStr: string): Date {
   return new Date(y, m - 1, d, 12, 0, 0, 0);
 }
 
-function formatCaption(dateStr: string, rows: Row[]): string {
+function formatCaption(
+  dateStr: string,
+  rows: Row[],
+  t: (path: string, fallback?: string) => string,
+  tPlanet: (k: string) => string,
+  tSign: (k: string) => string,
+  locale: string,
+): string {
   const retro = rows.filter((r) => r.retrograde);
   const sun = rows.find((r) => r.body === "sun");
   const date = parseLocal(dateStr);
-  const pretty = new Intl.DateTimeFormat("en", {
+  const pretty = new Intl.DateTimeFormat(locale, {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   }).format(date);
-  const sunPart = sun ? `the Sun is in ${sun.signName}` : "the Sun's sign is not resolved";
+  const sunPart = sun
+    ? subst(t("ephemeris.sunIn", "the Sun is in {sign}"), { sign: tSign(sun.sign) })
+    : t("ephemeris.sunSignNotResolved", "the Sun\u2019s sign is not resolved");
   const retroPart =
     retro.length === 0
-      ? "no planets are retrograde"
-      : `${retro.length} planet${retro.length === 1 ? " is" : "s are"} retrograde (${retro.map((r) => r.name).join(", ")})`;
-  return `On ${pretty}, ${retroPart}; ${sunPart}.`;
+      ? t("ephemeris.retroNone", "no planets are retrograde")
+      : subst(t("ephemeris.retroSome", "{count} planet(s) retrograde ({names})"), {
+          count: String(retro.length),
+          names: retro.map((r) => tPlanet(r.body)).join(", "),
+        });
+  return subst(t("ephemeris.onDate", "On {date}, {retro}; {sun}."), { date: pretty, retro: retroPart, sun: sunPart });
 }
 
 export function EphemerisClient() {
+  const { t, tPlanet, tSign, tElement, locale } = useLocale();
   const [dateStr, setDateStr] = useState<string>(todayLocal);
 
   const rows = useMemo<Row[]>(() => {
@@ -107,10 +125,10 @@ export function EphemerisClient() {
           onClick={() => shiftDay(-1)}
           className="rounded-full border border-white/15 bg-white/[0.05] px-4 py-2 text-sm text-starlight transition-colors hover:border-gold/40 hover:text-gold"
         >
-          ← Prev day
+          {t("ephemeris.prevDay", "← Prev day")}
         </button>
         <label className="flex items-center gap-2 text-sm text-muted">
-          Date
+          {t("common.date", "Date")}
           <input
             type="date"
             value={dateStr}
@@ -123,12 +141,12 @@ export function EphemerisClient() {
           onClick={() => shiftDay(1)}
           className="rounded-full border border-white/15 bg-white/[0.05] px-4 py-2 text-sm text-starlight transition-colors hover:border-gold/40 hover:text-gold"
         >
-          Next day →
+          {t("ephemeris.nextDay", "Next day →")}
         </button>
       </div>
 
       <p className="mt-4 text-center text-sm leading-6 text-muted">
-        {formatCaption(dateStr, rows)}
+        {formatCaption(dateStr, rows, t, tPlanet, tSign, locale)}
       </p>
 
       <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl">
@@ -136,12 +154,12 @@ export function EphemerisClient() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02] text-start text-xs font-semibold uppercase tracking-wider text-muted">
-                <th className="p-4 text-start">Body</th>
-                <th className="p-4 text-start">Sign</th>
-                <th className="p-4 text-start">Degree</th>
-                <th className="p-4 text-start">Longitude</th>
-                <th className="p-4 text-start">Element</th>
-                <th className="p-4 text-start">Motion</th>
+                <th className="p-4 text-start">{t("common.colPlanet", "Body")}</th>
+                <th className="p-4 text-start">{t("common.colSign", "Sign")}</th>
+                <th className="p-4 text-start">{t("common.colDegree", "Degree")}</th>
+                <th className="p-4 text-start">{t("common.colLongitude", "Longitude")}</th>
+                <th className="p-4 text-start">{t("common.colElement", "Element")}</th>
+                <th className="p-4 text-start">{t("common.colMotion", "Motion")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -150,28 +168,28 @@ export function EphemerisClient() {
                   <td className="p-4 font-medium text-starlight">
                     <div className="flex items-center gap-2.5">
                       <PlanetSymbol body={r.body} size="sm" className="text-gold" decorative />
-                      <span>{r.name}</span>
+                      <span>{tPlanet(r.body)}</span>
                     </div>
                   </td>
                   <td className="p-4 text-muted">
                     <div className="flex items-center gap-2">
                       <ZodiacSymbol sign={r.sign} size="sm" />
-                      <span className="font-medium text-starlight">{r.signName}</span>
+                      <span className="font-medium text-starlight">{tSign(r.sign)}</span>
                     </div>
                   </td>
                   <td className="p-4 font-mono text-muted">{r.degree}</td>
                   <td className="p-4 font-mono text-muted">{r.longitude.toFixed(2)}°</td>
-                  <td className="p-4 text-muted">{r.element || "—"}</td>
+                  <td className="p-4 text-muted">{r.element ? tElement(r.element) : "—"}</td>
                   <td className="p-4">
                     {r.motion === "—" ? (
                       <span className="text-muted">—</span>
                     ) : r.retrograde ? (
                       <span className="rounded bg-gold/15 px-2 py-0.5 text-xs font-semibold text-gold">
-                        {r.motion}
+                        {t("ephemeris.retroMarker", "Retrograde (R)")}
                       </span>
                     ) : (
                       <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-400">
-                        Direct
+                        {t("common.direct", "Direct")}
                       </span>
                     )}
                   </td>
