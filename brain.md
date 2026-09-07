@@ -400,6 +400,32 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #30: Technical SEO, Homepage & Birthday-Date Pages (launch polish)
+
+Verification: `tsc --noEmit` clean, `vitest` 340/340 (+87 this sprint), `eslint` 0 errors, `next build` green (459 pages — up from 93).
+
+Goal/convention: ship the exact homepage the customer's marketing language promised (precision astronomical engine + personalized birthday insights), make the site technically SEO-complete (JSON-LD, hreflang, sitemap for every route), and add 366 statically generated `/birthday/{MM-DD}` pages reachable from a hero quick-input.
+
+### Deliverables added
+- `src/lib/seo/site.ts` — default URL now `https://zunara.vercel.app`; description emphasizes the precision engine + birthday guide.
+- `src/lib/seo/metadata.ts` — `pageMetadata` (and `horoscopeMetadata`, `signIndexMetadata`) gained a `keywords: string[]` arg + `alternates.languages`. New `alternateLanguages(path)` helper.
+- hreflang decision (documented): no locale-prefixed URLs exist on the site, so `alternates.languages` maps all 5 supported locales + `x-default` to the same canonical URL. Canonical stays self-referencing. No fake locale URLs.
+- `src/lib/seo/jsonld.ts` — typed JSON-LD builders: `websiteJsonLd`, `softwareApplicationJsonLd`, `personJsonLd`, `birthdayItemListJsonLd`, `faqJsonLd`.
+- `src/components/ui/json-ld.tsx` — `JsonLd` accepts optional `data` (name/description/url now optional props too) plus a raw `JsonLdScript` emitter.
+- `src/app/sitemap.ts` — full site coverage incl. all tools, `/library/*` subpages, 366 birthday dates, `about/privacy/terms/disclaimer`, `rss.xml`.
+- `src/lib/calendar/birthday-routes.ts` — `pad2`, `monthDays` (366 incl. 02-29), `birthdayDates`, `parseBirthdayDate`, shared by sitemap + birthday route + quick input.
+- `src/app/birthday/[date]/page.tsx` + `birthday-client.tsx` — SSG (`dynamicParams=false`, `revalidate=86400`), per-date keywords/description, ItemList JSON-LD, breadcrumbs, zodiac-pairing CTA to `/{sign}/today`, and a live-upgrade island that renders the offline curated pool then resolves freshest Wikidata on mount (graceful static floor on any failure).
+- `src/components/home/quick-birth-input.tsx` — client hero picker (month/day selects→`/birthday/{MM-DD}`), localized month names via Intl.
+- `src/app/page.tsx` — rewritten to prescribed order: hero (date, headline, quick input) → exactly 2 CTAs (`/birthchart`, `/birthday/{todayMM-DD}`) → DailyOrbitBanner → Live Sky & Planets → SkyMap → DailyTransit → SkyEvents → CelebrityBirthdays → 12-sign grid → CosmicTraits → Core Features grid (4 tools) → Knowledge Base & Method.
+- Dictionaries (all 5 locales): hero headline/subtitle/CTAs, quick-birth keys, method + features blocks; added `home.liveSkyDesc` so the Live Sky intro no longer reuses the method copy.
+- Agent-track files merged into this sprint: timezone/DST groundwork (`src/lib/geo/timezones.ts`, positions/houses/timezones tests), plain-language content rewrite (`natal/readings.ts`, `guidance.ts`, `synastry.ts`, `content/engine.ts`, `validate.ts`), RTL/mobile bootstrap in `layout.tsx`/`site-nav.tsx`/`language-switcher.tsx`, section error boundaries + natal/aspect/retrograde/etc. test expansion.
+- `eslint.config.mjs` — overrides: the newer `react-hooks/set-state-in-effect` heuristic is disabled for the deliberate hydration/init effects; `no-require-imports` off for `**/*.cjs` build scripts. Remaining warnings are intentional (external-portrait `<img>`, underscore params, read-only i18n deps).
+
+### Verification
+- `npx tsc --noEmit` clean; `npx vitest run` 30 files/340 tests pass (incl. i18n key-tree parity = all 5 locales have identical keys, every leaf a non-empty string); `eslint` 0 errors; `npx next build` 459 static/SSG pages, zero dynamic pages.
+
+---
+
 ## Sprint #29: Dynamic "Famous Birthdays Today" — live Wikidata without a database (`86d55e4`)
 
 Verification: `tsc --noEmit` clean, `vitest` 253/253 (+3), `next build` green (93 pages).

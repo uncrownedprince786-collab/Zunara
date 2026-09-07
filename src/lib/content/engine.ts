@@ -191,7 +191,7 @@ export function generateContent(
 
 function introFor(sign: ZodiacSign, interpretation: Interpretation): string {
   if (interpretation.hint) return interpretation.hint;
-  return `A period of measured possibility for ${sign.name}.`;
+  return `A steady, promising stretch of time for ${sign.name} — one step at a time.`;
 }
 
 function buildSections(
@@ -217,8 +217,8 @@ function buildSections(
     parts.push({
       heading: "Strongest Themes",
       content: listed.length
-        ? `The week leans most clearly toward ${listed.join(" and ")} for ${sign.name}, with the rest of your focus better held lightly.`
-        : `The week is steady and even, without one theme dominating over the others.`,
+        ? `The week leans most clearly toward ${listed.join(" and ")} for ${sign.name}; keep the rest of your attention light.`
+        : `The week is steady and even, with no single theme crowding out the others.`,
       theme: "overview",
     });
     for (const area of strong.slice(0, 3)) parts.push(buildAreaSection(rng, area));
@@ -299,9 +299,9 @@ function importantPeriods(rng: () => number, snapshot: PlanetarySnapshot): strin
       .map((p) => p.key.charAt(0).toUpperCase() + p.key.slice(1))
       .reduce<string[]>((acc, n) => (acc.includes(n) ? acc : [...acc, n]), []);
     const list = humanList(names);
-    return `One thing to hold lightly: ${list} ${names.length > 1 ? "are" : "is"} retrograde for part of this period, favouring review and patience over rushed new starts. No specific dates are fixed; let the themes guide the timing.`;
+    return `One thing to hold lightly: ${list} ${names.length > 1 ? "are" : "is"} moving in reverse in the sky for part of this period, so patience and review beat rushing into new starts. No set dates are fixed; let the feel of it guide your timing.`;
   }
-  return `There are no major retrograde stretches to time around this period. Steady momentum is the better guide than chasing any particular date.`;
+  return `There are no major shifts to time around this period. Steady momentum is the better guide than chasing any particular moment.`;
 }
 
 function humanList(items: string[]): string {

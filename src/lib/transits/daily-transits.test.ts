@@ -1,20 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computeNatalChart } from "@/lib/natal/natal";
 import { dailyTransitInsights, daySummary, TRANSIT_BODIES, HOUSE_THEMES } from "./daily-transits";
-import type { BirthInput } from "@/lib/natal/validate";
-
-const FIXED_INPUT: BirthInput = {
-  year: 1995,
-  month: 6,
-  day: 21,
-  hour12: 12,
-  minute: 0,
-  ampm: "PM",
-  timeKnown: true,
-  latitude: 40.7128,
-  longitude: -74.006,
-  placeName: "New York, USA",
-};
 
 function makeChart() {
   return computeNatalChart(

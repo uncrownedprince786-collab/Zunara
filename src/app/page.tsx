@@ -10,6 +10,8 @@ import { snapshotForToday } from "@/lib/astronomy/astro";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { LocaleText } from "@/components/ui/locale-text";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
+import { JsonLd } from "@/components/ui/json-ld";
+import { QuickBirthInput } from "@/components/home/quick-birth-input";
 import {
   SkyMapClient,
   DailyTransitClient,
@@ -18,8 +20,8 @@ import {
   CelebrityBirthdays,
   CosmicTraits,
 } from "@/components/home/home-heavy-sections";
-import { SITE } from "@/lib/seo/site";
 import { pageMetadata } from "@/lib/seo/metadata";
+import { websiteJsonLd } from "@/lib/seo/jsonld";
 import { plainRetro, plainAspect } from "@/lib/content/sky-plain";
 
 function todayDate(): string {
@@ -32,12 +34,28 @@ function todayDate(): string {
   }).format(new Date());
 }
 
+function todayKey(): string {
+  const now = new Date();
+  const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(now.getUTCDate()).padStart(2, "0");
+  return `${mm}-${dd}`;
+}
+
 export const revalidate = 3600;
 
 export const metadata = pageMetadata(
   "/",
-  "Zunara — Written in the Stars",
-  "Premium editorial astrology publication. Mathematically calculated daily, weekly, monthly and yearly horoscopes for all twelve zodiac signs, grounded in real astronomical data.",
+  "Zunara — Precision Astrology, Birth Charts & Daily Horoscopes",
+  "Zunara is a precision astronomical engine and personalized birthday guide: exact birth-chart calculations, mathematically derived daily horoscopes for all twelve signs, live sky maps, and the famous people who share your birthday.",
+  "website",
+  [
+    "birth chart calculator",
+    "daily horoscope",
+    "zodiac signs",
+    "free natal chart",
+    "celebrity birthdays",
+    "astronomy astrology",
+  ],
 );
 
 export default function HomePage() {
@@ -55,20 +73,9 @@ export default function HomePage() {
 
   return (
     <div className="constellation-bg">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: "Zunara",
-            description:
-              "Premium editorial astrology publication. Daily, weekly, monthly and yearly horoscopes for all twelve signs, calculated from real astronomical data.",
-            url: SITE.url,
-          }),
-        }}
-      />
-      {/* ---- Masthead ---- */}
+      <JsonLd data={websiteJsonLd()} />
+
+      {/* ---- Masthead: hook, quick birthday lookup, exactly two CTAs ---- */}
       <section className="relative overflow-hidden border-b border-line-soft">
         <div
           aria-hidden="true"
@@ -85,30 +92,33 @@ export default function HomePage() {
           <p className="kicker">{date}</p>
           <div aria-hidden="true" className="gold-rule mx-auto mt-5 w-20" />
           <div className="starfield mx-auto -mb-3 mt-8 h-16" aria-hidden="true" />
-          <h1 className="mx-auto max-w-3xl font-display text-5xl font-medium leading-[1.05] text-starlight sm:text-7xl">
-            <LocaleText path="home.heroTitle" fallback="Written in the stars." />
+          <h1 className="mx-auto max-w-4xl font-display text-4xl font-medium leading-[1.05] text-starlight sm:text-6xl">
+            <LocaleText
+              path="home.heroTitle"
+              fallback="Precision astronomical engine &amp; personalized birthday insights"
+            />
           </h1>
-          <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-muted">
-            <LocaleText path="home.heroSubtitle" fallback="A premium editorial astrology publication." />
+          <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-muted">
+            <LocaleText
+              path="home.heroSubtitle"
+              fallback="Real planetary mathematics, not guesses. Calculate your exact birth chart, read mathematically derived horoscopes for all twelve signs, and discover the famous people who share your birthday."
+            />
           </p>
+
+          <QuickBirthInput />
+
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/horoscope"
-              className="rounded-full bg-gold px-8 py-3 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
-            >
-              <LocaleText path="home.heroCtaPrimary" fallback="Read today's horoscope" />
-            </Link>
-            <Link
               href="/birthchart"
-              className="rounded-full border border-gold/40 bg-gold/5 px-8 py-3 text-sm text-gold transition-colors hover:bg-gold/15"
+              className="rounded-full bg-gold px-9 py-3.5 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
             >
-              <LocaleText path="nav.birthchart" fallback="Birth Chart" />
+              <LocaleText path="home.heroCtaPrimary" fallback="Calculate Birth Chart" />
             </Link>
             <Link
-              href="/astrology"
-              className="rounded-full border border-line px-8 py-3 text-sm text-muted transition-colors hover:border-gold/40 hover:text-starlight"
+              href={`/birthday/${todayKey()}`}
+              className="rounded-full border border-gold/40 bg-gold/5 px-9 py-3.5 text-sm font-medium text-gold transition-colors hover:bg-gold/15"
             >
-              <LocaleText path="home.heroCtaSecondary" fallback="The astronomy" />
+              <LocaleText path="home.heroCtaSecondary" fallback="Discover Birthday Facts" />
             </Link>
           </div>
         </div>
@@ -116,7 +126,7 @@ export default function HomePage() {
 
       <DailyOrbitBanner />
 
-      {/* ---- The current sky (real data) ---- */}
+      {/* ---- Live Sky & Planets: the true, current sky ---- */}
       <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-stretch">
@@ -126,7 +136,7 @@ export default function HomePage() {
                 <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : "the zodiac"}
               </h2>
               <p className="mt-4 max-w-xl leading-7 text-muted">
-                <LocaleText path="home.methodDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
+                <LocaleText path="home.liveSkyDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
               </p>
               {sunSign && (
                 <div className="mt-6 flex flex-wrap gap-2">
@@ -229,7 +239,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---- Daily transit, personalised ---- */}
+      {/* ---- Daily transit, personalised sky ---- */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <p className="kicker"><LocaleText path="home.dailyTransitKicker" fallback="Your personal sky" /></p>
         <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
@@ -242,6 +252,12 @@ export default function HomePage() {
           <DailyTransitClient />
         </div>
       </section>
+
+      {/* ---- Upcoming sky events ---- */}
+      <SkyEvents />
+
+      {/* ---- Famous birthdays ---- */}
+      <CelebrityBirthdays />
 
       {/* ---- The twelve signs ---- */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="signs-heading">
@@ -264,74 +280,111 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---- Upcoming sky events ---- */}
-      <SkyEvents />
-
-      {/* ---- Born under today's stars ---- */}
-      <CelebrityBirthdays />
-
       {/* ---- Cosmic traits & career directions ---- */}
       <CosmicTraits />
 
-      {/* ---- Horizons ---- */}
+      {/* ---- Core features grid ---- */}
       <section className="border-y border-white/[0.08] bg-white/[0.02] backdrop-blur-xl saturate-180">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-            <div>
-              <p className="kicker"><LocaleText path="home.horizonsKicker" fallback="Four horizons" /></p>
-              <h2 className="mt-3 font-display text-3xl text-starlight">
-                <LocaleText path="home.horizonsTitle" fallback="Beginnings to whole years" />
-              </h2>
-              <p className="mt-4 leading-7 text-muted">
-                <LocaleText path="home.horizonsDesc" fallback="Start with the day, then travel outward — the week, the month, the year. Each horizon draws on the same truthful positions of the Sun, Moon and the planets." />
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                { labelKey: "horizons.daily", href: "/horoscope/aries/today", descKey: "horizons.dailyDesc", n: "I" },
-                { labelKey: "horizons.weekly", href: "/horoscope/aries/weekly", descKey: "horizons.weeklyDesc", n: "II" },
-                { labelKey: "horizons.monthly", href: "/horoscope/aries/monthly", descKey: "horizons.monthlyDesc", n: "III" },
-                { labelKey: "horizons.yearly", href: "/horoscope/aries/yearly", descKey: "horizons.yearlyDesc", n: "IV" },
-              ].map((c) => (
-                <Link
-                  key={c.labelKey}
-                  href={c.href}
-                  className="group relative flex flex-col justify-between gap-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  />
-                  <div className="flex items-center justify-between">
-                    <span className="font-display text-4xl italic text-subdued transition-colors group-hover:text-gold/80">
-                      {c.n}
-                    </span>
-                    <span className="grid h-8 w-8 place-items-center rounded-full border border-white/[0.08] bg-white/[0.03] text-gold opacity-0 transition-opacity group-hover:opacity-100">
-                      &rarr;
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-display text-2xl text-starlight"><LocaleText path={c.labelKey} /></p>
-                    <p className="mt-1 text-sm text-subdued"><LocaleText path={c.descKey} /></p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="kicker"><LocaleText path="home.featuresKicker" fallback="The toolkit" /></p>
+            <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
+              <LocaleText path="home.featuresTitle" fallback="Four tools, one truthful sky" />
+            </h2>
+            <p className="mt-4 leading-7 text-muted">
+              <LocaleText path="home.featuresDesc" fallback="Every tool runs on the same exact astronomical engine, so the numbers you read are the numbers the sky actually shows." />
+            </p>
+          </div>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+            {[
+              {
+                href: "/birthchart",
+                titleKey: "home.featureBirthChartTitle",
+                titleFallback: "Birth Chart",
+                descKey: "home.featureBirthChartDesc",
+                descFallback: "A precise natal chart of your Sun, Moon and rising signs — houses, aspects and plain-English guidance from real planetary positions.",
+                glyph: "★",
+              },
+              {
+                href: "/synastry",
+                titleKey: "home.featureCompatibilityTitle",
+                titleFallback: "Compatibility",
+                descKey: "home.featureCompatibilityDesc",
+                descFallback: "Two real birth charts, four relationship dimensions, one honest score drawn from the actual planetary angles between them.",
+                glyph: "✦",
+              },
+              {
+                href: "/sky-events",
+                titleKey: "home.featureEventsTitle",
+                titleFallback: "Celestial Events",
+                descKey: "home.featureEventsDesc",
+                descFallback: "Meteor showers, eclipses and lunar phases dated from astronomical ephemerides — know what is worth stepping outside for.",
+                glyph: "☄",
+              },
+              {
+                href: "/cosmic-facts",
+                titleKey: "home.featureFactsTitle",
+                titleFallback: "Cosmic Facts",
+                descKey: "home.featureFactsDesc",
+                descFallback: "Every sign's traits, superpowers, mythology and career energies, explained in plain language.",
+                glyph: "✦",
+              },
+            ].map((feature) => (
+              <Link
+                key={feature.href}
+                href={feature.href}
+                className="group relative flex flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-7 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
+              >
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                />
+                <div>
+                  <span aria-hidden className="text-2xl text-gold">
+                    {feature.glyph}
+                  </span>
+                  <h3 className="mt-4 font-display text-2xl text-starlight">
+                    <LocaleText path={feature.titleKey} fallback={feature.titleFallback} />
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted">
+                    <LocaleText path={feature.descKey} fallback={feature.descFallback} />
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-sm text-gold">
+                  Open {feature.titleFallback}
+                  <span aria-hidden className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ---- Method / editorial note ---- */}
+      {/* ---- Knowledge base & method ---- */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-2">
           <div>
-            <p className="kicker"><LocaleText path="home.methodKicker" fallback="Our method" /></p>
+            <p className="kicker"><LocaleText path="home.methodKicker" fallback="Knowledge base & method" /></p>
             <h2 className="mt-3 font-display text-3xl leading-tight text-starlight">
-              <LocaleText path="home.methodTitle" fallback="Real astronomy, editorial writing" />
+              <LocaleText path="home.methodTitle" fallback="Astronomy tells you where the planets are. Astrology wonders what that means." />
             </h2>
             <p className="mt-5 font-serif-body text-lg leading-8 text-starlight/85">
-              <LocaleText path="home.methodDesc" fallback="At Zunara, every planetary position you read is calculated from astronomical theory, never guessed. Our forecasts blend that data with carefully crafted editorial fragments — so the sky speaks with clarity, warmth and honesty." />
+              <LocaleText path="home.methodDesc" fallback="At Zunara, every planetary position you read is calculated from astronomical theory, never invented. We are equally clear about the difference between what the math measures and the meaning we reflect on." />
             </p>
+            <div className="mt-7 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
+                <p className="kicker text-gold"><LocaleText path="home.methodAstronomyTitle" fallback="Astronomy measures" /></p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  <LocaleText path="home.methodAstronomyText" fallback="Positions, motion and angles. Zunara computes the sky with the same planetary theory used in published ephemerides — no approximations, no invented coordinates." />
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
+                <p className="kicker text-gold"><LocaleText path="home.methodAstrologyTitle" fallback="Astrology reflects" /></p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  <LocaleText path="home.methodAstrologyText" fallback="Symbolic meaning drawn from those measured positions, written honestly for reflection and entertainment — never presented as science or fate." />
+                </p>
+              </div>
+            </div>
             <Link
               href="/about"
               className="mt-6 inline-block text-sm text-gold underline-offset-4 hover:underline"

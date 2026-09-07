@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SkyMapCanvas } from "@/components/astronomy/sky-map-canvas";
 import type { ObserverPoint } from "@/lib/astronomy/sky-map";
 import { loadNatalProfile } from "@/lib/natal/storage";
@@ -29,7 +29,6 @@ export function SkyMapClient() {
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [provenance, setProvenance] = useState<PlaceProvenance>("manual");
-  const searchSeq = useRef(0);
 
   // Seed coordinates from the persisted birth profile when available.
   useEffect(() => {

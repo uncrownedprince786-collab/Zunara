@@ -114,9 +114,9 @@ export function buildLifeGuidance(chart: NatalChart): GuidanceSection[] {
     title: "Personality & Identity",
     headline: `${sunName} Sun · ${ascName} Ascendant`,
     paragraphs: [
-      `Your Sun is in ${degreeNotation(sun.sign, sun.degree, sun.minutes)}, inside the ${ordinal(sunHouse)} house in whole-sign houses. This ${elementWord(sun.sign)}-element placement anchors your core identity and vitality.`,
-      `Your Ascendant is ${ascName}, the sign crossing the eastern horizon at your birth (${chart.houses.ascendantLongitude.toFixed(1)}° of tropical longitude). A ${ascName} Ascendant colors the way people meet you first, before your Sun-centered core is fully revealed.`,
-      `The pairing of a ${sunName} Sun with a ${ascName} Ascendant describes a ${elementWord(sun.sign).toLowerCase()}-inner, ${elementWord(ascSign).toLowerCase()}-outer personality — the two-layer axis that animates how you carry yourself.`,
+      `Your Sun is in ${degreeNotation(sun.sign, sun.degree, sun.minutes)}, inside the ${ordinal(sunHouse)} house. This ${elementWord(sun.sign)} sign's energy shapes your core identity and where you feel most alive.`,
+      `Your Ascendant is ${ascName}, the sign rising over the horizon at your birth (${chart.houses.ascendantLongitude.toFixed(1)} degrees). A ${ascName} Ascendant is what people notice about you first, before they see the Sun side underneath.`,
+      `Pairing a ${sunName} Sun with a ${ascName} Ascendant gives you a ${elementWord(sun.sign).toLowerCase()} inner nature and a ${elementWord(ascSign).toLowerCase()} outer manner — the two sides of how you carry yourself.`,
     ],
   };
 
@@ -127,11 +127,11 @@ export function buildLifeGuidance(chart: NatalChart): GuidanceSection[] {
     paragraphs: [
       `Your Venus is in ${degreeNotation(venus.sign, venus.degree, venus.minutes)}, placed in the ${ordinal(venusHouse)} house. ${
         venus.retrograde
-          ? "Retrograde at birth, Venus in this chart refines affection and revisits bonds rather than rushing into them."
-          : `${elementWord(venus.sign)} Venus approaches affection with a steady, ${elementOf(venus.sign)}-element consistency.`
+          ? "With Venus retrograde at your birth, you tend to feel things out slowly in love, revisiting old bonds more than rushing into new ones."
+          : `${elementWord(venus.sign)} Venus gives you a steady, ${elementOf(venus.sign)}-energy style of affection.`
       }`,
-      `The 7th house (partnership and committed bonds) begins in ${seventhName}, a ${elementWord(seventh).toLowerCase()}-element sign. Whole-sign house 7 starts exactly 6 signs past your Ascendant, marking the ground where committed bonds form in your chart.`,
-      `Taken together, a ${venusName} Venus in the ${ordinal(venusHouse)} house with a ${seventhName} 7th house describes how affection is given and the kind of partnership ground it is expressed upon.`,
+      `The 7th house (partnership and committed bonds) begins in ${seventhName}, a ${elementWord(seventh).toLowerCase()}-energy sign. This is the ground where your close, committed relationships tend to take shape.`,
+      `Taken together, a ${venusName} Venus in the ${ordinal(venusHouse)} house with a ${seventhName} 7th house describes how you give affection and the kind of connection you build it on.`,
     ],
   };
 
@@ -140,13 +140,13 @@ export function buildLifeGuidance(chart: NatalChart): GuidanceSection[] {
     title: "Career & Life Work",
     headline: `${tenthName} Tenth House · ${saturnName} Saturn`,
     paragraphs: [
-      `Your 10th house (public role and long-term contribution) begins in ${tenthName}, a ${elementWord(tenth).toLowerCase()}-element sign — the arena where consistent, visible work accumulates.`,
+      `Your 10th house (public role and long-term contribution) begins in ${tenthName}, a ${elementWord(tenth).toLowerCase()}-energy sign — the arena where consistent, visible work builds up over time.`,
       `Saturn is in ${degreeNotation(saturn.sign, saturn.degree, saturn.minutes)}, in the ${ordinal(saturnHouse)} house${
         saturn.retrograde
-          ? " and retrograde at birth, favoring review and revision over fresh initiatives"
-          : ", moving in its direct, structural register"
+          ? " and retrograde at birth, favouring review and revision over fresh initiatives"
+          : ", moving in its steady, structural register"
       }. Saturn governs the work you intend to build slowly and keep.`,
-      `A ${tenthName} 10th house alongside ${saturnName} Saturn points to career results that arrive through patient, repeatable effort in the ${elementWord(tenth).toLowerCase()}-element areas of your chart.`,
+      `A ${tenthName} 10th house alongside ${saturnName} Saturn points to career results that arrive through patient, repeatable effort in the ${elementWord(tenth).toLowerCase()}-energy areas of your chart.`,
     ],
   };
 
@@ -155,9 +155,9 @@ export function buildLifeGuidance(chart: NatalChart): GuidanceSection[] {
     title: "Inner World & Foundation",
     headline: `${moonName} Moon · ${fourthName} Fourth House`,
     paragraphs: [
-      `Your Moon is in ${degreeNotation(moon.sign, moon.degree, moon.minutes)}, set in the ${ordinal(moonHouse)} house — a ${elementWord(moon.sign).toLowerCase()}-element emotional baseline that shapes how you feel safe and steady.`,
-      `The 4th house (home, family roots and inner foundation) begins in ${fourthName}, a ${elementWord(fourth).toLowerCase()}-element sign, describing the private ground you return to when the outer hours are done.`,
-      `The ${moonName} Moon and ${fourthName} 4th house together describe an inner life that runs on ${elementWord(moon.sign).toLowerCase()}-element needs, held in a ${fourthName}-flavored home base.`,
+      `Your Moon is in ${degreeNotation(moon.sign, moon.degree, moon.minutes)}, set in the ${ordinal(moonHouse)} house — a ${elementWord(moon.sign).toLowerCase()}-energy emotional baseline that shapes how you feel safe and steady.`,
+      `The 4th house (home, family roots and inner foundation) begins in ${fourthName}, a ${elementWord(fourth).toLowerCase()}-energy sign, describing the private ground you return to when the outer hours wind down.`,
+      `The ${moonName} Moon and ${fourthName} 4th house together describe an inner life that runs on ${elementWord(moon.sign).toLowerCase()}-energy needs, held in a ${fourthName}-flavored home base.`,
     ],
   };
 

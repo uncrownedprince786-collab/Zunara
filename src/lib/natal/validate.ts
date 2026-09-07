@@ -7,6 +7,11 @@
  * receives a typed, human-readable field error.
  */
 
+import {
+  civilToUtc,
+  type CivilTime,
+} from "@/lib/geo/timezones";
+
 export interface BirthInput {
   year: number;
   month: number; // 1..12
@@ -18,6 +23,9 @@ export interface BirthInput {
   latitude: number; // -90..90
   longitude: number; // -180..180
   placeName: string;
+  /** Optional IANA timezone (e.g. "Asia/Tokyo"). When absent, Local Mean Time
+   *  derived from `longitude` is used for the civil → UTC conversion. */
+  timezone?: string;
 }
 
 export interface BirthConfig {
@@ -45,6 +53,7 @@ function buildDate(
   ampm: "AM" | "PM",
   timeKnown: boolean,
   longitude: number,
+  timezone?: string,
 ): Date | null {
   const hour24 =
     timeKnown === false
@@ -55,13 +64,18 @@ function buildDate(
           : hour12
         : (hour12 % 12) + 12;
   const minute24 = timeKnown === false ? 0 : minute;
-  // The entered civil birth time is local-mean-time for the birthplace. Convert
-  // it to a UTC instant by subtracting the longitude-derived LMT offset
-  // (offsetHours = -longitude/15). East is ahead of Greenwich, so UTC = LMT − λ/15.
-  const lmtOffsetMs = (longitude / 15) * 3600000;
-  return new Date(
-    Date.UTC(year, month - 1, day, hour24, minute24, 0, 0) - lmtOffsetMs,
-  );
+  // The entered civil birth time is local for the birthplace. Convert it to a
+  // UTC instant — DST-aware when an IANA timezone is known, otherwise via the
+  // longitude-derived Local Mean Time offset.
+  const civil: CivilTime = {
+    year,
+    month,
+    day,
+    hour: hour24,
+    minute: minute24,
+    second: 0,
+  };
+  return civilToUtc(civil, timezone ? { timeZone: timezone, longitude } : { longitude });
 }
 
 export function validateBirth(input: BirthInput): ValidationResult {
@@ -143,7 +157,8 @@ export function validateBirth(input: BirthInput): ValidationResult {
     };
   }
 
-  // Build the actual UTC instant using the LMT longitude offset.
+  // Build the actual UTC instant using the IANA timezone when provided,
+  // falling back to the LMT longitude offset.
   const date = buildDate(
     input.year,
     input.month,
@@ -153,6 +168,7 @@ export function validateBirth(input: BirthInput): ValidationResult {
     input.ampm,
     input.timeKnown,
     input.longitude,
+    input.timezone,
   );
   if (!date) {
     return {

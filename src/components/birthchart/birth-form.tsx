@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocale } from "@/lib/i18n/client";
 import { validateBirth, type BirthInput, YEAR_RANGE } from "@/lib/natal/validate";
 import {
@@ -51,16 +51,23 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
     setShowSuggestions(resolved.length >= 3 && results.length > 0);
   }, []);
 
-  const debouncedSearch = useMemo(
-    () => debounce((q: string) => void runSearch(q), 350),
-    [runSearch],
+  const debouncedSearchRef = useRef<ReturnType<typeof debounce<[string]>> | null>(
+    null,
   );
+  useEffect(() => {
+    debouncedSearchRef.current = debounce(
+      (q: string) => void runSearch(q),
+      350,
+    );
+    return () => debouncedSearchRef.current?.cancel();
+  }, [runSearch]);
 
   const selectPlace = useCallback(
     (place: PlaceSuggestion) => {
       handleChange("placeName", place.label);
       handleChange("latitude", place.latitude);
       handleChange("longitude", place.longitude);
+      handleChange("timezone", place.tz ?? undefined);
       setProvenance("verified");
       setPlaceSuggestions([]);
       setShowSuggestions(false);
@@ -244,7 +251,7 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
           value={input.placeName}
           onChange={(e) => {
             handleChange("placeName", e.target.value);
-            debouncedSearch(e.target.value);
+            debouncedSearchRef.current?.(e.target.value);
           }}
           onFocus={() => void runSearch(input.placeName || "")}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 250)}

@@ -24,13 +24,6 @@ export const SIGN_ELEMENTS: Record<string, "fire" | "earth" | "air" | "water"> =
   pisces: "water",
 };
 
-const ELEMENT_WORD: Record<string, string> = {
-  fire: "Fiery",
-  earth: "Grounded",
-  air: "Airy",
-  water: "Watery",
-};
-
 function elementOf(sign: string): string {
   return SIGN_ELEMENTS[sign] ?? "fire";
 }
@@ -53,20 +46,6 @@ const SIGN_INDEX: Record<string, number> = {
   capricorn: 9,
   aquarius: 10,
   pisces: 11,
-};
-
-/** Gloss for a planet-sign placement used inside reading bodies. */
-const PLANET_GLOSS: Record<NatalBodyKey, string> = {
-  sun: "your core identity",
-  moon: "your emotional baseline",
-  mercury: "how you think and speak",
-  venus: "how you love and attract",
-  mars: "how you act and pursue",
-  jupiter: "how you grow and expand",
-  saturn: "how you build and endure",
-  uranus: "how you break from the expected",
-  neptune: "how you dream and intuit",
-  pluto: "how you transform",
 };
 
 function placements(planets: NatalPlanet[]): Map<NatalBodyKey, NatalPlanet> {
@@ -118,28 +97,28 @@ export function buildReadings(
   const venusEl = elementOf(venus.sign);
 
   // ---- Love & Relationships (Venus + element + Moon baseline) ----
-  const loveHeadline = `${signName(venus.sign)} Venus, ${ELEMENT_WORD[venusEl]} love, guided by a ${signName(moon.sign).toLowerCase()} Moon`;
+  const loveHeadline = `${signName(venus.sign)} love style, ${signName(moon.sign).toLowerCase()} Moon mood`;
   const loveBody =
     `Your Venus in ${signName(venus.sign)} ` +
     (venus.retrograde
-      ? "turns inward, asking for love to be revisited and refined rather than rushed."
-      : `approaches affection with ${venusEl}-energy: ${venusEl === "fire" ? "bold and direct warmth" : venusEl === "earth" ? "loyal, tangible devotion" : venusEl === "air" ? "intellectual companionship and ideals" : "deep emotional attunement and trust"}.`) +
-    ` The Moon in ${signName(moon.sign)} (${elementOf(moon.sign)}-element inner needs) shapes what makes you feel secure in a bond, while ${signName(venus.sign)} Venus (in the ${venusHouse}${venusHouse === 1 ? "st" : venusHouse === 2 ? "nd" : venusHouse === 3 ? "rd" : "th"} house) shows where affection is most naturally expressed.`;
+      ? "turns inward — you need time to feel things out before committing, and that's a strength."
+      : `brings a ${venusEl === "fire" ? "bold, upfront" : venusEl === "earth" ? "loyal, dependable" : venusEl === "air" ? "playful, conversational" : "deep, intuitive"} warmth to how you connect.`) +
+    ` The Moon in ${signName(moon.sign)} shapes what helps you feel safe, while ${signName(venus.sign)} Venus (in the ${venusHouse}${venusHouse === 1 ? "st" : venusHouse === 2 ? "nd" : venusHouse === 3 ? "rd" : "th"} house) shows where affection comes most naturally.`;
 
   // ---- Career & Ambition (Sun + Mars + 10th/MC) ----
-  const careerHeadline = `${signName(sun.sign)} Sun purpose, ${signName(mars.sign)} Mars drive`;
+  const careerHeadline = `${signName(sun.sign)} Sun drive, ${signName(mars.sign)} Mars energy`;
   const careerBody =
-    `Your ${signName(sun.sign)} Sun (${PLANET_GLOSS.sun}, in the ${sunHouse}th house) sets the arc of your ambition, while ${signName(mars.sign)} Mars (${mars.retrograde ? "in its reflective retrograde, best used to re-strategize rather than charge" : "providing the forward push"}, in the ${marsHouse}th house) dictates how ferociously you pursue it. Leadership and long-form legacy are tied to your Solar drive; the momentum to begin, start and compete comes from Mars.`;
+    `Your ${signName(sun.sign)} Sun sets the tone for what kind of work matters to you, while ${signName(mars.sign)} Mars (${mars.retrograde ? "is retrograde, a good time to rethink your approach rather than push hard" : "brings the energy to get things done"}, in the ${marsHouse}th house) shapes how you go after it.`;
 
   // ---- Wealth & Resources (Jupiter + 2nd/8th) ----
   const wealthHeadline = `${signName(jupiter.sign)} Jupiter expansion`;
   const wealthBody =
-    `Growth and resources flow through Jupiter in ${signName(jupiter.sign)} (in the ${jupiterHouse}th house): ${jupiter.retrograde ? "a conservative, re-investing approach to abundance" : "an expanding, opportunity-seeking approach to abundance"}. The 2nd house governs earned income and personal assets, while the 8th rules shared resources and transformations of value — where these receive strong planetary attention, wealth rhythms are amplified.`;
+    `Money and growth flow through Jupiter in ${signName(jupiter.sign)} (in the ${jupiterHouse}th house). ${jupiter.retrograde ? "This is a time to be careful with spending, save steadily and reinvest what you earn." : "There's real opportunity here — stay open to sensible chances to grow your income or savings."}`;
 
   // ---- Core Life Path & Archetype (Sun + Moon + Ascendant) ----
-  const lifeHeadline = `${signName(sun.sign)} Sun core, ${signName(moon.sign)} Moon mind, ${signName(ascSign)} Ascendant mask`;
+  const lifeHeadline = `${signName(sun.sign)} Sun core, ${signName(moon.sign)} Moon inner world, ${signName(ascSign)} first impression`;
   const lifeBody =
-    `Your core self lives in ${signName(sun.sign)} (${elementOf(sun.sign)}-element), your inner world is a ${signName(moon.sign)} Moon, and the world first meets your ${signName(ascSign)} Ascendant. Together these three trace your archetype: the self you are, the self you feel, and the self you show.`;
+    `Your core self lives in ${signName(sun.sign)}, your inner world is a ${signName(moon.sign)} Moon, and the way people first meet you comes through your ${signName(ascSign)} Ascendant. Together, these three show the person you are, the person you feel inside, and the first impression you make.`;
 
   const ord = (n: number) => (n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : `${n}th`);
 
@@ -176,7 +155,7 @@ export function buildReadings(
     },
     life: {
       key: "life",
-      title: "Core Life Path & Archetype",
+      title: "Core Life Path",
       headline: lifeHeadline,
       body: lifeBody,
       drivers: [

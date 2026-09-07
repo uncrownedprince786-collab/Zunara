@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ZodiacSign } from "@/lib/zodiac/zodiac";
 import type { PeriodType } from "@/lib/calendar/periods";
 import { SITE, absoluteUrl } from "./site";
+import { LOCALES } from "@/lib/i18n/dictionaries";
 
 const PERIOD_TITLE: Record<PeriodType, string> = {
   daily: "Daily",
@@ -12,6 +13,18 @@ const PERIOD_TITLE: Record<PeriodType, string> = {
 
 const socialImages = { images: [absoluteUrl(SITE.image)] };
 const twitterMeta = { site: SITE.twitter, creator: SITE.twitter, images: [absoluteUrl(SITE.image)] };
+
+/**
+ * hreflang mapping: every page exists once and is served in all five locales
+ * through the client-side language switcher, so all five language codes plus
+ * `x-default` point at the same canonical URL.
+ */
+export function alternateLanguages(path: string): Record<string, string> {
+  const url = absoluteUrl(path);
+  const out: Record<string, string> = { "x-default": url };
+  for (const l of LOCALES) out[l.code] = url;
+  return out;
+}
 
 /** Shared OG/Twitter card fields, spread into a page's supplied openGraph/twitter. */
 export function shareMeta(url: string, title: string, description: string) {
@@ -42,7 +55,13 @@ export function horoscopeMetadata(
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages: alternateLanguages(path) },
+    keywords: [
+      `${sign.name} ${periodNoun.toLowerCase()} horoscope`,
+      `${sign.name.toLowerCase()} ${periodType.toLowerCase()} forecast`,
+      "zodiac horoscope today",
+      "astronomy-based horoscope",
+    ],
     openGraph: {
       title,
       description,
@@ -62,7 +81,8 @@ export function signIndexMetadata(sign: ZodiacSign): Metadata {
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages: alternateLanguages(`/horoscope/${sign.slug}`) },
+    keywords: [`${sign.name.toLowerCase()} zodiac sign`, `${sign.name.toLowerCase()} horoscope`, `${sign.name.toLowerCase()} dates`, "zodiac sign meanings"],
     openGraph: { title, description, url: canonical, type: "website", siteName: SITE.name, ...socialImages },
     twitter: { card: "summary_large_image", title, description, ...twitterMeta },
   };
@@ -73,12 +93,14 @@ export function pageMetadata(
   title: string,
   description: string,
   type: "website" | "article" = "website",
+  keywords: string[] = [],
 ): Metadata {
   const canonical = absoluteUrl(path);
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages: alternateLanguages(path) },
+    keywords,
     openGraph: {
       title,
       description,

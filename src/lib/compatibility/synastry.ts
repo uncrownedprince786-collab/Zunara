@@ -250,17 +250,18 @@ function interpretAspect(
   const nameA = BODY_NAME[bodyA] ?? bodyA;
   const nameB = BODY_NAME[bodyB] ?? bodyB;
   const pol = polarityWord(signA, signB);
+  const polPhrase = pol === "aligned" ? "they sit in easy alignment" : "they sit in a natural contrast";
   const theme =
     type === "conjunction"
-      ? "merge into a single focused point of contact"
+      ? "they line up into one clear, easy point of connection"
       : type === "sextile"
-        ? "open a natural lane of cooperation"
+        ? "they open a natural lane of easy cooperation"
         : type === "trine"
-          ? "flow with little conscious effort"
+          ? "they flow together with little effort"
           : type === "square"
-            ? "generate friction that asks for conscious work"
-            : "pull in opposite directions and ask for balance";
-  return `${roleA}'s ${nameA} in ${signName(signA)} ${ASPECT_WORD[type]} ${roleB}'s ${nameB} in ${signName(signB)} — ${theme}; the two placements read ${pol}.`;
+            ? "they pull a little against each other, so some patience helps"
+            : "they pull in opposite directions and call for balance";
+  return `${roleA}'s ${nameA} in ${signName(signA)} and ${roleB}'s ${nameB} in ${signName(signB)}: ${theme}. Overall, ${polPhrase}.`;
 }
 
 function buildDimension(
@@ -308,8 +309,8 @@ function buildDimension(
   const score = clampScore(raw);
   const summary =
     found === 0
-      ? `No tight major aspects between these ${dim.title.toLowerCase()} planets — a neutral, low-key connection in this area, with nothing forcing the issue.`
-      : `${roleA}'s and ${roleB}'s ${dim.title.toLowerCase()} planets produce ${found} tight major aspect${found === 1 ? "" : "s"}, scoring ${score}/100.`;
+      ? `No strong links showed up between your ${dim.title.toLowerCase()} planets — an easygoing, low-key area of connection, with nothing pushing or pulling either way.`
+      : `${roleA}'s and ${roleB}'s ${dim.title.toLowerCase()} planets show ${found} clear link${found === 1 ? "" : "s"} off the same charts, rating ${score} out of 100.`;
 
   return { key: dim.key, title: dim.title, score, aspects, summary };
 }

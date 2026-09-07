@@ -5,7 +5,7 @@ import { LOCALES, type Locale } from "@/lib/i18n/dictionaries";
 import { useLocale } from "@/lib/i18n/client";
 
 export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
-  const { locale, setLocale } = useLocale();
+  const { locale, setLocale, t } = useLocale();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -46,6 +46,7 @@ export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`${id}-menu`}
+        aria-label={t("language.label", "Language")}
       >
         <span aria-hidden="true">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
@@ -74,7 +75,7 @@ export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
                 }`}
               >
                 <span className="truncate">{l.label}</span>
-                {l.dir === "rtl" && <span className="text-[0.6rem] text-subdued">RTL</span>}
+                {l.dir === "rtl" && <span className="text-[0.6rem] text-subdued">{t("common.languageRtl", "RTL")}</span>}
               </button>
             </li>
           ))}

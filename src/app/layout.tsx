@@ -8,6 +8,7 @@ import { MeteorShower } from "@/components/ui/meteor-shower";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { SITE, absoluteUrl } from "@/lib/seo/site";
 import { LocaleProvider } from "@/lib/i18n/client";
+import { LocaleText } from "@/components/ui/locale-text";
 
 const display = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -78,8 +79,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${inter.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-ink text-starlight">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)zunara-locale=([^;]*)/);var v="";if(m){try{v=decodeURIComponent(m[1]);}catch(_){}}var l=(v||"").trim().toLowerCase();var lang="en",rtl=false;if(l==="ur"){lang="ur";rtl=true;}else if(l==="ar"){lang="ar";rtl=true;}else if(l==="es"){lang="es";}else if(l==="zh"){lang="zh";}var de=document.documentElement;de.setAttribute("dir",rtl?"rtl":"ltr");de.setAttribute("lang",lang);if(document.body)document.body.setAttribute("dir",rtl?"rtl":"ltr");}catch(e){}})();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -112,7 +118,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               sky canvas (z-0) while the meteors stay visually behind it on the
               dark canvas background. */}
           <div className="relative z-10 flex w-full flex-1 flex-col">
-            <a href="#main-content" className="skip-link">Skip to content</a>
+            <a href="#main-content" className="skip-link">
+              <LocaleText path="common.skipToContent" fallback="Skip to content" />
+            </a>
             <ErrorBoundary>
               <SiteHeader />
             </ErrorBoundary>

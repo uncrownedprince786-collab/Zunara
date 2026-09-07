@@ -27,7 +27,6 @@ export interface IcsOptions {
   /** Calendar display name in APPLY-TO / X-WR-CALNAME. */
   name?: string;
   /** Optional RFC 2445 cal-address for the organizer. */
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   calendarId?: string;
 }
 

@@ -16,7 +16,7 @@ const LINKS = [
 export function SiteNav({ labels }: { labels?: Record<string, string> }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const { dict } = useLocale();
+  const { dict, t } = useLocale();
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
@@ -55,9 +55,9 @@ export function SiteNav({ labels }: { labels?: Record<string, string> }) {
         className="inline-flex h-9 w-9 items-center justify-center text-muted md:hidden"
         aria-expanded={open}
         aria-controls="mobile-menu"
+        aria-label={open ? t("header.closeMenu", "Close menu") : t("header.openMenu", "Open menu")}
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="sr-only">{dict.nav.menuToggle}</span>
         {open ? (
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M6 6l12 12M18 6 6 18" />
@@ -69,13 +69,17 @@ export function SiteNav({ labels }: { labels?: Record<string, string> }) {
         )}
       </button>
       {open && (
-        <div id="mobile-menu" className="absolute inset-x-0 top-16 z-50 border-b border-white/[0.08] bg-ink/95 px-4 py-4 shadow-2xl backdrop-blur-xl saturate-180 md:hidden">
-          <div className="flex flex-col gap-3">
+        <div
+          id="mobile-menu"
+          aria-label={dict.nav.menu}
+          className="absolute inset-x-0 top-16 z-50 max-h-[70vh] overflow-y-auto border-b border-white/[0.08] bg-ink/95 px-4 py-2 shadow-2xl backdrop-blur-xl saturate-180 md:hidden"
+        >
+          <div className="flex flex-col gap-1">
             {items.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`text-sm tracking-wide text-muted transition-colors hover:text-gold ${isActive(l.href) ? "text-gold" : ""}`}
+                className={`rounded-lg px-3 py-2.5 text-sm leading-snug tracking-wide text-muted transition-colors hover:bg-white/[0.04] hover:text-gold ${isActive(l.href) ? "text-gold" : ""}`}
                 aria-current={isActive(l.href) ? "page" : undefined}
                 onClick={() => setOpen(false)}
               >

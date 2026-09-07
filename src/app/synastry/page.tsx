@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 import { SynastryClient } from "./synastry-client";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { JsonLd } from "@/components/ui/json-ld";
 import { absoluteUrl } from "@/lib/seo/site";
-import { shareMeta } from "@/lib/seo/metadata";
+import { shareMeta, alternateLanguages } from "@/lib/seo/metadata";
+import { softwareApplicationJsonLd } from "@/lib/seo/jsonld";
 
 export const metadata: Metadata = {
   title: "Synastry — Relationship Compatibility Chart",
   description:
     "Compare two birth charts across emotional, communication, attraction and long-term stability dimensions, calculated from real planetary positions.",
-  alternates: { canonical: absoluteUrl("/synastry") },
+  keywords: [
+    "synastry",
+    "relationship compatibility",
+    "compatibility chart",
+    "two birth charts",
+    "love compatibility astrology",
+  ],
+  alternates: { canonical: absoluteUrl("/synastry"), languages: alternateLanguages("/synastry") },
   ...shareMeta(
     absoluteUrl("/synastry"),
     "Synastry — Relationship Compatibility Chart | Zunara",
@@ -19,6 +28,13 @@ export const metadata: Metadata = {
 export default function SynastryPage() {
   return (
     <div className="constellation-bg">
+      <JsonLd
+        data={softwareApplicationJsonLd(
+          "Zunara Synastry — Relationship Compatibility Chart",
+          "Deterministic relationship compatibility computed from the real planetary angles between two birth charts across four relationship dimensions.",
+          absoluteUrl("/synastry"),
+        )}
+      />
       <div className="mx-auto max-w-5xl px-4 pt-14 sm:px-6">
         <div className="flex justify-center">
           <Breadcrumbs items={[{ label: "Synastry", href: "/synastry" }]} />

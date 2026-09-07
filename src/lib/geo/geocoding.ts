@@ -24,6 +24,8 @@ export interface PlaceSuggestion {
   /** addresstype: city, town, village, administrative, … */
   type: string;
   country?: string;
+  /** IANA timezone from Nominatim (e.g. "Europe/London"). Absent when unknown. */
+  tz?: string;
 }
 
 export const OSM_ATTRIBUTION = "Geocoding data © OpenStreetMap contributors";
@@ -52,6 +54,7 @@ function mapItem(item: Record<string, unknown>): PlaceSuggestion | null {
   const lat = parseFloat(item.lat as string);
   const lon = parseFloat(item.lon as string);
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  const tz = typeof item.timezone === "string" ? (item.timezone as string) : undefined;
   return {
     id: Number(item.place_id),
     label: String(item.display_name ?? ""),
@@ -60,6 +63,7 @@ function mapItem(item: Record<string, unknown>): PlaceSuggestion | null {
     longitude: lon,
     type: String(item.addresstype ?? item.type ?? "place"),
     country: (item.address as { country?: string } | undefined)?.country,
+    ...(tz ? { tz } : {}),
   };
 }
 
