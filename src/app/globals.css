@@ -263,6 +263,25 @@ body {
   background-color: rgba(108, 92, 231, 0.25);
 }
 
+/* ---------------- Quick birth lookup selects ----------------
+   Same dark-midnight popup treatment as .sign-switch so the open
+   options list stays readable on light OS menus, minus the native
+   arrow (the component draws its own chevron). */
+.quick-birth-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #111222;
+  color: #ffffff;
+}
+.quick-birth-select option {
+  background-color: #111222;
+  color: #ffffff;
+}
+.quick-birth-select option:checked,
+.quick-birth-select option:hover {
+  background-color: rgba(108, 92, 231, 0.28);
+}
+
 /* ---------------- Motion system ---------------- */
 
 /* Entrance reveal: fade + gentle rise, driven by the Reveal primitive. */
