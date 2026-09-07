@@ -400,6 +400,18 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #29: Dynamic "Famous Birthdays Today" — live Wikidata without a database (`86d55e4`)
+
+Verification: `tsc --noEmit` clean, `vitest` 253/253 (+3), `next build` green (93 pages).
+
+Goal: the home "Famous Birthdays Today" section showed only ~2 celebrity cards, both without portraits, on low-coverage dates (e.g. Sep 7 — no curated primary entry, and the supplementary pool has just two same-day names with no `image` field), because the live tier was gated behind a configured database.
+
+- `src/lib/celebrities/resolver.ts` — the Level-2 live tier now runs in every environment, not only when a DB cache store exists.
+  - New exported `createMemoryCache()`: a process-lifetime `CacheStore`, so no-DB deployments still resolve birthdays live from Wikidata while reusing fresh results across page loads (26h staleness via the existing `CACHE_STALE_MS`; stale entries pruned on write).
+  - `defaultStore()`: DB-backed store when `isDbConfigured()`, otherwise a shared in-memory cache — skipped under `NODE_ENV === "test"` so the suite stays network-free.
+  - Live results write through to whichever store exists, get topped up with the curated same-date pool, and are capped at 12. Sep 7 now resolves real notable people (Evan Rachel Wood, Gloria Gaynor, Queen Elizabeth I, Grandma Moses, Kevin Love, Leslie Jones, Toby Jones, …) with Commons portraits + sitelink badges — dynamically, for every date, with zero config.
+- `resolver.test.ts`: +3 tests — memory cache backs the live tier without a DB, `updatedAt` stamped on write for staleness checks, cache miss returns null. 253/253.
+
 ## Sprint #28: Performance (payload −38%), visible moon phase, sky-events polish, celebrity portrait fallbacks (`f416c71`, `d93821a`, `32bc9c9`)
 
 Verification: `tsc --noEmit` clean, `vitest` 250/250, `next build` green (93 pages).
