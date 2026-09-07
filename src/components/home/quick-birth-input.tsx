@@ -60,7 +60,7 @@ export function QuickBirthInput() {
         {t("home.quickBirthLabel", "Born on any other day? See who celebrates with you")}
       </p>
 
-      <div className="grid flex-1 grid-cols-2 items-center gap-2">
+      <div className="grid flex-1 grid-cols-[1.4fr_1fr] items-center gap-2">
         <div className="relative">
           <label
             htmlFor="quick-birth-month"
