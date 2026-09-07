@@ -6,6 +6,7 @@ import {
   imageCandidates,
   parseWikidataBindings,
   selectTopByCategory,
+  wikiSummaryUrl,
 } from "./wikidata";
 
 const BINDINGS = {
@@ -148,5 +149,22 @@ describe("wikidata birthday pipeline", () => {
       "Physicist A", // science
       "Tech A", // tech-business (alphabetical category round-robin order)
     ]);
+  });
+
+  it("builds Wikipedia REST summary URLs for portrait fallback", () => {
+    expect(wikiSummaryUrl("Gloria_Gaynor")).toBe(
+      "https://en.wikipedia.org/api/rest_v1/page/summary/Gloria_Gaynor",
+    );
+  });
+
+  it("converts spaces to underscores for article titles", () => {
+    expect(wikiSummaryUrl("Evan Rachel Wood")).toBe(
+      "https://en.wikipedia.org/api/rest_v1/page/summary/Evan_Rachel_Wood",
+    );
+  });
+
+  it("returns an empty URL for an empty or whitespace title", () => {
+    expect(wikiSummaryUrl("")).toBe("");
+    expect(wikiSummaryUrl("   ")).toBe("");
   });
 });

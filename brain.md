@@ -412,6 +412,14 @@ Goal: the home "Famous Birthdays Today" section showed only ~2 celebrity cards, 
   - Live results write through to whichever store exists, get topped up with the curated same-date pool, and are capped at 12. Sep 7 now resolves real notable people (Evan Rachel Wood, Gloria Gaynor, Queen Elizabeth I, Grandma Moses, Kevin Love, Leslie Jones, Toby Jones, …) with Commons portraits + sitelink badges — dynamically, for every date, with zero config.
 - `resolver.test.ts`: +3 tests — memory cache backs the live tier without a DB, `updatedAt` stamped on write for staleness checks, cache miss returns null. 253/253.
 
+### Resilience layer (same sprint, follow-up)
+- Audit showed the curated static tier returns <4 people on ~300/366 days (the pool holds ~2 same-date names per day, so "two celebs" was every day's static reality, not just Sep 7). The dynamic live tier is the real fix; the static tier stays a failsafe.
+- `wikidata.ts` `wikiSummaryUrl(title)`: pure URL builder for the Wikipedia REST `page/summary` lead-image API (follows redirects), +3 tests.
+- `celebrity-birthdays-view.tsx` `PortraitAvatar`: when a celebrity has no stored portrait or all Commons candidates fail, it fetches the article lead image from `en.wikipedia.org` (module-level `PORTRAIT_CACHE`, graceful monogram on failure) — so imageless pool/static picks get real photos instead of letter avatars.
+- `next.config.ts`: `connect-src` gained `https://en.wikipedia.org` and `https://query.wikidata.org` for the REST fetch.
+- `celebrities.ts`: added 6 real Sep 7 births to the primary list (Gloria Gaynor, Queen Elizabeth I, Evan Rachel Wood, Kevin Love, Leslie Jones, Chrissie Hynde) so that date always has a 6-person floor.
+- 256/256 tests, `tsc` clean, `next build` green (93 pages).
+
 ## Sprint #28: Performance (payload −38%), visible moon phase, sky-events polish, celebrity portrait fallbacks (`f416c71`, `d93821a`, `32bc9c9`)
 
 Verification: `tsc --noEmit` clean, `vitest` 250/250, `next build` green (93 pages).

@@ -8,7 +8,7 @@ import {
 import { zodiacForDate, type ZodiacSign } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { useLocale } from "@/lib/i18n/client";
-import { imageCandidates } from "@/lib/celebrities/wikidata";
+import { imageCandidates, wikiSummaryUrl } from "@/lib/celebrities/wikidata";
 import {
   CATEGORY_STYLE,
   categoryFromProfession,
@@ -16,6 +16,26 @@ import {
   type CategorySlug,
 } from "@/lib/celebrities/categories";
 import type { CelebritySource } from "@/lib/celebrities/resolver";
+
+/** In-memory cache of resolved REST lead-image URLs, keyed by article title. */
+const PORTRAIT_CACHE = new Map<string, string | null>();
+
+function initialsOf(name: string): string {
+  return name
+    .replace(/[^a-zA-Z0-9' .-]/g, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.replace(/[^a-zA-Z]/g, "").charAt(0).toUpperCase())
+    .join("");
+}
+
+/** Resolve an article title usable by the Wikipedia REST endpoint. */
+function wikiTitleOf(celebrity: Celebrity): string {
+  const slug = celebrity.wiki;
+  if (slug && !/^Q\d+$/.test(slug)) return slug;
+  return celebrity.name.replace(/ /g, "_");
+}
 
 const REGION_STYLE: Record<CelebrityRegion, string> = {
   Hollywood: "border-white/10 bg-white/[0.04] text-muted",
@@ -47,16 +67,6 @@ const ELEMENT_BG: Record<ZodiacSign["element"], string> = {
   Water: "from-water/15 to-nebula/40",
 };
 
-function initialsOf(name: string): string {
-  return name
-    .replace(/[^a-zA-Z0-9' .-]/g, "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.replace(/[^a-zA-Z]/g, "").charAt(0).toUpperCase())
-    .join("");
-}
-
 function PortraitAvatar({
   celebrity,
   sign,
@@ -71,10 +81,54 @@ function PortraitAvatar({
     [celebrity.image],
   );
   const [srcIndex, setSrcIndex] = useState(0);
+  const [restSrc, setRestSrc] = useState<string | null>(null);
+  const [restState, setRestState] = useState<"idle" | "loading" | "done" | "failed">("idle");
   const glow = ELEMENT_GLOW[sign.element];
   const bg = ELEMENT_BG[sign.element];
 
-  if (!celebrity.image || srcIndex >= sources.length) {
+  const exhausted = !celebrity.image || srcIndex >= sources.length;
+
+  // When the direct file candidates run out (no stored portrait, or every
+  // Commons URL failed), ask the Wikipedia REST API for the article's lead
+  // image. Cached per title, graceful monogram fallback on any failure.
+  useEffect(() => {
+    if (!exhausted || restState !== "idle") return;
+    const title = wikiTitleOf(celebrity);
+    if (!title) {
+      setRestState("failed");
+      return;
+    }
+    const cached = PORTRAIT_CACHE.get(title);
+    if (cached !== undefined) {
+      if (cached) setRestSrc(cached);
+      setRestState("done");
+      return;
+    }
+    let cancelled = false;
+    setRestState("loading");
+    fetch(wikiSummaryUrl(title))
+      .then((res) => {
+        if (!res.ok) throw new Error(`summary HTTP ${res.status}`);
+        return res.json() as Promise<{ thumbnail?: { source?: string } }>;
+      })
+      .then((data) => {
+        const src = data.thumbnail?.source ?? null;
+        PORTRAIT_CACHE.set(title, src);
+        if (!cancelled) {
+          if (src) setRestSrc(src);
+          setRestState("done");
+        }
+      })
+      .catch(() => {
+        PORTRAIT_CACHE.set(title, null);
+        if (!cancelled) setRestState("done");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [exhausted, restState, celebrity]);
+
+  if (exhausted && !restSrc) {
     const monogram = initialsOf(celebrity.name) || "★";
     return (
       <div className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10">
@@ -99,12 +153,17 @@ function PortraitAvatar({
     );
   }
 
+  const src = exhausted ? (restSrc as string) : sources[srcIndex];
+  const onError = exhausted
+    ? () => setRestState("failed")
+    : () => setSrcIndex((i) => i + 1);
+
   return (
     <div className="relative h-16 w-16 shrink-0">
       <div className="absolute inset-0 overflow-hidden rounded-full border border-white/10">
         <img
-          key={sources[srcIndex]}
-          src={sources[srcIndex]}
+          key={src}
+          src={src}
           alt={celebrity.name}
           width={120}
           height={120}
@@ -112,7 +171,7 @@ function PortraitAvatar({
           decoding="async"
           referrerPolicy="no-referrer"
           className="h-full w-full object-cover"
-          onError={() => setSrcIndex((i) => i + 1)}
+          onError={onError}
         />
       </div>
       <span

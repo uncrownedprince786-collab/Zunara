@@ -66,6 +66,18 @@ export function commonsThumb(uri: string): string {
 }
 
 /**
+ * Wikipedia REST summary URL that resolves an article's lead image for a
+ * person with no stored portrait. The `/api/rest_v1/page/summary/<title>`
+ * endpoint follows redirects, so name-based titles ("The Rock") resolve to the
+ * correct article thumb. Pure builder — the fetch itself happens client-side.
+ */
+export function wikiSummaryUrl(title: string): string {
+  const wikiTitle = (title ?? "").trim().replace(/ /g, "_");
+  if (!wikiTitle) return "";
+  return `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiTitle)}`;
+}
+
+/**
  * Robust image-loading fallback chain for a single Commons file reference.
  *
  * External feeds can hand us Commons file references that are already
