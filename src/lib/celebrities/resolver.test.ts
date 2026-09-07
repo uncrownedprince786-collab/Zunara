@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Celebrity } from "@/lib/content/celebrities";
 import {
+  createMemoryCache,
   dateKey,
   resolveCelebritiesForDate,
   CACHE_STALE_MS,
@@ -130,5 +131,29 @@ describe("3-tier celebrity resolver", () => {
 
   it("constant defines the staleness threshold as 26h", () => {
     expect(CACHE_STALE_MS).toBe(26 * 60 * 60 * 1000);
+  });
+
+  it("memory cache backs the live tier without any database (dynamic mode)", async () => {
+    const store = createMemoryCache();
+    await store.set("09-03", [person("Cached Star")], "cache");
+    const result = await resolveCelebritiesForDate(9, 3, {
+      store,
+      now: new Date(),
+    });
+    expect(result.source).toBe("cache");
+    expect(result.people[0].name).toBe("Cached Star");
+  });
+
+  it("memory cache stamps updatedAt on write for staleness checks", async () => {
+    const store = createMemoryCache();
+    await store.set("09-03", [person("First")], "cache");
+    const row = await store.get("09-03");
+    expect(row?.source).toBe("cache");
+    expect(Date.now() - (row?.updatedAt.getTime() ?? 0)).toBeLessThan(10_000);
+  });
+
+  it("returns an empty memory cache miss as null", async () => {
+    const store = createMemoryCache();
+    expect(await store.get("01-01")).toBeNull();
   });
 });

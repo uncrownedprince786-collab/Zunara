@@ -5,8 +5,10 @@
  * Level 2 (live)     — when the cache is empty or stale, fetch Wikidata live.
  * Level 3 (static)   — if that fails, serve the local curated pool.
  *
- * The live fetch only runs when a database is configured, so static builds and
- * local environments never accidentally hammer the Wikidata endpoint. All
+ * The live fetch always runs unless a database-backed cache serves the date,
+ * so "Famous Birthdays Today" is dynamic in every environment. When no
+ * database is configured, a small process-lifetime memory cache backs the live
+ * tier, so repeat visitors never hammer the Wikidata endpoint. All
  * dependencies are injectable for deterministic unit tests.
  */
 import type { Celebrity } from "@/lib/content/celebrities";
@@ -51,16 +53,47 @@ export function dateKey(month: number, day: number): string {
   return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-function defaultStore(): CacheStore | null {
-  if (!isDbConfigured()) return null;
+/**
+ * Process-lifetime cache used when no database is configured. Lets the live
+ * tier run (dynamic birthdays for every date) while reusing fresh results
+ * across page loads. Expired entries are treated as stale by the resolver and
+ * refreshed on the next visit; stale rows are pruned on write to bound memory.
+ */
+export function createMemoryCache(): CacheStore {
+  const map = new Map<string, CachedCelebrities>();
   return {
-    get: async (key) => {
-      const row = await getCelebrityCache(key);
-      if (!row) return null;
-      return { payload: row.payload as unknown, source: row.source, updatedAt: row.updatedAt };
+    get: async (key) => map.get(key) ?? null,
+    set: async (key, payload, source) => {
+      map.set(key, { payload, source, updatedAt: new Date() });
+      for (const [k, v] of map) {
+        if (Date.now() - v.updatedAt.getTime() > CACHE_STALE_MS * 2) {
+          map.delete(k);
+        }
+      }
+      return true;
     },
-    set: (key, payload, source) => upsertCelebrityCache(key, payload, source),
   };
+}
+
+let memoryCache: CacheStore | null = null;
+
+function defaultStore(): CacheStore | null {
+  if (isDbConfigured()) {
+    return {
+      get: async (key) => {
+        const row = await getCelebrityCache(key);
+        if (!row) return null;
+        return { payload: row.payload as unknown, source: row.source, updatedAt: row.updatedAt };
+      },
+      set: (key, payload, source) => upsertCelebrityCache(key, payload, source),
+    };
+  }
+  // No database configured: back the live tier with a shared in-memory cache
+  // so birthdays stay dynamic without hammering Wikidata per page view. Tests
+  // opt out so they never touch the network.
+  if (process.env.NODE_ENV === "test") return null;
+  memoryCache ??= createMemoryCache();
+  return memoryCache;
 }
 
 function asCelebrities(payload: unknown): Celebrity[] {
@@ -100,10 +133,10 @@ export async function resolveCelebritiesForDate(
     }
   }
 
-  // Level 2 — live Wikidata fallback. Only runs when a cache store is
-  // configured (DB-backed production) or a fetcher was explicitly injected,
-  // so static builds and local environments never accidentally hammer the
-  // Wikidata endpoint during render.
+  // Level 2 — live Wikidata fallback. Runs whenever no fresh cache exists
+  // (DB-backed or in-memory), or a fetcher was explicitly injected, so the
+  // section stays dynamic in every environment. A failed live attempt simply
+  // falls through to the offline static tier.
   const live = deps.fetchLive ?? fetchWikidataBirthdayCelebrities;
   const allowLive = Boolean(store) || Boolean(deps.fetchLive);
   if (allowLive) {
