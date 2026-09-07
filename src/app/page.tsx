@@ -118,85 +118,96 @@ export default function HomePage() {
 
       {/* ---- The current sky (real data) ---- */}
       <section className="mx-auto max-w-6xl px-4 pt-16 sm:px-6">
-        <div className="flex flex-col gap-10 lg:flex-row">
-          <div className="lg:w-3/5">
-            <p className="kicker"><LocaleText path="home.skyTonight" fallback="The sky, tonight" /></p>
-            <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
-              <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : "the zodiac"}
-            </h2>
-            <p className="mt-4 max-w-xl leading-7 text-muted">
-              <LocaleText path="home.methodDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
-            </p>
-            {sunSign && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {sunSign.traits.slice(0, 4).map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
-                  >
-                    {t}
-                  </span>
-                ))}
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-stretch">
+            <div className="lg:w-3/5">
+              <p className="kicker"><LocaleText path="home.skyTonight" fallback="The sky, tonight" /></p>
+              <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
+                <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : "the zodiac"}
+              </h2>
+              <p className="mt-4 max-w-xl leading-7 text-muted">
+                <LocaleText path="home.methodDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
+              </p>
+              {sunSign && (
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {sunSign.traits.slice(0, 4).map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="lg:w-2/5">
+              <div className="flex h-full flex-col justify-center">
+                <MoonSignCard />
               </div>
-            )}
+            </div>
           </div>
 
-          <div className="lg:w-2/5">
-            <div className="space-y-5">
-              <MoonSignCard />
-              <div className="paper-panel rounded-lg p-6">
-                <p className="kicker"><LocaleText path="home.planetaryBulletin" fallback="Planetary bulletin" /></p>
-                <p className="mt-1 text-xs leading-5 text-subdued">
-                  In plain words: “retrograde” is an illusion — the planet only appears to move
-                  backwards from Earth; it is a signal to slow down and review.
-                </p>
-                <dl className="mt-5 space-y-3">
-                  {retro.length > 0 ? (
-                    retro.map((p) => (
-                      <div key={p.key} className="flex items-center gap-3">
-                        <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
-                        <dd className="text-sm text-p-ink">
-                          <span className="font-medium"><LocaleText path={`planets.${p.key}`} fallback={p.key} /></span>
-                          <span className="text-p-muted"> <LocaleText path="home.retrogradeIn" fallback="retrograde in" /> <LocaleText path={`signs.${p.sign}`} fallback={p.sign} /> <span className="font-medium text-gold-deep">℞</span></span>
-                          <p className="mt-1 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
-                            In plain words: {plainRetro(p.key, p.sign)}
-                          </p>
-                        </dd>
-                      </div>
-                    ))
-                  ) : (
+          <div className="paper-panel rounded-lg p-6 sm:p-8">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <p className="kicker"><LocaleText path="home.planetaryBulletin" fallback="Planetary bulletin" /></p>
+              <p className="max-w-md text-xs leading-5 text-subdued">
+                In plain words: “retrograde” is an illusion — the planet only appears to move
+                backwards from Earth; it is a signal to slow down and review.
+              </p>
+            </div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {retro.length > 0 ? (
+                retro.map((p) => (
+                  <div key={p.key} className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4">
                     <div className="flex items-center gap-3">
-                      <PlanetSymbol body="sun" size="md" className="text-gold-deep" decorative />
-                      <dd className="text-sm text-p-ink">
-                        <span className="font-medium"><LocaleText path="home.noRetrogrades" fallback="No retrogrades" /></span>
-                        <span className="text-p-muted"> — <LocaleText path="home.allPlanetsDirect" fallback="all planets direct today" /></span>
-                        <p className="mt-1 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
-                          In plain words: no planets are backtracking right now — momentum is on your side.
-                        </p>
-                      </dd>
+                      <PlanetSymbol body={p.key} size="md" className="text-gold-deep" decorative />
+                      <p className="text-sm text-p-ink">
+                        <span className="font-medium"><LocaleText path={`planets.${p.key}`} fallback={p.key} /></span>
+                        <span className="text-p-muted"> <LocaleText path="home.retrogradeIn" fallback="retrograde in" /> <LocaleText path={`signs.${p.sign}`} fallback={p.sign} /> <span className="font-medium text-gold-deep">℞</span></span>
+                      </p>
                     </div>
-                  )}
-                  {transit && (
-                    <div className="mt-3 flex items-start gap-3 border-t border-p-line pt-3">
-                      <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" decorative />
-                      <dd className="text-sm text-p-ink">
-                        <span className="font-medium capitalize">
-                          <LocaleText path={`aspects.${transit.name.toLowerCase()}`} fallback={transit.name} />
-                        </span>
-                        <span className="text-p-muted">
-                          {" "}— <LocaleText path={`planets.${transit.bodyA}`} fallback={transit.bodyA} /> &amp;{" "}
-                          <LocaleText path={`planets.${transit.bodyB}`} fallback={transit.bodyB} />
-                          {", " + transit.orb.toFixed(1) + "° "}
-                          <LocaleText path="aspects.orb" fallback="orb" />
-                        </span>
-                        <p className="mt-1 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
-                          In plain words: {plainAspect(transit.name, transit.bodyA, transit.bodyB, transit.orb)}
-                        </p>
-                      </dd>
-                    </div>
-                  )}
-                </dl>
-              </div>
+                    <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                      In plain words: {plainRetro(p.key, p.sign)}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4">
+                  <div className="flex items-center gap-3">
+                    <PlanetSymbol body="sun" size="md" className="text-gold-deep" decorative />
+                    <p className="text-sm text-p-ink">
+                      <span className="font-medium"><LocaleText path="home.noRetrogrades" fallback="No retrogrades" /></span>
+                      <span className="text-p-muted"> — <LocaleText path="home.allPlanetsDirect" fallback="all planets direct today" /></span>
+                    </p>
+                  </div>
+                  <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                    In plain words: no planets are backtracking right now — momentum is on your side.
+                  </p>
+                </div>
+              )}
+              {transit && (
+                <div className="rounded-xl border border-gold/20 bg-gold/5 p-4">
+                  <div className="flex items-center gap-3">
+                    <PlanetSymbol body={transit.bodyA} size="md" className="text-gold-deep" decorative />
+                    <p className="text-sm text-p-ink">
+                      <span className="font-medium capitalize">
+                        <LocaleText path={`aspects.${transit.name.toLowerCase()}`} fallback={transit.name} />
+                      </span>
+                      <span className="text-p-muted">
+                        {" "}— <LocaleText path={`planets.${transit.bodyA}`} fallback={transit.bodyA} /> &amp;{" "}
+                        <LocaleText path={`planets.${transit.bodyB}`} fallback={transit.bodyB} />
+                        {", " + transit.orb.toFixed(1) + "° "}
+                        <LocaleText path="aspects.orb" fallback="orb" />
+                      </span>
+                    </p>
+                  </div>
+                  <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                    In plain words: {plainAspect(transit.name, transit.bodyA, transit.bodyB, transit.orb)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

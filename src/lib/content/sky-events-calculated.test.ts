@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   calculateSkyEvents,
   mergeSkyEventSources,
+  seasonKeyOf,
   SKY_CALC_HORIZON_DAYS,
 } from "./sky-events-calculated";
 import type { SkyEvent } from "./sky-events-data";
@@ -40,7 +41,7 @@ describe("calculateSkyEvents", () => {
   it("classifies lunar phases and seasonal points by category", () => {
     const events = calculateSkyEvents(NOW);
     expect(events.some((e) => e.category === "moon-phases")).toBe(true);
-    expect(events.some((e) => e.category === "eclipses")).toBe(true);
+    expect(events.some((e) => e.category === "seasonal")).toBe(true);
   });
 
   it("is deterministic for a fixed reference date", () => {
@@ -87,5 +88,60 @@ describe("mergeSkyEventSources", () => {
     const b = mergeSkyEventSources([meteor], [generic]);
     expect(a).toHaveLength(2);
     expect(b).toHaveLength(2);
+  });
+
+  it("collapses seasonal equinox duplicates even when the date differs by a day", () => {
+    const curated: SkyEvent = {
+      title: "Autumnal Equinox",
+      start: "2026-09-22",
+      description: "curated day",
+      category: "seasonal",
+      titleKey: "skyEvents.events.autumnalEquinox.title",
+      descKey: "skyEvents.events.autumnalEquinox.desc",
+    };
+    const computed: SkyEvent = {
+      title: "autumnalEquinox",
+      start: "2026-09-23",
+      description: "computed crossing",
+      category: "seasonal",
+      titleKey: "skyEvents.events.autumnalEquinox.title",
+      descKey: "skyEvents.events.autumnalEquinox.desc",
+    };
+    const feed: SkyEvent = {
+      title: "September Equinox",
+      start: "2026-09-23",
+      description: "live feed day",
+      category: "eclipses",
+    };
+    const merged = mergeSkyEventSources([feed], [computed], [curated]);
+    expect(merged).toHaveLength(1);
+    expect(merged[0].title).toBe("September Equinox");
+  });
+
+  it("keeps ordinary same-category events on different days", () => {
+    const dayA: SkyEvent = {
+      title: "Full Moon",
+      start: "2026-09-26",
+      description: "a",
+      category: "moon-phases",
+    };
+    const dayB: SkyEvent = {
+      title: "Full Moon",
+      start: "2026-09-27",
+      description: "b",
+      category: "moon-phases",
+    };
+    expect(mergeSkyEventSources([dayA], [dayB])).toHaveLength(2);
+  });
+});
+
+describe("seasonKeyOf", () => {
+  it("returns null for non-seasonal events", () => {
+    expect(seasonKeyOf({ title: "Full Moon", start: "2026-09-26", description: "" })).toBeNull();
+  });
+
+  it("maps an equinox to a stable season token", () => {
+    expect(seasonKeyOf({ title: "Autumnal Equinox", start: "2026-09-22", description: "" }))
+      .toBe("season|2026|autumn|equinox");
   });
 });

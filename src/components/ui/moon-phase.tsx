@@ -53,6 +53,7 @@ export function MoonPhaseWidget({ date }: { date?: Date }) {
     { illumination: String(mp.illumination) },
   );
   const gradId = `z-moon-grad-${useId().replace(/:/g, "")}`;
+  const maskId = `z-moon-cap-${useId().replace(/:/g, "")}`;
   const R = 44;
   const night = nightCapPath(R, mp.phase * 360);
   const hiding = mp.illumination >= 99.5;
@@ -71,14 +72,22 @@ export function MoonPhaseWidget({ date }: { date?: Date }) {
             <stop offset="60%" stopColor="var(--color-starlight)" stopOpacity="0.75" />
             <stop offset="100%" stopColor="var(--color-starlight)" stopOpacity="0.42" />
           </radialGradient>
+          {!hiding && (
+            <mask id={maskId}>
+              <rect x="-48" y="-48" width="96" height="96" fill="white" />
+              <path d={night} fill="black" />
+            </mask>
+          )}
         </defs>
         <circle r={R} fill="var(--color-starlight)" opacity="0.06" />
+        {!hiding && <circle r={R} fill="var(--color-ink-3)" opacity="0.8" />}
+        {/* The lit disc stays at full brightness; the night cap is a mask that
+            carves out the dark side, so a slim 21% crescent is clearly visible. */}
         <circle
           r={R}
           fill={`url(#${gradId})`}
-          opacity={mp.illumination / 100}
+          mask={hiding ? undefined : `url(#${maskId})`}
         />
-        {!hiding && <path d={night} fill="var(--color-ink-3)" />}
       </svg>
       <div className="min-w-0">
         <p className="text-sm font-medium text-starlight">{localizedPhase}</p>

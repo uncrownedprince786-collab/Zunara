@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type Celebrity,
   type CelebrityRegion,
@@ -8,6 +8,7 @@ import {
 import { zodiacForDate, type ZodiacSign } from "@/lib/zodiac/zodiac";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { useLocale } from "@/lib/i18n/client";
+import { imageCandidates } from "@/lib/celebrities/wikidata";
 import {
   CATEGORY_STYLE,
   categoryFromProfession,
@@ -63,11 +64,17 @@ function PortraitAvatar({
   celebrity: Celebrity;
   sign: ZodiacSign;
 }) {
-  const [failed, setFailed] = useState(false);
+  // Up to four equivalent Commons URLs are tried in order (resized thumb,
+  // original file, decode-then-encode, verbatim reference) before giving up.
+  const sources = useMemo(
+    () => (celebrity.image ? imageCandidates(celebrity.image) : []),
+    [celebrity.image],
+  );
+  const [srcIndex, setSrcIndex] = useState(0);
   const glow = ELEMENT_GLOW[sign.element];
   const bg = ELEMENT_BG[sign.element];
 
-  if (!celebrity.image || failed) {
+  if (!celebrity.image || srcIndex >= sources.length) {
     const monogram = initialsOf(celebrity.name) || "★";
     return (
       <div className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-white/10">
@@ -96,7 +103,8 @@ function PortraitAvatar({
     <div className="relative h-16 w-16 shrink-0">
       <div className="absolute inset-0 overflow-hidden rounded-full border border-white/10">
         <img
-          src={celebrity.image}
+          key={sources[srcIndex]}
+          src={sources[srcIndex]}
           alt={celebrity.name}
           width={120}
           height={120}
@@ -104,7 +112,7 @@ function PortraitAvatar({
           decoding="async"
           referrerPolicy="no-referrer"
           className="h-full w-full object-cover"
-          onError={() => setFailed(true)}
+          onError={() => setSrcIndex((i) => i + 1)}
         />
       </div>
       <span

@@ -44,7 +44,7 @@ export const YEARLY_EVENTS_2026: SkyEvent[] = [
 
   // ---- March ----
   { title: "Full Moon", start: "2026-03-03", description: "A bright full Moon climbing high through the early-spring sky.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.fullMoonMar.title", descKey: "skyEvents.events.fullMoonMar.desc" },
-  { title: "Vernal Equinox", start: "2026-03-20", description: "Day and night are nearly equal; the astronomical start of spring in the northern hemisphere.", url: NASA_SKY, category: "eclipses", titleKey: "skyEvents.events.vernalEquinox.title", descKey: "skyEvents.events.vernalEquinox.desc" },
+  { title: "Vernal Equinox", start: "2026-03-20", description: "Day and night are nearly equal; the astronomical start of spring in the northern hemisphere.", url: NASA_SKY, category: "seasonal", titleKey: "skyEvents.events.vernalEquinox.title", descKey: "skyEvents.events.vernalEquinox.desc" },
   { title: "New Moon", start: "2026-03-19", description: "A great night for stargazing with the Moon out of the way.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.newMoonMar.title", descKey: "skyEvents.events.newMoonMar.desc" },
 
   // ---- April ----
@@ -58,7 +58,7 @@ export const YEARLY_EVENTS_2026: SkyEvent[] = [
   { title: "New Moon", start: "2026-05-16", description: "A dark-sky window for faint objects through the late-spring nights.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.newMoonMay.title", descKey: "skyEvents.events.newMoonMay.desc" },
 
   // ---- June ----
-  { title: "Summer Solstice", start: "2026-06-21", description: "The longest day of the year in the northern hemisphere — the astronomical start of summer.", url: NASA_SKY, category: "eclipses", titleKey: "skyEvents.events.summerSolstice.title", descKey: "skyEvents.events.summerSolstice.desc" },
+  { title: "Summer Solstice", start: "2026-06-21", description: "The longest day of the year in the northern hemisphere — the astronomical start of summer.", url: NASA_SKY, category: "seasonal", titleKey: "skyEvents.events.summerSolstice.title", descKey: "skyEvents.events.summerSolstice.desc" },
   { title: "Full Moon · Strawberry Moon", start: "2026-06-29", description: "June's full Moon, low and warm-tinted on the northern horizon.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.fullMoonJun.title", descKey: "skyEvents.events.fullMoonJun.desc" },
   { title: "New Moon", start: "2026-06-15", description: "A dark window for observing the Milky Way and its many open clusters.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.newMoonJun.title", descKey: "skyEvents.events.newMoonJun.desc" },
 
@@ -73,7 +73,7 @@ export const YEARLY_EVENTS_2026: SkyEvent[] = [
 
   // ---- September ----
   { title: "New Moon", start: "2026-09-11", description: "A dark-sky evening perfect for glimpsing galaxies and the autumn Milky Way.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.newMoonSep.title", descKey: "skyEvents.events.newMoonSep.desc" },
-  { title: "Autumnal Equinox", start: "2026-09-22", description: "Day and night are nearly equal again; the astronomical start of autumn in the north.", url: NASA_SKY, category: "eclipses", titleKey: "skyEvents.events.autumnalEquinox.title", descKey: "skyEvents.events.autumnalEquinox.desc" },
+  { title: "Autumnal Equinox", start: "2026-09-22", description: "Day and night are nearly equal again; the astronomical start of autumn in the north.", url: NASA_SKY, category: "seasonal", titleKey: "skyEvents.events.autumnalEquinox.title", descKey: "skyEvents.events.autumnalEquinox.desc" },
   { title: "Full Moon · Harvest Moon", start: "2026-09-26", description: "The famous Harvest Moon, rising soon after sunset for several nights in a row.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.harvestMoon.title", descKey: "skyEvents.events.harvestMoon.desc" },
 
   // ---- October ----
@@ -89,7 +89,7 @@ export const YEARLY_EVENTS_2026: SkyEvent[] = [
   // ---- December ----
   { title: "New Moon", start: "2026-12-09", description: "Dark December nights return — a superb window for winter constellations.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.newMoonDec.title", descKey: "skyEvents.events.newMoonDec.desc" },
   { title: "Geminids Meteor Shower · Peak Night", start: "2026-12-14", description: "Often the year's richest shower, with slow, bright meteors and fireballs.", url: IMO, category: "meteor-showers", titleKey: "skyEvents.events.geminids.title", descKey: "skyEvents.events.geminids.desc" },
-  { title: "Winter Solstice", start: "2026-12-21", description: "The shortest day of the year in the north — the astronomical start of winter.", url: NASA_SKY, category: "eclipses", titleKey: "skyEvents.events.winterSolstice.title", descKey: "skyEvents.events.winterSolstice.desc" },
+  { title: "Winter Solstice", start: "2026-12-21", description: "The shortest day of the year in the north — the astronomical start of winter.", url: NASA_SKY, category: "seasonal", titleKey: "skyEvents.events.winterSolstice.title", descKey: "skyEvents.events.winterSolstice.desc" },
   { title: "Ursids Meteor Shower · Peak Night", start: "2026-12-22", description: "A modest shower radiating from Ursa Minor around the winter solstice.", url: IMO, category: "meteor-showers", titleKey: "skyEvents.events.ursids.title", descKey: "skyEvents.events.ursids.desc" },
   { title: "Full Moon · Cold Moon", start: "2026-12-24", description: "December's full Moon rising near the winter solstice nights.", url: NASA_MOON, category: "moon-phases", titleKey: "skyEvents.events.coldMoon.title", descKey: "skyEvents.events.coldMoon.desc" },
 ];
@@ -99,6 +99,7 @@ export const EVENT_GUIDES = {
   moonPhases: NASA_MOON,
   meteorShowers: IMO,
   eclipses: NASA_SKY,
+  seasonal: NASA_SKY,
   planetary: SOLARSYSTEM,
   default: NASA_SKY,
 } as const;
@@ -107,6 +108,7 @@ export const FALLBACK_BY_CATEGORY: Record<string, string> = {
   "meteor-showers": EVENT_GUIDES.meteorShowers,
   "moon-phases": EVENT_GUIDES.moonPhases,
   eclipses: EVENT_GUIDES.eclipses,
+  seasonal: EVENT_GUIDES.seasonal,
   oppositions: EVENT_GUIDES.planetary,
   conjunctions: EVENT_GUIDES.planetary,
 };

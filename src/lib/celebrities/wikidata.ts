@@ -65,6 +65,53 @@ export function commonsThumb(uri: string): string {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(clean)}?width=330`;
 }
 
+/**
+ * Robust image-loading fallback chain for a single Commons file reference.
+ *
+ * External feeds can hand us Commons file references that are already
+ * URL-escaped, plain, or carrying characters (parens, percent) that double-
+ * encode easily, so we emit several equivalent `Special:FilePath` candidates
+ * and let the renderer try them in order until one actually renders. Exhausting
+ * the whole chain is a fast, reliable signal to fall back to a typographic
+ * avatar. Returns only, unique `https://` candidates.
+ */
+export function imageCandidates(uri: string): string[] {
+  if (!uri) return [];
+  const filename = (uri.split("/").pop() ?? uri)
+    .replace(/^File:/i, "")
+    .replace(/ /g, "_");
+  const base = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+  const out: string[] = [];
+  const add = (url: string) => {
+    if (url && !out.includes(url)) out.push(url);
+  };
+  // 1) Decode-then-encode: when the source value was already percent-escaped
+  //    (e.g. SPARQL URIs like "Foo%28Bar%29.jpg"), this prevents double-encoding
+  //    so the FIRST attempt is already a working URL.
+  try {
+    const decoded = decodeURIComponent(filename);
+    if (decoded !== filename) {
+      add(`${base}${encodeURIComponent(decoded)}?width=330`);
+      add(`${base}${encodeURIComponent(decoded)}`);
+    }
+  } catch {
+    /* malformed escape sequence — skip the decoded variants */
+  }
+  // 2) Primary: resized thumbnail (the canonical embed URL for plain names).
+  //    Skipped when the name is already percent-escaped — re-encoding it
+  //    there would double-encode (e.g. "%28" → "%2528") and break the URL.
+  if (!filename.includes("%")) {
+    add(`${base}${encodeURIComponent(filename)}?width=330`);
+    add(`${base}${encodeURIComponent(filename)}`);
+  }
+  // 3) Pass the reference through verbatim; the browser encodes the parts it
+  //    must, so an already-escaped filename keeps its escapes intact.
+  if (!/[?#"\\]/.test(filename)) {
+    add(`${base}${filename}?width=330`);
+  }
+  return out;
+}
+
 function articleUrl(qid: string, article: string): string {
   const trimmed = article.trim();
   if (trimmed.length > 0) return trimmed;

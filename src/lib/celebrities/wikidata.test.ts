@@ -3,6 +3,7 @@ import type { Celebrity } from "@/lib/content/celebrities";
 import {
   buildBirthdaySparql,
   commonsThumb,
+  imageCandidates,
   parseWikidataBindings,
   selectTopByCategory,
 } from "./wikidata";
@@ -92,6 +93,28 @@ describe("wikidata birthday pipeline", () => {
   it("normalises Commons file URLs into resized thumbnails", () => {
     expect(commonsThumb("http://commons.wikimedia.org/wiki/Special:FilePath/Foo Bar.png"))
       .toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
+  });
+
+  it("builds a multi-candidate image fallback chain from a plain filename", () => {
+    const c = imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png");
+    expect(c[0]).toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
+    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
+    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png");
+    expect(c.every((u) => u.startsWith("https://"))).toBe(true);
+  });
+
+  it("adds decode-then-encode variants for already-escaped filenames", () => {
+    const c = imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo%28Bar%29.jpg");
+    expect(c[0]).toContain("?width=330");
+    // Never double-encode "%28" into "%2528".
+    expect(c.every((u) => !u.includes("%25"))).toBe(true);
+    // The passed-through (already-escaped) reference stays reachable too.
+    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo%28Bar%29.jpg?width=330");
+  });
+
+  it("returns an empty list for missing input", () => {
+    expect(imageCandidates("")).toEqual([]);
+    expect(imageCandidates(undefined as unknown as string)).toEqual([]);
   });
 
   it("selects the top sitelink-ranked figure per category and caps the total", () => {

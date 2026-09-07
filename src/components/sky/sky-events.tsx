@@ -135,9 +135,15 @@ export function SkyEvents() {
     );
   });
 
-  function categoryLabel(category: string | undefined): string {
+  function categoryLabel(category: string | undefined, title: string): string {
+    // Equinoxes and solstices are seasonal moments, not eclipses — no matter
+    // how an upstream feed happens to categorise them.
+    if (/equinox|solstice/i.test(title)) {
+      return t("skyEvents.seasonal", "Seasonal");
+    }
     switch (category) {
       case "meteor-showers": return t("skyEvents.meteorShower", "Meteor shower");
+      case "seasonal": return t("skyEvents.seasonal", "Seasonal");
       case "eclipses": return t("skyEvents.eclipse", "Eclipse");
       case "oppositions": return t("skyEvents.opposition", "Opposition");
       case "conjunctions": return t("skyEvents.conjunction", "Conjunction");
@@ -239,7 +245,7 @@ export function SkyEvents() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {events.map((e) => {
               const { month, text } = displayDate(e.start, locale);
-              const label = categoryLabel(e.category);
+              const label = categoryLabel(e.category, e.title ?? "");
               return (
                 <article
                   key={`${e.start}-${e.title}`}

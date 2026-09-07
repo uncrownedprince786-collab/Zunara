@@ -12,10 +12,10 @@ const NASA_SKY_URL = "https://www.nasa.gov/skywatching/";
 
 /** Localized keys for the four principal lunar phases (see `phases.*`). */
 const QUARTER_INFO: Array<{ titleKey: string; descKey: string }> = [
-  { titleKey: "phases.newMoon", descKey: "phases.phaseHints.newMoon" },
-  { titleKey: "phases.firstQuarter", descKey: "phases.phaseHints.firstQuarter" },
-  { titleKey: "phases.fullMoon", descKey: "phases.phaseHints.fullMoon" },
-  { titleKey: "phases.lastQuarter", descKey: "phases.phaseHints.lastQuarter" },
+  { titleKey: "phases.newMoon", descKey: "phaseHints.newMoon" },
+  { titleKey: "phases.firstQuarter", descKey: "phaseHints.firstQuarter" },
+  { titleKey: "phases.fullMoon", descKey: "phaseHints.fullMoon" },
+  { titleKey: "phases.lastQuarter", descKey: "phaseHints.lastQuarter" },
 ];
 
 /** Seasonal points as target Sun ecliptic longitudes → localized event keys. */
@@ -85,7 +85,7 @@ export function calculateSkyEvents(
         start: isoDay(at),
         description: key,
         url: NASA_SKY_URL,
-        category: "eclipses",
+        category: "seasonal",
         titleKey: `skyEvents.events.${key}.title`,
         descKey: `skyEvents.events.${key}.desc`,
       });
@@ -100,21 +100,54 @@ export function calculateSkyEvents(
 }
 
 /**
+ * Stable identity token for seasonal events (equinoxes/solstices).
+ *
+ * These recur yearly and legitimately land on different dates depending on the
+ * source — a live feed's UTC day can differ by a day from the exact computed
+ * crossing moment or the curated calendar — so they are deduplicated by season
+ * instead of by `date|category`, which would otherwise show the equinox twice
+ * on two nearly identical dates.
+ */
+export function seasonKeyOf(e: SkyEvent): string | null {
+  if (!/^\d{4}-\d{2}/.test(e.start || "")) return null;
+  const title = (e.title ?? "").toLowerCase();
+  const isEquinox = /equinox/.test(title);
+  const isSolstice = /solstice/.test(title);
+  if (!isEquinox && !isSolstice) return null;
+  const year = e.start.slice(0, 4);
+  const month = Number(e.start.slice(5, 7));
+  let season: string;
+  if (month >= 3 && month <= 4) season = "spring";
+  else if (month >= 5 && month <= 7) season = "summer";
+  else if (month >= 8 && month <= 10) season = "autumn";
+  else season = "winter";
+  return `season|${year}|${season}|${isEquinox ? "equinox" : "solstice"}`;
+}
+
+/**
  * Merge several event sources with first-wins deduplication, keyed by
  * `date + category`. Passing sources highest-priority first keeps live feed
  * entries, then the named full-year baseline, and finally the generic computed
  * phases — so a "Full Moon · Harvest Moon" entry wins over a plain "Full Moon"
- * on the same night.
+ * on the same night. Seasonal events are deduplicated by season regardless of
+ * small (1-day) date disagreements between sources.
  */
 export function mergeSkyEventSources(...sources: SkyEvent[][]): SkyEvent[] {
   const seen = new Set<string>();
+  const seenSeason = new Set<string>();
   const key = (e: SkyEvent) => `${e.start.slice(0, 10)}|${e.category ?? ""}`;
   const out: SkyEvent[] = [];
   for (const source of sources) {
     for (const e of source) {
-      const k = key(e);
-      if (seen.has(k)) continue;
-      seen.add(k);
+      const season = seasonKeyOf(e);
+      if (season) {
+        if (seenSeason.has(season)) continue;
+        seenSeason.add(season);
+      } else {
+        const k = key(e);
+        if (seen.has(k)) continue;
+        seen.add(k);
+      }
       out.push(e);
     }
   }
