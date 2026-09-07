@@ -400,6 +400,43 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #28: Performance (payload −38%), visible moon phase, sky-events polish, celebrity portrait fallbacks (`f416c71`, `d93821a`, `32bc9c9`)
+
+Verification: `tsc --noEmit` clean, `vitest` 250/250, `next build` green (93 pages).
+
+Goal: cut the initial JS payload that was making the site feel slow, make the moon actually look like a moon, fix the Sky Events data glitches, and make celebrity portraits resolve reliably.
+
+### Performance — initial JS ~1415KB → ~870KB
+- `src/components/home/home-heavy-sections.tsx`: new `"use client"` wrapper using `next/dynamic(..., { ssr: false })` (illegal directly in a Server Component) for SkyMapClient, DailyTransitClient, BentoZodiacGrid, SkyEvents, CelebrityBirthdays, CosmicTraits; `SectionSkeleton` fallback. `page.tsx` imports these from the wrapper.
+- three.js chunk (559KB, `1dfbrz954xgec.js`) is no longer in the home init HTML — fetched only when the sky map mounts.
+- `vitruvian-hero.tsx`: removed `priority`, set `loading="lazy"` (decorative opacity-15 watermark, absolute → zero CLS); killed the 3840px preload. Preload list is now just the two webfonts.
+- MeteorShower already optimized (30fps, pauses offscreen/hidden, reduced-motion aware). Commits `f416c71` + `d93821a`.
+
+### Moon phase is visible again
+- `moon-phase.tsx` SVG drew the whole disc at `opacity = illumination/100`, so a 21% waning-crescent disc was nearly invisible. Now the lit disc renders at full brightness and the dark side is carved out with an SVG `<mask>` (`common white rect − night-cap path`), with the unlit limb as a subtle `--color-ink-3` disc underneath. A slim crescent now shows clearly on the correct (waning/waxing) side.
+
+### Upcoming Sky Events (3 fixes)
+- **i18n leak:** computed moon-phase events used `descKey: "phases.phaseHints.*"` but `phaseHints` is a top-level dict block — raw keys were rendered verbatim. Fixed keys to `"phaseHints.*"` (en|ur|ar|es|zh).
+- **Equinox ≠ Eclipse:** equinoxes/solstices were categorised `"eclipses"` (badge "Eclipse"). Now `"seasonal"` with a localized "Seasonal/موسمی/موسمي/Estacional/季节性" label (all 5 dicts), plus a `categoryLabel` guard so a live-feed equinox can never show "Eclipse"; `FALLBACK_BY_CATEGORY` gained `seasonal`.
+- **Duplicate Autumnal Equinox (Sep 22 + Sep 23):** `mergeSkyEventSources` deduped only by `date|category`, so the feed's equinox, the exact computed crossing and the curated calendar produced two cards a day apart. New `seasonKeyOf()` tokens seasonal events by year+season+type (`season|2026|autumn|equinox`) and merge keeps the first across any ±1-day disagreement.
+
+### Celebrity portraits — multi-layer fallback (once and for all)
+- `wikidata.ts` `imageCandidates(uri)`: up to 4 equivalent `Special:FilePath` URLs tried in order — decode-then-encode (fixes double-encoded SPARQL names like `%28`), resized `?width=330` thumb for plain names, original file, verbatim passthrough (guarded against `%` re-encoding and `?#` chars). `commonsThumb` unchanged (existing tests stable).
+- `celebrity-birthdays-view.tsx` `PortraitAvatar` cycles candidates on `onError` (remount via `key={src}`), falling back to the typographic monogram only when the whole chain is exhausted.
+
+### Planetary bulletin position (home)
+- "The current sky" previously stacked Moon card + bulletin in the right column, leaving a tall empty gap under the left column. Restructured: header + Sun copy (3/5) alongside MoonSignCard (2/5), then the **Planetary bulletin as a full-width panel below** with retro/transit entries in a responsive `sm:grid-cols-2 lg:grid-cols-3` card grid — no dead space on either side.
+
+### Tests
+- `sky-events-calculated.test.ts`: seasonal category now asserted as `"seasonal"`; added equinox-collapse (different dates) + keep-same-category-different-days + `seasonKeyOf` cases.
+- `wikidata.test.ts`: added `imageCandidates` coverage (plain, escaped, empty).
+
+### 3D-sky tool survey (conclusion: keep three.js)
+- Reviewed Stellarium Web Engine (AGPL-3.0 → would force-copyleft the whole site; emscripten/WASM + Gaia/star databases → multi-MB payload, undoes the deferral win), d3-celestial (2D planar maps, not a live dome). Our three.js dome (MIT, already integrated, bundle-split, SSR-safe) remains the right fit for a lightweight, design-matched "see the sky right now" widget.
+
+### Files touched
+- `src/app/page.tsx`, `src/components/home/home-heavy-sections.tsx` (new), `src/components/ui/vitruvian-hero.tsx`, `src/components/ui/moon-phase.tsx`, `src/components/ui/celebrity-birthdays-view.tsx`, `src/lib/celebrities/wikidata.ts`(+test), `src/lib/content/sky-events-calculated.ts`(+test), `src/lib/content/sky-events-data.ts`, `src/components/sky/sky-events.tsx`, `src/lib/i18n/dictionaries.ts`.
+
 ## Sprint #27: RTL blank-screen fix, hydration mismatches resolved, date-sync & image polish (`9b4c174`)
 
 Verification: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green.
