@@ -30,7 +30,7 @@ export function VitruvianHero({
         alt=""
         width={550}
         height={550}
-        priority
+        loading="lazy"
         sizes="(max-width: 550px) 100vw, 550px"
         className="mx-auto max-w-[550px] object-contain opacity-15"
       />
