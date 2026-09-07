@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
-import { BentoZodiacGrid } from "@/components/ui/bento-zodiac-grid";
 import { HeroVisual } from "@/components/ui/hero-visual";
 import { VitruvianHero } from "@/components/ui/vitruvian-hero";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
@@ -11,11 +10,14 @@ import { snapshotForToday } from "@/lib/astronomy/astro";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { LocaleText } from "@/components/ui/locale-text";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
-import { SkyEvents } from "@/components/sky/sky-events";
-import { CelebrityBirthdays } from "@/components/ui/celebrity-birthdays";
-import { CosmicTraits } from "@/components/ui/cosmic-traits";
-import { SkyMapClient } from "@/app/sky-map/sky-map-client";
-import { DailyTransitClient } from "@/app/daily-transit/daily-transit-client";
+import {
+  SkyMapClient,
+  DailyTransitClient,
+  BentoZodiacGrid,
+  SkyEvents,
+  CelebrityBirthdays,
+  CosmicTraits,
+} from "@/components/home/home-heavy-sections";
 import { SITE } from "@/lib/seo/site";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { plainRetro, plainAspect } from "@/lib/content/sky-plain";
