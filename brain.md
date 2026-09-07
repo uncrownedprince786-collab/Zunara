@@ -400,11 +400,43 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #27: RTL blank-screen fix, hydration mismatches resolved, date-sync & image polish (`9b4c174`)
+
+Verification: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green.
+
+Goal: fix the production-only blank screen on RTL locales (Urdu/Arabic) and eliminate hydration mismatches that cause mobile flash / full-root re-render.
+
+### RTL blank screen (root cause + fix)
+- **Bug:** `.skip-link { left: -9999px }` in `globals.css` — under `dir=rtl` the offset is measured from the right edge, inflating `document.scrollWidth` to ~10,624px. Combined with `html { overflow-x: clip }`, all visible content is pushed off-screen → fully blank RTL layout.
+- **Fix:** replaced with the `clip()` visually-hidden pattern (`clip: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px`) + `inset-inline-start` for correct LTR/RTL focus placement. Zero overflow added.
+
+### Hydration mismatches (root cause + fix)
+- **SVG `<title>` array children:** `zodiac-symbol.tsx` and `planet-symbol.tsx` rendered `<title>{glyph} {aria}</title>` (3 children: glyph + space + aria). Browsers collapse `<title>` to a single text node, so React sees 3 children on server but 1 in the browser → hydration mismatch on every page. Fixed by collapsing to a single template-literal string (`<title>{`${glyph} ${aria}`}</title>`).
+- **Live astronomy at render time:** `BentoZodiacGrid`, `MoonSignCard`, `MoonPhaseWidget` (via `DailyOrbitBanner`), and `SkyEvents` each called `new Date()` / `snapshotForToday()` / `moonSign()` / `moonPhase()` during render. Build-time SSR and client hydration compute different planetary positions → React #418 (prod-only, triggers full root re-render / mobile flash). Fixed by adding `startOfUtcDay()` helper to `astro.ts` (returns 00:00:00 UTC for the current day) and passing it to every live-computing component so server and client agree.
+
+### Home date sync
+- Daily cron (`api/cron/daily/route.ts`) now calls `revalidatePath("/")` so the ISR home page refreshes its hero date and "famous birthdays today" on the UTC day rollover instead of holding a stale date on low-traffic days.
+
+### Image domain expansion
+- Added `commons.wikimedia.org` to CSP `img-src` and `next/image` `remotePatterns` in `next.config.ts`.
+
+### Files touched
+- `src/app/globals.css` — skip-link clip pattern
+- `src/components/ui/zodiac-symbol.tsx` — title single-string
+- `src/components/ui/planet-symbol.tsx` — title single-string
+- `src/lib/astronomy/astro.ts` — new `startOfUtcDay()` export
+- `src/components/ui/bento-zodiac-grid.tsx` — pass stable date
+- `src/components/ui/moon-sign-card.tsx` — pass stable date
+- `src/components/ui/daily-orbit-banner.tsx` — pass stable date to MoonPhaseWidget
+- `src/components/sky/sky-events.tsx` — use stable date in useState initializer
+- `src/app/api/cron/daily/route.ts` — `revalidatePath("/")`
+- `next.config.ts` — commons.wikimedia.org CSP + remotePatterns
+
 ## Sprint #26: Free geocoding everywhere, expanded legal disclaimer, 3D night-sky dome (`11eab96`)
 
 Verification: `tsc --noEmit` 0 errors, `vitest` 243/243, `next build` green (home + `/sky-map` prerender the 3D client island cleanly).
 
-Goal: give every location/place field a free, accurate address lookup; harden the legal disclaimer; turn the flat sky map into a 3D model anyone understands — delivered in three parallel tracks (done ASAP). Working tree hygiene: the user's unrelated uncommitted hydration work (`astro.ts startOfUtcDay`, `moon-sign-card`, `sky-events`, `bento-zodiac-grid`, `daily-orbit-banner`, `globals.css`, `next.config.ts`, `api/cron/daily`, `planet-symbol`, `zodiac-symbol`) was left uncommitted.
+Goal: give every location/place field a free, accurate address lookup; harden the legal disclaimer; turn the flat sky map into a 3D model anyone understands — delivered in three parallel tracks (done ASAP).
 
 ### Track 1 — Verified-place geocoding (free, accurate, never misleading)
 - New `src/lib/geo/geocoding.ts`: shared **Nominatim/OpenStreetMap** client (free, no key) — `COOLDOWN_MS=1000` 1 req/s throttle, `debounce()` helper (callers use 350ms), `MIN_QUERY_LENGTH=3`, typed `PlaceSuggestion {id,label,name,latitude,longitude,type,country}`, `searchPlaces(q)` returns `{query,results}` so stale responses are dropped, `PlaceProvenance = "verified" | "manual"`, and a required `OSM_ATTRIBUTION` constant.
