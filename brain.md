@@ -400,6 +400,23 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #32: Celebrity Portrait Rendering Fix + Planning-First Sky Calendar (`2740b71`)
+
+Verification: `tsc --noEmit` clean, `vitest` 366/366, `eslint` 0 errors (5 pre-existing benign warnings), `next build` green. **Runtime-verified for real**: started `next start`, fetched `/birthday/09-03`, `/famous-birthdays`, `/sky-events`, `/` — birthday page now SSR-renders 3 direct `<img src="https://upload.wikimedia.org/…">` tags (Charlie Sheen, Shaun White, Garrett Hedlund); all 85 curated portrait URLs return HTTP 200 (the 429s during bulk HEAD were Wikimedia rate-limiting — same URLs 200 when spaced); Wikipedia REST summary fallback resolves 7/8 no-image titles with a real lead image (Leslie Jones has no lead image — monogram fallback fires as designed).
+
+### Root cause fixed — portraits were never rendering their real image
+- `imageCandidates()` (src/lib/celebrities/wikidata.ts) was fed **full absolute URLs** by both pipelines (curated pool stores `https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Foo.jpg/330px-Foo.jpg`; live tier stores `commonsThumb()` output `https://commons.wikimedia.org/wiki/Special:FilePath/Foo.jpg?width=330`), but it did `uri.split("/").pop()` and rebuilt a fake `Special:FilePath/330px-Foo.jpg` reference → every candidate 404'd → **every** portrait fell through to the slow client-side Wikipedia REST fallback (which itself 404s for ambiguous short titles like `RM`, `V`, `Gandhi`), so many cards showed the initials monogram instead of a photo.
+- Fix: when the input already starts with `http(s)://`, return it **verbatim** as the single candidate (upgrading `http:` → `https:` to avoid mixed-content blocking). Bare-filename candidates still build the multi-candidate `Special:FilePath` chain as before.
+- `wikidata.test.ts` updated to the corrected contract (verbatim passthrough + https upgrade; plain-filename chain tests retained). 13 cases.
+
+### Sky events — planning-first, no more "Past"
+- Removed the useless **Past** filter entirely (`Filter = "all" | "upcoming"`); default filter is now `upcoming` so the current year opens on what's still ahead.
+- Year picker clamped to `[currentYear, currentYear+2]` (no browsing the past); added a **"Plan ahead"** row with quick chips **This year / Next year** so visitors can plan the next 12–24 months in one tap.
+- i18n across all 5 locales: dropped `skyEvents.filters.past`, added `skyEvents.planHeading` + `skyEvents.yearPicker.{thisYear,nextYear}` (parity + no-raw-fallback audits green).
+
+### Notes for future
+- Supplementary pool entries (e.g. most dates without a primary card, like today 9-8) carry **no `image`** — they start as a monogram and upgrade client-side via the Wikipedia REST lead-image fetch (verified working). Live Wikidata tier (which fills these with real photos on `/birthday/MM-DD` and the hub) remains untestable from the sandbox (no egress to `query.wikidata.org`) — confirm live-source upgrade in production on a real deploy.
+
 ## Sprint #31: Perpetual Sky-Events Calendar + High-Density Famous Birthdays Hub (`4bd5c9f`)
 
 Verification: `tsc --noEmit` clean, `vitest` 364/364 (24 new), `eslint` 0 errors (5 pre-existing benign warnings), `next build` green — `/sky-events` and `/famous-birthdays` both prerendered static. Work executed in parallel (two agents: sky calendar + birthdays hub), integration/dict/sitemap/footer done orchestrator-side.
