@@ -97,7 +97,7 @@ describe("wikidata birthday pipeline", () => {
   });
 
   it("builds a multi-candidate image fallback chain from a plain filename", () => {
-    const c = imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png");
+    const c = imageCandidates("Foo_Bar.png");
     expect(c[0]).toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
     expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
     expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png");
@@ -105,12 +105,40 @@ describe("wikidata birthday pipeline", () => {
   });
 
   it("adds decode-then-encode variants for already-escaped filenames", () => {
-    const c = imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo%28Bar%29.jpg");
+    const c = imageCandidates("Foo%28Bar%29.jpg");
     expect(c[0]).toContain("?width=330");
     // Never double-encode "%28" into "%2528".
     expect(c.every((u) => !u.includes("%25"))).toBe(true);
     // The passed-through (already-escaped) reference stays reachable too.
     expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo%28Bar%29.jpg?width=330");
+  });
+
+  it("passes an already-absolute URL through verbatim instead of re-splitting it", () => {
+    // Commons thumb URLs and commonsThumb() output are full URLs; splitting the
+    // path would corrupt them (e.g. "…/thumb/d/d4/Foo.jpg/330px-Foo.jpg" is a
+    // valid thumb, not the file "330px-Foo.jpg").
+    expect(
+      imageCandidates(
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330",
+      ),
+    ).toEqual([
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330",
+    ]);
+    expect(
+      imageCandidates(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Foo.jpg/330px-Foo.jpg",
+      ),
+    ).toEqual([
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Foo.jpg/330px-Foo.jpg",
+    ]);
+  });
+
+  it("upgrades http: source URLs to https: to avoid mixed-content blocking", () => {
+    expect(
+      imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo.png?width=330"),
+    ).toEqual([
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Foo.png?width=330",
+    ]);
   });
 
   it("returns an empty list for missing input", () => {

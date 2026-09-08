@@ -89,6 +89,15 @@ export function wikiSummaryUrl(title: string): string {
  */
 export function imageCandidates(uri: string): string[] {
   if (!uri) return [];
+  // Already-an-absolute URL (curated thumbs, commonsThumb output, REST lead
+  // images): embed it verbatim. Splitting the path would corrupt the filename
+  // (e.g. "d/d4/Foo.jpg/330px-Foo.jpg" → "330px-Foo.jpg") and 404 in the
+  // rendering <img>, which used to send every portrait through the slow REST
+  // fallback below. http: URLs are upgraded to https: to avoid mixed-content
+  // blocking on the rendered page.
+  if (/^https?:\/\//i.test(uri)) {
+    return [uri.replace(/^http:/i, "https:")];
+  }
   const filename = (uri.split("/").pop() ?? uri)
     .replace(/^File:/i, "")
     .replace(/ /g, "_");

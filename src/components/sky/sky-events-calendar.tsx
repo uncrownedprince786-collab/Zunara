@@ -13,7 +13,7 @@ import { generateTransitICS } from "@/lib/calendar/ics-generator";
 
 const DEAD_HOSTS = ["aa.usno.navy.mil"];
 
-type Filter = "all" | "upcoming" | "past";
+type Filter = "all" | "upcoming";
 
 function resolveUrl(e: SkyEvent): string {
   const raw = (e.url ?? "").trim();
@@ -78,7 +78,7 @@ function categoryLabel(
 }
 
 const CURRENT_YEAR = new Date().getUTCFullYear();
-const MIN_YEAR = CURRENT_YEAR - 2;
+const MIN_YEAR = CURRENT_YEAR;
 const MAX_YEAR = CURRENT_YEAR + 2;
 
 export function SkyEventsCalendar() {
@@ -89,7 +89,7 @@ export function SkyEventsCalendar() {
     const utcYear = new Date().getUTCFullYear();
     return Math.max(MIN_YEAR, Math.min(MAX_YEAR, utcYear));
   });
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<Filter>("upcoming");
 
   useEffect(() => {
     setNowRef(new Date());
@@ -100,7 +100,6 @@ export function SkyEventsCalendar() {
   const filtered = useMemo(() => {
     const nowTs = nowRef.getTime();
     if (filter === "upcoming") return events.filter((e) => eventTime(e) >= nowTs);
-    if (filter === "past") return events.filter((e) => eventTime(e) < nowTs);
     return events;
   }, [events, filter, nowRef]);
 
@@ -233,12 +232,36 @@ export function SkyEventsCalendar() {
             </span>
           </div>
 
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-subdued">
+              {t("skyEvents.planHeading", "Plan ahead")}
+            </span>
+            {(
+              [
+                [String(CURRENT_YEAR), "skyEvents.yearPicker.thisYear", "This year"],
+                [String(CURRENT_YEAR + 1), "skyEvents.yearPicker.nextYear", "Next year"],
+              ] as const
+            ).map(([value, key, fb]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setYear(Number(value))}
+                className={`rounded-full border px-4 py-1.5 text-xs font-medium transition-colors ${
+                  year === Number(value)
+                    ? "border-gold/40 bg-gold/15 text-gold"
+                    : "border-white/15 text-starlight hover:border-gold/30 hover:text-gold"
+                }`}
+              >
+                {t(key, fb)}
+              </button>
+            ))}
+          </div>
+
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {(
               [
                 ["all", "skyEvents.filters.all", "All"],
                 ["upcoming", "skyEvents.filters.upcoming", "Upcoming"],
-                ["past", "skyEvents.filters.past", "Past"],
               ] as const
             ).map(([value, key, fb]) => (
               <button
