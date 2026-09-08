@@ -41,6 +41,8 @@ export function SiteFooter() {
         { label: t("footer.skyMap", "Night Sky Map"), href: "/sky-map" },
         { label: t("footer.retrogrades", "Retrogrades"), href: "/retrograde" },
         { label: t("footer.ephemeris", "Ephemeris"), href: "/ephemeris" },
+        { label: t("footer.skyEvents", "Sky Events"), href: "/sky-events" },
+        { label: t("footer.famousBirthdays", "Famous Birthdays"), href: "/famous-birthdays" },
         { label: t("footer.library", "Library"), href: "/library" },
       ],
     },

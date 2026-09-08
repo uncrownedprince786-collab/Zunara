@@ -20,6 +20,10 @@ export interface SkyEvent {
   category?: string;
   titleKey?: string;
   descKey?: string;
+  viewTipKey?: string;
+  regionKey?: string;
+  bodyA?: string;
+  bodyB?: string;
 }
 
 const NASA_SKY = "https://www.nasa.gov/skywatching/";
@@ -112,3 +116,14 @@ export const FALLBACK_BY_CATEGORY: Record<string, string> = {
   oppositions: EVENT_GUIDES.planetary,
   conjunctions: EVENT_GUIDES.planetary,
 };
+
+export const ANNUAL_SHOWER_PEAKS: ReadonlyArray<{ slug: string; month: number; day: number; region: "northern" | "southern" }> = [
+  { slug: "quadrantids", month: 1, day: 3, region: "northern" },
+  { slug: "lyrids", month: 4, day: 22, region: "northern" },
+  { slug: "etaAquariids", month: 5, day: 6, region: "southern" },
+  { slug: "perseids", month: 8, day: 12, region: "northern" },
+  { slug: "orionids", month: 10, day: 21, region: "northern" },
+  { slug: "leonids", month: 11, day: 17, region: "northern" },
+  { slug: "geminids", month: 12, day: 14, region: "northern" },
+  { slug: "ursids", month: 12, day: 22, region: "northern" },
+];

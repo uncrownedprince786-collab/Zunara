@@ -62,6 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/retrograde", changeFrequency: "weekly", priority: 0.6 },
     { path: "/ephemeris", changeFrequency: "weekly", priority: 0.6 },
     { path: "/sky-events", changeFrequency: "weekly", priority: 0.7 },
+    { path: "/famous-birthdays", changeFrequency: "weekly", priority: 0.7 },
     { path: "/library", changeFrequency: "monthly", priority: 0.5 },
     { path: "/library/signs", changeFrequency: "monthly", priority: 0.5 },
     { path: "/library/planets", changeFrequency: "monthly", priority: 0.5 },

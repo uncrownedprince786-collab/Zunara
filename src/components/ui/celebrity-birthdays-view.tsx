@@ -20,7 +20,7 @@ import type { CelebritySource } from "@/lib/celebrities/resolver";
 /** In-memory cache of resolved REST lead-image URLs, keyed by article title. */
 const PORTRAIT_CACHE = new Map<string, string | null>();
 
-function initialsOf(name: string): string {
+export function initialsOf(name: string): string {
   return name
     .replace(/[^a-zA-Z0-9' .-]/g, "")
     .split(/\s+/)
@@ -37,7 +37,7 @@ function wikiTitleOf(celebrity: Celebrity): string {
   return celebrity.name.replace(/ /g, "_");
 }
 
-const REGION_STYLE: Record<CelebrityRegion, string> = {
+export const REGION_STYLE: Record<CelebrityRegion, string> = {
   Hollywood: "border-white/10 bg-white/[0.04] text-muted",
   Bollywood: "border-gold/20 bg-gold/5 text-gold-deep",
   "K-Pop": "border-cosmic/25 bg-cosmic/10 text-cosmic",
@@ -46,28 +46,28 @@ const REGION_STYLE: Record<CelebrityRegion, string> = {
   Global: "border-white/10 bg-white/[0.04] text-muted",
 };
 
-const ELEMENT_GLOW: Record<ZodiacSign["element"], string> = {
+export const ELEMENT_GLOW: Record<ZodiacSign["element"], string> = {
   Fire: "from-fire/25",
   Earth: "from-earth/25",
   Air: "from-air/25",
   Water: "from-water/25",
 };
 
-const ELEMENT_RING: Record<ZodiacSign["element"], string> = {
+export const ELEMENT_RING: Record<ZodiacSign["element"], string> = {
   Fire: "text-fire",
   Earth: "text-earth",
   Air: "text-air",
   Water: "text-water",
 };
 
-const ELEMENT_BG: Record<ZodiacSign["element"], string> = {
+export const ELEMENT_BG: Record<ZodiacSign["element"], string> = {
   Fire: "from-fire/15 to-nebula/40",
   Earth: "from-earth/15 to-nebula/40",
   Air: "from-air/15 to-nebula/40",
   Water: "from-water/15 to-nebula/40",
 };
 
-function PortraitAvatar({
+export function PortraitAvatar({
   celebrity,
   sign,
 }: {

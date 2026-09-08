@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   calculateSkyEvents,
+  calculateSkyEventsForYear,
   mergeSkyEventSources,
   seasonKeyOf,
   SKY_CALC_HORIZON_DAYS,
 } from "./sky-events-calculated";
+import { ANNUAL_SHOWER_PEAKS } from "./sky-events-data";
 import type { SkyEvent } from "./sky-events-data";
 
 const NOW = new Date("2026-09-15T12:00:00Z");
@@ -143,5 +145,90 @@ describe("seasonKeyOf", () => {
   it("maps an equinox to a stable season token", () => {
     expect(seasonKeyOf({ title: "Autumnal Equinox", start: "2026-09-22", description: "" }))
       .toBe("season|2026|autumn|equinox");
+  });
+});
+
+const YEAR = 2026;
+const yearStartTs = Date.UTC(YEAR, 0, 1);
+const yearEndTs = Date.UTC(YEAR, 11, 31, 23, 59, 59);
+
+describe("calculateSkyEventsForYear", () => {
+  const events = calculateSkyEventsForYear(YEAR);
+
+  it("generates exactly 4 seasonal events", () => {
+    const seasonal = events.filter((e) => e.category === "seasonal");
+    expect(seasonal).toHaveLength(4);
+  });
+
+  it("seasonal events have full ISO datetime starts", () => {
+    const seasonal = events.filter((e) => e.category === "seasonal");
+    for (const e of seasonal) {
+      expect(e.start.length).toBeGreaterThan(10);
+      expect(Number.isNaN(new Date(e.start).getTime())).toBe(false);
+    }
+  });
+
+  it("generates moon phases in the expected range", () => {
+    const phases = events.filter((e) => e.category === "moon-phases");
+    expect(phases.length).toBeGreaterThanOrEqual(12);
+    expect(phases.length).toBeLessThanOrEqual(60);
+  });
+
+  it("all moon phases are sorted", () => {
+    const phases = events.filter((e) => e.category === "moon-phases");
+    const times = phases.map((e) => new Date(e.start).getTime());
+    expect(times).toEqual([...times].sort((a, b) => a - b));
+  });
+
+  it("generates exactly the expected number of meteor showers", () => {
+    const showers = events.filter((e) => e.category === "meteor-showers");
+    expect(showers).toHaveLength(ANNUAL_SHOWER_PEAKS.length);
+  });
+
+  it("meteor showers have date-only starts", () => {
+    const showers = events.filter((e) => e.category === "meteor-showers");
+    for (const e of showers) {
+      expect(e.start).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+
+  it("generates at least one conjunction", () => {
+    const conjunctions = events.filter((e) => e.category === "conjunctions");
+    expect(conjunctions.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("conjunction events have truthy bodyA and bodyB", () => {
+    const conjunctions = events.filter((e) => e.category === "conjunctions");
+    for (const e of conjunctions) {
+      expect(e.bodyA).toBeTruthy();
+      expect(e.bodyB).toBeTruthy();
+    }
+  });
+
+  it("conjunction events have parseable starts", () => {
+    const conjunctions = events.filter((e) => e.category === "conjunctions");
+    for (const e of conjunctions) {
+      expect(Number.isNaN(new Date(e.start).getTime())).toBe(false);
+    }
+  });
+
+  it("every start is a valid ISO date or datetime within the year", () => {
+    for (const e of events) {
+      expect(e.start).toMatch(/^\d{4}-\d{2}-\d{2}/);
+      const ts = new Date(e.start).getTime();
+      expect(ts).toBeGreaterThanOrEqual(yearStartTs);
+      expect(ts).toBeLessThanOrEqual(yearEndTs);
+    }
+  });
+
+  it("returns events globally sorted by start", () => {
+    const times = events.map((e) => new Date(e.start).getTime());
+    expect(times).toEqual([...times].sort((a, b) => a - b));
+  });
+
+  it("is deterministic across calls", () => {
+    const a = calculateSkyEventsForYear(YEAR);
+    const b = calculateSkyEventsForYear(YEAR);
+    expect(a).toEqual(b);
   });
 });
