@@ -400,6 +400,30 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #31: Perpetual Sky-Events Calendar + High-Density Famous Birthdays Hub (`4bd5c9f`)
+
+Verification: `tsc --noEmit` clean, `vitest` 364/364 (24 new), `eslint` 0 errors (5 pre-existing benign warnings), `next build` green — `/sky-events` and `/famous-birthdays` both prerendered static. Work executed in parallel (two agents: sky calendar + birthdays hub), integration/dict/sitemap/footer done orchestrator-side.
+
+### Part 1 — `/sky-events` perpetual full-year calendar
+- `src/lib/content/sky-events-calculated.ts` — new `calculateSkyEventsForYear(year)` (deterministic, pure): 4 seasonal points (`SearchSunLongitude`), all ~49 moon quarters (`SearchMoonQuarter`/`NextMoonQuarter`), 8 annual meteor-shower peaks (from new `ANNUAL_SHOWER_PEAKS` in `sky-events-data.ts`), and planetary conjunctions for all 10 naked-eye planet pairs via `AE.PairLongitude` zero-crossing + bisection refinement (~sub-hour precision, 10-day sampling, 15-day skip guard). Exact ISO UTC datetimes on computed events; shower peaks are date-only.
+- `SkyEvent` gained optional `viewTipKey`, `regionKey`, `bodyA`, `bodyB`.
+- `src/components/sky/sky-events-calendar.tsx` (new client island): year selector (prev/current/next, clamped ±2), All/Upcoming/Past tabs (hydration-safe `startOfUtcDay()` lazy init + mount refresh), rich cards (month badge, localized category/title/description, UTC + user-local time lines, region tag, localized viewing tip, "How to watch" link with dead-host filtering), per-event "Add to calendar" (.ics) + bulk year export. No network dependency — fully computed offline.
+- `src/app/sky-events/page.tsx` — re-shelled around the calendar, perpetual-calendar copy.
+
+### Part 2 — `/famous-birthdays` hub
+- `src/lib/celebrities/filters.ts` (new) — `CelebrityFilter` (all/cinema/music/science/sports) + `CELEBRITY_FILTER_GROUPS` (science → science+tech-business+world-leaders) + `celebrityMatchesFilter` (prefers `c.category` when a known slug, else `categoryFromProfession`).
+- `src/components/celebrities/famous-birthdays-hub.tsx` (new client island) — SSG first paint via `celebritiesForDate(today)`; live 3-tier upgrade via `resolveCelebritiesForDate` (cache → Wikidata → static); Born Today spotlight, zodiac-of-the-day chip, month/day selects + Yesterday/Today/Tomorrow + prev/next day (year-boundary-safe via `Date.UTC(2000, …)` math), category filter chips, dense card grid with `PortraitAvatar` (exported from `celebrity-birthdays-view.tsx`), cards link to `/birthday/MM-DD`; `revalidate = 3600`.
+- `src/app/famous-birthdays/page.tsx` — static shell, `pageMetadata` SEO (title/desc/keywords/hreflang alternates).
+- Sitemap: `/famous-birthdays` added (weekly, 0.7). Footer astronomy column: Sky Events + Famous Birthdays links.
+
+### i18n (all 5 locales, parity + no-raw-fallback audit green)
+- `skyEvents` new: `yearPicker.{label,previous,next}`, `filters.{all,upcoming,past}`, `calendar.{utc,local,tip,addToCalendar}`, `noEvents`, `regions.{global,northern,southern}`, `tips.{meteorShower,moonPhase,seasonal,conjunction}`, `conjunctionsDesc`.
+- `celebrities` new: `filters.{all,cinema,music,science,sports}`, `bornToday`, `yesterday`, `today`, `tomorrow`, `searchLabel`, `signOfTheDay`, `emptyState`.
+
+### Notes for future
+- Live Wikidata fetch still untestable from the sandbox (no egress to `query.wikidata.org`); the live tier self-falls-back to static here, and the hub's static tier keeps first paint dense. Verify `/famous-birthdays` live-source in production.
+- Conjunction engine uses angular-distance crossing detection instead of `SearchRelativeLongitude` (which is single-body-vs-Sun in astronomy-engine 2.1.19); deterministic per year, tested.
+
 ## Sprint #30: Technical SEO, Homepage & Birthday-Date Pages (launch polish)
 
 Verification: `tsc --noEmit` clean, `vitest` 340/340 (+87 this sprint), `eslint` 0 errors, `next build` green (459 pages — up from 93).
