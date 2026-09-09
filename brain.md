@@ -400,6 +400,24 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #33b: Multi-Source Portrait Backfill (`c606361`)
+
+Follow-up to Sprint #33 (the bake script): 8 entries the REST summary endpoint couldn't image. Won 5 more; 3 have genuinely no free photo.
+
+### New sources unlocked (beyond REST summary)
+- `en.wikipedia.org/w/api.php?action=query&titles=…&generator=images&prop=imageinfo&iiurlwidth=330` — every image actually on an article page (works even when the lead image is absent). Resolved **Robin Roberts** (she has no lead image; picked the 2018 cropped high-res shot from the page's image set).
+- `srnamespace=6` **File-namespace search** (`list=search`) — finds Commons photos hosted with the subject's name even when the article has no portrait. Resolved **Leslie Jones** (page has zero images; found `Leslie Jones at The Stress Factory` on Commons) and **Sana** (`Twice in Seattle 2026 – TWICE. Sana(55044986286).jpg`).
+- **Local-language wikis** — th.wikipedia REST resolves **Ken Theeradeth** (en article doesn't exist; Thai article `ธีรเดช วงศ์พัวพันธ์` has one image, normalized to 330px thumb) — reachable, only gotcha is 429 rate-limiting (retry w/ backoff).
+- **Correct slug discovery**: Aum Patchrapa's en article is `Patcharapa_Chaichua` (not `Patchrapa_Chaichua`, which 404s) — had a 2025 portrait. Sana's is `Minatozaki_Sana`. Leslie's is `Leslie_Jones_(comedian)`.
+- `www.wikidata.org` API reachable, but **`commons.wikimedia.org` is ENOTFOUND** in the sandbox → P18 file-URL resolution must go through the en action-API imageinfo path instead (single-hop, same host as everything else).
+
+### Still monogram (verified across en/hi/th wikis, page images, file search, P18)
+- **Vivek Bindra** (no article in any reachable project), **Lisa Bonet** (article exists but zero images — likely BLP-removed), **Zoheb Hassan** (no image on page, no file). Monogram fallback stays.
+
+### Verification
+Fresh `next build` + `next start`, SSR checked per date — all five now render their wikimedia `<img>`: `/birthday/09-07` 6/6 (Leslie included), `/birthday/11-27` (Robin), `/birthday/01-20` (Aum), `/birthday/12-03` (Ken), `/birthday/12-29` (Sana). `tsc` clean, `vitest` 366/366. Pushed `c606361`.
+Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also found the pool's Denzel Washington wrongly dated 1/20 (real: Dec 28) — unrelated, left as-is.
+
 ## Sprint #33: Event-Specific Viewing Tips + Wikipedia Portraits Baked Into Celebrity Pools (`324a8e5`)
 
 Follow-up to Sprint #32's remaining gap: (1) viewing tip was identical for every event in a category, (2) no-image supplement entries still depended on the client React fallback.
