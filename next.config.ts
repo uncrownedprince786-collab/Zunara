@@ -27,7 +27,7 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://upload.wikimedia.org https://commons.wikimedia.org",
+      "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org",
       "font-src 'self' data:",
       "connect-src 'self' https://nominatim.openstreetmap.org https://en.wikipedia.org https://query.wikidata.org",
       "object-src 'none'",
@@ -50,6 +50,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "upload.wikimedia.org",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "thumb.wikimedia.org",
         pathname: "/**",
       },
       {
