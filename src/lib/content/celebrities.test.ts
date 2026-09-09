@@ -59,24 +59,27 @@ describe("celebrity hub data integrity", () => {
     expect(a).toEqual(b);
   });
 
-  it("every real date renders at least one person (no empty grids)", () => {
-    const empty: string[] = [];
+  it("every real date renders at least three people (no sparse grids)", () => {
+    const sparse: string[] = [];
     for (let m = 1; m <= 12; m++) {
       const days = new Date(2024, m, 0).getDate();
       for (let d = 1; d <= days; d++) {
         if (m === 2 && d === 29) continue; // non-leap-year date
-        if (celebritiesForDate(m, d).length === 0) empty.push(`${m}/${d}`);
+        if (celebritiesForDate(m, d).length < 3) sparse.push(`${m}/${d}`);
       }
     }
-    expect(empty).toEqual([]);
+    expect(sparse).toEqual([]);
   });
 
-  it("never shows the same person twice on a date", () => {
+  it("never shows the same person twice on a date (exact or near-duplicate names)", () => {
+    const normalize = (n: string) => n.toLowerCase().replace(/[^a-z0-9]/g, "");
     for (let m = 1; m <= 12; m++) {
       const days = new Date(2024, m, 0).getDate();
       for (let d = 1; d <= days; d++) {
-        const names = celebritiesForDate(m, d).map((p) => p.name);
-        expect(new Set(names).size).toBe(names.length);
+        const keys = celebritiesForDate(m, d).map((p) => normalize(p.name));
+        expect(new Set(keys).size, `${m}/${d} contains duplicate people`).toBe(
+          keys.length,
+        );
       }
     }
   });
