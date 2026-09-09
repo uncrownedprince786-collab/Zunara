@@ -3,6 +3,7 @@ import {
   celebritiesForDate,
   industriesPresent,
 } from "./celebrities";
+import { SUPPLEMENTARY_POOL } from "./celebrity-pool";
 
 describe("celebrity hub data integrity", () => {
   it("covers all diversified industries", () => {
@@ -56,5 +57,55 @@ describe("celebrity hub data integrity", () => {
     const a = celebritiesForDate(7, 14).map((c) => c.name).sort();
     const b = celebritiesForDate(7, 14).map((c) => c.name).sort();
     expect(a).toEqual(b);
+  });
+
+  it("every real date renders at least one person (no empty grids)", () => {
+    const empty: string[] = [];
+    for (let m = 1; m <= 12; m++) {
+      const days = new Date(2024, m, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        if (m === 2 && d === 29) continue; // non-leap-year date
+        if (celebritiesForDate(m, d).length === 0) empty.push(`${m}/${d}`);
+      }
+    }
+    expect(empty).toEqual([]);
+  });
+
+  it("never shows the same person twice on a date", () => {
+    for (let m = 1; m <= 12; m++) {
+      const days = new Date(2024, m, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        const names = celebritiesForDate(m, d).map((p) => p.name);
+        expect(new Set(names).size).toBe(names.length);
+      }
+    }
+  });
+
+  it("every returned celebrity has a portrait image URL or a wiki source", () => {
+    for (let m = 1; m <= 12; m++) {
+      const days = new Date(2024, m, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        for (const person of celebritiesForDate(m, d)) {
+          expect(
+            !!person.image || !!person.wiki,
+            `${person.name} (${m}/${d}) has no image or wiki source`,
+          ).toBe(true);
+          if (person.image) expect(person.image).toMatch(/^https:\/\//);
+        }
+      }
+    }
+  });
+
+  it("every pool entry has a valid month/day and a portrait source (image URL or wiki slug)", () => {
+    for (const p of SUPPLEMENTARY_POOL) {
+      expect(p.month, `${p.name} invalid month`).toBeGreaterThanOrEqual(1);
+      expect(p.month).toBeLessThanOrEqual(12);
+      expect(p.day).toBeGreaterThanOrEqual(1);
+      expect(p.day).toBeLessThanOrEqual(31);
+      expect(
+        !!p.image || !!p.wiki,
+        `${p.name} has neither an image URL nor a wiki slug`,
+      ).toBe(true);
+    }
   });
 });
