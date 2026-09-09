@@ -17,9 +17,10 @@ import {
   DailyTransitClient,
   BentoZodiacGrid,
   SkyEvents,
-  CelebrityBirthdays,
   CosmicTraits,
 } from "@/components/home/home-heavy-sections";
+import { TodaysStars } from "@/components/home/todays-stars";
+import { celebritiesForDate } from "@/lib/content/celebrities";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { websiteJsonLd } from "@/lib/seo/jsonld";
 import { plainRetro, plainAspect } from "@/lib/content/sky-plain";
@@ -34,11 +35,14 @@ function todayDate(): string {
   }).format(new Date());
 }
 
-function todayKey(): string {
+function todayMonthDay(): { month: number; day: number } {
   const now = new Date();
-  const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(now.getUTCDate()).padStart(2, "0");
-  return `${mm}-${dd}`;
+  return { month: now.getUTCMonth() + 1, day: now.getUTCDate() };
+}
+
+function todayKey(): string {
+  const { month, day } = todayMonthDay();
+  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 export const revalidate = 3600;
@@ -61,6 +65,9 @@ export const metadata = pageMetadata(
 export default function HomePage() {
   const date = todayDate();
   const snapshot = snapshotForToday();
+
+  const { month, day } = todayMonthDay();
+  const people = celebritiesForDate(month, day);
 
   const sun = snapshot.positions.find((p) => p.key === "sun");
   const sunSign = sun ? ZODIAC_SIGNS.find((s) => s.slug === sun.sign) : undefined;
@@ -256,8 +263,8 @@ export default function HomePage() {
       {/* ---- Upcoming sky events ---- */}
       <SkyEvents />
 
-      {/* ---- Famous birthdays ---- */}
-      <CelebrityBirthdays />
+      {/* ---- Born today on the home page ---- */}
+      <TodaysStars month={month} day={day} initial={people} />
 
       {/* ---- The twelve signs ---- */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="signs-heading">

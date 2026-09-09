@@ -418,6 +418,17 @@ Follow-up to Sprint #33 (the bake script): 8 entries the REST summary endpoint c
 Fresh `next build` + `next start`, SSR checked per date — all five now render their wikimedia `<img>`: `/birthday/09-07` 6/6 (Leslie included), `/birthday/11-27` (Robin), `/birthday/01-20` (Aum), `/birthday/12-03` (Ken), `/birthday/12-29` (Sana). `tsc` clean, `vitest` 366/366. Pushed `c606361`.
 Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also flagged the pool's Denzel Washington as wrongly dated 1/20 (real: Dec 28) — since fixed in Sprint #34.
 
+## Sprint #36: Home page "Born today" section was silently broken — now server-rendered with today's 6 celebs
+
+User asked to "add a section on the home page showing current-date celeb" — turned out the code already had one, but it NEVER rendered. Root cause: `home-heavy-sections.tsx` (`"use client"`) loaded the ASYNC SERVER COMPONENT `CelebrityBirthdays` via `dynamic(..., { ssr: false })`. Async server components cannot run in the client bundle — React throws on render, `SectionErrorBoundary` swallows it, and the section silently disappears. Verified: built home HTML had ZERO celebrity markup (`Famous birthdays today` absent, no "Full profile" buttons).
+
+Fix (same proven pattern as `/birthday/[date]` → `BirthdayLive`):
+- New `src/components/home/todays-stars.tsx` — `"use client"` island receiving `initial` people from the server (static pool via `celebritiesForDate(today)` — guaranteed 6); on mount it live-upgrades via the resolver exactly like `BirthdayLive`, never blanking on failure.
+- `src/app/page.tsx` — `HomePage` now computes `todayMonthDay()` (UTC, same source as `todayKey()`/masthead date; home is static with `revalidate = 3600` so "today" is the day of last revalidation, consistent with the existing "Discover Birthday Facts" CTA) and renders `<TodaysStars month={month} day={day} initial={people} />`. SSR-verified: kicker "Famous Birthdays Today", heading "September 9", 6 cards + images, tsc/lint/build/tests 9/9 green.
+- Deleted dead wrapper `src/components/ui/celebrity-birthdays.tsx` (async resolver version) and its `CelebrityBirthdaysRaw` dynamic export.
+- No data files touched — `celebrity-pool.ts`/`celebrities.ts` unchanged.
+- Lesson: verify SSR HTML != "code exists". `grep` the prerendered HTML for section markers to confirm a section actually renders; `ssr:false` + async Server Component is always broken.
+
 ## Sprint #35: Static pool expanded ~5× so every birthday date shows 6 diverse celebs offline (`5862763`)
 
 User complaint: "why are we showing like one or 2 celebs… are we getting celebs from every category and industry?" Root cause (verified in code): static tier had ~90 primary + ~557 pool entries ≈ 1.8/date, so most dates SSR'd 1-2 people; the client live-Wikidata top-up frequently timed out (7s SPARQL across all of Wikidata) and silently fell back to static 1-2. User chose "Expand static pool" over "fix live tier".

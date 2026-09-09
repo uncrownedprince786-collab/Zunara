@@ -27,11 +27,6 @@ const SkyEventsRaw = dynamic(
   { ssr: false, loading: SectionSkeleton },
 );
 
-const CelebrityBirthdaysRaw = dynamic(
-  () => import("@/components/ui/celebrity-birthdays").then((m) => m.CelebrityBirthdays),
-  { ssr: false, loading: SectionSkeleton },
-);
-
 const CosmicTraitsRaw = dynamic(
   () => import("@/components/ui/cosmic-traits").then((m) => m.CosmicTraits),
   { ssr: false, loading: SectionSkeleton },
@@ -65,14 +60,6 @@ export function SkyEvents(props: Record<string, unknown>) {
   return (
     <SectionErrorBoundary>
       <SkyEventsRaw {...props} />
-    </SectionErrorBoundary>
-  );
-}
-
-export function CelebrityBirthdays(props: Record<string, unknown>) {
-  return (
-    <SectionErrorBoundary>
-      <CelebrityBirthdaysRaw {...props} />
     </SectionErrorBoundary>
   );
 }
