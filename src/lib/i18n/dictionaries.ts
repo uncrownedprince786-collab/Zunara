@@ -724,10 +724,20 @@ export const en = {
       southern: "Best from the southern hemisphere",
     },
     tips: {
-      meteorShower: "Look up after midnight away from city lights — most showers peak around 2–4 am.",
-      moonPhase: "Pick a clear night, face the Moon and let your eyes adjust for a few minutes.",
-      seasonal: "Mark the changing seasons — a fine night to photograph the horizon at dawn or dusk.",
-      conjunction: "Right after sunset or before sunrise, find a clear horizon — the planets appear close together.",
+      meteor: "Go to a dark site away from city lights after midnight and give your eyes about 20 minutes to adapt — the meteors radiate from a single point in the sky.",
+      conjunction: "{a} and {b} will appear close together in the sky. Look towards the sunrise or sunset horizon just after dusk or before dawn — no telescope needed.",
+      moon: {
+        newMoon: "The Moon is out of the way tonight, leaving the sky dark for faint nebulae, galaxies and star clusters.",
+        firstQuarter: "The half-lit Moon rides high in the evening sky — its crisp edge lights up even ordinary binoculars.",
+        fullMoon: "The fully lit Moon rises at sunset and stays up all night, a brilliant glow even in city skies.",
+        lastQuarter: "The Moon rises late and lingers into the pre-dawn hours — best viewed in the second half of the night.",
+      },
+      seasons: {
+        vernalEquinox: "On the equinox the Sun rises due east and sets due west — day and night are nearly equal across the planet.",
+        summerSolstice: "The Sun climbs to its highest midday point — the longest day of the year in the north.",
+        autumnalEquinox: "Day and night balance once more as the Sun crosses the celestial equator.",
+        winterSolstice: "The Sun traces its lowest arc of the year — the shortest daylight in the north.",
+      },
     },
     conjunctionsDesc: "Two planets share nearly the same line of sight from Earth.",
     events: {
@@ -1652,10 +1662,20 @@ export const ur: Dict = {
       southern: "جنوبی نصف کرہ سے بہترین",
     },
     tips: {
-      meteorShower: "آدھی رات کے بعد شہر کی روشنیوں سے دور آسمان کی طرف دیکھیں — زیادہ تر بارشیں رات 2 سے 4 بجے کے درمیان عروج پر ہوتی ہیں۔",
-      moonPhase: "ایک صاف رات چنیں، چاند کی طرف رخ کریں اور آنکھوں کو چند منٹ ڈھلنے دیں۔",
-      seasonal: "موسموں کی تبدیلی کو نشان زد کریں — صبح یا شام کے افق کی تصویر کے لیے ایک اچھی رات۔",
-      conjunction: "غروبِ شمس کے فوراً بعد یا طلوع سے پہلے صاف افق تلاش کریں — سیارے ایک دوسرے کے قریب نظر آئیں گے۔",
+      meteor: "آدھی رات کے بعد شہر کی روشنیوں سے دور کسی تاریک مقام پر جائیں اور آنکھوں کو تقریباً 20 منٹ ڈھلنے دیں — شہابِ ثاقب آسمان کے ایک نقطے سے پھوٹتے نظر آئیں گے۔",
+      conjunction: "{a} اور {b} آسمان میں ایک دوسرے کے قریب نظر آئیں گے۔ شام کے بعد یا فجر سے پہلے طلوع/غروب کی سمت افق پر دیکھیں — دوربین کی ضرورت نہیں۔",
+      moon: {
+        newMoon: "آج رات چاند راستے سے ہٹا ہوا ہے، جس سے آسمان مدھم سحابیوں، کہکشاؤں اور ستاروں کے جھرمٹ کے لیے تاریک رہے گا۔",
+        firstQuarter: "آدھا روشن چاند شام کے آسمان میں بلند رہتا ہے — عام دوربین میں بھی اُس کے کنارے چمکتے ہیں۔",
+        fullMoon: "مکمل روشن چاند غروبِ شمس پر طلوع ہوتا ہے اور پوری رات رہتا ہے — شہر کی روشنیوں میں بھی چمکتا منظر۔",
+        lastQuarter: "چاند رات گئے طلوع ہوتا ہے اور سحری تک رہتا ہے — رات کے دوسرے نصف میں اسے دیکھنا بہترین ہے۔",
+      },
+      seasons: {
+        vernalEquinox: "اعتدالِ ربیعی پر سورج بالکل مشرق سے طلوع اور مغرب میں غروب ہوتا ہے — زمین پر دن اور رات تقریباً برابر ہوتے ہیں۔",
+        summerSolstice: "سورج دوپہر کے اپنے بلند ترین مقام پر پہنچتا ہے — شمال میں سال کا سب سے لمبا دن۔",
+        autumnalEquinox: "سورج فلکی خطِ استوا عبور کرتا ہے تو دن اور رات پھر برابر ہو جاتے ہیں۔",
+        winterSolstice: "سورج سال کا سب سے نیچا قوس طے کرتا ہے — شمال میں سب سے کم دن کی روشنی۔",
+      },
     },
     conjunctionsDesc: "زمین سے دو سیارے تقریباً ایک ہی نظر کی لائن پر آتے ہیں۔",
     events: {
@@ -2470,10 +2490,20 @@ export const ar: Dict = {
       southern: "أفضل من نصف الكرة الجنوبي",
     },
     tips: {
-      meteorShower: "انظر إلى السماء بعد منتصف الليل بعيداً عن أضواء المدينة — تبلغ معظم زخات الشهب ذروتها بين 2 و4 فجراً.",
-      moonPhase: "اختر ليلة صافية، توجّه نحو القمر ودع عينيك تتأقلمان لبضع دقائق.",
-      seasonal: "ارصد تغيّر الفصول — ليلة رائعة لالتقاط الأفق عند الفجر أو الشفق.",
-      conjunction: "بعد غروب الشمس مباشرة أو قبل شروقها، ابحث عن أفق صافٍ — سيظهر الكوكبان متقاربين.",
+      meteor: "توجه إلى مكان مظلم بعيداً عن أضواء المدينة بعد منتصف الليل، وأعط عينيك نحو 20 دقيقة للتأقلم — تتباعد الشهب من نقطة واحدة في السماء.",
+      conjunction: "سيظهر {a} و{b} متقاربين في السماء. انظر نحو أفق الشروق أو الغروب بعد الغسق مباشرة أو قبل الفجر — ولا حاجة لمنظار.",
+      moon: {
+        newMoon: "القمر خارج الطريق هذه الليلة، تاركاً السماء مظلمة لمشاهدة السدم والمجرات وعناقيد النجوم الخافتة.",
+        firstQuarter: "القمر نصف المضيء يرتفع في سماء المساء — حوافه الواضحة تتألق حتى في المناظير العادية.",
+        fullMoon: "القمر المكتمل يشرق عند الغروب ويمكث طوال الليل — توهج ساطع حتى وسط أضواء المدينة.",
+        lastQuarter: "يشرق القمر متأخراً ويمكث حتى ساعات ما قبل الفجر — ويُشاهد بشكل أفضل في الشوط الثاني من الليل.",
+      },
+      seasons: {
+        vernalEquinox: "عند الاعتدال الشمسي تشرق الشمس من الشرق تماماً وتغرب غرباً — يتساوى النهار والليل تقريباً في كل الأرض.",
+        summerSolstice: "تبلغ الشمس أعلى نقطة لها ظهراً — أطول نهار في السنة في النصف الشمالي.",
+        autumnalEquinox: "يتعادل النهار والليل مجدداً مع عبور الشمس خط الاستواء السماوي.",
+        winterSolstice: "ترسم الشمس أدنى قوس في السنة — أقصر ضوء نهار في النصف الشمالي.",
+      },
     },
     conjunctionsDesc: "كوكبان يكادان يشتركان في نفس خط الرؤية من الأرض.",
     events: {
@@ -3288,10 +3318,20 @@ export const es: Dict = {
       southern: "Mejor desde el hemisferio sur",
     },
     tips: {
-      meteorShower: "Mira hacia arriba pasada la medianoche, lejos de las luces de la ciudad: la mayoría de las lluvias alcanzan su pico entre las 2 y las 4 de la madrugada.",
-      moonPhase: "Elige una noche despejada, mira hacia la Luna y deja que tus ojos se adapten unos minutos.",
-      seasonal: "Marca el cambio de estación: una noche ideal para fotografiar el horizonte al amanecer o al anochecer.",
-      conjunction: "Justo después del atardecer o antes del amanecer, busca un horizonte despejado: los planetas aparecen juntos.",
+      meteor: "Ve a un lugar oscuro lejos de las luces de la ciudad pasada la medianoche y deja que tus ojos se adapten unos 20 minutos: los meteoros parten de un mismo punto del cielo.",
+      conjunction: "{a} y {b} aparecerán muy juntos en el cielo. Mira hacia el horizonte del amanecer o del atardecer justo después del crepúsculo o antes del alba; no hace falta telescopio.",
+      moon: {
+        newMoon: "La Luna se aparta esta noche y deja el cielo oscuro para ver nebulosas, galaxias y cúmulos estelares tenues.",
+        firstQuarter: "La Luna a medio iluminar brilla alta en el cielo vespertino, nítida incluso con unos binoculares sencillos.",
+        fullMoon: "La Luna llena sale al atardecer y permanece toda la noche, con un brillo intenso incluso entre las luces de la ciudad.",
+        lastQuarter: "La Luna sale tarde y se queda hasta las horas previas al amanecer: se ve mejor en la segunda mitad de la noche.",
+      },
+      seasons: {
+        vernalEquinox: "En el equinoccio el Sol sale exactamente por el este y se pone por el oeste; el día y la noche duran casi lo mismo en todo el planeta.",
+        summerSolstice: "El Sol alcanza su punto más alto al mediodía: el día más largo del año en el norte.",
+        autumnalEquinox: "El día y la noche vuelven a equilibrarse cuando el Sol cruza el ecuador celeste.",
+        winterSolstice: "El Sol traza el arco más bajo del año: la luz diurna más corta del año en el norte.",
+      },
     },
     conjunctionsDesc: "Dos planetas comparten casi la misma línea de visión desde la Tierra.",
     events: {
@@ -4101,10 +4141,20 @@ export const zh: Dict = {
       southern: "南半球观测最佳",
     },
     tips: {
-      meteorShower: "午夜过后，远离城市灯光抬头观看——大多数流星雨在凌晨 2 点到 4 点达到极大。",
-      moonPhase: "选一个晴朗的夜晚，面向月球，让眼睛适应几分钟。",
-      seasonal: "标记季节更替——适合在黎明或黄昏拍摄地平线的夜晚。",
-      conjunction: "日落之后或日出之前，找一片开阔的地平线——两颗行星会显得非常接近。",
+      meteor: "午夜过后，前往远离城市灯光、开阔黑暗的地方，让眼睛适应约 20 分钟——流星都从一个辐射点散出。",
+      conjunction: "{a} 与 {b} 将在天空中显得非常接近。请在黄昏后或黎明前朝日出/日落方向的地平线观看——无需望远镜。",
+      moon: {
+        newMoon: "今晚月球让出夜空，正是观赏暗淡星云、星系和星团的绝佳窗口。",
+        firstQuarter: "半亮的月球在傍晚天空中高悬，普通双筒望远镜也能看清其清晰的边缘。",
+        fullMoon: "满月在日落时升起并整夜高悬，即使在城市灯光中也发出耀眼的光芒。",
+        lastQuarter: "月球夜晚才升起并持续到黎明前——后半夜观看效果最佳。",
+      },
+      seasons: {
+        vernalEquinox: "春分时太阳正东升起、正西落下——全球昼夜几乎等长。",
+        summerSolstice: "太阳在正午到达一年中的最高点——北半球昼长最长的一天。",
+        autumnalEquinox: "太阳越过天赤道，昼夜再次几乎等长。",
+        winterSolstice: "太阳走出一年中最低的弧线——北半球白昼最短的一天。",
+      },
     },
     conjunctionsDesc: "从地球上看，两颗行星几乎位于同一条视线上。",
     events: {

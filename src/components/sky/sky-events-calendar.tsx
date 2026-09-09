@@ -81,6 +81,59 @@ const CURRENT_YEAR = new Date().getUTCFullYear();
 const MIN_YEAR = CURRENT_YEAR;
 const MAX_YEAR = CURRENT_YEAR + 2;
 
+const MOON_TIP_KEYS: Record<string, string> = {
+  newMoon: "skyEvents.tips.moon.newMoon",
+  firstQuarter: "skyEvents.tips.moon.firstQuarter",
+  fullMoon: "skyEvents.tips.moon.fullMoon",
+  lastQuarter: "skyEvents.tips.moon.lastQuarter",
+};
+
+const SEASON_TIP_KEYS: Record<string, string> = {
+  vernalEquinox: "skyEvents.tips.seasons.vernalEquinox",
+  summerSolstice: "skyEvents.tips.seasons.summerSolstice",
+  autumnalEquinox: "skyEvents.tips.seasons.autumnalEquinox",
+  winterSolstice: "skyEvents.tips.seasons.winterSolstice",
+};
+
+function moonTipKey(e: SkyEvent): string | null {
+  const tk = e.titleKey ?? "";
+  const phase = tk.startsWith("phases.") ? tk.split(".")[1] : "";
+  if (phase && MOON_TIP_KEYS[phase]) return MOON_TIP_KEYS[phase];
+  const title = (e.title ?? "").toLowerCase();
+  if (title.startsWith("full moon")) return MOON_TIP_KEYS.fullMoon;
+  if (title.startsWith("new moon")) return MOON_TIP_KEYS.newMoon;
+  return null;
+}
+
+function seasonTipKey(e: SkyEvent): string | null {
+  const m = /events\.([A-Za-z]+)\./.exec(e.titleKey ?? "");
+  if (m && SEASON_TIP_KEYS[m[1]]) return SEASON_TIP_KEYS[m[1]];
+  return null;
+}
+
+function viewingTip(
+  e: SkyEvent,
+  t: (key: string, fb?: string) => string,
+): string {
+  if (e.category === "meteor-showers") {
+    return t("skyEvents.tips.meteor", "");
+  }
+  if (e.category === "conjunctions" && e.bodyA && e.bodyB) {
+    return t("skyEvents.tips.conjunction", "")
+      .replace(/\{a\}/g, t(`planets.${e.bodyA}`, e.bodyA))
+      .replace(/\{b\}/g, t(`planets.${e.bodyB}`, e.bodyB));
+  }
+  if (e.category === "moon-phases") {
+    const key = moonTipKey(e);
+    if (key) return t(key, "");
+  }
+  if (e.category === "seasonal") {
+    const key = seasonTipKey(e);
+    if (key) return t(key, "");
+  }
+  return e.viewTipKey ? t(e.viewTipKey, "") : "";
+}
+
 export function SkyEventsCalendar() {
   const { t, locale } = useLocale();
 
@@ -310,6 +363,7 @@ export function SkyEventsCalendar() {
                 const label = categoryLabel(e.category, e.title ?? "", t);
                 const isUpcoming = eventTime(e) >= nowTs;
                 const hasTime = e.start.length > 10;
+                const tip = viewingTip(e, t);
                 return (
                   <article
                     key={`${e.start}-${e.title}-${e.category}`}
@@ -352,13 +406,13 @@ export function SkyEventsCalendar() {
                           {t(e.regionKey, e.regionKey)}
                         </span>
                       )}
-                      {e.viewTipKey && (
+                      {tip && (
                         <div className="mt-3 rounded-lg bg-white/[0.03] px-3 py-2">
                           <span className="text-[0.65rem] font-semibold uppercase tracking-wider text-gold/70">
                             {t("skyEvents.calendar.tip", "Viewing tip")}
                           </span>
                           <p className="mt-1 text-xs leading-5 text-p-muted">
-                            {t(e.viewTipKey, "")}
+                            {tip}
                           </p>
                         </div>
                       )}

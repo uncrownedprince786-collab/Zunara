@@ -243,7 +243,7 @@ export function calculateSkyEventsForYear(year: number): SkyEvent[] {
         titleKey: `skyEvents.events.${season.key}.title`,
         descKey: `skyEvents.events.${season.key}.desc`,
         regionKey: "skyEvents.regions.global",
-        viewTipKey: "skyEvents.tips.seasonal",
+        viewTipKey: `skyEvents.tips.seasons.${season.key}`,
       });
     }
   }
@@ -265,7 +265,7 @@ export function calculateSkyEventsForYear(year: number): SkyEvent[] {
         titleKey: info.titleKey,
         descKey: info.descKey,
         regionKey: "skyEvents.regions.global",
-        viewTipKey: "skyEvents.tips.moonPhase",
+        viewTipKey: `skyEvents.tips.moon.${info.titleKey.split(".")[1]}`,
       });
     }
     quarter = AE.NextMoonQuarter(quarter);
@@ -282,7 +282,7 @@ export function calculateSkyEventsForYear(year: number): SkyEvent[] {
       titleKey: `skyEvents.events.${peak.slug}.title`,
       descKey: `skyEvents.events.${peak.slug}.desc`,
       regionKey: `skyEvents.regions.${peak.region}`,
-      viewTipKey: "skyEvents.tips.meteorShower",
+      viewTipKey: "skyEvents.tips.meteor",
     });
   }
 
