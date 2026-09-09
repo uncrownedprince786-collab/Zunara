@@ -418,6 +418,28 @@ Follow-up to Sprint #33 (the bake script): 8 entries the REST summary endpoint c
 Fresh `next build` + `next start`, SSR checked per date — all five now render their wikimedia `<img>`: `/birthday/09-07` 6/6 (Leslie included), `/birthday/11-27` (Robin), `/birthday/01-20` (Aum), `/birthday/12-03` (Ken), `/birthday/12-29` (Sana). `tsc` clean, `vitest` 366/366. Pushed `c606361`.
 Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also flagged the pool's Denzel Washington as wrongly dated 1/20 (real: Dec 28) — since fixed in Sprint #34.
 
+## Sprint #35: Static pool expanded ~5× so every birthday date shows 6 diverse celebs offline (`5862763`)
+
+User complaint: "why are we showing like one or 2 celebs… are we getting celebs from every category and industry?" Root cause (verified in code): static tier had ~90 primary + ~557 pool entries ≈ 1.8/date, so most dates SSR'd 1-2 people; the client live-Wikidata top-up frequently timed out (7s SPARQL across all of Wikidata) and silently fell back to static 1-2. User chose "Expand static pool" over "fix live tier".
+
+### Pipeline (all reusable, in `Temp/opencode`)
+1. `scrape-births.mjs` — `action=parse` each `Month_Day` day-article's `==Births==` wikitext section → ~25.2k verified-by-date birth entries (cache keyed `MM-DD.json`, resumable). Gotchas: headings appear as BOTH `==Births==` and `==Births ==` (trailing space — regex must be `==\s*Births\s*==`); name links are `[[Title]]` or `[[Title|label]]` (take pre-pipe title); separators `&ndash;`. `April_24` and `May_15` used the spaced variant and silently yielded 0 — always re-check 0-entry dates.
+2. `select-bake-main.mjs` — pick `need+6` candidates per date (modern-first, dedupe vs existing pool by slug + case-insensitive name), then batch-bake images/descriptions via a SINGLE `action=query&prop=pageimages|description&pithumbsize=330` call per 50 titles (≈75 calls total — far faster than per-name REST). Gotcha: `formatversion=2` returns `pages` as an array; a helper `pagesArray(r.data)` accidentally received `r.data.query` (→ `query.query.pages` → undefined → 0 matches). Redirects resolved via `normalized`+`redirects` maps.
+3. `assemble-pool.mjs` — merge full+rerun batches, dedupe, then TS-block. Region/profession/star derived heuristically from day-article note + article description (sports→Sports; Indian+entertainer→Bollywood; Korean→K-Pop; Thai→Thai; Western+entertainer→Hollywood; else Global).
+
+### Results
+- Pool 557 → **2,746 entries** (all 2,190 new: 2,175 image-baked, 15 wiki-avatar-only). Every real date reaches **6 people statically** (incl. 02-29); SSR verified 6 alts / 24 wikimedia imgs on sampled dates; 35/35 sampled baked image URLs return 200.
+- Accuracy: birthdays come from the day-article curated birth lists, so they're inherently correct per date.
+- Caught+removed near-dupe: pooled "Jung Kook" vs primary "Jungkook" (9/1) — same BTS member under different spacing.
+
+### TS limitation hit
+A single inline object-literal array of ~2.7k entries blows TS's union limit: `TS2590 … union type is too complex to represent` even when annotated. Fix: chunk the literal into 12 per-month `const _pool<Month>: SupplementaryCelebrity[] = […]` and reassemble `export const SUPPLEMENTARY_POOL = […_poolJanuary, …]` (`chunk-pool.mjs`). Also preserved LF endings.
+
+### Tests hardened (`celebrities.test.ts`)
+- every real date now asserts **≥3 people** (was ≥1) — guarantees the 1-2-person complaint can't regress;
+- per-date dedupe check is now case/punctuation-insensitive (would have caught Jung Kook).
+- Verified: tsc/vitest (370)/lint (0 err)/next build all green.
+
 ## Sprint #34b: CSP was silently blocking 269 celebrity portraits — ROOT CAUSE of "broken images" (`66a668f`)
 
 **The image URLs were never broken. The browser was.** User reported J. D. Salinger's image broken. URL verified 200/image-jpeg directly, via REST summary, and via action API (file exists on Commons, canonical). The real bug: 269 baked portraits (Salinger, Oprah, Obama, Rihanna, Lincoln, Asimov, Bowie, …) are served from **`thumb.wikimedia.org`**, but the production CSP `img-src` in `next.config.ts` only allowed `upload.wikimedia.org` + `commons.wikimedia.org`. Browser enforces CSP client-side, so those 269 images were silently blocked in the deployed site — file `next.config.ts` now adds `https://thumb.wikimedia.org` to `img-src` AND `images.remotePatterns`. Verified: fresh `next build` + `next start`, `Content-Security-Policy` header now lists all 3 hosts. **Lesson: HTTP-200 verification of image URLs is NOT sufficient — the CSP/`img-src` policy of the deploying server must also allow the host. Always re-check the served CSP header after header changes.** Only 2 hosts used across all pool+main images (thumb + upload).
