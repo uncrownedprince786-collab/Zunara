@@ -400,6 +400,28 @@ Closes the last localization gap from Sprint #22/#23: the tool-route copy that p
 - Data/editorial prose: guidance paragraphs, milestone notes, transit notes, synastry interpretations, retrograde advice, horoscope readings, and glossary tooltip terms remain English data content.
 - Example placeholders ("e.g. Alex") and `AM/PM` month-name options in `birth-form.tsx`.
 
+## Sprint #33: Event-Specific Viewing Tips + Wikipedia Portraits Baked Into Celebrity Pools (`324a8e5`)
+
+Follow-up to Sprint #32's remaining gap: (1) viewing tip was identical for every event in a category, (2) no-image supplement entries still depended on the client React fallback.
+
+### Viewing tips are now per-event, not per-category
+- Root cause: `calculateSkyEventsForYear` in `sky-events-calculated.ts` set `viewTipKey` once per category (all ~49 moon phases shared `tips.moonPhase`, seasons shared `tips.seasonal`, etc.).
+- Rewrote the `skyEvents.tips` block in all 5 locales (`dictionaries.ts`, parity via `Dict = typeof en`): `meteor`, `conjunction` (planetary-pair template with `{a}`/`{b}` placeholders), `moon.{newMoon,firstQuarter,fullMoon,lastQuarter}`, `seasons.{vernalEquinox,summerSolstice,autumnalEquinox,winterSolstice}`.
+- `sky-events-calendar.tsx` got helpers `moonTipKey` (titleKey `phases.*` for dynamic; curated titles parsed by startsWith "Full Moon"/"New Moon"), `seasonTipKey` (regex on `events.<season>.` in titleKey), and `viewingTip(e, t)` which interpolates conjunction planet names via `t(planets.${body})` — so the render is fully driven by event data with no reliance on baked keys.
+- `viewTipKey` assignments in `sky-events-calculated.ts` updated to point at the new keys for coherence.
+- `calculateSkyEvents` (75-day window) was left keyless by design — the calendar's data-driven helpers cover it too.
+
+### Real portrait images baked into BOTH celebrity pools
+- Bake script + resume cache: `C:\Users\NEWTEC~1\AppData\Local\Temp\opencode\bake-images.mjs` + `bake-cache.json` (temp, unscoped). Uses Node global fetch against `en.wikipedia.org/api/rest_v1/page/summary/<title>` (REST resolves redirects + normalizes titles, e.g. Nicholas_Cage→Nicolas Cage; `type:"disambiguation"` yields no thumb).
+- `celebrities.ts` Sep 7 primary: baked `image` for Gloria Gaynor, Queen Elizabeth I, Evan Rachel Wood, Kevin Love, Chrissie Hynde (only Leslie Jones remains monogram — her page is a disambiguation, correctly no image).
+- `celebrity-pool.ts`: 532/538 entries now carry a real 330px thumbnail; 14 `wiki` slugs added for disambiguated names (Sting_(musician), Usher_(musician), D.O._(entertainer), IU_(singer), Lisa_(rapper), Kai_(singer,_born_1994), Irene_(singer), Momo_(Japanese_singer), Antoni_Tàpies, etc.); `Laura Ingram`→`Laura_Ingraham` and `Micheal`→`Michael Graves` typo fixes. Removed junk: "Tie-dye Day" + fictional "Ernst Stavro Blofeld".
+- `SupplementaryCelebrity` gained optional `wiki?`/`image?`; `supplementToCelebriant` URL prefers `s.wiki`.
+- Thumbnails serve from BOTH `upload.wikimedia.org` and `thumb.wikimedia.org` (both whitelisted); normalized full-size images to `/thumb/<d1>/<d2>/<file>/330px-<file>` (dir pattern `[0-9a-f]{1,2}/[0-9a-f]{1,2}`). Remaining image-less entries are genuinely article-less (404) or lead-image-less (Lisa Bonet, Robin Roberts, Zoheb Hassan, Sana).
+- Gotcha hit: REST title `"Weird Al" Yankovic` contains literal double quotes → would break the TS string; bake now skips wiki slugs containing `"` (reverted to relying on redirect + baked image).
+
+### Verification
+Runtime-verified for real: `next start`, fetched `/sky-events`, `/birthday/09-08` (supplement-only date), `/famous-birthdays`. `/birthday/09-08` now SSR-renders real Wikimedia `<img>` tags where it previously had none. `/sky-events` shows **79 tip blocks / 17 distinct texts** (was 1 text per category) with conjunction templates interpolated to real planet pairs ("Mars and Saturn…", "Mercury and Jupiter…") and no literal `{a}`/`{b}` leakage. After: `tsc` clean, `vitest` 366/366, `eslint` 0 errors (5 baseline warnings), `next build` green. Pushed `324a8e5` to `main`. Client REST fallback remains as-is (concurrency tuning deferred — baked images make it a rarely-hit safety net).
+
 ## Sprint #32: Celebrity Portrait Rendering Fix + Planning-First Sky Calendar (`2740b71`)
 
 Verification: `tsc --noEmit` clean, `vitest` 366/366, `eslint` 0 errors (5 pre-existing benign warnings), `next build` green. **Runtime-verified for real**: started `next start`, fetched `/birthday/09-03`, `/famous-birthdays`, `/sky-events`, `/` — birthday page now SSR-renders 3 direct `<img src="https://upload.wikimedia.org/…">` tags (Charlie Sheen, Shaun White, Garrett Hedlund); all 85 curated portrait URLs return HTTP 200 (the 429s during bulk HEAD were Wikimedia rate-limiting — same URLs 200 when spaced); Wikipedia REST summary fallback resolves 7/8 no-image titles with a real lead image (Leslie Jones has no lead image — monogram fallback fires as designed).
