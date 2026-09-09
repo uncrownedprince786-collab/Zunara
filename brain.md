@@ -416,7 +416,34 @@ Follow-up to Sprint #33 (the bake script): 8 entries the REST summary endpoint c
 
 ### Verification
 Fresh `next build` + `next start`, SSR checked per date — all five now render their wikimedia `<img>`: `/birthday/09-07` 6/6 (Leslie included), `/birthday/11-27` (Robin), `/birthday/01-20` (Aum), `/birthday/12-03` (Ken), `/birthday/12-29` (Sana). `tsc` clean, `vitest` 366/366. Pushed `c606361`.
-Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also found the pool's Denzel Washington wrongly dated 1/20 (real: Dec 28) — unrelated, left as-is.
+Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also flagged the pool's Denzel Washington as wrongly dated 1/20 (real: Dec 28) — since fixed in Sprint #34.
+
+## Sprint #34: Celebrity Pool Regression Pass — Zero Dates Filled, Accuracy Fixes, Hard Invariants (`e5ee3b8`)
+
+User directive: "Born on any other day? … make sure we have enough celebrities pool and everyone's data is accurate and images are rendering no broken image — I want this perfect." Focused pass (user declined full 627-entry re-verify + full ≥3-per-date expansion as separate options).
+
+### Images: no broken images
+- Earlier bulk check had 388 OK / 232 TIMEOUT / 3 bad. The 232 TIMEOUTs were **my own checker's rate-limit artifact**, not broken links — confirmed via re-check: single fresh requests return 200 instantly (incl. Beyoncé, MJ, Madonna). The only genuine 4xx were 3 TIFFs (Galileo, César Chávez, Barbara Jordan) — already fixed with `lossy-page1-*.jpg` variants, all verified 200.
+- Newly baked URLs for the 24 added entries: verified 200 (some needed 429 backoff retries; eventually all 200).
+
+### Accuracy fixes (10 confirmed misdates) + dedup
+- Moved to real birthdays: **Denzel Washington** 1/20→12/28, **Eric Clapton** 1/6→3/30, **Messi** 6/20→6/24, **Jacqueline Kennedy** 7/15→7/28, **Monica Lewinsky** 10/24→7/23, **Beatrix Potter** 12/17→7/28, **Tony Hawk** 5/14→5/12, **Antonio Banderas** 3/4→8/10.
+- Removed wrong duplicate: **Usher** @3/24 (real 10/14, kept pool entry), **Louis Armstrong** @8/1 (real 8/4, kept 8/4).
+- Replaced article-less/no-photo **Vivek Bindra** @10/17 with **Eminem** (also 10/17, huge get). **Lisa Bonet** + **Zoheb Hassan** keep monogram fallback (no Commons/en photo exists), now carry `wiki` slugs so links resolve.
+
+### Zero dates eliminated
+- Before: **8 real dates rendered an EMPTY grid** in the static tier (3/23, 3/30, 5/12, 5/15, 6/24, 7/23, 7/28, 8/10). Filled all with 24 accurate, image-verified entries (Chaka Khan, Keri Russell, Mo Farah; George Carlin, Burt Bacharach; Madeleine Albright, Brian Eno, Emmitt Smith; Lionel Messi, Mick Fleetwood, Pharrell; Daniel Radcliffe, Woody Harrelson; Jackie Kennedy, Hugo Chávez+; Herbert Hoover, Ian Anderson, Angie Harmon; Jerry Garcia + Yves Saint Laurent for 8/1; Laura Dern + Emilio Estefan for 3/4; Drake + Kevin Kline for 10/24).
+- Static tier now: **only 2/29 (non-leap) uncovered**; 647 entries, no duplicate names. Note: static grid is still 1-2 people on many dates — the client-side Wikidata resolver tops up to 6 live; full ≥3-per-date statically is a larger expansion not done this sprint (user set scope).
+
+### Regression tests added (`celebrities.test.ts`, now 9 tests → 370 total)
+- Every real date renders ≥1 person (no empty grids).
+- Never same person twice on a date.
+- Every returned celebrity has image URL OR wiki source (renderer falls back to avatar for wiki-only).
+- Every pool entry has valid month/day + image-or-wiki.
+- (Existing: ≤6 per date, date-consistency, industries, determinism.)
+
+### Verification
+`tsc` clean, `vitest` 370/370, `lint` 0 errors (5 benign pre-existing warnings), `next build` OK. SSR via `next start -p 3010`: all 15 touched dates return 200 with correct wikimedia `<img>` counts (was-empty dates now 8-16 imgs). Pushed `e5ee3b8`.
 
 ## Sprint #33: Event-Specific Viewing Tips + Wikipedia Portraits Baked Into Celebrity Pools (`324a8e5`)
 
