@@ -182,6 +182,14 @@ function supplementToCelebriant(s: SupplementaryCelebrity): Celebrity {
   };
 }
 
+/** Rough athlete detector used to keep sportspeople a minority on the page. */
+const ATHLETE_RE =
+  /player|football|soccer|baseball|basketball|hockey|cricket|tennis|golf|boxer|wrestl|athlet|racing|swimmer|gymnast|sumo|snooker|coach|rugby|skater|skier|cyclist|runner|volleyball|judo|karate|shooter|darts|badminton|triath|biath|pentathl|sailor/i;
+
+export function isAthlete(c: Pick<Celebrity, "profession" | "region">): boolean {
+  return ATHLETE_RE.test(c.profession) || c.region === "Sports";
+}
+
 /**
  * Diversity-preserving selection: picks `count` items from `pool` using a
  * deterministic hash, trying to balance across regions and professions.
@@ -228,12 +236,15 @@ function diversitySelect(
 
   // Fill remaining slots via shuffled round-robin
   let offset = 0;
-  while (selected.length < count) {
+  while (selected.length < count && offset < pool.length * 4) {
     const idx =
       dateHash(month, day, 1000 + offset) % pool.length;
     offset++;
     if (usedIndices.has(idx)) continue;
     const entry = pool[idx];
+    // Keep athletes a minority: at most two sportspeople from the fill pass
+    // (the region pass already reserves one slot for Sports when available).
+    if (isAthlete(entry) && selected.filter(isAthlete).length >= 2) continue;
     // Prefer entries from under-represented regions/professions
     if (
       usedRegions.size < regions.length &&
@@ -247,6 +258,17 @@ function diversitySelect(
     usedIndices.add(idx);
     usedRegions.add(entry.region);
     usedProfessions.add(entry.profession);
+  }
+
+  // Deterministic fallback: top up with unused entries in index order when the
+  // hash walk ran out of acceptable candidates (e.g. an all-sport pool).
+  if (selected.length < count) {
+    for (let i = 0; i < pool.length && selected.length < count; i++) {
+      if (usedIndices.has(i)) continue;
+      const entry = pool[i];
+      selected.push(entry);
+      usedIndices.add(i);
+    }
   }
 
   return selected;

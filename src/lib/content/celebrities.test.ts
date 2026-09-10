@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   celebritiesForDate,
   industriesPresent,
+  isAthlete,
 } from "./celebrities";
 import { SUPPLEMENTARY_POOL } from "./celebrity-pool";
 
@@ -59,16 +60,30 @@ describe("celebrity hub data integrity", () => {
     expect(a).toEqual(b);
   });
 
-  it("every real date renders at least three people (no sparse grids)", () => {
+  it("every real date renders at least three non-athletes (mixed industries)", () => {
     const sparse: string[] = [];
     for (let m = 1; m <= 12; m++) {
       const days = new Date(2024, m, 0).getDate();
       for (let d = 1; d <= days; d++) {
         if (m === 2 && d === 29) continue; // non-leap-year date
-        if (celebritiesForDate(m, d).length < 3) sparse.push(`${m}/${d}`);
+        const list = celebritiesForDate(m, d);
+        if (list.filter((p) => !isAthlete(p)).length < 3) sparse.push(`${m}/${d}`);
       }
     }
     expect(sparse).toEqual([]);
+  });
+
+  it("keeps athletes a minority: no date shows more than three sportspeople", () => {
+    const overloaded: string[] = [];
+    for (let m = 1; m <= 12; m++) {
+      const days = new Date(2024, m, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        if (m === 2 && d === 29) continue; // non-leap-year date
+        const list = celebritiesForDate(m, d);
+        if (list.filter(isAthlete).length > 3) overloaded.push(`${m}/${d}`);
+      }
+    }
+    expect(overloaded).toEqual([]);
   });
 
   it("never shows the same person twice on a date (exact or near-duplicate names)", () => {
