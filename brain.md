@@ -418,6 +418,16 @@ Follow-up to Sprint #33 (the bake script): 8 entries the REST summary endpoint c
 Fresh `next build` + `next start`, SSR checked per date — all five now render their wikimedia `<img>`: `/birthday/09-07` 6/6 (Leslie included), `/birthday/11-27` (Robin), `/birthday/01-20` (Aum), `/birthday/12-03` (Ken), `/birthday/12-29` (Sana). `tsc` clean, `vitest` 366/366. Pushed `c606361`.
 Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also flagged the pool's Denzel Washington as wrongly dated 1/20 (real: Dec 28) — since fixed in Sprint #34.
 
+## Sprint #39: "On this day" home section — a curated history timeline for every date
+
+User: "we need to show a fun fact history fact or anything happened on that day". Added a new home section right below "Famous Birthdays Today": a static, server-rendered, 4-card vertical timeline ("1607 / 1919 / 1942 / 2024" style year badges + summary) for the current date, with a "Full timeline on Wikipedia" link out. Fully translated (5 locales).
+
+**Data (static, offline, no API at runtime):** fetched all 366 enwiki day-articles once (`action=query&prop=revisions&rvprop=content&rvslots=main`, ~1s pacing, then a second gentle repair pass for the ~20% of dates the API silently throttled) → JSONL of every `== Events ==` bullet (19,593 events). Baked a curation pipeline (`on-this-day.ts`, 1,464 entries = 4/date) that scores events (Wikipedia's bold `'''...'''` featured-event boost, ~30 "extraordinary" keyword hits, modernity + century-diversity caps — at most 2 events/century) and picks deterministically. `onThisDay(month, day)` returns events sorted by year ascending; Feb 29 included for correctness.
+
+**Quality guards caught by tests, not by hand:** (1) the fetch script appended `.` unconditionally → double trailing periods; (2) stripped `{{HMS|…}}`-style ship templates left mangled "The submarine is … by the submarine" (adjacent-template collapse — detection: same noun twice within 65 chars for a marine/military noun list); (3) leaked `<!--…-->` HTML comments; (4) leftover empty `[ ]` link brackets; (5) accented leading caps (Édouard). All normalized in the cleaner; the data test now enforces: coverage 366 dates × ≥3 events, years 1000–2025, starts with a letter/digit, ends with a single terminal punctuation, no markup leftovers, no dupes, deterministic ascending order.
+
+**Verification:** 377/377 tests (5 new), tsc 0, lint 0, build OK, SSR live ✓ — section sits between celebrities and the twelve signs, shows "September 10", kicker, the four curated events (1607 Virginia colony, 1919 Treaty of Saint-Germain, 1942 Madagascar landing, 2024 Polaris Dawn spacewalk), and the Wikipedia link. Celebrities section untouched.
+
 ## Sprint #38: Zero monogram cards — every date's 6 celebs now always render a real portrait
 
 User: "some celebs don't have any image". Audit: 104 pool entries (of 3,271) had a wiki slug but no portrait → the grid showed letter-monogram cards (e.g. Ménélik on today's home). Two-part fix:

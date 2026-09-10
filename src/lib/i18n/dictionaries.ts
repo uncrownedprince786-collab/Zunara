@@ -945,6 +945,11 @@ export const en = {
       Global: "Global",
     },
   },
+  history: {
+    kicker: "On this day",
+    subtitle: "Extraordinary moments that happened on this day in history.",
+    readMore: "Full timeline on Wikipedia",
+  },
   footer: {
     tagline:
       "An editorial astrology publication. Every position is calculated from real astronomical data; no myth, only the mathematics of the sky.",
@@ -1775,6 +1780,11 @@ export const ur: Dict = {
       Global: "عالمی",
     },
   },
+  history: {
+    kicker: "آج کے دن",
+    subtitle: "تاریخ کے صفحات میں اس دن پیش آنے والے غیر معمولی واقعات۔",
+    readMore: "ویکیپیڈیا پر مکمل واقعات",
+  },
   footer: {
     tagline:
       "ایک ادبی نجومیات رسالہ۔ ہر مقام اصلی فلکیاتی اعداد سے شمار کیا جاتا ہے؛ نہ کوئی افسانہ، صرف آسمان کی ریاضی۔",
@@ -2602,6 +2612,11 @@ export const ar: Dict = {
       Sports: "رياضة",
       Global: "عالمي",
     },
+  },
+  history: {
+    kicker: "في هذا اليوم",
+    subtitle: "لحظات استثنائية وقعت في مثل هذا اليوم عبر التاريخ.",
+    readMore: "الجدول الزمني الكامل على ويكيبيديا",
   },
   footer: {
     tagline:
@@ -3431,6 +3446,11 @@ export const es: Dict = {
       Global: "Global",
     },
   },
+  history: {
+    kicker: "Tal día como hoy",
+    subtitle: "Momentos extraordinarios que ocurrieron en este día de la historia.",
+    readMore: "Cronología completa en Wikipedia",
+  },
   footer: {
     tagline:
       "Una publicación editorial de astrología. Cada posición se calcula con datos astronómicos reales; sin mito, solo las matemáticas del cielo.",
@@ -4253,6 +4273,11 @@ export const zh: Dict = {
       Sports: "体育",
       Global: "全球",
     },
+  },
+  history: {
+    kicker: "历史上的今天",
+    subtitle: "历史上的今天，发生过哪些非凡的时刻。",
+    readMore: "在维基百科查看完整年表",
   },
   footer: {
     tagline:

@@ -20,6 +20,7 @@ import {
   CosmicTraits,
 } from "@/components/home/home-heavy-sections";
 import { TodaysStars } from "@/components/home/todays-stars";
+import { OnThisDay } from "@/components/home/on-this-day";
 import { celebritiesForDate } from "@/lib/content/celebrities";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { websiteJsonLd } from "@/lib/seo/jsonld";
@@ -265,6 +266,8 @@ export default function HomePage() {
 
       {/* ---- Born today on the home page ---- */}
       <TodaysStars month={month} day={day} initial={people} />
+
+      <OnThisDay month={month} day={day} />
 
       {/* ---- The twelve signs ---- */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="signs-heading">
