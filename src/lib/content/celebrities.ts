@@ -271,6 +271,33 @@ function diversitySelect(
     }
   }
 
+  // Prefer portrait-bearing entries: swap any imageless pick for an unused
+  // entry that has a portrait, without pushing athletes past the minority cap.
+  const athleteCount = () => selected.filter(isAthlete).length;
+  for (let i = 0; i < selected.length && athleteCount() <= 3; i++) {
+    if (selected[i].image) continue;
+    const wasAthlete = isAthlete(selected[i]);
+    let bestI = -1;
+    let bestScore = -1;
+    for (let j = 0; j < pool.length; j++) {
+      if (usedIndices.has(j)) continue;
+      const cand = pool[j];
+      if (!cand.image) continue;
+      if (!wasAthlete && isAthlete(cand) && athleteCount() >= 3) continue;
+      const score =
+        (cand.region === selected[i].region ? 2 : 0) +
+        (isAthlete(cand) === wasAthlete ? 1 : 0);
+      if (score > bestScore) {
+        bestScore = score;
+        bestI = j;
+      }
+    }
+    if (bestI !== -1) {
+      selected[i] = pool[bestI];
+      usedIndices.add(bestI);
+    }
+  }
+
   return selected;
 }
 

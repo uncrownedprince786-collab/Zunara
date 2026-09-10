@@ -418,6 +418,16 @@ Follow-up to Sprint #33 (the bake script): 8 entries the REST summary endpoint c
 Fresh `next build` + `next start`, SSR checked per date — all five now render their wikimedia `<img>`: `/birthday/09-07` 6/6 (Leslie included), `/birthday/11-27` (Robin), `/birthday/01-20` (Aum), `/birthday/12-03` (Ken), `/birthday/12-29` (Sana). `tsc` clean, `vitest` 366/366. Pushed `c606361`.
 Gotcha: `next start` can serve a STALE `.next` for `celebrities.ts` imports — always `next build` before runtime checks or edits look "not applied". Also flagged the pool's Denzel Washington as wrongly dated 1/20 (real: Dec 28) — since fixed in Sprint #34.
 
+## Sprint #38: Zero monogram cards — every date's 6 celebs now always render a real portrait
+
+User: "some celebs don't have any image". Audit: 104 pool entries (of 3,271) had a wiki slug but no portrait → the grid showed letter-monogram cards (e.g. Ménélik on today's home). Two-part fix:
+
+**Data:** re-baked missing portraits via enwiki `pageimages` + Wikidata `wbgetentities`/`wbgetclaims` P18 → upload.wikimedia.org canonical thumb URLs (MD5-hash path). Sandbox egress lessons: enwiki `pageimages` intermittently returns pageprops with NO thumbnail (degraded/rate-limited — wait + retry), `wbgetentities` with 50-entity batches trips the Wikidata limiter ("You are making too many requests" as 200-with-HTML) while SINGLE-entity calls work — do per-Q-id calls with 650ms spacing, never fat batches. Root-caused & fixed corrupted lines this left behind in `celebrity-pool.ts` (missing commas from partial writes: `" image:` interleavings); validated with esbuild/vitest.
+
+**Selection (the durable guarantee):** `diversitySelect` now has a portrait-preference polish pass — after picking, any imageless entry is swapped (same region + same athlete-category preferred, pick-by-score) for an unused portrait-bearing pool entry, WITHOUT pushing athletes past the ≤3 minority cap. 2/27 was the sole stuck date (Zoheb Hassan = only spare non-athlete, imageless, athletes would hit 4): top-upped with 3 verified image'd same-date non-athletes (Josh Groban, Kate Mara, Neal Schon — all genuinely born Feb 27, portraits confirmed live).
+
+**Contract locked by test:** new strict test — `celebritiesForDate` returns a portrait image for EVERY person on ALL 365 dates (no monogram-only cards). 372/372 tests green, tsc 0, lint 0 errors, build OK. SSR verified today's home: 6/6 cards with images. Image-liveness spot check on sample + new URLs: OK (one 429 was Wikimedia throttling the probe, not a broken file).
+
 ## Sprint #37: Killed the sports-overload — rebalanced pool across every industry, athletes capped to a minority
 
 User: "why most of the celebs are sports related, we need celebs from every industry". Root cause: the #35 bake over-indexed athletes. The Wikipedia day-article "Births" lists are numerically athlete-heavy AND the image filter favored athletes (they nearly always have Commons portraits); the display selection then re-drew from a pool that was 54–55% sports.

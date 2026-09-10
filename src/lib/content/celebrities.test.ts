@@ -20,6 +20,17 @@ describe("celebrity hub data integrity", () => {
     );
   });
 
+  it("every returned celebrity has a portrait image (no monogram-only cards)", () => {
+    for (let m = 1; m <= 12; m++) {
+      const days = new Date(2024, m, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        for (const person of celebritiesForDate(m, d)) {
+          expect(person.image, `${m}/${d} ${person.name}`).toBeTruthy();
+        }
+      }
+    }
+  });
+
   it("every returned celebrity is genuinely born on the requested date", () => {
     for (let m = 1; m <= 12; m++) {
       const days = new Date(2024, m, 0).getDate();
