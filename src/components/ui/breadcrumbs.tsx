@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CrumbText } from "./crumb-text";
 import { SITE } from "@/lib/seo/site";
 
 export interface Crumb {
@@ -30,15 +31,15 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
       <nav aria-label="Breadcrumb" className="text-sm">
         <ol className="flex flex-wrap items-center gap-1.5 text-subdued">
           <li>
-            <Link href="/" className="transition-colors hover:text-gold">Home</Link>
+            <Link href="/" className="transition-colors hover:text-gold"><CrumbText label="Home" /></Link>
           </li>
           {items.map((item, i) => (
             <li key={item.href} className="flex items-center gap-1.5">
               <span aria-hidden="true">/</span>
               {i === items.length - 1 ? (
-                <span aria-current="page" className="text-muted">{item.label}</span>
+                <span aria-current="page" className="text-muted"><CrumbText label={item.label} /></span>
               ) : (
-                <Link href={item.href} className="transition-colors hover:text-gold">{item.label}</Link>
+                <Link href={item.href} className="transition-colors hover:text-gold"><CrumbText label={item.label} /></Link>
               )}
             </li>
           ))}

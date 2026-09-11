@@ -16,8 +16,10 @@ import { useEffect, useRef } from "react";
  *  - "Hero" bolides: thicker, glowing head (gold nucleus + indigo aura) that
  *    flares out just before fading and leaves a brief smoke/light streak.
  *
- * The layer is strictly decorative: pointer-events none, GPU-composited, and
- * disabled under prefers-reduced-motion.
+ * The layer is strictly decorative: pointer-events none and GPU-composited.
+ * Under prefers-reduced-motion we stop animating but still paint a single
+ * static tableau of faint stars and frozen streaks, so the sky stays alive on
+ * phones that ship with "Reduce Motion" enabled.
  */
 
 interface Meteor {
@@ -41,6 +43,59 @@ interface ResiduePoint {
   alpha: number;
 }
 
+/** Tiny deterministic hash so the static reduced-motion tableau is stable. */
+function staticRand(seed: number, salt: number): number {
+  const s = Math.sin(seed * 127.1 + salt * 311.7) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+/**
+ * Reduced-motion still: a sparse sheet of faint stars plus 2-3 frozen meteor
+ * streaks mid-descent. Painted once and re-painted on resize only — zero
+ * animation cost, but the night sky never renders as a blank void on mobile.
+ */
+function drawStaticScene(
+  c: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+) {
+  c.clearRect(0, 0, width, height);
+
+  const stars = Math.min(150, Math.round((width * height) / 16000));
+  for (let i = 0; i < stars; i++) {
+    const sx = staticRand(i, 1) * width;
+    const sy = staticRand(i, 2) * height;
+    c.globalAlpha = 0.22 + staticRand(i, 3) * 0.4;
+    c.fillStyle = "#ffffff";
+    c.beginPath();
+    c.arc(sx, sy, 0.4 + staticRand(i, 4) * 0.9, 0, Math.PI * 2);
+    c.fill();
+  }
+  c.globalAlpha = 1;
+
+  const streaks = 2 + Math.floor(staticRand(9, 1) * 2); // 2..3 streaks
+  for (let i = 0; i < streaks; i++) {
+    const x0 = (0.06 + staticRand(i, 6) * 0.34) * width;
+    const y0 = (0.06 + staticRand(i, 7) * 0.3) * height;
+    const ang = ((45 + staticRand(i, 8) * 15) * Math.PI) / 180;
+    const speed = (0.62 + staticRand(i, 9) * 0.5) * width * 0.6;
+    const ux = Math.cos(ang);
+    const uy = Math.sin(ang);
+    const len = Math.max(90, Math.min(220, speed * 0.18));
+    const g = c.createLinearGradient(x0, y0, x0 - ux * len, y0 - uy * len);
+    g.addColorStop(0, "rgba(255,255,255,0.72)");
+    g.addColorStop(0.4, "rgba(255,255,255,0.28)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+    c.strokeStyle = g;
+    c.lineWidth = 1.2;
+    c.lineCap = "round";
+    c.beginPath();
+    c.moveTo(x0, y0);
+    c.lineTo(x0 - ux * len, y0 - uy * len);
+    c.stroke();
+  }
+}
+
 export function MeteorShower() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -54,7 +109,28 @@ export function MeteorShower() {
     const reduce =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
+    if (reduce) {
+      // No animation — but still paint the sky: one static tableau of stars and
+      // frozen streaks, re-drawn on resize. Keeps the phone sky alive without
+      // any motion (the old `return` here rendered a blank dark void on mobile
+      // devices that ship with Reduce Motion enabled).
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      let small = width < 768;
+      const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.25 : 1.5);
+      const paint = () => {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        small = width < 768;
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        c.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawStaticScene(c, width, height);
+      };
+      paint();
+      window.addEventListener("resize", paint);
+      return () => window.removeEventListener("resize", paint);
+    }
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -157,7 +233,7 @@ export function MeteorShower() {
         vx,
         vy,
         len,
-        thickness: isHero ? 3 : 0.9 + Math.random() * 0.6,
+        thickness: isHero ? 3 : small ? 1.25 + Math.random() * 0.55 : 0.9 + Math.random() * 0.6,
         hue: isHero ? "hero" : "normal",
         life: 0,
         dur,

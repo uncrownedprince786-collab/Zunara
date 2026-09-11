@@ -83,7 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col bg-ink text-starlight">
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)zunara-locale=([^;]*)/);var v="";if(m){try{v=decodeURIComponent(m[1]);}catch(_){}}var l=(v||"").trim().toLowerCase();var lang="en",rtl=false;if(l==="ur"){lang="ur";rtl=true;}else if(l==="ar"){lang="ar";rtl=true;}else if(l==="es"){lang="es";}else if(l==="zh"){lang="zh";}var de=document.documentElement;de.setAttribute("dir",rtl?"rtl":"ltr");de.setAttribute("lang",lang);if(document.body)document.body.setAttribute("dir",rtl?"rtl":"ltr");}catch(e){}})();`,
+            __html: `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)zunara-locale=([^;]*)/);var v="";if(m){try{v=decodeURIComponent(m[1]);}catch(_){}}var l=(v||"").trim().toLowerCase();var lang="en",rtl=false;if(l==="ur"){lang="ur";rtl=true;}else if(l==="ar"){lang="ar";rtl=true;}else if(l==="es"){lang="es";}else if(l==="hi"){lang="hi";}else if(l==="zh"){lang="zh";}var de=document.documentElement;de.setAttribute("dir",rtl?"rtl":"ltr");de.setAttribute("lang",lang);if(document.body)document.body.setAttribute("dir",rtl?"rtl":"ltr");}catch(e){}})();`,
           }}
         />
         <script
