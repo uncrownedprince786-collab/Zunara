@@ -9,6 +9,7 @@ import { ElementIcon } from "@/components/ui/element-icon";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { LocaleText } from "@/components/ui/locale-text";
+import { LocaleDate } from "@/components/ui/locale-date";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
 import { JsonLd } from "@/components/ui/json-ld";
 import { QuickBirthInput } from "@/components/home/quick-birth-input";
@@ -25,16 +26,6 @@ import { celebritiesForDate } from "@/lib/content/celebrities";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { websiteJsonLd } from "@/lib/seo/jsonld";
 import { plainRetro, plainAspect } from "@/lib/content/sky-plain";
-
-function todayDate(): string {
-  return new Intl.DateTimeFormat("en", {
-    timeZone: "UTC",
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date());
-}
 
 function todayMonthDay(): { month: number; day: number } {
   const now = new Date();
@@ -64,7 +55,6 @@ export const metadata = pageMetadata(
 );
 
 export default function HomePage() {
-  const date = todayDate();
   const snapshot = snapshotForToday();
 
   const { month, day } = todayMonthDay();
@@ -97,7 +87,7 @@ export default function HomePage() {
           <VitruvianHero className="opacity-[0.14]" />
         </div>
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
-          <p className="kicker">{date}</p>
+          <p className="kicker"><LocaleDate /></p>
           <div aria-hidden="true" className="gold-rule mx-auto mt-5 w-20" />
           <div className="starfield mx-auto -mb-3 mt-8 h-16" aria-hidden="true" />
           <h1 className="mx-auto max-w-4xl font-display text-4xl font-medium leading-[1.05] text-starlight sm:text-6xl">
@@ -141,7 +131,7 @@ export default function HomePage() {
             <div className="lg:w-3/5">
               <p className="kicker"><LocaleText path="home.skyTonight" fallback="The sky, tonight" /></p>
               <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
-                <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : "the zodiac"}
+                <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : <LocaleText path="uichrome.theZodiac" fallback="the zodiac" />}
               </h2>
               <p className="mt-4 max-w-xl leading-7 text-muted">
                 <LocaleText path="home.liveSkyDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
@@ -171,7 +161,7 @@ export default function HomePage() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <p className="kicker"><LocaleText path="home.planetaryBulletin" fallback="Planetary bulletin" /></p>
               <p className="max-w-md text-xs leading-5 text-subdued">
-                In plain words: “retrograde” is an illusion — the planet only appears to move
+                <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />“retrograde” is an illusion — the planet only appears to move
                 backwards from Earth; it is a signal to slow down and review.
               </p>
             </div>
@@ -187,7 +177,7 @@ export default function HomePage() {
                       </p>
                     </div>
                     <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
-                      In plain words: {plainRetro(p.key, p.sign)}
+                      <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />{plainRetro(p.key, p.sign)}
                     </p>
                   </div>
                 ))
@@ -201,7 +191,7 @@ export default function HomePage() {
                     </p>
                   </div>
                   <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
-                    In plain words: no planets are backtracking right now — momentum is on your side.
+                    <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />no planets are backtracking right now — momentum is on your side.
                   </p>
                 </div>
               )}
@@ -222,7 +212,7 @@ export default function HomePage() {
                     </p>
                   </div>
                   <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
-                    In plain words: {plainAspect(transit.name, transit.bodyA, transit.bodyB, transit.orb)}
+                    <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />{plainAspect(transit.name, transit.bodyA, transit.bodyB, transit.orb)}
                   </p>
                 </div>
               )}
@@ -361,7 +351,7 @@ export default function HomePage() {
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-1.5 text-sm text-gold">
-                  Open {feature.titleFallback}
+                  <LocaleText path="uichrome.openFeature" fallback="Open" /> {feature.titleFallback}
                   <span aria-hidden className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
                 </span>
               </Link>

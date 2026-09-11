@@ -116,7 +116,7 @@ export function SkyMapClient() {
             )}
           </div>
           <p className="mt-1.5 text-[0.68rem] leading-4 text-subdued">
-            Pick a suggestion to set exact coordinates for the map.
+            {t("uichrome.placePick", "Pick a suggestion to set exact coordinates for the map.")}
           </p>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div>
@@ -160,8 +160,8 @@ export function SkyMapClient() {
           </p>
           <p className="mt-2 text-[0.65rem] leading-4 text-subdued">
             {provenance === "verified"
-              ? "Coordinates verified from the selected place."
-              : "Coordinates entered manually — the map uses them as-is."}
+              ? t("uichrome.placeVerified", "Coordinates verified from the selected place.")
+              : t("uichrome.placeManualMap", "Coordinates entered manually — the map uses them as-is.")}
           </p>
           <p className="mt-0.5 text-[0.65rem] leading-4 text-subdued">{OSM_ATTRIBUTION}</p>
         </div>

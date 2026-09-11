@@ -70,7 +70,7 @@ export function FamousBirthdaysHub({
   initialDay,
   initialPeople,
 }: FamousBirthdaysHubProps) {
-  const { t, locale } = useLocale();
+  const { t, tSign, locale } = useLocale();
 
   const [now, setNow] = useState(() => startOfUtcDay());
   useEffect(() => {
@@ -167,7 +167,7 @@ export function FamousBirthdaysHub({
             </h2>
             <p className="mt-1 text-sm text-subdued">
               {t("celebrities.signOfTheDay", "Sign of the day")}{" "}
-              <span className="font-medium text-starlight">{sign.name}</span>
+              <span className="font-medium text-starlight">{tSign(sign.slug)}</span>
               <span className="ms-1 opacity-60">{sign.glyph}</span>
             </p>
           </div>

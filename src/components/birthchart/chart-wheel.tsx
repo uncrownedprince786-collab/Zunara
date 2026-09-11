@@ -52,8 +52,8 @@ export function ChartWheel({ chart, size = 480 }: ChartWheelProps) {
   const planetR = houseR - 30;
 
   return (
-    <div className="relative inline-block">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="rotate-[-90deg]">
+    <div className="relative w-full" style={{ maxWidth: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="h-auto w-full rotate-[-90deg]">
         <defs>
           <radialGradient id="wheel-bg" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#090B10" />

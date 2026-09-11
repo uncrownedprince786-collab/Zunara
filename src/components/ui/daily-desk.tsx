@@ -84,7 +84,7 @@ export function DailyDesk() {
               <div className="mt-5 flex-1">
                 <p className="text-[0.62rem] uppercase tracking-[0.22em] text-subdued">{t("horoscope.activeTheme", "Today's theme")}</p>
                 <p className="mt-1.5 font-serif-body text-[0.98rem] italic leading-6 text-starlight/90">
-                  {headline ?? "A steady day"}
+                  {headline ?? t("uichrome.steadyDay", "A steady day")}
                 </p>
 
                 {strongest && (

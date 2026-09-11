@@ -14,16 +14,17 @@ const PROMO_SIGNS = ["aries", "leo", "libra", "pisces"] as const;
  * every visitor starts fresh and picks a sign themselves.
  */
 export function DailyOrbitBanner() {
-  const { dict } = useLocale();
+  const { dict, tSign } = useLocale();
+  const readTodays = (slug: string) => dict.uichrome.readTodays.replace("{sign}", tSign(slug));
   return (
-    <section aria-label="Today's horoscope" className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
+    <section aria-label={dict.uichrome.todaysHoroscope} className="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
       <div className="cosmic-glow flex items-center gap-4 rounded-xl border border-white/[0.08] bg-white/[0.04] p-4 backdrop-blur-sm sm:p-5">
         <div className="flex shrink-0 items-center justify-center gap-3">
           {PROMO_SIGNS.map((slug) => (
             <Link
               key={slug}
               href={`/horoscope/${slug}/today`}
-              aria-label={`Read today's ${slug} horoscope`}
+              aria-label={readTodays(slug)}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.03] text-gold/80 transition-colors hover:border-gold/40 hover:text-gold"
             >
               <ZodiacSymbol sign={slug} size={26} label={slug} />

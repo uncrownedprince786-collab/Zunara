@@ -12,6 +12,7 @@ import { zodiacForDate } from "@/lib/zodiac/zodiac";
 import { absoluteUrl } from "@/lib/seo/site";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { birthdayItemListJsonLd } from "@/lib/seo/jsonld";
+import { LocaleDate } from "@/components/ui/locale-date";
 import { BirthdayLive } from "./birthday-client";
 
 export const revalidate = 86400;
@@ -76,7 +77,7 @@ export default async function BirthdayPage({ params }: BirthdayPageProps) {
           <p className="kicker">Famous birthdays by date</p>
           <div aria-hidden="true" className="gold-rule mx-auto mt-4 w-20" />
           <h1 className="mt-6 font-display text-4xl leading-tight text-starlight sm:text-6xl">
-            People born on {label}
+            People born on <LocaleDate month={month} day={day} />
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted">
             Who else shares this birthday? The notable names below are synced live

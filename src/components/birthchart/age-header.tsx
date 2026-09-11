@@ -27,7 +27,7 @@ export function AgeHeader({ chart, at }: AgeHeaderProps) {
           <h2 className="font-display text-xl font-medium text-starlight">
             {t("birthchart.bigThree", "The Big Three")}
           </h2>
-          <div className="mt-5 grid grid-cols-3 gap-3">
+          <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
             <div className="flex flex-col items-center rounded-xl bg-white/[0.03] p-4 text-center">
               <ZodiacSymbol sign={chart.bigThree.sun.sign} size="md" className="text-gold" />
               <div className="mt-2 text-xs font-semibold text-gold">{t("birthchart.sunSign", "Sun")}</div>

@@ -17,9 +17,9 @@ import { useEffect, useRef } from "react";
  *    flares out just before fading and leaves a brief smoke/light streak.
  *
  * The layer is strictly decorative: pointer-events none and GPU-composited.
- * Under prefers-reduced-motion we stop animating but still paint a single
- * static tableau of faint stars and frozen streaks, so the sky stays alive on
- * phones that ship with "Reduce Motion" enabled.
+ * Under prefers-reduced-motion we dial the show WAY down (fewer, slower, dimmer
+ * streaks, no flare-outs, no lingering smoke) but it still animates — meteors
+ * must keep drifting on phones that ship with "Reduce Motion" enabled.
  */
 
 interface Meteor {
@@ -50,17 +50,14 @@ function staticRand(seed: number, salt: number): number {
 }
 
 /**
- * Reduced-motion still: a sparse sheet of faint stars plus 2-3 frozen meteor
- * streaks mid-descent. Painted once and re-painted on resize only — zero
- * animation cost, but the night sky never renders as a blank void on mobile.
+ * Ambient star field, re-painted under the meteors every frame so the sky always
+ * has depth (and is never an empty void between streaks). Deterministic.
  */
-function drawStaticScene(
+function paintStars(
   c: CanvasRenderingContext2D,
   width: number,
   height: number,
 ) {
-  c.clearRect(0, 0, width, height);
-
   const stars = Math.min(150, Math.round((width * height) / 16000));
   for (let i = 0; i < stars; i++) {
     const sx = staticRand(i, 1) * width;
@@ -72,28 +69,6 @@ function drawStaticScene(
     c.fill();
   }
   c.globalAlpha = 1;
-
-  const streaks = 2 + Math.floor(staticRand(9, 1) * 2); // 2..3 streaks
-  for (let i = 0; i < streaks; i++) {
-    const x0 = (0.06 + staticRand(i, 6) * 0.34) * width;
-    const y0 = (0.06 + staticRand(i, 7) * 0.3) * height;
-    const ang = ((45 + staticRand(i, 8) * 15) * Math.PI) / 180;
-    const speed = (0.62 + staticRand(i, 9) * 0.5) * width * 0.6;
-    const ux = Math.cos(ang);
-    const uy = Math.sin(ang);
-    const len = Math.max(90, Math.min(220, speed * 0.18));
-    const g = c.createLinearGradient(x0, y0, x0 - ux * len, y0 - uy * len);
-    g.addColorStop(0, "rgba(255,255,255,0.72)");
-    g.addColorStop(0.4, "rgba(255,255,255,0.28)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
-    c.strokeStyle = g;
-    c.lineWidth = 1.2;
-    c.lineCap = "round";
-    c.beginPath();
-    c.moveTo(x0, y0);
-    c.lineTo(x0 - ux * len, y0 - uy * len);
-    c.stroke();
-  }
 }
 
 export function MeteorShower() {
@@ -109,28 +84,10 @@ export function MeteorShower() {
     const reduce =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      // No animation — but still paint the sky: one static tableau of stars and
-      // frozen streaks, re-drawn on resize. Keeps the phone sky alive without
-      // any motion (the old `return` here rendered a blank dark void on mobile
-      // devices that ship with Reduce Motion enabled).
-      let width = window.innerWidth;
-      let height = window.innerHeight;
-      let small = width < 768;
-      const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.25 : 1.5);
-      const paint = () => {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        small = width < 768;
-        canvas.width = Math.round(width * dpr);
-        canvas.height = Math.round(height * dpr);
-        c.setTransform(dpr, 0, 0, dpr, 0, 0);
-        drawStaticScene(c, width, height);
-      };
-      paint();
-      window.addEventListener("resize", paint);
-      return () => window.removeEventListener("resize", paint);
-    }
+    // Gentle mode under reduce-motion: still animates (meteors must keep
+    // drifting on mobile), but calmer — slower/dimmer streaks, no hero
+    // flare-outs, no lingering smoke, capped concurrency.
+    const gentle = reduce;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -140,7 +97,7 @@ export function MeteorShower() {
     const dpr = Math.min(window.devicePixelRatio || 1, small ? 1.25 : 1.5);
     // Stay GPU-cheap on small screens: fewer concurrent streaks and lighter
     // hero residue keep battery drain and jank in check on phones.
-    const MAX_CONCURRENT = small ? 3 : 4;
+    const MAX_CONCURRENT = gentle ? 2 : small ? 3 : 4;
 
     const resize = () => {
       width = window.innerWidth;
@@ -149,6 +106,7 @@ export function MeteorShower() {
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      paintStars(c, width, height);
     };
     resize();
     window.addEventListener("resize", resize);
@@ -193,8 +151,9 @@ export function MeteorShower() {
       points.length = 0;
       for (const pt of next) points.push(pt);
     }
-    // First pattern fires almost immediately so the sky feels alive on load.
-    let nextPattern = 0.4;
+    // First pattern fires almost immediately so the sky feels alive on load
+    // (a bit more early calm under reduce-motion).
+    let nextPattern = gentle ? 1.2 : 0.4;
 
     /** One isolated, accelerated meteor sweep per cycle. */
     function spawn(isHero: boolean, speedBoost = 1, angle?: number) {
@@ -210,7 +169,8 @@ export function MeteorShower() {
         (0.62 + Math.random() * 0.5) *
         speedBoost *
         (isHero ? 1.05 : 1) *
-        (width * 0.6);
+        (width * 0.6) *
+        (gentle ? 0.55 : 1);
       const vx = Math.cos(a) * speed;
       const vy = Math.sin(a) * speed;
 
@@ -223,7 +183,9 @@ export function MeteorShower() {
         ) || dist;
       dist = Math.min(dist, edgeAllow * 0.62);
 
-      const dur = isHero ? 0.7 + Math.random() * 0.3 : 0.34 + Math.random() * 0.34;
+      const dur =
+        (isHero ? 0.7 + Math.random() * 0.3 : 0.34 + Math.random() * 0.34) *
+        (gentle ? 1.6 : 1);
       const travel = speed; // ~distance covered in 1s
       const len = Math.max(90, Math.min(220, travel * (isHero ? 0.28 : 0.18)));
 
@@ -251,7 +213,8 @@ export function MeteorShower() {
       const fadeIn = Math.min(1, m.life / 0.08);
       const tailRatio = m.dur > 0 ? m.life / m.dur : 1;
       const fadeOut = tailRatio > 0.72 ? 1 - (tailRatio - 0.72) / 0.28 : 1;
-      const alpha = Math.max(0, fadeIn * fadeOut);
+      const alpha =
+        Math.max(0, fadeIn * fadeOut) * (gentle ? 0.55 : 1);
 
       // Head glow (radius tuned down on phones to keep gradient fills cheap).
       if (m.hue === "hero") {
@@ -292,6 +255,14 @@ export function MeteorShower() {
     }
 
     function scheduleCycle() {
+      if (gentle) {
+        // Gentle: sparse, slow single sweeps — never hero flare-outs or
+        // clusters, so motion stays calm under reduce-motion.
+        if (Math.random() < 0.8) spawn(false, 1);
+        nextPattern = 2.5 + Math.random() * 2;
+        return;
+      }
+
       // Independent, unpredictable golden hero check fired on every cycle.
       const hero = Math.random() < 0.12;
 
@@ -355,9 +326,10 @@ export function MeteorShower() {
             scheduleCycle();
           }
 
-          c.clearRect(0, 0, width, height);
+c.clearRect(0, 0, width, height);
+      paintStars(c, width, height);
 
-          for (let i = meteors.length - 1; i >= 0; i--) {
+      for (let i = meteors.length - 1; i >= 0; i--) {
             const m = meteors[i];
             m.life += dt;
             drawMeteor(m, simTime);

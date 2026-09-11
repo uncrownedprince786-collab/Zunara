@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useLocale } from "@/lib/i18n/client";
+import { monthLong } from "@/lib/i18n/date";
 import { validateBirth, type BirthInput, YEAR_RANGE } from "@/lib/natal/validate";
 import {
   searchPlaces,
@@ -17,7 +18,7 @@ interface BirthFormProps {
 }
 
 export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [input, setInput] = useState<BirthInput>({
     year: new Date().getUTCFullYear() - 25,
     month: 6,
@@ -85,20 +86,10 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
     onSubmit(input);
   };
 
-  const months = [
-    { value: 1, label: "January" },
-    { value: 2, label: "February" },
-    { value: 3, label: "March" },
-    { value: 4, label: "April" },
-    { value: 5, label: "May" },
-    { value: 6, label: "June" },
-    { value: 7, label: "July" },
-    { value: 8, label: "August" },
-    { value: 9, label: "September" },
-    { value: 10, label: "October" },
-    { value: 11, label: "November" },
-    { value: 12, label: "December" },
-  ];
+  const months = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: monthLong(locale, i),
+  }));
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl saturate-180 sm:p-8">
@@ -255,7 +246,7 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
           }}
           onFocus={() => void runSearch(input.placeName || "")}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 250)}
-          placeholder="e.g., London, United Kingdom"
+          placeholder={t("uichrome.placeExample", "e.g., London, United Kingdom").replace("{city}", "London").replace("{country}", "United Kingdom")}
           className="w-full rounded-xl border border-white/10 bg-ink/80 px-4 py-3 text-sm text-starlight outline-none transition-colors focus:border-gold"
           autoComplete="off"
         />
@@ -273,12 +264,12 @@ export function BirthForm({ onSubmit, isLoading = false }: BirthFormProps) {
           </ul>
         )}
         <p className="mt-1.5 text-[0.68rem] leading-4 text-subdued">
-          Pick a suggestion to set exact coordinates.
+          {t("uichrome.placePick", "Pick a suggestion to set exact coordinates.")}
         </p>
         <p className="mt-0.5 text-[0.65rem] leading-4 text-subdued">
           {provenance === "verified"
-            ? "Coordinates verified from the selected place."
-            : "Coordinates below were entered manually — the chart uses them as-is."}
+            ? t("uichrome.placeVerified", "Coordinates verified from the selected place.")
+            : t("uichrome.placeManualWheel", "Coordinates below were entered manually — the chart uses them as-is.")}
         </p>
         <p className="mt-1 text-[0.65rem] leading-4 text-subdued">{OSM_ATTRIBUTION}</p>
       </div>

@@ -63,7 +63,7 @@ export function CosmicFactsClient() {
           {t("cosmicFacts.tapToReveal", "Tap a sign to reveal its cosmic profile")}
         </h2>
 
-        <div className="mt-10 grid grid-cols-3 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
           {ZODIAC_SIGNS.map((sign) => {
             const active = selected?.slug === sign.slug;
             return (

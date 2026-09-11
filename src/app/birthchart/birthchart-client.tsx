@@ -18,6 +18,7 @@ import { VitruvianHero } from "@/components/ui/vitruvian-hero";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { useLocale } from "@/lib/i18n/client";
+import { formatDate } from "@/lib/i18n/date";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 function subst(tpl: string, vars: Record<string, string>): string {
@@ -25,7 +26,7 @@ function subst(tpl: string, vars: Record<string, string>): string {
 }
 
 export function BirthchartClient() {
-  const { t, tSign, tPlanet } = useLocale();
+  const { t, tSign, tPlanet, locale } = useLocale();
 
   const [chart, setChart] = useState<NatalChart | null>(null);
 
@@ -153,7 +154,7 @@ export function BirthchartClient() {
                   {tSign(chart.bigThree.sun.sign)} {t("birthchart.sunSign", "Sun")} · {tSign(chart.bigThree.moon.sign)} {t("birthchart.moonSign", "Moon")} · {tSign(chart.bigThree.ascendant)} {t("birthchart.ascendant", "Rising")}
                 </p>
                 <p className="mt-1 text-xs text-muted">
-                  {subst(t("birthchart.computedFor", "Computed for {date} · VSOP87 Engine {version}"), { date: new Date(chart.utcTime).toUTCString(), version: chart.engineVersion })}
+                  {subst(t("birthchart.computedFor", "Computed for {date} · VSOP87 Engine {version}"), { date: formatDate(locale, new Date(chart.utcTime), { dateStyle: "medium", timeStyle: "short" }), version: chart.engineVersion })}
                 </p>
               </div>
               <button
@@ -188,7 +189,7 @@ export function BirthchartClient() {
                   <h2 className="font-display text-xl font-medium text-starlight mb-5">
                     {t("birthchart.bigThree", "The Big Three")}
                   </h2>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
                     {/* Sun */}
                     <div className="flex flex-col items-center text-center p-3 rounded-xl bg-white/[0.03]">
                       <ZodiacSymbol sign={chart.bigThree.sun.sign} size="md" className="text-gold" />

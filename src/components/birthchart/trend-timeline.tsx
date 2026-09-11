@@ -3,6 +3,8 @@
 import type { TransitForecast, TransitAspectName, TransitArea } from "@/lib/natal/transits";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { useLocale } from "@/lib/i18n/client";
+import { monthShort } from "@/lib/i18n/date";
+import type { Locale } from "@/lib/i18n/dictionaries";
 
 const ASPECT_STYLE: Record<TransitAspectName, string> = {
   Conjunction: "border-gold/25 bg-gold/10 text-gold",
@@ -33,11 +35,6 @@ const PLANET_STYLE: Record<string, string> = {
   pluto: "text-purple-300",
 };
 
-const MONTH_SHORT = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-
 const AREA_STYLE: Record<TransitArea, string> = {
   identity: "border-gold/25 bg-gold/10 text-gold",
   relationships: "border-pink-500/25 bg-pink-500/10 text-pink-300",
@@ -47,9 +44,9 @@ const AREA_STYLE: Record<TransitArea, string> = {
   energy: "border-orange-500/25 bg-orange-500/10 text-orange-300",
 };
 
-function formatRange(start: Date, end: Date): string {
-  const monthA = MONTH_SHORT[start.getUTCMonth()];
-  const monthB = MONTH_SHORT[end.getUTCMonth()];
+function formatRange(start: Date, end: Date, locale: Locale): string {
+  const monthA = monthShort(locale, start);
+  const monthB = monthShort(locale, end);
   const year = end.getUTCFullYear();
   if (start.getUTCMonth() === end.getUTCMonth() && start.getUTCFullYear() === end.getUTCFullYear()) {
     return `${monthA} ${start.getUTCDate()} – ${end.getUTCDate()}, ${year}`;
@@ -62,7 +59,7 @@ interface TrendTimelineProps {
 }
 
 export function TrendTimeline({ forecast }: TrendTimelineProps) {
-  const { t, tArea, tPlanet } = useLocale();
+  const { t, tArea, tPlanet, locale } = useLocale();
 
   if (forecast.length === 0) {
     return (
@@ -88,7 +85,7 @@ export function TrendTimeline({ forecast }: TrendTimelineProps) {
 
             <div className="flex flex-wrap items-center gap-3">
               <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 font-mono text-xs text-starlight">
-                {formatRange(entry.start, entry.end)}
+                {formatRange(entry.start, entry.end, locale)}
               </span>
               <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${ASPECT_STYLE[entry.aspectName]}`}>
                 <span className="text-base leading-none">{ASPECT_GLYPH[entry.aspectName]}</span>

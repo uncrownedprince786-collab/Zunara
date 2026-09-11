@@ -1,4 +1,5 @@
 import { LocaleText } from "@/components/ui/locale-text";
+import { LocaleDate } from "@/components/ui/locale-date";
 import { onThisDay } from "@/lib/content/on-this-day";
 
 const MONTHS = [
@@ -16,19 +17,10 @@ const MONTHS = [
   "December",
 ];
 
-function historyLabel(month: number, day: number): string {
-  return new Intl.DateTimeFormat("en", {
-    timeZone: "UTC",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(Date.UTC(2024, month - 1, day)));
-}
-
 export function OnThisDay({ month, day }: { month: number; day: number }) {
   const events = onThisDay(month, day).sort((a, b) => a.year - b.year);
   if (events.length === 0) return null;
 
-  const label = historyLabel(month, day);
   const wikiUrl = `https://en.wikipedia.org/wiki/${MONTHS[month - 1]}_${day}`;
 
   return (
@@ -45,7 +37,7 @@ export function OnThisDay({ month, day }: { month: number; day: number }) {
             id="on-this-day-heading"
             className="mt-3 font-display text-3xl text-starlight sm:text-4xl"
           >
-            {label}
+            {month != null && day != null && <LocaleDate month={month} day={day} />}
           </h2>
           <p className="mt-1 max-w-2xl text-sm text-muted">
             <LocaleText

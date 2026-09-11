@@ -22,7 +22,7 @@ export function PeriodTabs({ signSlug, active, basePath }: PeriodTabsProps) {
         : `/horoscope/${sign}/${type}`;
 
   return (
-    <nav aria-label={t("horoscope.chooseHorizon", "Forecast period")} className="inline-flex items-center gap-1 border-b border-line">
+    <nav aria-label={t("horoscope.chooseHorizon", "Forecast period")} className="inline-flex max-w-full items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-line">
       {TABS.map((tab) => {
         const isActive = tab === active;
         return (

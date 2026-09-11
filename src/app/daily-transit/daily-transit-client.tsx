@@ -16,7 +16,6 @@ import type { NatalChart } from "@/lib/natal/types";
 import type { DailyInsight } from "@/lib/transits/daily-transits";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
-import { getCelestialBody } from "@/lib/astronomy/bodies";
 import { useLocale } from "@/lib/i18n/client";
 
 function subst(tpl: string, vars: Record<string, string>): string {
@@ -247,7 +246,6 @@ export function DailyTransitClient() {
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {insights.map((ins) => {
-                const meta = getCelestialBody(ins.transitBody);
                 return (
                   <div
                     key={ins.transitBody}
@@ -255,7 +253,7 @@ export function DailyTransitClient() {
                   >
                     <div className="flex items-center gap-2.5">
                       <PlanetSymbol body={ins.transitBody} size="sm" className="text-gold" decorative />
-                      <span className="font-medium text-starlight">{meta.name}</span>
+                      <span className="font-medium text-starlight">{tPlanet(ins.transitBody)}</span>
                       <span className="ml-auto font-mono text-xs text-muted">{subst(t("dailyTransit.houseLabel", "House {n}"), { n: String(ins.house) })}</span>
                     </div>
                     <div className="mt-2 flex items-center gap-2">

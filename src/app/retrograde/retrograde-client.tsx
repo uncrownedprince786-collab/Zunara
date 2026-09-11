@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { tabulateRetrogrades, liveSkyStats } from "@/lib/retrograde/tracker";
 import type { TabulatedRetrograde, SkyStats } from "@/lib/retrograde/tracker";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
-import { getZodiacSign } from "@/lib/zodiac/zodiac";
+
 import { useLocale } from "@/lib/i18n/client";
 
 function subst(tpl: string, vars: Record<string, string>): string {
@@ -109,7 +109,6 @@ export function RetrogradeClient() {
               {tabs.map((row) => {
                 const planetName = tPlanet(row.planet);
                 const signDot = stats?.planetsBySign.find((p) => p.planet === row.planet);
-                const signName = signDot ? getZodiacSign(signDot.sign)?.name : null;
                 return (
                   <tr key={row.planet} className="align-top transition-colors hover:bg-white/[0.03]">
                     <td className="p-4 whitespace-nowrap">
@@ -117,8 +116,8 @@ export function RetrogradeClient() {
                         <PlanetSymbol body={row.planet} size="sm" className="text-gold" decorative />
                         <div>
                           <span className="font-medium text-starlight">{planetName}</span>
-                          {signName && (
-                            <span className="block text-xs text-subdued">{subst(t("retrograde.inSign", "in {sign}"), { sign: tSign(signName) })}</span>
+                          {signDot && (
+                            <span className="block text-xs text-subdued">{subst(t("retrograde.inSign", "in {sign}"), { sign: tSign(signDot.sign) })}</span>
                           )}
                         </div>
                       </div>

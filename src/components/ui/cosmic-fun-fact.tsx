@@ -1,4 +1,7 @@
+"use client";
+
 import { PlanetSymbol } from "./planet-symbol";
+import { LocaleText } from "./locale-text";
 
 interface CosmicFunFactProps {
   fact: string;
@@ -26,7 +29,7 @@ export function CosmicFunFact({ fact, compact = false }: CosmicFunFactProps) {
         </span>
         <div>
           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
-            Did you know?
+            <LocaleText path="uichrome.didYouKnow" fallback="Did you know?" />
           </p>
           <p className="mt-2 text-sm leading-6 text-p-ink">{fact}</p>
         </div>
