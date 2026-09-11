@@ -428,7 +428,7 @@ Urdu/Arabic/Spanish/Chinese added #25–#36; this sprint ships **हिन्द
 
 **Breadcrumb chrome audit:** scanning `src/components` for raw JSX text found exactly one real leak — the "Home" crumb (footer "Zunara" is the brand). Breadcrumbs are server-rendered while translation lives client-side, so `CrumbText` (client) reverse-maps English labels → dict paths (nav/home indexed first, exact then case-insensitive match) and still renders english fallback for unmatchable editorial labels ("Astrology", "Library", ad hoc page titles). Known OUT-OF-SCOPE limitation recorded: server-rendered editorial pages (`library/*`, `astrology/[topic]`, famous-birthdays & sky-events landings) are static English content by design — chrome localizes, article bodies don't.
 
-**Verification:** 377/377 tests, tsc 0, eslint 0 (5 pre-existing warnings), `next build` OK, SSR on :3010 → GET / with `zunara-locale=hi` = 200, served HTML contains the hi inline branch, and the built client chunks contain होम/मेष (dict reached the browser bundle — ripgrep "JSON record exceeded 65536 bytes" means the minified dict line is just >64KB, which IS the hit). Push <hash>.
+**Verification:** 377/377 tests, tsc 0, eslint 0 (5 pre-existing warnings), `next build` OK, SSR on :3010 → GET / with `zunara-locale=hi` = 200, served HTML contains the hi inline branch, and the built client chunks contain होम/मेष (dict reached the browser bundle — ripgrep "JSON record exceeded 65536 bytes" means the minified dict line is just >64KB, which IS the hit). Pushed `7e28a81`.
 
 ## Sprint #39: "On this day" home section — a curated history timeline for every date
 
