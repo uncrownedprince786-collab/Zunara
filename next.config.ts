@@ -29,7 +29,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org",
       "font-src 'self' data:",
-      "connect-src 'self' https://nominatim.openstreetmap.org https://en.wikipedia.org https://query.wikidata.org",
+      "connect-src 'self' https://nominatim.openstreetmap.org https://en.wikipedia.org https://query.wikidata.org https://space-calendar.lukekorth.com",
       "object-src 'none'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
@@ -39,6 +39,14 @@ const securityHeaders = [
   {
     key: "X-DNS-Prefetch-Control",
     value: "on",
+  },
+  {
+    key: "Cross-Origin-Opener-Policy",
+    value: "same-origin",
+  },
+  {
+    key: "Cross-Origin-Resource-Policy",
+    value: "same-origin",
   },
 ];
 

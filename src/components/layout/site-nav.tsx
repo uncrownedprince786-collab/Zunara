@@ -52,7 +52,7 @@ export function SiteNav({ labels }: { labels?: Record<string, string> }) {
 
       <button
         type="button"
-        className="inline-flex h-9 w-9 items-center justify-center text-muted md:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center text-muted md:hidden"
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label={open ? t("header.closeMenu", "Close menu") : t("header.openMenu", "Open menu")}

@@ -73,13 +73,13 @@ export function LifePillars({ sections }: LifePillarsProps) {
               aria-controls={`pillar-panel-${s.id}`}
               tabIndex={selected ? 0 : -1}
               onClick={() => setActiveIndex(index)}
-              className={`border-b-2 pb-3 pr-4 pt-1 text-left text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
+              className={`border-b-2 pb-3 pe-4 pt-1 text-start text-xs font-semibold uppercase tracking-[0.14em] transition-colors ${
                 selected
                   ? "border-gold text-gold"
                   : "border-transparent text-muted hover:text-starlight"
               }`}
             >
-              <span className="mr-2 text-gold/70">0{index + 1}</span>
+              <span className="me-2 text-gold/70">0{index + 1}</span>
               {t(`birthchart.pillar.${s.id}`, s.title)}
             </button>
           );

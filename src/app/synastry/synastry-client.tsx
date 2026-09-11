@@ -200,7 +200,7 @@ function AspectRow({ asp }: { asp: SynastryAspect }) {
         <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${badge}`}>
           {word}
         </span>
-        <span className="ml-auto font-mono text-xs text-muted">{subst(t("synastry.orb", "orb {orb}°"), { orb: asp.orb.toFixed(1) })}</span>
+        <span className="ms-auto font-mono text-xs text-muted">{subst(t("synastry.orb", "orb {orb}°"), { orb: asp.orb.toFixed(1) })}</span>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted">{asp.interpretation}</p>
     </li>

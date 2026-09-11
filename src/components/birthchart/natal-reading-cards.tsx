@@ -49,7 +49,7 @@ function ReadingCard({ reading }: ReadingCardProps) {
       <p className="text-sm leading-6 text-starlight/90">{reading.body}</p>
       <details className="text-xs text-muted border-t border-white/5 pt-3">
         <summary className="cursor-pointer select-none mb-1">{t("common.drivingPlacements", "Driving placements")}</summary>
-        <ul className="space-y-1 pl-4 list-disc">
+        <ul className="space-y-1 ps-4 list-disc">
           {reading.drivers.map((d, i) => (
             <li key={i}>{d}</li>
           ))}

@@ -221,7 +221,7 @@ function CelebrityCard({ celebrity }: { celebrity: Celebrity }) {
         </span>
         {typeof celebrity.sitelinks === "number" && celebrity.sitelinks > 0 && (
           <span className="text-[0.62rem] text-subdued">
-            <span aria-hidden className="mr-1 text-gold">★</span>
+            <span aria-hidden className="me-1 text-gold">★</span>
             {celebrity.sitelinks}
             {" "}{t("celebrities.sitelinks", "language editions")}
           </span>

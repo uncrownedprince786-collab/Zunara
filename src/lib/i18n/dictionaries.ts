@@ -246,7 +246,7 @@ export const en = {
     colAdvice: "Advice",
   },
   home: {
-    heroTitle: "Precision astronomical engine & personalized birthday insights",
+    heroTitle: "Your sky, written from real planetary positions",
     heroSubtitle:
       "Real planetary mathematics, not guesses. Calculate your exact birth chart, read mathematically derived horoscopes for all twelve signs, follow the live sky, and discover the famous people who share your birthday.",
     heroCtaPrimary: "Calculate Birth Chart",
@@ -374,7 +374,7 @@ export const en = {
     noonNote:
       "Exact birth time unknown: Ascendant & houses estimated using 12:00 PM (Noon) UTC. For the precise rising sign, provide the exact birth time.",
     modifyDetails: "Modify Details",
-    computedFor: "Computed for {date} · VSOP87 Engine {version}",
+    computedFor: "Computed for {date} · VSOP87-based ephemeris",
     checkForm: "Please check the form inputs.",
     calcFailed: "Failed to calculate birth chart",
     ageSection: "Age and next milestone",
@@ -453,7 +453,7 @@ export const en = {
     computedAt: "Computed at {time} · A retrograde is apparent, not physical.",
     perPlanetTracker: "Per-planet tracker",
     orderedBy:
-      "Ordered by the start of the next retrograde window. Dates are refined to hour-level precision from calculated stations.",
+      "Ordered by the start of the next retrograde window. Station dates are refined from calculated positions.",
     inSign: "in {sign}",
     upcoming: "Upcoming",
     strength: {
@@ -490,12 +490,12 @@ export const en = {
     legendStar: "Star",
   },
   cosmicFacts: {
-    kicker: "The cosmic vault",
-    heroTitle: "Cosmic Traits & Facts",
+    kicker: "Zodiac traits",
+    heroTitle: "Zodiac traits & facts",
     heroSubtitle:
-      "Explore every zodiac sign's core traits, secret perks, ruling planet lore, and the elemental forces that shape each personality.",
+      "Core traits, ruling planets, and the elemental roots of all twelve zodiac signs.",
     chooseSign: "Choose your sign",
-    tapToReveal: "Tap a sign to reveal its cosmic profile",
+    tapToReveal: "Tap a sign to reveal its full profile",
     compatibilityKicker: "How two signs mesh",
     compatibilityTitle: "Zodiac compatibility",
     compatibilitySubtitle:
@@ -516,7 +516,7 @@ export const en = {
     careerArenasTitle: "Career arenas",
     superpowersTitle: "Your superpowers",
     watchOutForTitle: "Watch out for",
-    cosmicFunFactTitle: "Cosmic fun fact",
+    cosmicFunFactTitle: "Fun fact",
     elements: {
       Fire: "Passion, ambition, creative spark. Fire signs lead with courage and ignite every room they enter.",
       Earth: "Stability, patience, sensory wisdom. Earth signs build what lasts and ground every vision.",
@@ -1207,7 +1207,7 @@ export const ur: Dict = {
     colAdvice: "مشورہ",
   },
   home: {
-    heroTitle: "درست فلکیاتی انجن اور ذاتی یوم پیدائش کی بصیرتیں",
+    heroTitle: "آپ کا آسمان، حقیقی سیاروں کی گردش سے لکھا گیا",
     heroSubtitle:
       "سیاروں کی حقیقی ریاضی، اندازے نہیں۔ اپنا درست پیدائشی چارٹ شمار کریں، بارہوں برجوں کے ریاضیاتی زائچے پڑھیں، زندہ آسمان دیکھیں، اور جانیں کہ کون سی مشہور شخصیات آپ کی سالگرہ شریک ہیں۔",
     heroCtaPrimary: "پیدائشی چارٹ شمار کریں",
@@ -1335,7 +1335,7 @@ export const ur: Dict = {
     noonNote:
       "پیدائش کا درست وقت معلوم نہ ہونے پر طالع اور گھر دوپہر 12:00 بجے UTC کے حساب سے تخمینہ لگائے گئے ہیں۔",
     modifyDetails: "تفصیلات تبدیل کریں",
-    computedFor: "{date} کے لیے شمار کیا گیا · VSOP87 انجن {version}",
+    computedFor: "{date} کے لیے شمار کیا گیا · VSOP87 پر مبنی ایفیمریس",
     checkForm: "براہِ کرم فارم کی معلومات دیکھیں۔",
     calcFailed: "پیدائشی چارٹ کا حساب نہ ہو سکا",
     ageSection: "عمر اور اگلا اہم موڑ",
@@ -1414,7 +1414,7 @@ export const ur: Dict = {
     computedAt: "شمار کردہ {time} · رجعت ظاہری حرکت ہے، حقیقی نہیں۔",
     perPlanetTracker: "فی سیارہ ٹریکر",
     orderedBy:
-      "اگلی رجعت کے آغاز کے لحاظ سے ترتیب شدہ۔ تاریخیں محسوب مقامات سے گھنٹے کی درستگی تک کی گئی ہیں۔",
+      "اگلی رجعت کے آغاز کے لحاظ سے ترتیب شدہ۔ تاریخیں محسوب مقامات سے نکالی گئی ہیں۔",
     inSign: "{sign} میں",
     upcoming: "آئندہ",
     strength: {
@@ -1824,12 +1824,12 @@ export const ur: Dict = {
     placeExample: "مثلاً، {city}، {country}",
     steadyDay: "ایک مستحکم دن",
     didYouKnow: "کیا آپ جانتے ہیں؟",
-    errorReload: "کچھ بگڑ گیا — دوبارہ لوڈ کر کے دوبارہ سنک کریں۔",
-    positionUpdatesLive: "مقام کی پوزیشن لائیو اپڈیٹ ہوتی ہے",
+    errorReload: "کچھ بگڑ گیا — صفحہ دوبارہ لوڈ کر کے سنک کریں۔",
+    positionUpdatesLive: "پوزیشن لائیو اپڈیٹ ہوتی ہے",
     nodeNorth: "شمالی نوڈ",
     nodeSouth: "جنوبی نوڈ",
     todaysHoroscope: "آج کا زائچہ",
-    readTodays: "آج کا {sign} کا زائچہ پڑھیں",
+    readTodays: "آج {sign} کا زائچہ پڑھیں",
   },
 };
 
@@ -2058,7 +2058,7 @@ export const ar: Dict = {
     colAdvice: "النصيحة",
   },
   home: {
-    heroTitle: "محرّك فلكي دقيق ورؤى مخصّصة لأعياد الميلاد",
+    heroTitle: "سماؤك، مكتوبة من مواقع الكواكب الحقيقية",
     heroSubtitle:
       "رياضيات كوكبية حقيقية، لا تخمين. احسب مخطط ميلادك بدقة، واقرأ أبراج الاثني عشر المشتقة حسابياً، وتتبّع السماء لحظة بلحظة، واكتشف المشاهير الذين يشاركونك يوم ميلادك.",
     heroCtaPrimary: "احسب مخطط الميلاد",
@@ -2186,7 +2186,7 @@ export const ar: Dict = {
     noonNote:
       "وقت الميلاد الدقيق غير معروف — تم تقدير الطالع والبيوت عند الساعة 12:00 ظهراً بالتوقيت العالمي.",
     modifyDetails: "تعديل التفاصيل",
-    computedFor: "محسوبة بتاريخ {date} · محرك VSOP87 {version}",
+    computedFor: "محسوبة بتاريخ {date} · أفيميرس مبنية على VSOP87",
     checkForm: "يرجى التحقق من بيانات النموذج.",
     calcFailed: "تعذّر حساب الخريطة الفلكية",
     ageSection: "العمر والمحطة التالية",
@@ -2265,7 +2265,7 @@ export const ar: Dict = {
     computedAt: "محسوب في {time} · الرجعية حركة ظاهرية، وليست حقيقية.",
     perPlanetTracker: "متابعة لكل كوكب",
     orderedBy:
-      "مرتبة حسب بداية نافذة الرجعية التالية. التواريخ مضبوطة لدقة الساعة من المحطات المحسوبة.",
+      "مرتبة حسب بداية نافذة الرجعية التالية. التواريخ مضبوطة من المحطات المحسوبة.",
     inSign: "في {sign}",
     upcoming: "قادم",
     strength: {
@@ -2665,7 +2665,7 @@ export const ar: Dict = {
     copyright: "مكتوب في النجوم. كل المحتوى الفلكي للترفيه والتأمل وليس نصيحة مهنية.",
   },
   uichrome: {
-    inPlainWords: "بعبارة صريحة:",
+    inPlainWords: "بعبارة بسيطة:",
     openFeature: "افتح",
     theZodiac: "دائرة البروج",
     placePick: "اختر اقتراحًا لتثبيت الإحداثيات الدقيقة.",
@@ -2676,7 +2676,7 @@ export const ar: Dict = {
     steadyDay: "يوم ثابت",
     didYouKnow: "هل تعلم؟",
     errorReload: "حدث خطأ — أعد التحميل لإعادة المزامنة.",
-    positionUpdatesLive: "يتم تحديث الموقع مباشرة",
+    positionUpdatesLive: "يتم تحديث الموضع مباشرةً",
     nodeNorth: "العقدة الشمالية",
     nodeSouth: "العقدة الجنوبية",
     todaysHoroscope: "برج اليوم",
@@ -2909,7 +2909,7 @@ export const es: Dict = {
     colAdvice: "Consejo",
   },
   home: {
-    heroTitle: "Motor astronómico de precisión y cumpleaños personalizados",
+    heroTitle: "Tu cielo, escrito con las posiciones reales de los planetas",
     heroSubtitle:
       "Matemáticas planetarias reales, no suposiciones. Calcula tu carta natal exacta, lee los horóscopos derivados matemáticamente para los doce signos, sigue el cielo en vivo y descubre a los famosos que comparten tu cumpleaños.",
     heroCtaPrimary: "Calcular carta natal",
@@ -3037,7 +3037,7 @@ export const es: Dict = {
     noonNote:
       "Hora exacta desconocida: Ascendente y casas calculados usando las 12:00 PM UTC como referencia.",
     modifyDetails: "Modificar detalles",
-    computedFor: "Calculado para {date} · Motor VSOP87 {version}",
+    computedFor: "Calculado para {date} · Efemérides basadas en VSOP87",
     checkForm: "Revisa los datos del formulario.",
     calcFailed: "No se pudo calcular la carta natal",
     ageSection: "Edad y próximo hito",
@@ -3116,7 +3116,7 @@ export const es: Dict = {
     computedAt: "Calculado a las {time} · La retrogradación es aparente, no real.",
     perPlanetTracker: "Seguimiento por planeta",
     orderedBy:
-      "Ordenado por inicio de próxima ventana retrógrada. Las fechas tienen precisión horaria desde las estaciones calculadas.",
+      "Ordenado por inicio de la próxima ventana retrógrada. Las fechas se refinan a partir de las estaciones calculadas.",
     inSign: "en {sign}",
     upcoming: "Próximos",
     strength: {
@@ -3760,7 +3760,7 @@ export const zh: Dict = {
     colAdvice: "建议",
   },
   home: {
-    heroTitle: "精准天文引擎，个性生辰指南",
+    heroTitle: "你的星空，写在真实行星的位置之上",
     heroSubtitle:
       "真实的行星数学，而非推测。计算你的精确星盘，查看十二星座基于数学推演的每日运势，实时追踪夜空，并发现与你同一天生日的名人。",
     heroCtaPrimary: "计算星盘",
@@ -3886,7 +3886,7 @@ export const zh: Dict = {
     readingsHeading: "深度星盘解读",
     noonNote: "由于出生时间未知，上升星座及宫位按国际标准世界时中午12:00估算。",
     modifyDetails: "修改出生信息",
-    computedFor: "计算日期 {date} · VSOP87 引擎 {version}",
+    computedFor: "计算日期 {date} · 基于 VSOP87 的星历",
     checkForm: "请检查表单中的信息。",
     calcFailed: "无法计算个人星盘",
     ageSection: "年龄与下一个里程碑",
@@ -3964,7 +3964,7 @@ export const zh: Dict = {
     startsOn: "{planet} 于 {date} 开始逆行",
     computedAt: "计算于 {time} · 逆行是视运动，并非真实运动。",
     perPlanetTracker: "逐行星追踪",
-    orderedBy: "按下一逆行窗口的开始时间排序。日期由计算出的停滞点精确至小时。",
+    orderedBy: "按下一逆行窗口的开始时间排序。日期根据计算出的停滞点得出。",
     inSign: "在{sign}",
     upcoming: "即将到来",
     strength: {
@@ -4451,7 +4451,7 @@ export const hi: Dict = {
     calculateButton: "जन्म कुंडली की गणना करें",
     calculating: "निर्देशांकों की गणना हो रही है...",
     checkForm: "कृपया फ़ॉर्म की जानकारी जाँचें।",
-    computedFor: "{date} के लिए गणना · VSOP87 इंजन {version}",
+    computedFor: "{date} के लिए गणना · VSOP87-आधारित पंचांग",
     exactAgeLabel: "सटीक आयु",
     formSubtitle: "सटीक ग्रहीय स्थितियाँ · संपूर्ण-राशि भाव · निश्चित रीडिंग",
     formTitle: "जन्म विवरण दर्ज करें",
@@ -4827,7 +4827,7 @@ export const hi: Dict = {
     heroCtaPrimary: "जन्म कुंडली की गणना करें",
     heroCtaSecondary: "जन्मदिन के तथ्य देखें",
     heroSubtitle: "वास्तविक ग्रहीय गणित, अनुमान नहीं। अपनी सटीक जन्म कुंडली बनाएँ, सभी बारह राशियों के गणितीय रूप से व्युत्पन्न राशिफल पढ़ें, लाइव आकाश का अनुसरण करें, और अपनी जन्मतिथि साझा करने वाली प्रसिद्ध हस्तियों को खोजें।",
-    heroTitle: "सटीक खगोलीय इंजन और व्यक्तिगत जन्मदिन की अंतर्दृष्टियाँ",
+    heroTitle: "आपका आकाश, वास्तविक ग्रहों की स्थितियों से लिखा गया",
     horizonsDesc: "दिन से शुरू करें, फिर सप्ताह, माह और वर्ष की ओर बढ़ें। हर क्षितिज सूर्य, चंद्रमा और ग्रहों की उन्हीं सच्ची स्थितियों पर आधारित है।",
     horizonsKicker: "चार क्षितिज",
     horizonsTitle: "शुरुआत से पूरे वर्षों तक",
@@ -4979,7 +4979,7 @@ export const hi: Dict = {
     none: "कोई नहीं",
     noneInWindow: "वर्तमान खिड़की में कोई नहीं",
     ofTracked: "{count} निगरानी किए गए ग्रहों में से",
-    orderedBy: "अगली प्रतिगामी खिड़की की शुरुआत के अनुसार क्रमबद्ध। तिथियाँ गणना किए गए स्थिरांक (स्टेशन) से घंटे-स्तर की सटीकता तक परिष्कृत हैं।",
+    orderedBy: "अगली प्रतिगामी खिड़की की शुरुआत के अनुसार क्रमबद्ध। तिथियाँ गणना किए गए स्थिरांक (स्टेशन) से परिष्कृत की गई हैं।",
     perPlanetTracker: "प्रति-ग्रह ट्रैकर",
     retrogradeNow: "अभी प्रतिगामी",
     startsOn: "{planet} की शुरुआत {date}",
@@ -5310,8 +5310,8 @@ export const hi: Dict = {
     didYouKnow: "क्या आप जानते हैं?",
     errorReload: "कुछ बिगड़ गया — पुनः लोड करके सिंक करें।",
     positionUpdatesLive: "स्थिति लाइव अपडेट होती है",
-    nodeNorth: "उत्तर नोड",
-    nodeSouth: "दक्षिण नोड",
+    nodeNorth: "राहु",
+    nodeSouth: "केतु",
     todaysHoroscope: "आज का राशिफल",
     readTodays: "आज का {sign} राशिफल पढ़ें",
   },

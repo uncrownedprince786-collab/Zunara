@@ -16,7 +16,7 @@ function Chevron() {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-subdued"
+      className="pointer-events-none absolute inset-y-0 end-3 flex items-center text-subdued"
     >
       <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
         <path
@@ -64,7 +64,7 @@ export function QuickBirthInput() {
         <div className="relative">
           <label
             htmlFor="quick-birth-month"
-            className="absolute -top-1.5 left-4 z-10 bg-[#0D0E1A] px-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-subdued"
+            className="absolute -top-1.5 start-4 z-10 bg-[#0D0E1A] px-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-subdued"
           >
             {t("home.quickBirthMonth", "Month")}
           </label>
@@ -76,7 +76,7 @@ export function QuickBirthInput() {
               setMonth(next);
               setDay((current) => Math.min(current, monthDays(next)));
             }}
-            className="quick-birth-select h-11 w-full rounded-full border border-white/[0.16] py-2.5 pl-4 pr-10 text-sm font-medium text-starlight outline-none transition-colors hover:border-gold/50 focus:border-gold/70"
+            className="quick-birth-select h-11 w-full rounded-full border border-white/[0.16] py-2.5 ps-4 pe-10 text-sm font-medium text-starlight outline-none transition-colors hover:border-gold/50 focus:border-gold/70"
           >
             {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
               <option key={m} value={m}>
@@ -90,7 +90,7 @@ export function QuickBirthInput() {
         <div className="relative">
           <label
             htmlFor="quick-birth-day"
-            className="absolute -top-1.5 left-4 z-10 bg-[#0D0E1A] px-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-subdued"
+            className="absolute -top-1.5 start-4 z-10 bg-[#0D0E1A] px-1 text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-subdued"
           >
             {t("home.quickBirthDay", "Day")}
           </label>
@@ -98,7 +98,7 @@ export function QuickBirthInput() {
             id="quick-birth-day"
             value={day}
             onChange={(event) => setDay(Number.parseInt(event.target.value, 10) || 1)}
-            className="quick-birth-select h-11 w-full rounded-full border border-white/[0.16] py-2.5 pl-4 pr-10 text-sm font-medium text-starlight outline-none transition-colors hover:border-gold/50 focus:border-gold/70"
+            className="quick-birth-select h-11 w-full rounded-full border border-white/[0.16] py-2.5 ps-4 pe-10 text-sm font-medium text-starlight outline-none transition-colors hover:border-gold/50 focus:border-gold/70"
           >
             {Array.from({ length: days }, (_, i) => i + 1).map((d) => (
               <option key={d} value={d}>

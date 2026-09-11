@@ -84,7 +84,7 @@ export default function HomePage() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 select-none"
         >
-          <VitruvianHero className="opacity-[0.14]" />
+          <VitruvianHero className="opacity-[0.07]" />
         </div>
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24">
           <p className="kicker"><LocaleDate /></p>
@@ -93,7 +93,7 @@ export default function HomePage() {
           <h1 className="mx-auto max-w-4xl font-display text-4xl font-medium leading-[1.05] text-starlight sm:text-6xl">
             <LocaleText
               path="home.heroTitle"
-              fallback="Precision astronomical engine &amp; personalized birthday insights"
+              fallback="Your sky, written from real planetary positions"
             />
           </h1>
           <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-muted">
@@ -107,8 +107,14 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/birthchart"
+              href="/horoscope"
               className="rounded-full bg-gold px-9 py-3.5 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
+            >
+              <LocaleText path="uichrome.todaysHoroscope" fallback="Today's horoscope" />
+            </Link>
+            <Link
+              href="/birthchart"
+              className="rounded-full border border-gold/40 bg-gold/5 px-9 py-3.5 text-sm font-medium text-gold transition-colors hover:bg-gold/15"
             >
               <LocaleText path="home.heroCtaPrimary" fallback="Calculate Birth Chart" />
             </Link>
@@ -176,7 +182,7 @@ export default function HomePage() {
                         <span className="text-p-muted"> <LocaleText path="home.retrogradeIn" fallback="retrograde in" /> <LocaleText path={`signs.${p.sign}`} fallback={p.sign} /> <span className="font-medium text-gold-deep">℞</span></span>
                       </p>
                     </div>
-                    <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                    <p className="mt-2 border-s-2 border-gold/30 ps-2 text-xs leading-5 text-subdued">
                       <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />{plainRetro(p.key, p.sign)}
                     </p>
                   </div>
@@ -190,7 +196,7 @@ export default function HomePage() {
                       <span className="text-p-muted"> — <LocaleText path="home.allPlanetsDirect" fallback="all planets direct today" /></span>
                     </p>
                   </div>
-                  <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                  <p className="mt-2 border-s-2 border-gold/30 ps-2 text-xs leading-5 text-subdued">
                     <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />no planets are backtracking right now — momentum is on your side.
                   </p>
                 </div>
@@ -211,7 +217,7 @@ export default function HomePage() {
                       </span>
                     </p>
                   </div>
-                  <p className="mt-2 border-l-2 border-gold/30 pl-2 text-xs leading-5 text-subdued">
+                  <p className="mt-2 border-s-2 border-gold/30 ps-2 text-xs leading-5 text-subdued">
                     <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />{plainAspect(transit.name, transit.bodyA, transit.bodyB, transit.orb)}
                   </p>
                 </div>

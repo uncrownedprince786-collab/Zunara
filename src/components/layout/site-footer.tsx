@@ -89,7 +89,7 @@ export function SiteFooter() {
                   <Link
                     href={`/horoscope/${s.slug}`}
                     title={`${tSign(s.slug)} — ${formatDateRange(s, locale)}`}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line-soft text-sm text-muted transition-colors hover:border-gold/50 hover:text-gold"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-line-soft text-sm text-muted transition-colors hover:border-gold/50 hover:text-gold"
                   >
                     <span aria-hidden="true">{s.glyph}</span>
                     <span className="sr-only">{tSign(s.slug)}</span>

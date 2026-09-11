@@ -14,10 +14,9 @@ import { AspectsPanel } from "@/components/birthchart/aspects-panel";
 import { AgeHeader } from "@/components/birthchart/age-header";
 import { LifePillars } from "@/components/birthchart/life-pillars";
 import { TrendTimeline } from "@/components/birthchart/trend-timeline";
-import { VitruvianHero } from "@/components/ui/vitruvian-hero";
+import { useLocale } from "@/lib/i18n/client";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
-import { useLocale } from "@/lib/i18n/client";
 import { formatDate } from "@/lib/i18n/date";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
@@ -93,8 +92,8 @@ export function BirthchartClient() {
       // Persist the validated profile so /daily-transit (and other personal
       // tools) can load the same birth details without re-entry.
       saveNatalProfile(input);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : t("birthchart.calcFailed", "Failed to calculate birth chart"));
+    } catch {
+      setError(t("birthchart.calcFailed", "Something went wrong while calculating your chart. Try different birth details."));
     } finally {
       setIsLoading(false);
     }
@@ -102,10 +101,6 @@ export function BirthchartClient() {
 
   return (
     <div className="constellation-bg pb-24">
-      <div className="relative mx-auto h-80 max-w-6xl select-none">
-        <VitruvianHero className="opacity-[0.14]" />
-      </div>
-
       <main className="relative z-10 mx-auto max-w-6xl px-4 pt-10 sm:px-6">
         <Breadcrumbs items={[{ label: t("nav.birthchart", "Birth Chart"), href: "/birthchart" }]} />
 

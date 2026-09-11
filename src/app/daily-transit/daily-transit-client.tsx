@@ -254,7 +254,7 @@ export function DailyTransitClient() {
                     <div className="flex items-center gap-2.5">
                       <PlanetSymbol body={ins.transitBody} size="sm" className="text-gold" decorative />
                       <span className="font-medium text-starlight">{tPlanet(ins.transitBody)}</span>
-                      <span className="ml-auto font-mono text-xs text-muted">{subst(t("dailyTransit.houseLabel", "House {n}"), { n: String(ins.house) })}</span>
+                      <span className="ms-auto font-mono text-xs text-muted">{subst(t("dailyTransit.houseLabel", "House {n}"), { n: String(ins.house) })}</span>
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <ZodiacSymbol sign={ins.transitSign} size="sm" />

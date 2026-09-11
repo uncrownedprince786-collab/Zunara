@@ -211,7 +211,7 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
             <button
               type="button"
               onClick={onClose}
-              className="grid h-9 w-9 place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-white/25 hover:text-starlight"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-white/25 hover:text-starlight"
               aria-label={t("common.close", "Close profile")}
             >
               ✕

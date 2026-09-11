@@ -75,7 +75,7 @@ export default function NodesPage() {
                   {n.glyph}
                 </span>
                 <h2 className="font-display text-2xl text-starlight">{n.title}</h2>
-                <span className="ml-auto hidden text-xs uppercase tracking-[0.14em] text-subdued sm:block">
+                <span className="ms-auto hidden text-xs uppercase tracking-[0.14em] text-subdued sm:block">
                   {n.key === "northNode" ? "growth" : "patterns"}
                 </span>
               </div>

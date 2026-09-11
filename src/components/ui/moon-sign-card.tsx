@@ -59,7 +59,7 @@ export function MoonSignCard() {
       <p className="mt-4 text-sm leading-6 text-p-muted">
         {illuminated} — {t("phases.phaseSubtitle", "the lunar cycle is a living clock for emotion and instinct.")}
       </p>
-      <p className="mt-2 border-l-2 border-gold/30 pl-3 text-xs leading-5 text-subdued">
+      <p className="mt-2 border-s-2 border-gold/30 ps-3 text-xs leading-5 text-subdued">
         {t("uichrome.inPlainWords", "In plain words: ")}
         {plainMoon(sign.sign, phase.name)}
       </p>

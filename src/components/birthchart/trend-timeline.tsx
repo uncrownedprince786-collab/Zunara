@@ -79,7 +79,7 @@ export function TrendTimeline({ forecast }: TrendTimelineProps) {
         return (
           <li
             key={entry.id}
-            className="relative rounded-xl border border-white/10 bg-white/[0.03] p-5 pl-10 sm:p-6 sm:pl-12"
+            className="relative rounded-xl border border-white/10 bg-white/[0.03] p-5 ps-10 sm:p-6 sm:ps-12"
           >
             <span aria-hidden className="absolute left-4 top-7 h-2.5 w-2.5 rounded-full bg-gold/70 sm:left-5" />
 
