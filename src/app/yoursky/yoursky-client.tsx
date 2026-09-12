@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { computeNatalChart } from "@/lib/natal/natal";
 import { validateBirth } from "@/lib/natal/validate";
@@ -240,6 +241,14 @@ export function YourSkyClient() {
                   ))}
                 </div>
               </div>
+            )}
+            {profiles.length >= 1 && (
+              <Link
+                href="/synastry"
+                className="mt-5 inline-flex items-center gap-2 text-xs text-gold transition-colors hover:underline"
+              >
+                {t("yoursky.compareLink", "Compare two people's charts")} →
+              </Link>
             )}
           </div>
         )}

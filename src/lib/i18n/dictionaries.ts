@@ -1002,6 +1002,7 @@ export const en = {
     energy: "Energy",
   },
   yoursky: {
+    compareLink: "Compare two people’s charts",
     kicker: "Your personal sky",
     title: "Your Sky",
     subtitle: "A live reading of the strongest influence touching your birth chart right now and what peaks next, computed from real planetary positions.",
@@ -1951,6 +1952,7 @@ export const ur: Dict = {
     energy: "توانائی",
   },
   yoursky: {
+    compareLink: "دو لوگوں کے چارٹس کا موازنہ کریں",
     kicker: "آپ کا ذاتی آسمان",
     title: "آپ کا آسمان",
     subtitle: "آپ کی پیدائشی چارٹ کو ابھی چھونے والی سب سے مضبوط قوت اور آگے آنے والے اہم لمحات کی زندہ تشریح، حقیقی سیاروں کی پوزیشنوں سے شمار کی گئی۔",
@@ -2898,6 +2900,7 @@ export const ar: Dict = {
     energy: "الطاقة",
   },
   yoursky: {
+    compareLink: "قارن مخططات شخصین",
     kicker: "سماؤك الشخصية",
     title: "سماؤك",
     subtitle: "قراءة حية لأقوى تأثير يلامس مخطط ميلادك الآن وما يقترب في الأيام القادمة، محسوبة من مواقع الكواكب الحقيقية.",
@@ -3845,6 +3848,7 @@ export const es: Dict = {
     energy: "Energía",
   },
   yoursky: {
+    compareLink: "Compara las cartas de dos personas",
     kicker: "Tu cielo personal",
     title: "Tu cielo",
     subtitle: "Una lectura en vivo de la influencia más fuerte que toca tu carta natal ahora y del próximo momento culminante, calculada desde posiciones planetarias reales.",
@@ -4787,6 +4791,7 @@ export const zh: Dict = {
     energy: "能量",
   },
   yoursky: {
+    compareLink: "比较两个人的星盘",
     kicker: "你的个人天空",
     title: "你的天空",
     subtitle: "实时解读此刻触及你出生星盘的最强影响，以及下一个顶峰时刻，全部基于真实行星位置计算。",
@@ -5819,6 +5824,7 @@ export const hi: Dict = {
     energy: "ऊर्जा",
   },
   yoursky: {
+    compareLink: "दो लोगों की कुंडली की तुलना करें",
     kicker: "आपका व्यक्तिगत आकाश",
     title: "आपका आकाश",
     subtitle: "आपकी जन्म कुंडली को अभी छूने वाले सबसे प्रबल प्रभाव और आगे आने वाले शिखर क्षणों की सीधी व्याख्या, वास्तविक ग्रह स्थितियों से गणित।",
