@@ -28,11 +28,13 @@ export function VitruvianHero({
       <Image
         src="/vitruvian-cosmic.jpg"
         alt=""
-        width={550}
-        height={550}
-        loading="lazy"
-        sizes="(max-width: 550px) 100vw, 550px"
-        className="mx-auto max-w-[550px] object-contain opacity-15"
+        width={256}
+        height={256}
+        priority
+        fetchPriority="high"
+        sizes="256px"
+        quality={45}
+        className="mx-auto max-w-[256px] object-contain opacity-15"
       />
     </div>
   );

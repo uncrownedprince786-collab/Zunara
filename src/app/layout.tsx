@@ -89,25 +89,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                name: SITE.orgName,
-                url: SITE.url,
-                logo: absoluteUrl(SITE.image),
-                sameAs: [],
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                name: SITE.name,
-                url: SITE.url,
-                description: SITE.description,
-                inLanguage: "en",
-                publisher: { "@type": "Organization", name: SITE.orgName, url: SITE.url },
-              },
-            ]),
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "@id": absoluteUrl("/#organization"),
+              name: SITE.orgName,
+              url: SITE.url,
+              logo: absoluteUrl(SITE.image),
+              sameAs: [],
+            }),
           }}
         />
         <LocaleProvider>

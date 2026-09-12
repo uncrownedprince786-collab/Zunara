@@ -120,8 +120,9 @@ export function SkyMapClient() {
           </p>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-muted mb-1">{t("skyMap.latitude", "Latitude")}</label>
+              <label htmlFor="obs-latitude" className="block text-xs text-muted mb-1">{t("skyMap.latitude", "Latitude")}</label>
               <input
+                id="obs-latitude"
                 type="number"
                 step="0.0001"
                 min={-90}
@@ -135,8 +136,9 @@ export function SkyMapClient() {
               />
             </div>
             <div>
-              <label className="block text-xs text-muted mb-1">{t("skyMap.longitude", "Longitude")}</label>
+              <label htmlFor="obs-longitude" className="block text-xs text-muted mb-1">{t("skyMap.longitude", "Longitude")}</label>
               <input
+                id="obs-longitude"
                 type="number"
                 step="0.0001"
                 min={-180}

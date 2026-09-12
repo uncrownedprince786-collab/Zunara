@@ -196,10 +196,11 @@ export function DailyTransitClient() {
         )}
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
+          <label htmlFor="transit-date" className="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">
             {t("dailyTransit.transitDate", "Transit date (local)")}
           </label>
           <input
+            id="transit-date"
             type="date"
             value={dateStr}
             onChange={(e) => e.target.value && handleDateChange(e.target.value)}

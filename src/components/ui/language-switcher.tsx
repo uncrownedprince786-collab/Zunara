@@ -46,8 +46,8 @@ export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`${id}-menu`}
-        aria-label={t("language.label", "Language")}
       >
+        <span className="sr-only">{t("language.label", "Language")}</span>
         <span aria-hidden="true">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
             <circle cx="12" cy="12" r="9" />
