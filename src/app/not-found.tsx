@@ -12,10 +12,10 @@ export default function NotFound() {
         <span className="font-display text-7xl font-medium text-gold/60">404</span>
         <div aria-hidden="true" className="gold-rule mt-6 w-24" />
         <h1 className="mt-8 font-display text-3xl text-starlight sm:text-4xl">
-          {t("notFound.title", "Lost among the stars")}
+          {t("notFound.title", "We can't find that page")}
         </h1>
         <p className="mt-4 max-w-md leading-7 text-muted">
-          {t("notFound.desc", "The page you sought has drifted out of the ecliptic. Perhaps it was carried off by a slow outer planet — or simply never came into view.")}
+          {t("notFound.desc", "The page may have moved, or the link may be broken. Try the homepage or browse the horoscopes below.")}
         </p>
         <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
           <Link

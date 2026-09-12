@@ -36,8 +36,8 @@ export const revalidate = 3600;
 
 export const metadata = pageMetadata(
   "/",
-  "Zunara — Precision Astrology, Birth Charts & Daily Horoscopes",
-  "Zunara is a precision astronomical engine and personalized birthday guide: exact birth-chart calculations, mathematically derived daily horoscopes for all twelve signs, live sky maps, and the famous people who share your birthday.",
+  "Birth Charts & Daily Horoscopes, Calculated",
+  "Calculate your exact birth chart and read daily horoscopes for all 12 signs, computed from real planetary positions, plus the famous people who share your birthday.",
   "website",
   [
     "birth chart calculator",
@@ -94,7 +94,7 @@ export default function HomePage() {
           <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-muted">
             <LocaleText
               path="home.heroSubtitle"
-              fallback="Real planetary mathematics, not guesses. Calculate your exact birth chart, read mathematically derived horoscopes for all twelve signs, and discover the famous people who share your birthday."
+              fallback="Real planetary math, not guesses. Calculate your birth chart, read horoscopes for all twelve signs, follow the live sky, and see who shares your birthday."
             />
           </p>
 
@@ -129,7 +129,7 @@ export default function HomePage() {
                 <LocaleText path="home.sunPassesThrough" fallback="The Sun passes through" /> {sunSign ? <LocaleText path={`signs.${sunSign.slug}`} fallback={sunSign.name} /> : <LocaleText path="uichrome.theZodiac" fallback="the zodiac" />}
               </h2>
               <p className="mt-4 max-w-xl leading-7 text-muted">
-                <LocaleText path="home.liveSkyDesc" fallback="Every position below is computed from astronomical theory, not invented. Zunara renders the movements of the spheres into reading — each aspect and retrograde corresponds to the true state of the sky." />
+                <LocaleText path="home.liveSkyDesc" fallback="Every position below is computed from real astronomy, not invented. Each aspect and retrograde matches the true state of the sky right now." />
               </p>
               {sunSign && (
                 <div className="mt-6 flex flex-wrap gap-2">
@@ -156,8 +156,8 @@ export default function HomePage() {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <p className="kicker"><LocaleText path="home.planetaryBulletin" fallback="Planetary bulletin" /></p>
               <p className="max-w-md text-xs leading-5 text-subdued">
-                <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />“retrograde” is an illusion — the planet only appears to move
-                backwards from Earth; it is a signal to slow down and review.
+                <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />“retrograde” just means a planet looks like it is moving
+                backwards from Earth. It is a cue to slow down and review, not a warning.
               </p>
             </div>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -186,7 +186,7 @@ export default function HomePage() {
                     </p>
                   </div>
                   <p className="mt-2 border-s-2 border-gold/30 ps-2 text-xs leading-5 text-subdued">
-                    <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />no planets are backtracking right now — momentum is on your side.
+                    <LocaleText path="uichrome.inPlainWords" fallback="In plain words: " />no planets are backtracking right now, so momentum is on your side.
                   </p>
                 </div>
               )}
@@ -258,9 +258,9 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6" aria-labelledby="signs-heading">
         <div className="flex items-end justify-between border-b border-line-soft pb-5">
           <div>
-            <p className="kicker"><LocaleText path="home.anIndexOfHeavens" fallback="The twelve signs" /></p>
+            <p className="kicker"><LocaleText path="common.theTwelve" fallback="The twelve signs" /></p>
             <h2 id="signs-heading" className="mt-3 font-display text-3xl text-starlight">
-              <LocaleText path="home.anIndexOfHeavens" fallback="An index of the heavens" />
+              <LocaleText path="home.anIndexOfHeavens" fallback="Read today's forecast for any sign" />
             </h2>
           </div>
           <Link
@@ -284,7 +284,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="kicker"><LocaleText path="home.featuresKicker" fallback="The toolkit" /></p>
             <h2 className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl">
-              <LocaleText path="home.featuresTitle" fallback="Four tools, one truthful sky" />
+              <LocaleText path="home.featuresTitle" fallback="Four tools, one sky" />
             </h2>
             <p className="mt-4 leading-7 text-muted">
               <LocaleText path="home.featuresDesc" fallback="Every tool runs on the same exact astronomical engine, so the numbers you read are the numbers the sky actually shows." />

@@ -50,7 +50,7 @@ export function horoscopeMetadata(
   const path = `/horoscope/${sign.slug}/${periodType === "daily" ? "today" : periodType}`;
   const canonical = absoluteUrl(path);
   const title = `${sign.name} ${periodNoun} Horoscope — ${label}`;
-  const description = `Read the ${sign.name.toLowerCase()} ${periodType.toLowerCase()} horoscope for ${label}. Calculated from real astronomical data, in ${sign.name}'s ${sign.element} ${sign.modality} sign.`;
+  const description = `Read the ${sign.name} ${periodType.toLowerCase()} horoscope for ${label}, calculated from real planetary positions for ${sign.name}, a ${sign.element} ${sign.modality} sign.`;
 
   return {
     title,
@@ -77,7 +77,7 @@ export function horoscopeMetadata(
 export function signIndexMetadata(sign: ZodiacSign): Metadata {
   const canonical = absoluteUrl(`/horoscope/${sign.slug}`);
   const title = `${sign.name} Zodiac Sign`;
-  const description = `Discover the ${sign.name} zodiac sign's ${sign.modality.toLowerCase()} ${sign.element.toLowerCase()} nature, elements, modal qualities and horoscopes. Dates ${formatRange(sign)}.`;
+  const description = `${sign.name} dates, element, modality and personality traits, plus daily, weekly, monthly and yearly ${sign.name} horoscopes. Born ${formatRange(sign)}.`;
   return {
     title,
     description,

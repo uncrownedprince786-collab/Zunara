@@ -7,9 +7,9 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta, alternateLanguages } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  title: "Cosmic Traits & Facts — Zodiac Signs, Perks & Planetary Lore",
+  title: "Zodiac Sign Traits, Strengths & Weaknesses",
   description:
-    "Explore every zodiac sign's core traits, superpowers, weaknesses, and cosmic fun facts. Interactive guide to the twelve signs, elemental forces, and compatibility.",
+    "Every zodiac sign's core traits, strengths, weaknesses and elemental forces. An interactive guide to all 12 signs and their compatibility.",
   keywords: [
     "zodiac sign traits",
     "cosmic facts",
@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   alternates: { canonical: absoluteUrl("/cosmic-facts"), languages: alternateLanguages("/cosmic-facts") },
   ...shareMeta(
     absoluteUrl("/cosmic-facts"),
-    "Cosmic Traits & Facts | Zunara",
-    "Explore every zodiac sign's core traits, superpowers, weaknesses, and cosmic fun facts.",
+    "Zodiac Sign Traits, Strengths & Weaknesses | Zunara",
+    "Every zodiac sign's core traits, strengths, weaknesses and elemental forces. An interactive guide to all 12 signs and their compatibility.",
   ),
 };
 

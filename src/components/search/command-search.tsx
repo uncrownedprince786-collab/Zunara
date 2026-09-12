@@ -23,7 +23,7 @@ const TOOLS: { href: string; key: string; fallback: string; keywords?: string }[
   { href: "/synastry", key: "synastry", fallback: "Compatibility", keywords: "synastry love relationship aspects two charts" },
   { href: "/sky-now", key: "skyNow", fallback: "Sky Now", keywords: "planet positions live retrograde moon phase aspects" },
   { href: "/sky-map", key: "skyMap", fallback: "Sky Map", keywords: "interactive night sky viewer stars telescope" },
-  { href: "/sky-events", key: "astronomy", fallback: "Celestial Events", keywords: "meteor showers eclipses full moon solstice equinox" },
+  { href: "/sky-events", key: "astronomy", fallback: "Sky Events", keywords: "meteor showers eclipses full moon solstice equinox" },
   { href: "/retrograde", key: "retrogradeNav", fallback: "Retrogrades", keywords: "retrograde calendar mercury mars venus" },
   { href: "/ephemeris", key: "ephemeris", fallback: "Ephemeris", keywords: "planetary positions table degrees longitude" },
   { href: "/famous-birthdays", key: "famousBirthdays", fallback: "Famous Birthdays", keywords: "celebrities born today birthday shares" },

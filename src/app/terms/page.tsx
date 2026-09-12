@@ -5,12 +5,12 @@ import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Zunara's terms of service.",
+  description: "The terms under which Zunara's astrology content and tools are offered for personal, non-commercial use.",
   alternates: { canonical: absoluteUrl("/terms") },
   ...shareMeta(
     absoluteUrl("/terms"),
     "Terms of Service | Zunara",
-    "Zunara's terms of service.",
+    "The terms under which Zunara's astrology content and tools are offered for personal, non-commercial use.",
   ),
 };
 

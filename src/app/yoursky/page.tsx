@@ -7,12 +7,12 @@ import { shareMeta } from "@/lib/seo/metadata";
 export const metadata: Metadata = {
   title: "Your Sky — Personal Transit Dashboard",
   description:
-    "See the strongest influence touching your birth chart today, what it means, and the significant transits approaching over the next 30 days — computed from real planetary positions.",
+    "The strongest transit hitting your birth chart today, what it means, and the key transits coming over the next 30 days, from real planetary data.",
   alternates: { canonical: absoluteUrl("/yoursky") },
   ...shareMeta(
     absoluteUrl("/yoursky"),
     "Your Sky — Personal Transit Dashboard | Zunara",
-    "Your strongest influence today and the key upcoming transits, from your real birth chart.",
+    "The strongest transit hitting your birth chart today, what it means, and the key transits coming over the next 30 days, from real planetary data.",
   ),
 };
 

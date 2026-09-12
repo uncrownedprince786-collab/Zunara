@@ -5,14 +5,14 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  title: "Sky Events Calendar — Meteor Showers, Eclipses & More",
+  title: "Sky Events Calendar: Eclipses & Meteor Showers",
   description:
-    "A perpetual celestial-events calendar: meteor showers, eclipses, oppositions, conjunctions and lunar phases computed from real astronomical data, with year-by-year navigation.",
+    "A perpetual calendar of meteor showers, eclipses, oppositions, conjunctions and lunar phases, computed from real astronomical data.",
   alternates: { canonical: absoluteUrl("/sky-events") },
   ...shareMeta(
     absoluteUrl("/sky-events"),
-    "Sky Events Calendar | Zunara",
-    "A perpetual celestial-events calendar powered by live astronomical ephemerides.",
+    "Sky Events Calendar: Eclipses & Meteor Showers | Zunara",
+    "A perpetual calendar of meteor showers, eclipses, oppositions, conjunctions and lunar phases, computed from real astronomical data.",
   ),
 };
 

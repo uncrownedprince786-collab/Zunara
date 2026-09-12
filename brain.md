@@ -976,5 +976,26 @@ Actioned the smoke-test handoff above. Verified live on production FIRST (React 
 - The prior handoff's "mobile nav toggle bug" was a false alarm: the toggle IS accessible (`aria-label` Open/Close menu, `aria-expanded`, `aria-controls`, 44px tap target). The QA script just queried the wrong selector. No change.
 
 ### Quality gates (all green)
-`tsc --noEmit` 0 errors · `eslint` 0 errors (7 pre-existing warnings unchanged) · `vitest` 387/387 (32 files) · `next build` green · local `next start` smoke: /ephemeris /horoscope /sky-map /famous-birthdays all 0 console errors, overflow eliminated on home + sky-now, nested-anchor count 0.
+`tsc --noEmit` 0 errors · `eslint` 0 errors (7 pre-existing warnings unchanged) · `vitest` 387/387 (32 files) · `next build` green · local `next start` smoke: /ephemeris /horoscope /sky-map /famous-birthdays all 0 console errors, overflow eliminated on home + sky-now, nested-anchor count 0. Deployed live (verified in a fresh browser tab: all four routes 0 console errors, home overflow 62→1px, sky-now 24→0px in production).
+
+## Content, SEO copy & localization pass (Claude Opus 4.8) — 2026-09-12
+
+Goal: make the copy read human, not AI, and unify SEO metadata + terminology. Audited first with three read-only sub-agents (component copy, page metadata, English dictionary), then edited English comprehensively and updated the 6 locales for the highest-visibility substantive strings. No layout/feature/engine/schema changes.
+
+### Content-writing rules now in force (see AGENTS brief "Final Transformation Pass")
+- Simple words, short sentences, one idea per sentence. No filler verbs (Discover, Unlock, Explore, Journey, Harness, Empower, Transform, Elevate). No em dash as a default connector in prose — use a period or colon. The tagline "Written in the stars" is used at most once, not repeated.
+- One feature = one name. The sky-events feature is **"Sky Events"** everywhere (was mixed Cosmic Events / Celestial Events / Sky Events). Keep this consistent in English and per-locale.
+- Metadata: raw page title ≤ ~52 chars (a " | Zunara" suffix is appended by the layout template); meta descriptions ≤ ~155; no brand duplication ("Zunara … | Zunara"); no literal "|" inside a page title; capitalize the sign name in horoscope descriptions.
+
+### What changed
+- **Shared SEO helpers** (`lib/seo/metadata.ts`, `lib/seo/site.ts`, `layout.tsx`): removed "Discover" from `signIndexMetadata` (12 sign pages); fixed the lowercased sign name in `horoscopeMetadata` (48 pages: "Read the aries…" → "Read the Aries…"); shortened `SITE.description`; default `<title>` "Zunara — Written in the stars" → "Zunara: Birth Charts and Daily Horoscopes".
+- **Home** (`app/page.tsx` + `home.*` dict): hero subtitle de-jargoned and "discover" removed; the twelve-signs kicker+heading were both bound to `home.anIndexOfHeavens` (rendered identically) — kicker now uses `common.theTwelve`, heading `home.anIndexOfHeavens` reworded to "Read today's forecast for any sign"; em dashes cleaned across home strings; inline retrograde explainers de-em-dashed.
+- **Dictionary English polish** (`dictionaries.ts` `en`): traits, birthchart (subtitle/how-it-works de-jargoned, VSOP87 kept but "deterministically" dropped; aspect/transit intros de-em-dashed), cosmicFacts (synastry title/kicker/subtitle, elemental subtitle), about (subtitle/origins de-flowered), celebrities.noStars, history.subtitle, footer.copyright (dropped tagline), uichrome.errorReload + placeManual*, yoursky.emptyToday, dailyTransit.savedProfileHint, skyMap.seededHint, horoscope.exploreMath.
+- **Per-route metadata** (22 pages, via sub-agent): shorter, filler-free titles/descriptions; `VSOPS87` typo fixed; `/astrology/[topic]` given real titles + the missing hreflang `languages`; house titles switched to numeral-ordinal + colon to fit length; ephemeris title differentiated from sky-now. OG/Twitter (`shareMeta`) card copy synced to the new titles/descriptions.
+- **Localization** (6 locales, substantive keys only): `nav.astronomy`, `home.heroCtaSecondary`, `home.anIndexOfHeavens`, `home.featuresTitle`, `home.horizonsTitle`, `horoscope.exploreMath`, `uichrome.errorReload` updated to match the new English meaning (meaning-preserving; ur/hi were already "see"-style so left where correct). heroSubtitle translations left as faithful longer renderings (meaning unchanged). Lower-visibility English-only polish did NOT ripple to translations — a fuller locale re-polish of secondary strings is a recommended follow-up.
+- **Localization QA test** (`dictionaries.test.ts`): new interpolation-placeholder-parity check — every `{var}` in an English string must appear in each translation (grammatical helper `article` may be dropped; unknown/typo'd `{vars}` are always failures). Guards against dropped/renamed interpolation variables.
+
+### Known limitations / follow-ups
+- Client-side i18n means SSR/indexed copy is English; the content quality bar is highest there. Non-English secondary strings keep their prior (still meaning-faithful) translations except the substantive keys above.
+- `notFound.*` remain English-only fallbacks by existing design (not in the dict); copy was made plain and helpful but not localized.
 6. tsc + eslint + vitest + next build green before commit; push master→main (brain.md stays uncommitted).

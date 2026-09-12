@@ -6,7 +6,7 @@ import { shareMeta, alternateLanguages } from "@/lib/seo/metadata";
 import { softwareApplicationJsonLd } from "@/lib/seo/jsonld";
 
 export const metadata: Metadata = {
-  title: "Birth Chart Calculator — Free Natal Chart & Planetary Placements",
+  title: "Free Birth Chart Calculator (Natal Chart)",
   description:
     "Calculate your exact natal birth chart, ascendant rising sign, houses and planetary placements using high-precision astronomical positions.",
   keywords: [
@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   alternates: { canonical: absoluteUrl("/birthchart"), languages: alternateLanguages("/birthchart") },
   ...shareMeta(
     absoluteUrl("/birthchart"),
-    "Birth Chart Calculator | Zunara",
-    "Calculate your exact natal birth chart, ascendant, houses and planetary placements using precise astronomical positions.",
+    "Free Birth Chart Calculator (Natal Chart) | Zunara",
+    "Calculate your exact natal birth chart, ascendant rising sign, houses and planetary placements using high-precision astronomical positions.",
   ),
 };
 

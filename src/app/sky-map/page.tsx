@@ -5,14 +5,14 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  title: "Night Sky Map — See the Sky Now",
+  title: "Live Night Sky Map for Your Location",
   description:
-    "An interactive real-time map of the night sky from your coordinates: where the Sun, Moon, planets and bright stars are right now, computed with precise astronomy.",
+    "An interactive real-time map of the night sky from your location: where the Sun, Moon, planets and bright stars are right now.",
   alternates: { canonical: absoluteUrl("/sky-map") },
   ...shareMeta(
     absoluteUrl("/sky-map"),
-    "Night Sky Map — See the Sky Now | Zunara",
-    "Interactive real-time sky map plotted from precise astronomical positions.",
+    "Live Night Sky Map for Your Location | Zunara",
+    "An interactive real-time map of the night sky from your location: where the Sun, Moon, planets and bright stars are right now.",
   ),
 };
 

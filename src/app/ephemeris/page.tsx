@@ -5,14 +5,14 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  title: "Ephemeris — Live Planetary Positions by Day",
+  title: "Ephemeris: Daily Planetary Positions Table",
   description:
     "Interactive daily ephemeris of the Sun, Moon, eight planets and lunar nodes, with sign, degree, longitude, element and motion for any date.",
   alternates: { canonical: absoluteUrl("/ephemeris") },
   ...shareMeta(
     absoluteUrl("/ephemeris"),
-    "Ephemeris — Live Planetary Positions | Zunara",
-    "Day-by-day planetary positions, signs, longitudes and retrograde motion.",
+    "Ephemeris: Daily Planetary Positions Table | Zunara",
+    "Interactive daily ephemeris of the Sun, Moon, eight planets and lunar nodes, with sign, degree, longitude, element and motion for any date.",
   ),
 };
 

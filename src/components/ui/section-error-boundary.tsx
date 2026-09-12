@@ -20,7 +20,7 @@ function DefaultFallback() {
         ☆
       </span>
       <p className="max-w-xs text-sm leading-relaxed text-white/60">
-        {t("uichrome.errorReload", "Something drifted off the map — reload to re-sync.")}
+        {t("uichrome.errorReload", "This section didn't load. Refresh the page to try again.")}
       </p>
     </div>
   );

@@ -37,7 +37,7 @@ export async function generateMetadata({
   if (!house) return {};
   const path = `/houses/${n}`;
   const ord = ORDINAL[house.number];
-  const title = `The ${ord} House in Astrology — ${house.title}`;
+  const title = `${ord} House: ${house.title}`;
   const description = `The ${ord} house: ${house.title.toLowerCase()}. What it covers, which planets rule it, and how it reads in your birth chart — in plain English.`;
   return {
     ...pageMetadata(path, title, description, "article", house.keywords),
@@ -146,7 +146,7 @@ export default async function HousePage({
         <section className="mt-16">
           <p className="kicker text-center">The other houses</p>
           <h2 className="mt-3 text-center font-display text-2xl text-starlight">
-            Explore all twelve
+            All twelve houses
           </h2>
           <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
             {HOUSES.filter((h) => h.number !== house.number).map((h) => (

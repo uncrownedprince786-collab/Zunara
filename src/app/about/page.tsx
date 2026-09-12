@@ -6,14 +6,14 @@ import { shareMeta } from "@/lib/seo/metadata";
 import { LocaleText } from "@/components/ui/locale-text";
 
 export const metadata: Metadata = {
-  title: "About Zunara & Methodology",
+  title: "How We Calculate Horoscopes",
   description:
-    "How Zunara calculates real astronomical positions and turns them into daily, weekly, monthly and yearly horoscopes — and the ancient origins of sky-watching.",
+    "How Zunara turns real astronomical positions into daily, weekly, monthly and yearly horoscopes, plus the ancient origins of sky-watching.",
   alternates: { canonical: absoluteUrl("/about") },
   ...shareMeta(
     absoluteUrl("/about"),
-    "About Zunara & Methodology",
-    "How Zunara calculates real astronomical positions and turns them into daily, weekly, monthly and yearly horoscopes.",
+    "How We Calculate Horoscopes | Zunara",
+    "How Zunara turns real astronomical positions into daily, weekly, monthly and yearly horoscopes, plus the ancient origins of sky-watching.",
   ),
 };
 

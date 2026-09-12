@@ -8,8 +8,8 @@ export const revalidate = 3600;
 
 export const metadata = pageMetadata(
   "/famous-birthdays",
-  "Famous Birthdays — Browse Celebrity Birthdays by Date",
-  "Explore famous people born on any day of the year. Filter by actors, musicians, scientists, athletes and more — live from Wikidata.",
+  "Famous Birthdays by Date",
+  "Find famous people born on any day of the year. Filter by actors, musicians, scientists, athletes and more, with data live from Wikidata.",
   "website",
   [
     "famous birthdays",
@@ -40,7 +40,7 @@ export default function FamousBirthdaysPage() {
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted">
             Browse the famous people born on any day of the year. Filter by
-            profession, explore categories, and discover who shares your birthday.
+            profession and see who shares your birthday.
           </p>
         </header>
       </div>

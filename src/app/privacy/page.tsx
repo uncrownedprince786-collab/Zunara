@@ -5,12 +5,12 @@ import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Zunara's privacy policy.",
+  description: "How Zunara handles data and privacy. An editorial site that collects as little as possible.",
   alternates: { canonical: absoluteUrl("/privacy") },
   ...shareMeta(
     absoluteUrl("/privacy"),
     "Privacy Policy | Zunara",
-    "Zunara's privacy policy.",
+    "How Zunara handles data and privacy. An editorial site that collects as little as possible.",
   ),
 };
 

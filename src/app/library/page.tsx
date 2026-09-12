@@ -6,14 +6,14 @@ import { shareMeta } from "@/lib/seo/metadata";
 import { glossaryByCategory } from "@/lib/content/glossary";
 
 export const metadata: Metadata = {
-  title: "Zunara Library — The Astrology Knowledge Base",
+  title: "Astrology Glossary & Knowledge Base",
   description:
     "A plain-English glossary and reference base: planets, zodiac signs, houses, aspects, lunar nodes and movement terms, all defined without hype.",
   alternates: { canonical: absoluteUrl("/library") },
   ...shareMeta(
     absoluteUrl("/library"),
-    "Zunara Library — The Astrology Knowledge Base",
-    "Plain-English definitions of planets, signs, houses, aspects and more.",
+    "Astrology Glossary & Knowledge Base | Zunara",
+    "A plain-English glossary and reference base: planets, zodiac signs, houses, aspects, lunar nodes and movement terms, all defined without hype.",
   ),
 };
 

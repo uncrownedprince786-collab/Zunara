@@ -8,12 +8,12 @@ export const revalidate = 86400;
 
 export const metadata = pageMetadata(
   "/how-it-works",
-  "How Zunara Works — Astronomical Calculation, Honest Interpretation",
-  "Zunara computes every planetary position from the VSOP87 planetary theory — the same mathematics used in published ephemerides — then reflects honestly on what those measured positions can mean. No invented coordinates, no hidden rules.",
+  "The Astronomy Behind Our Horoscopes",
+  "Zunara computes every planetary position from VSOP87 theory, the maths used in published ephemerides, then interprets what those positions mean.",
   "website",
   [
     "how astrology is calculated",
-    "VSOPS87 VSOP87 planetary theory",
+    "VSOP87 planetary theory",
     "zodiac calculation method",
     "astronomy vs astrology",
     "natal chart calculation",

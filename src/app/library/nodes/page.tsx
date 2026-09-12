@@ -7,14 +7,14 @@ import { AstroTerm } from "@/components/ui/astro-tooltip";
 import { NodePosition } from "./node-position";
 
 export const metadata: Metadata = {
-  title: "Library — Lunar Nodes",
+  title: "Lunar Nodes: North & South Node Meaning",
   description:
     "The North Node and South Node explained in plain English, with their current calculated positions.",
   alternates: { canonical: absoluteUrl("/library/nodes") },
   ...shareMeta(
     absoluteUrl("/library/nodes"),
-    "Library — Lunar Nodes | Zunara",
-    "North and South Node meaning plus live positions.",
+    "Lunar Nodes: North & South Node Meaning | Zunara",
+    "The North Node and South Node explained in plain English, with their current calculated positions.",
   ),
 };
 

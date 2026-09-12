@@ -65,4 +65,42 @@ describe("i18n language audit (one-by-one completeness)", () => {
       expect(dict.traits.signs.aries.career.trim().length).toBeGreaterThan(0);
     }
   });
+
+  // Localization QA: interpolation variables must line up across locales.
+  // A translation may drop a purely grammatical English helper (e.g. the
+  // indefinite article "a"/"an", which most languages don't use), but it must
+  // never drop a real data variable ({sign}, {planet}, {count}, {date}, ...)
+  // and must never introduce a variable English doesn't supply (a typo like
+  // {singe} would render a literal "{singe}" or substitute nothing).
+  it("interpolation placeholders match English in every locale", () => {
+    // English-only grammatical helpers that translations may legitimately omit.
+    const GRAMMATICAL_ONLY = new Set(["article"]);
+    const placeholders = (s: string): string[] =>
+      [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    const getLeaf = (dict: unknown, path: string): unknown => {
+      let cur: unknown = dict;
+      for (const part of path.split(".")) {
+        if (cur == null) return undefined;
+        cur = (cur as Record<string, unknown>)[part];
+      }
+      return cur;
+    };
+    const problems: string[] = [];
+    for (const key of enKeys) {
+      const enVal = getLeaf(en, key);
+      if (typeof enVal !== "string") continue;
+      const want = placeholders(enVal);
+      if (want.length === 0) continue;
+      for (const code of localeCodes) {
+        const v = getLeaf(dictionaries[code], key);
+        if (typeof v !== "string") continue;
+        const got = placeholders(v);
+        const missing = want.filter((p) => !got.includes(p) && !GRAMMATICAL_ONLY.has(p));
+        const extra = got.filter((p) => !want.includes(p));
+        if (missing.length) problems.push(`${code}.${key} drops data variable(s) {${missing.join(", ")}}`);
+        if (extra.length) problems.push(`${code}.${key} has unknown variable(s) {${extra.join(", ")}}`);
+      }
+    }
+    expect(problems, "interpolation placeholder problems").toEqual([]);
+  });
 });

@@ -9,14 +9,14 @@ import { elementText } from "@/components/ui/element";
 import { AstroTerm } from "@/components/ui/astro-tooltip";
 
 export const metadata: Metadata = {
-  title: "Library — Zodiac Signs",
+  title: "Zodiac Signs: Elements, Rulers & Dates",
   description:
     "All twelve zodiac signs with their element, modality, ruler, dates and personality traits.",
   alternates: { canonical: absoluteUrl("/library/signs") },
   ...shareMeta(
     absoluteUrl("/library/signs"),
-    "Library — Zodiac Signs | Zunara",
-    "The twelve signs, their elements, rulers and traits.",
+    "Zodiac Signs: Elements, Rulers & Dates | Zunara",
+    "All twelve zodiac signs with their element, modality, ruler, dates and personality traits.",
   ),
 };
 

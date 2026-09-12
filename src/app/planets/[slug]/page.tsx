@@ -213,7 +213,7 @@ export default async function PlanetPage({
         <section className="mt-16">
           <p className="kicker text-center">Keep reading</p>
           <h2 className="mt-3 text-center font-display text-2xl text-starlight">
-            Learn more
+            Where to go next
           </h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {[

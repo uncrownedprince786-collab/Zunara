@@ -16,8 +16,8 @@ export const revalidate = 3600;
 
 export const metadata = pageMetadata(
   "/sky-now",
-  "Sky Now — Live Planet Positions, Retrogrades & Moon Phase",
-  "See where every planet actually is today, by zodiac sign and degree: live planetary positions, retrogrades, the current lunar phase and the major aspects between the wandering stars — calculated from astronomical theory, not guesses.",
+  "Live Planet Positions, Retrogrades & Moon Phase",
+  "Where every planet is right now by zodiac sign and degree, which planets are retrograde, the current moon phase and today's major aspects.",
   "website",
   [
     "live planet positions",

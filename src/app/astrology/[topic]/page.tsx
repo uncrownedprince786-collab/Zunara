@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getAstrologyTopic, ASTROLOGY_TOPICS } from "@/lib/astrology/topics";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { absoluteUrl, SITE } from "@/lib/seo/site";
+import { alternateLanguages } from "@/lib/seo/metadata";
 
 export const revalidate = 604800;
 
@@ -19,9 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ topic: st
   if (!data) return {};
   const canonical = absoluteUrl(`/astrology/${topic}`);
   return {
-    title: data.title,
+    title: `${data.title} in Astrology, Explained`,
     description: data.summary,
-    alternates: { canonical },
+    alternates: { canonical, languages: alternateLanguages(`/astrology/${topic}`) },
     openGraph: { title: data.title, description: data.summary, url: canonical, type: "article", siteName: SITE.name, images: [absoluteUrl(SITE.image)] },
     twitter: { card: "summary_large_image", title: data.title, description: data.summary, site: SITE.twitter, creator: SITE.twitter, images: [absoluteUrl(SITE.image)] },
   };

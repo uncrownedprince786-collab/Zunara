@@ -5,14 +5,14 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  title: "Daily Transit — Your Personal Day",
+  title: "Daily Transits for Your Birth Chart",
   description:
     "See which planetary transits touch your chart today, which houses they highlight, and a concise plain-English summary of the day's signals.",
   alternates: { canonical: absoluteUrl("/daily-transit") },
   ...shareMeta(
     absoluteUrl("/daily-transit"),
-    "Daily Transit — Your Personal Day | Zunara",
-    "Personal transits against your natal chart, computed for any date.",
+    "Daily Transits for Your Birth Chart | Zunara",
+    "See which planetary transits touch your chart today, which houses they highlight, and a concise plain-English summary of the day's signals.",
   ),
 };
 

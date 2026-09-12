@@ -9,14 +9,14 @@ import { AstroTerm } from "@/components/ui/astro-tooltip";
 import type { BodyKey } from "@/lib/astronomy/bodies";
 
 export const metadata: Metadata = {
-  title: "Library — Planets",
+  title: "Planets in Astrology: Meanings & Glyphs",
   description:
     "The Sun, Moon and eight planets plus the lunar nodes: each body's meaning, glyph and plain-English nature.",
   alternates: { canonical: absoluteUrl("/library/planets") },
   ...shareMeta(
     absoluteUrl("/library/planets"),
-    "Library — Planets | Zunara",
-    "The meaning and behaviour of each planet in the chart.",
+    "Planets in Astrology: Meanings & Glyphs | Zunara",
+    "The Sun, Moon and eight planets plus the lunar nodes: each body's meaning, glyph and plain-English nature.",
   ),
 };
 

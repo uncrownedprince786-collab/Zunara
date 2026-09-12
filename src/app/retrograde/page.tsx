@@ -5,14 +5,14 @@ import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
-  title: "Retrograde Tracker & Sky Stats",
+  title: "Which Planets Are Retrograde Right Now",
   description:
     "Which planets are retrograde right now, when the next retrograde starts, plain-English advice for each planet, and current sky statistics.",
   alternates: { canonical: absoluteUrl("/retrograde") },
   ...shareMeta(
     absoluteUrl("/retrograde"),
-    "Retrograde Tracker & Sky Stats | Zunara",
-    "Live retrograde status, next stations, and behavioural guidance for every planet.",
+    "Which Planets Are Retrograde Right Now | Zunara",
+    "Which planets are retrograde right now, when the next retrograde starts, plain-English advice for each planet, and current sky statistics.",
   ),
 };
 

@@ -10,14 +10,14 @@ import { shareMeta } from "@/lib/seo/metadata";
 import { LocaleText } from "@/components/ui/locale-text";
 
 export const metadata: Metadata = {
-  title: "Today's Horoscopes | All Zodiac Signs",
+  title: "Today's Horoscope for All 12 Zodiac Signs",
   description:
-    "A daily zodiac desk: today's real signal for all twelve signs, calculated from live astronomical data. Read daily, weekly, monthly and yearly forecasts.",
+    "Today's horoscope for all 12 zodiac signs, calculated from live planetary positions, plus weekly, monthly and yearly forecasts.",
   alternates: { canonical: absoluteUrl("/horoscope") },
   ...shareMeta(
     absoluteUrl("/horoscope"),
-    "Today's Horoscopes | All Zodiac Signs",
-    "A daily zodiac desk: real signals for all twelve signs, calculated from live astronomical data.",
+    "Today's Horoscope for All 12 Zodiac Signs | Zunara",
+    "Today's horoscope for all 12 zodiac signs, calculated from live planetary positions, plus weekly, monthly and yearly forecasts.",
   ),
 };
 
