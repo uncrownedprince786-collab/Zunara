@@ -32,11 +32,6 @@ function todayMonthDay(): { month: number; day: number } {
   return { month: now.getUTCMonth() + 1, day: now.getUTCDate() };
 }
 
-function todayKey(): string {
-  const { month, day } = todayMonthDay();
-  return `${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
 export const revalidate = 3600;
 
 export const metadata = pageMetadata(
@@ -107,22 +102,16 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/horoscope"
+              href="/yoursky"
               className="rounded-full bg-gold px-9 py-3.5 text-sm font-medium tracking-wide text-ink transition-opacity hover:opacity-90"
             >
+              <LocaleText path="navExtra.yourSky" fallback="Your Sky" />
+            </Link>
+            <Link
+              href="/horoscope"
+              className="rounded-full border border-gold/40 bg-gold/5 px-9 py-3.5 text-sm font-medium text-gold transition-colors hover:bg-gold/15"
+            >
               <LocaleText path="uichrome.todaysHoroscope" fallback="Today's horoscope" />
-            </Link>
-            <Link
-              href="/birthchart"
-              className="rounded-full border border-gold/40 bg-gold/5 px-9 py-3.5 text-sm font-medium text-gold transition-colors hover:bg-gold/15"
-            >
-              <LocaleText path="home.heroCtaPrimary" fallback="Calculate Birth Chart" />
-            </Link>
-            <Link
-              href={`/birthday/${todayKey()}`}
-              className="rounded-full border border-gold/40 bg-gold/5 px-9 py-3.5 text-sm font-medium text-gold transition-colors hover:bg-gold/15"
-            >
-              <LocaleText path="home.heroCtaSecondary" fallback="Discover Birthday Facts" />
             </Link>
           </div>
         </div>
@@ -304,6 +293,14 @@ export default function HomePage() {
           <div className="mt-12 grid gap-4 sm:grid-cols-2">
             {[
               {
+                href: "/yoursky",
+                titleKey: "navExtra.yourSky",
+                titleFallback: "Your Sky",
+                descKey: "home.featureSkyDesc",
+                descFallback: "Your personal sky from your saved birth chart: which life topics the planets touch for you today, and the weeks ahead.",
+                glyph: "☉",
+              },
+              {
                 href: "/birthchart",
                 titleKey: "home.featureBirthChartTitle",
                 titleFallback: "Birth Chart",
@@ -320,20 +317,12 @@ export default function HomePage() {
                 glyph: "✦",
               },
               {
-                href: "/sky-events",
-                titleKey: "home.featureEventsTitle",
-                titleFallback: "Celestial Events",
-                descKey: "home.featureEventsDesc",
-                descFallback: "Meteor showers, eclipses and lunar phases dated from astronomical ephemerides — know what is worth stepping outside for.",
-                glyph: "☄",
-              },
-              {
-                href: "/cosmic-facts",
-                titleKey: "home.featureFactsTitle",
-                titleFallback: "Cosmic Facts",
-                descKey: "home.featureFactsDesc",
-                descFallback: "Every sign's traits, superpowers, mythology and career energies, explained in plain language.",
-                glyph: "✦",
+                href: "/sky-now",
+                titleKey: "navExtra.skyNow",
+                titleFallback: "Sky Now",
+                descKey: "home.featureNowDesc",
+                descFallback: "Where every planet actually is this moment — positions, retrogrades, the lunar phase and major aspects, computed from astronomical theory.",
+                glyph: "☾",
               },
             ].map((feature) => (
               <Link

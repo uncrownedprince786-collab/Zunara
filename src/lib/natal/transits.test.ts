@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computeNatalChart } from "./natal";
-import { upcomingTransits, ASPECT_ORBS } from "./transits";
+import { upcomingTransits, activeTransits, ASPECT_ORBS } from "./transits";
 import { getCelestialBody } from "@/lib/astronomy/bodies";
 import type { NatalChart } from "./types";
 
@@ -15,6 +15,8 @@ function chart(): NatalChart {
 }
 
 const AT = new Date(Date.UTC(2026, 0, 15, 12, 0, 0));
+
+const PHASES = ["applying", "exact", "separating"] as const;
 
 const ASPECT_NAMES = ["Conjunction", "Opposition", "Trine", "Square", "Sextile"] as const;
 const AREAS = ["identity", "relationships", "inner life", "career", "growth", "energy"] as const;
@@ -37,6 +39,22 @@ describe("upcoming transits", () => {
       expect(entry.note).toContain(getCelestialBody(entry.targetBody).name);
       expect(entry.note).toContain("from");
       expect(entry.note).not.toMatch(/TODO|lorem/i);
+    }
+  });
+
+  it("enriches every entry with depth fields", () => {
+    const forecast = run();
+    expect(forecast.length).toBeGreaterThan(0);
+    for (const entry of forecast) {
+      expect(entry.strength).toBeGreaterThanOrEqual(0);
+      expect(entry.strength).toBeLessThanOrEqual(100);
+      expect(Number.isInteger(entry.strength)).toBe(true);
+      expect(PHASES).toContain(entry.phase);
+      expect(entry.targetHouse).toBeGreaterThanOrEqual(1);
+      expect(entry.targetHouse).toBeLessThanOrEqual(12);
+      expect(entry.orb).toBeGreaterThanOrEqual(0);
+      expect(entry.meaning).toBeTruthy();
+      expect(entry.meaning.length).toBeGreaterThan(10);
     }
   });
 
@@ -69,5 +87,42 @@ describe("upcoming transits", () => {
 
   it("is deterministic across two calls", () => {
     expect(run()).toEqual(run());
+  });
+});
+
+describe("active transits", () => {
+  function runActive(overrides: { maxEntries?: number } = {}): ReturnType<typeof activeTransits> {
+    return activeTransits(chart(), AT, { maxEntries: 6, ...overrides });
+  }
+
+  it("returns at most maxEntries entries", () => {
+    expect(runActive().length).toBeLessThanOrEqual(6);
+    expect(runActive({ maxEntries: 2 }).length).toBeLessThanOrEqual(2);
+  });
+
+  it("every returned window spans the reference date", () => {
+    for (const entry of runActive()) {
+      expect(entry.start.getTime()).toBeLessThanOrEqual(AT.getTime());
+      expect(AT.getTime()).toBeLessThanOrEqual(entry.end.getTime());
+      expect(PHASES).toContain(entry.phase);
+      expect(entry.strength).toBeGreaterThanOrEqual(0);
+      expect(entry.strength).toBeLessThanOrEqual(100);
+    }
+  });
+
+  it("ranks by strength descending", () => {
+    const active = runActive();
+    for (let i = 1; i < active.length; i++) {
+      expect(active[i].strength).toBeLessThanOrEqual(active[i - 1].strength);
+    }
+  });
+
+  it("is deterministic across two calls", () => {
+    expect(runActive()).toEqual(runActive());
+  });
+
+  it("honors the documented orbs", () => {
+    expect(ASPECT_ORBS.Sextile).toBe(4);
+    expect(ASPECT_ORBS.Conjunction).toBe(6);
   });
 });

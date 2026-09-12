@@ -27,6 +27,27 @@
   --z-accent-purple: #6C5CE7;      /* Vibrant Electric Indigo */
   --z-accent-cyan: #00CEC9;        /* Aurora Cyan */
 
+  /* Planetary identity palette — each world's signature hue (visible, AA-safe
+     on the midnight canvas; used for planet rows, sky markers, chart legends).
+     10 traditional bodies: Sun through Pluto. */
+  --z-planet-sun: #FFD166;
+  --z-planet-moon: #E7EAF2;
+  --z-planet-mercury: #B9C2D4;
+  --z-planet-venus: #FFB86B;
+  --z-planet-mars: #FF7A70;
+  --z-planet-jupiter: #E0AE4C;
+  --z-planet-saturn: #D6CBB5;
+  --z-planet-uranus: #6BD9D9;
+  --z-planet-neptune: #6C8CFF;
+  --z-planet-pluto: #9B7BD0;
+
+  /* Semantic emphasis + focus tokens (editorial premium hierarchy) */
+  --z-fg-emphasis: #FFD166;
+  --z-focus-ring: rgba(255, 209, 102, 0.55);
+  --z-elev-1: rgba(255, 255, 255, 0.04);
+  --z-elev-2: rgba(255, 255, 255, 0.06);
+  --z-elev-3: rgba(255, 255, 255, 0.09);
+
   /* Back-compat aliases (kept so existing utilities resolve) */
   --z-bg-2: var(--z-surface);
   --z-bg-3: var(--z-surface-2);
@@ -90,6 +111,25 @@
   --color-earth: #10B981;
   --color-air: #06B6D4;
   --color-water: #8B5CF6;
+
+  /* Planetary identity colors (utility classes: text-planet-venus, bg-planet-mars/10 …) */
+  --color-planet-sun: var(--z-planet-sun);
+  --color-planet-moon: var(--z-planet-moon);
+  --color-planet-mercury: var(--z-planet-mercury);
+  --color-planet-venus: var(--z-planet-venus);
+  --color-planet-mars: var(--z-planet-mars);
+  --color-planet-jupiter: var(--z-planet-jupiter);
+  --color-planet-saturn: var(--z-planet-saturn);
+  --color-planet-uranus: var(--z-planet-uranus);
+  --color-planet-neptune: var(--z-planet-neptune);
+  --color-planet-pluto: var(--z-planet-pluto);
+
+  /* Editorial emphasis + elevation */
+  --color-emphasis: var(--z-fg-emphasis);
+  --color-focus: var(--z-focus-ring);
+  --color-elev-1: var(--z-elev-1);
+  --color-elev-2: var(--z-elev-2);
+  --color-elev-3: var(--z-elev-3);
 
   /* Text on unified glass surfaces */
   --color-p-ink: var(--z-p-ink);

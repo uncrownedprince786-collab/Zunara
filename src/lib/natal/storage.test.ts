@@ -4,7 +4,12 @@ import {
   loadNatalProfile,
   saveNatalProfile,
   clearNatalProfile,
+  clearAllProfiles,
   hasStorage,
+  listProfiles,
+  saveProfile,
+  deleteProfile,
+  DEFAULT_PROFILE_ID,
 } from "./storage";
 import type { BirthInput } from "@/lib/natal/validate";
 
@@ -76,5 +81,48 @@ describe("natal profile storage", () => {
     uninstallStorage();
     expect(loadNatalProfile()).toBeNull();
     expect(saveNatalProfile(VALID)).toBeNull();
+  });
+});
+
+describe("multi-profile storage", () => {
+  beforeEach(installStorage);
+  afterEach(uninstallStorage);
+
+  it("keeps secondary profiles alongside the primary without corrupting it", () => {
+    saveNatalProfile(VALID);
+    saveProfile({ ...VALID, placeName: "Berlin", latitude: 52.52, longitude: 13.405 }, "partner", "Sarah");
+    saveProfile({ ...VALID, placeName: "Lahore", latitude: 31.55, longitude: 74.34 }, "friend", "Ali");
+
+    const profiles = listProfiles();
+    expect(profiles.length).toBeGreaterThanOrEqual(3);
+    const byName = new Map(profiles.map((p) => [p.name ?? p.placeName, p] as const));
+    expect(byName.get("Sarah")?.id).toBe("partner");
+    expect(byName.get("Ali")?.id).toBe("friend");
+    expect(loadNatalProfile()?.placeName).toBe("New York");
+
+    deleteProfile("partner");
+    const after = listProfiles();
+    expect(after.some((p) => p.id === "partner")).toBe(false);
+    expect(after.some((p) => p.id === DEFAULT_PROFILE_ID)).toBe(true);
+  });
+
+  it("updates an existing profile in place when re-saved", () => {
+    saveProfile(VALID, "partner", "Sarah");
+    saveProfile({ ...VALID, placeName: "Rome", latitude: 41.9, longitude: 12.49 }, "partner", "Sarah");
+    const profiles = listProfiles().filter((p) => p.id === "partner");
+    expect(profiles).toHaveLength(1);
+    expect(profiles[0].latitude).toBeCloseTo(41.9, 4);
+  });
+
+  it("returns the defaults id when saving without one", () => {
+    expect(saveProfile(VALID)?.id).toBe(DEFAULT_PROFILE_ID);
+  });
+
+  it("clears every profile via clearAllProfiles", () => {
+    saveNatalProfile(VALID);
+    saveProfile({ ...VALID, placeName: "Berlin" }, "partner", "Sarah");
+    clearAllProfiles();
+    expect(listProfiles()).toHaveLength(0);
+    expect(loadNatalProfile()).toBeNull();
   });
 });

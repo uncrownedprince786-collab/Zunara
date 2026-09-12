@@ -4,6 +4,8 @@ import { ASTROLOGY_TOPICS } from "@/lib/astrology/topics";
 import { SITE } from "@/lib/seo/site";
 import { dailyKey } from "@/lib/calendar/periods";
 import { birthdayDates } from "@/lib/calendar/birthday-routes";
+import { PLANET_SLUGS } from "@/lib/planets/planet-content";
+import { HOUSES } from "@/lib/houses/house-content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -54,6 +56,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   entries.push({ url: `${base}/cosmic-facts`, lastModified: now, changeFrequency: "weekly", priority: 0.6 });
   entries.push({ url: `${base}/birthchart`, lastModified: now, changeFrequency: "weekly", priority: 0.8 });
+  entries.push({ url: `${base}/yoursky`, lastModified: now, changeFrequency: "weekly", priority: 0.8 });
+  entries.push({ url: `${base}/sky-now`, lastModified: now, changeFrequency: "hourly", priority: 0.9 });
+
+  for (const slug of PLANET_SLUGS) {
+    entries.push({
+      url: `${base}/planets/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
+  for (const house of HOUSES) {
+    entries.push({
+      url: `${base}/houses/${house.number}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
 
   const tools: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
     { path: "/synastry", changeFrequency: "weekly", priority: 0.8 },
@@ -81,7 +102,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
-  for (const page of ["/about", "/privacy", "/terms", "/disclaimer"]) {
+  for (const page of ["/about", "/how-it-works", "/privacy", "/terms", "/disclaimer"]) {
     entries.push({ url: `${base}${page}`, lastModified: now, changeFrequency: "yearly", priority: 0.4 });
   }
   entries.push({ url: `${base}/rss.xml`, lastModified: now, changeFrequency: "weekly", priority: 0.3 });

@@ -22,6 +22,7 @@ export type TransitArea =
   | "career"
   | "growth"
   | "energy";
+export type TransitPhase = "applying" | "exact" | "separating";
 
 export interface TransitForecast {
   id: string;
@@ -33,12 +34,26 @@ export interface TransitForecast {
   end: Date;
   area: TransitArea;
   note: string;
+  /** Orb (degrees from exact) at the sampled peak. Lower = tighter. */
+  orb: number;
+  /** Natal house holding the natal target body (the "affected" area). */
+  targetHouse: number;
+  /** Whether the aspect is inbound (applying), exact, or releasing. */
+  phase: TransitPhase;
+  /** Deterministic 0–100 intensity based on aspect, closeness and weight. */
+  strength: number;
+  /** Layer-2 "why": the classic character of the aspect itself. */
+  meaning: string;
 }
 
 export interface TransitOptions {
   /** Horizon length in whole 30-day months (default 6). */
   horizonMonths?: number;
-  /** Sampling step in days (default 7). */
+  /** Days to look back when scanning for transits active at `at` (default 60). */
+  lookbackDays?: number;
+  /** Days to look ahead when scanning for transits active at `at` (default 140). */
+  lookaheadDays?: number;
+  /** Sampling step in days (default 7, 4 for the active-window scan). */
   stepDays?: number;
   /** Number of most-significant entries to keep (default 6). */
   maxEntries?: number;
@@ -51,6 +66,14 @@ export const ASPECT_ORBS: Record<TransitAspectName, number> = {
   Trine: 6,
   Square: 6,
   Sextile: 4,
+};
+
+const ASPECT_BASE_STRENGTH: Record<TransitAspectName, number> = {
+  Conjunction: 100,
+  Opposition: 90,
+  Trine: 85,
+  Square: 80,
+  Sextile: 70,
 };
 
 const ASPECT_ANGLES: { type: TransitAspectName; angle: number }[] = [
@@ -67,6 +90,20 @@ const ASPECT_VERB: Record<TransitAspectName, string> = {
   Square: "squares",
   Trine: "trines",
   Opposition: "opposes",
+};
+
+/** Layer-2 astrology: the classic character of each major aspect. */
+const ASPECT_MEANING: Record<TransitAspectName, string> = {
+  Conjunction:
+    "A conjunction fuses two energies, pulling them into a single, concentrated theme while the planets travel together.",
+  Sextile:
+    "A sextile is a friendly angle — the two energies cooperate naturally and tend to open doors when the opportunity is acted on.",
+  Square:
+    "A square creates productive friction, pushing something that has been neglected into the open where it has to be dealt with.",
+  Trine:
+    "A trine flows easily, letting the two energies support each other without strain — often felt as a favouring current.",
+  Opposition:
+    "An opposition holds two energies in dialogue — balance comes from honouring both sides, not forcing one to win.",
 };
 
 const MONTH_NAMES = [
@@ -140,29 +177,39 @@ interface DetectedSample {
   aspect: TransitAspectName;
 }
 
-export function upcomingTransits(
-  chart: NatalChart,
-  at: Date = new Date(),
-  opts: TransitOptions = {},
-): TransitForecast[] {
-  const horizonMonths = opts.horizonMonths ?? 6;
-  const stepDays = opts.stepDays ?? 7;
-  const maxEntries = opts.maxEntries ?? 6;
+interface DetectedWindow {
+  transitBody: BodyKey;
+  target: NatalPlanet;
+  aspectName: TransitAspectName;
+  start: Date;
+  peak: Date;
+  end: Date;
+  orb: number;
+}
 
+/**
+ * Scan the sample grid in [from, to] and return every detected aspect window
+ * (a run of ≥2 in-orb samples, fast bodies excepted), each with its tightest
+ * sample as the peak. Deterministic. Shared by the forward forecast and the
+ * "active today" scan so all consumers agree on the geometry.
+ */
+function scanWindows(
+  chart: NatalChart,
+  from: Date,
+  to: Date,
+  stepDays: number,
+): DetectedWindow[] {
   const natal = byKey(chart.planets);
   const targets: NatalPlanet[] = NATAL_BODY_KEYS.map((key) => natal.get(key)).filter(
     (planet): planet is NatalPlanet => Boolean(planet),
   );
-  const ascIndex = SIGN_INDEX[chart.houses.ascendant] ?? 0;
 
   const stepMs = stepDays * DAY_MS;
-  const horizonMs = horizonMonths * 30 * DAY_MS;
-  const horizonEnd = at.getTime() + horizonMs;
 
   const sampleDates: Date[] = [];
-  let cursor = at.getTime();
+  let cursor = from.getTime();
   let guard = 0;
-  while (cursor <= horizonEnd + 1 && guard < 10000) {
+  while (cursor <= to.getTime() + 1 && guard < 12000) {
     sampleDates.push(new Date(cursor));
     cursor += stepMs;
     guard++;
@@ -179,7 +226,7 @@ export function upcomingTransits(
     transitLons.set(body, perSample);
   }
 
-  const windows: TransitForecast[] = [];
+  const windows: DetectedWindow[] = [];
 
   for (const transitBody of NATAL_BODY_KEYS) {
     const lons = transitLons.get(transitBody) ?? new Map<number, number>();
@@ -219,12 +266,18 @@ export function upcomingTransits(
             for (const sample of run) {
               if (sample.orb < peak.orb) peak = sample;
             }
-            if (peak.date.getTime() <= horizonEnd) {
-              const start = run[0].date;
-              const last = run[run.length - 1].date;
-              const end = new Date(last.getTime() + stepMs);
-              windows.push(buildForecast(chart, transitBody, target, peak.aspect, start, peak.date, end, ascIndex));
-            }
+            const start = run[0].date;
+            const last = run[run.length - 1].date;
+            const end = new Date(last.getTime() + stepMs);
+            windows.push({
+              transitBody,
+              target,
+              aspectName: peak.aspect,
+              start,
+              peak: peak.date,
+              end,
+              orb: peak.orb,
+            });
           }
         }
         run = item ? [item] : [];
@@ -232,41 +285,133 @@ export function upcomingTransits(
     }
   }
 
-  windows.sort((a, b) => {
-    const aScore = significanceOf(a.transitBody, natal.get(a.targetBody as NatalBodyKey) ?? targets[0], ascIndex);
-    const bScore = significanceOf(b.transitBody, natal.get(b.targetBody as NatalBodyKey) ?? targets[0], ascIndex);
+  return windows;
+}
+
+function strengthOf(
+  aspectName: TransitAspectName,
+  orb: number,
+  transitBody: BodyKey,
+  target: NatalPlanet,
+  house: number,
+): number {
+  const base = ASPECT_BASE_STRENGTH[aspectName] ?? 70;
+  const maxOrb = ASPECT_ORBS[aspectName];
+  const closeness = 1 - Math.min(1, orb / maxOrb);
+  let s = base * (0.7 + 0.3 * closeness);
+  if (OUTER_BODIES.has(transitBody)) s += 6;
+  if (target.key === "sun" || target.key === "moon") s += 4;
+  if (house === 10) s += 3;
+  return Math.max(0, Math.min(100, Math.round(s)));
+}
+
+function phaseOf(peak: Date, at: Date): TransitPhase {
+  const diff = at.getTime() - peak.getTime();
+  if (Math.abs(diff) <= DAY_MS) return "exact";
+  return diff < 0 ? "applying" : "separating";
+}
+
+function formatForecast(
+  chart: NatalChart,
+  w: DetectedWindow,
+  ascIndex: number,
+  at: Date,
+): TransitForecast {
+  const transitName = getCelestialBody(w.transitBody).name;
+  const targetName = getCelestialBody(w.target.key).name;
+  const area = areaFor(w.target, ascIndex);
+  const house = houseOf(ascIndex, SIGN_INDEX[w.target.sign] ?? 0);
+  const note = `${transitName} ${ASPECT_VERB[w.aspectName]} your ${targetName} from ${MONTH_NAMES[w.start.getUTCMonth()]} to ${MONTH_NAMES[w.end.getUTCMonth()]} — ${AREA_NOTE[area]}.`;
+  return {
+    id: `transit:${w.transitBody}-${w.target.key}-${w.aspectName.toLowerCase()}-${w.peak.getTime()}`,
+    transitBody: w.transitBody,
+    targetBody: w.target.key,
+    aspectName: w.aspectName,
+    start: w.start,
+    peak: w.peak,
+    end: w.end,
+    area,
+    orb: w.orb,
+    targetHouse: house,
+    phase: phaseOf(w.peak, at),
+    strength: strengthOf(w.aspectName, w.orb, w.transitBody, w.target, house),
+    meaning: ASPECT_MEANING[w.aspectName],
+    note,
+  };
+}
+
+/**
+ * Forward-looking transits from `at`: the most significant windows whose peak
+ * falls inside the horizon, sorted so the big, close ones surface first.
+ */
+export function upcomingTransits(
+  chart: NatalChart,
+  at: Date = new Date(),
+  opts: TransitOptions = {},
+): TransitForecast[] {
+  const horizonMonths = opts.horizonMonths ?? 6;
+  const stepDays = opts.stepDays ?? 7;
+  const maxEntries = opts.maxEntries ?? 6;
+
+  const natal = byKey(chart.planets);
+  const targets: NatalPlanet[] = NATAL_BODY_KEYS.map((key) => natal.get(key)).filter(
+    (planet): planet is NatalPlanet => Boolean(planet),
+  );
+  const ascIndex = SIGN_INDEX[chart.houses.ascendant] ?? 0;
+
+  const horizonMs = horizonMonths * 30 * DAY_MS;
+  const horizonEnd = at.getTime() + horizonMs;
+
+  const windows = scanWindows(chart, at, new Date(horizonEnd), stepDays).filter(
+    (w) => w.peak.getTime() <= horizonEnd,
+  );
+
+  const formatted = windows.map((w) => formatForecast(chart, w, ascIndex, at));
+
+  formatted.sort((a, b) => {
+    const aScore = significanceOf(
+      a.transitBody,
+      natal.get(a.targetBody as NatalBodyKey) ?? targets[0],
+      ascIndex,
+    );
+    const bScore = significanceOf(
+      b.transitBody,
+      natal.get(b.targetBody as NatalBodyKey) ?? targets[0],
+      ascIndex,
+    );
     if (bScore !== aScore) return bScore - aScore;
     return a.peak.getTime() - b.peak.getTime();
   });
 
-  const chosen = windows.slice(0, maxEntries);
+  const chosen = formatted.slice(0, maxEntries);
   chosen.sort((a, b) => a.peak.getTime() - b.peak.getTime());
   return chosen;
 }
 
-function buildForecast(
+/**
+ * Transits active at `at` itself — windows whose span includes the reference
+ * date. This is the "what is touching my chart right now" view, ranked by
+ * strength so the most intense active influence leads.
+ */
+export function activeTransits(
   chart: NatalChart,
-  transitBody: BodyKey,
-  target: NatalPlanet,
-  aspectName: TransitAspectName,
-  start: Date,
-  peak: Date,
-  end: Date,
-  ascIndex: number,
-): TransitForecast {
-  const transitName = getCelestialBody(transitBody).name;
-  const targetName = getCelestialBody(target.key).name;
-  const area = areaFor(target, ascIndex);
-  const note = `${transitName} ${ASPECT_VERB[aspectName]} your ${targetName} from ${MONTH_NAMES[start.getUTCMonth()]} to ${MONTH_NAMES[end.getUTCMonth()]} — ${AREA_NOTE[area]}.`;
-  return {
-    id: `transit:${transitBody}-${target.key}-${aspectName.toLowerCase()}-${peak.getTime()}`,
-    transitBody,
-    targetBody: target.key,
-    aspectName,
-    start,
-    peak,
-    end,
-    area,
-    note,
-  };
+  at: Date = new Date(),
+  opts: TransitOptions = {},
+): TransitForecast[] {
+  const lookbackDays = opts.lookbackDays ?? 60;
+  const lookaheadDays = opts.lookaheadDays ?? 140;
+  const stepDays = opts.stepDays ?? 4;
+  const maxEntries = opts.maxEntries ?? 6;
+
+  const ascIndex = SIGN_INDEX[chart.houses.ascendant] ?? 0;
+
+  const from = new Date(at.getTime() - lookbackDays * DAY_MS);
+  const to = new Date(at.getTime() + lookaheadDays * DAY_MS);
+
+  const active = scanWindows(chart, from, to, stepDays)
+    .filter((w) => w.start.getTime() <= at.getTime() && at.getTime() <= w.end.getTime())
+    .map((w) => formatForecast(chart, w, ascIndex, at));
+
+  active.sort((a, b) => b.strength - a.strength || a.peak.getTime() - b.peak.getTime());
+  return active.slice(0, maxEntries);
 }

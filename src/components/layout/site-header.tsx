@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SiteNav } from "./site-nav";
 import { VitruvianMark } from "@/components/ui/vitruvian-mark";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { CommandSearch } from "@/components/search/command-search";
 import { useLocale } from "@/lib/i18n/client";
 
 export function SiteHeader() {
@@ -23,13 +24,14 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           <SiteNav
             labels={{
+              yourSky: dict.navExtra.yourSky,
               horoscopes: dict.nav.horoscopes,
               birthchart: dict.nav.birthchart,
-              cosmicFacts: dict.nav.cosmicFacts,
-              astronomy: dict.nav.astronomy,
-              about: dict.nav.about,
+              synastry: dict.nav.synastry,
+              skyNow: dict.navExtra.skyNow,
             }}
           />
+          <CommandSearch />
           <LanguageSwitcher />
         </div>
       </div>

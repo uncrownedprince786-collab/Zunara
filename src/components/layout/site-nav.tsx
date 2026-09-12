@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 import { useLocale } from "@/lib/i18n/client";
 
 const LINKS = [
-  { href: "/horoscope", key: "horoscopes" as const },
-  { href: "/birthchart", key: "birthchart" as const },
-  { href: "/cosmic-facts", key: "cosmicFacts" as const },
-  { href: "/sky-events", key: "astronomy" as const },
-  { href: "/about", key: "about" as const },
+  { href: "/yoursky", key: "yourSky" as const, fallback: "Your Sky" },
+  { href: "/horoscope", key: "horoscopes" as const, fallback: "Daily Horoscopes" },
+  { href: "/birthchart", key: "birthchart" as const, fallback: "Birth Chart" },
+  { href: "/synastry", key: "synastry" as const, fallback: "Compatibility" },
+  { href: "/sky-now", key: "skyNow" as const, fallback: "Sky Now" },
 ];
 
 export function SiteNav({ labels }: { labels?: Record<string, string> }) {
@@ -23,12 +23,16 @@ export function SiteNav({ labels }: { labels?: Record<string, string> }) {
 
   const items = LINKS.map((l) => ({
     href: l.href,
-    label: labels?.[l.key] ?? dict.nav[l.key] ?? l.key,
+    label:
+      labels?.[l.key] ??
+      (dict.navExtra as Record<string, string | undefined>)?.[l.key] ??
+      (dict.nav as Record<string, string | undefined>)?.[l.key] ??
+      l.fallback,
   }));
 
   return (
     <nav aria-label={dict.nav.publication}>
-      <div className="hidden items-center gap-6 md:flex">
+      <div className="hidden items-center gap-6 lg:flex">
         {items.map((l) => {
           const active = isActive(l.href);
           return (
@@ -52,7 +56,7 @@ export function SiteNav({ labels }: { labels?: Record<string, string> }) {
 
       <button
         type="button"
-        className="inline-flex h-11 w-11 items-center justify-center text-muted md:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center text-muted lg:hidden"
         aria-expanded={open}
         aria-controls="mobile-menu"
         aria-label={open ? t("header.closeMenu", "Close menu") : t("header.openMenu", "Open menu")}
@@ -72,7 +76,7 @@ export function SiteNav({ labels }: { labels?: Record<string, string> }) {
         <div
           id="mobile-menu"
           aria-label={dict.nav.menu}
-          className="absolute inset-x-0 top-16 z-50 max-h-[70vh] overflow-y-auto border-b border-white/[0.08] bg-ink/95 px-4 py-2 shadow-2xl backdrop-blur-xl saturate-180 md:hidden"
+          className="absolute inset-x-0 top-16 z-50 max-h-[70vh] overflow-y-auto border-b border-white/[0.08] bg-ink/95 px-4 py-2 shadow-2xl backdrop-blur-xl saturate-180 lg:hidden"
         >
           <div className="flex flex-col gap-1">
             {items.map((l) => (

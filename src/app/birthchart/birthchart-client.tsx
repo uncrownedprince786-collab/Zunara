@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { computeNatalChart } from "@/lib/natal/natal";
 import { validateBirth, type BirthInput } from "@/lib/natal/validate";
 import type { NatalChart } from "@/lib/natal/types";
@@ -22,6 +22,48 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 function subst(tpl: string, vars: Record<string, string>): string {
   return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+}
+
+const TAB_SECTIONS = [
+  { id: "overview", key: "charttabs.overview", fallback: "Overview" },
+  { id: "chart", key: "charttabs.chart", fallback: "Chart" },
+  { id: "bigthree", key: "charttabs.bigThree", fallback: "Big Three" },
+  { id: "houses", key: "charttabs.houses", fallback: "Houses" },
+  { id: "aspects", key: "charttabs.aspects", fallback: "Aspects" },
+  { id: "readings", key: "charttabs.patterns", fallback: "Patterns" },
+  { id: "planets", key: "charttabs.planets", fallback: "Planets" },
+  { id: "technical", key: "charttabs.technical", fallback: "Technical" },
+] as const;
+
+const SECTION_IDS: readonly string[] = TAB_SECTIONS.map((s) => s.id);
+const NO_SECTIONS: readonly string[] = [];
+
+// Highlights the tab for the result section currently crossing the upper part
+// of the viewport (below the sticky site header + tab bar).
+function useActiveSection(
+  ids: readonly string[],
+  instance: string | undefined,
+): [string, (id: string) => void] {
+  const [active, setActive] = useState(ids[0] ?? "");
+  useEffect(() => {
+    if (ids.length === 0) return;
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (hit) setActive(hit.target.id);
+      },
+      { rootMargin: "-96px 0px -60% 0px" },
+    );
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [ids, instance]);
+  return [active, setActive];
 }
 
 export function BirthchartClient() {
@@ -65,6 +107,35 @@ export function BirthchartClient() {
   const forecast = useMemo(
     () => (chart && at ? upcomingTransits(chart, at) : null),
     [chart, at],
+  );
+
+  // Section tab navigation. `instance` rekeys the observer whenever a freshly
+  // computed chart remounts its result DOM, so highlight tracking stays live.
+  const [activeSection, setActiveSection] = useActiveSection(
+    chart ? SECTION_IDS : NO_SECTIONS,
+    chart?.utcTime,
+  );
+
+  const scrollToSection = useCallback(
+    (id: string) => {
+      setActiveSection(id);
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    [setActiveSection],
+  );
+
+  const handleTabKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+      if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+      event.preventDefault();
+      const next =
+        (index + (event.key === "ArrowRight" ? 1 : -1) + TAB_SECTIONS.length) %
+        TAB_SECTIONS.length;
+      const target = TAB_SECTIONS[next];
+      document.getElementById(`charttab-${target.id}`)?.focus();
+      scrollToSection(target.id);
+    },
+    [scrollToSection],
   );
 
   const handleSubmit = async (input: BirthInput) => {
@@ -141,7 +212,11 @@ export function BirthchartClient() {
               </div>
             )}
             {/* Age + Big Three + next milestone */}
-            {at && <AgeHeader chart={chart} at={at} />}
+            {at && (
+              <div id="overview" className="scroll-mt-28">
+                <AgeHeader chart={chart} at={at} />
+              </div>
+            )}
             {/* Header Status Bar */}
             <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl sm:flex-row sm:items-center">
               <div>
@@ -171,8 +246,41 @@ export function BirthchartClient() {
               </div>
             )}
 
+            {/* Section Navigation */}
+            <div
+              role="tablist"
+              aria-label={t("nav.birthchart", "Birth Chart")}
+              className="sticky top-16 z-30 -mx-4 border-b border-white/[0.08] bg-ink/85 backdrop-blur-xl saturate-180 sm:-mx-6"
+            >
+              <div className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-2.5 sm:px-6">
+                {TAB_SECTIONS.map((section, index) => {
+                  const active = activeSection === section.id;
+                  return (
+                    <button
+                      key={section.id}
+                      type="button"
+                      id={`charttab-${section.id}`}
+                      role="tab"
+                      aria-selected={active}
+                      aria-controls={section.id}
+                      tabIndex={active ? 0 : -1}
+                      onClick={() => scrollToSection(section.id)}
+                      onKeyDown={(event) => handleTabKeyDown(event, index)}
+                      className={`relative whitespace-nowrap rounded-full px-3.5 py-1.5 text-[0.72rem] uppercase tracking-[0.14em] transition-colors ${
+                        active
+                          ? "bg-gold/15 text-gold"
+                          : "text-muted hover:text-starlight"
+                      }`}
+                    >
+                      {t(section.key, section.fallback)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Wheel + Big Three Grid */}
-            <div className="grid items-start gap-8 lg:grid-cols-[1fr_360px]">
+            <div id="chart" className="grid scroll-mt-28 items-start gap-8 lg:grid-cols-[1fr_360px]">
               {/* Wheel View */}
               <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl sm:p-8">
                 <ChartWheel chart={chart} size={420} />
@@ -180,7 +288,7 @@ export function BirthchartClient() {
 
               {/* Big Three & Cusps */}
               <div className="space-y-6">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+                <div id="bigthree" className="rounded-2xl scroll-mt-28 border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
                   <h2 className="font-display text-xl font-medium text-starlight mb-5">
                     {t("birthchart.bigThree", "The Big Three")}
                   </h2>
@@ -212,7 +320,7 @@ export function BirthchartClient() {
                 </div>
 
                 {/* House Cusps */}
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+                <div id="houses" className="rounded-2xl scroll-mt-28 border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
                   <h2 className="font-display text-xl font-medium text-starlight mb-4">
                     {t("birthchart.housesHeading", "House Cusps (Whole Sign)")}
                   </h2>
@@ -251,7 +359,7 @@ export function BirthchartClient() {
 
             {/* Upcoming Transits */}
             {forecast && (
-              <section aria-labelledby="transits-heading">
+              <section id="transits" aria-labelledby="transits-heading" className="scroll-mt-28">
                 <div className="mb-6">
                   <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
                     {t("birthchart.transitsKicker", "Forecasts from real motion")}
@@ -271,10 +379,12 @@ export function BirthchartClient() {
             )}
 
             {/* Transit Aspects */}
-            <AspectsPanel chart={chart} />
+            <div id="aspects" className="scroll-mt-28">
+              <AspectsPanel chart={chart} />
+            </div>
 
             {/* Core Readings */}
-            <div>
+            <div id="readings" className="scroll-mt-28">
               <h2 className="font-display text-2xl text-starlight mb-6">
                 {t("birthchart.readingsHeading", "Core Interpretations")}
               </h2>
@@ -282,7 +392,7 @@ export function BirthchartClient() {
             </div>
 
             {/* Planetary Placements Table */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] overflow-hidden backdrop-blur-xl">
+            <div id="planets" className="rounded-2xl scroll-mt-28 border border-white/10 bg-white/[0.04] overflow-hidden backdrop-blur-xl">
               <div className="p-6 border-b border-white/10">
                 <h2 className="font-display text-2xl text-starlight">
                   {t("birthchart.planetsHeading", "Planetary Placements")}
@@ -331,7 +441,7 @@ export function BirthchartClient() {
             </div>
 
             {/* Method Note */}
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-sm text-subdued backdrop-blur-xl">
+            <div id="technical" className="rounded-2xl scroll-mt-28 border border-white/10 bg-white/[0.02] p-6 text-sm text-subdued backdrop-blur-xl">
               <h3 className="font-display text-lg text-starlight">
                 {t("birthchart.howItWorksTitle", "How Zunara Calculates Your Chart")}
               </h3>
