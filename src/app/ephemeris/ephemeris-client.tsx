@@ -34,17 +34,13 @@ function formatDegree(deg: number): string {
   return `${d}°${String(m).padStart(2, "0")}′`;
 }
 
-function todayLocal(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function parseLocal(dateStr: string): Date {
+function parseUtcNoon(dateStr: string): Date {
   const [y, m, d] = dateStr.split("-").map(Number);
-  return new Date(y, m - 1, d, 12, 0, 0, 0);
+  // Parse as UTC noon so the computed positions are identical on the server
+  // prerender and the client hydration. A local-time parse resolves to a
+  // different instant per timezone, shifting positions and triggering a
+  // React #418 hydration mismatch.
+  return new Date(Date.UTC(y, m - 1, d, 12, 0, 0, 0));
 }
 
 function formatCaption(
@@ -57,8 +53,9 @@ function formatCaption(
 ): string {
   const retro = rows.filter((r) => r.retrograde);
   const sun = rows.find((r) => r.body === "sun");
-  const date = parseLocal(dateStr);
+  const date = parseUtcNoon(dateStr);
   const pretty = new Intl.DateTimeFormat(locale, {
+    timeZone: "UTC",
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -77,12 +74,12 @@ function formatCaption(
   return subst(t("ephemeris.onDate", "On {date}, {retro}; {sun}."), { date: pretty, retro: retroPart, sun: sunPart });
 }
 
-export function EphemerisClient() {
+export function EphemerisClient({ initialDate }: { initialDate: string }) {
   const { t, tPlanet, tSign, tElement, locale } = useLocale();
-  const [dateStr, setDateStr] = useState<string>(todayLocal);
+  const [dateStr, setDateStr] = useState<string>(initialDate);
 
   const rows = useMemo<Row[]>(() => {
-    const at = parseLocal(dateStr);
+    const at = parseUtcNoon(dateStr);
     const snap = computeSnapshot(at);
     const out: Row[] = [];
     for (const pos of snap.positions) {
@@ -109,11 +106,11 @@ export function EphemerisClient() {
   }, [dateStr]);
 
   const shiftDay = (delta: number) => {
-    const at = parseLocal(dateStr);
-    at.setDate(at.getDate() + delta);
-    const y = at.getFullYear();
-    const m = String(at.getMonth() + 1).padStart(2, "0");
-    const d = String(at.getDate()).padStart(2, "0");
+    const at = parseUtcNoon(dateStr);
+    at.setUTCDate(at.getUTCDate() + delta);
+    const y = at.getUTCFullYear();
+    const m = String(at.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(at.getUTCDate()).padStart(2, "0");
     setDateStr(`${y}-${m}-${d}`);
   };
 

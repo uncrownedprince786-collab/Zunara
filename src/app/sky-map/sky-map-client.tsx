@@ -29,6 +29,7 @@ export function SkyMapClient() {
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [provenance, setProvenance] = useState<PlaceProvenance>("manual");
+  const [mounted, setMounted] = useState(false);
 
   // Seed coordinates from the persisted birth profile when available.
   useEffect(() => {
@@ -67,17 +68,22 @@ export function SkyMapClient() {
     };
   }, []);
 
-  // Keep the map honest to the current moment.
+  // Keep the map honest to the current moment. Marking mounted here also gates
+  // the time caption below so the SSR prerender and first client render agree
+  // (a raw toLocaleString of `now` differs between them → React #418).
   useEffect(() => {
+    setMounted(true);
     const id = window.setInterval(() => setNow(new Date()), 60000);
     return () => window.clearInterval(id);
   }, []);
 
-  const placeLabel = now.toLocaleString(locale, {
-    weekday: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const placeLabel = mounted
+    ? now.toLocaleString(locale, {
+        weekday: "long",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "…";
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-24 sm:px-6">

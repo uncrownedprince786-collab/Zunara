@@ -298,12 +298,21 @@ export function FamousBirthdaysHub({
                 })();
 
                 return (
-                  <Link
+                  <div
                     key={c.url + c.name}
-                    href={`/birthday/${pad2(month)}-${pad2(day)}`}
                     className="group relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl saturate-180 transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
                   >
-                    <div className="flex items-start gap-3">
+                    {/* Full-card navigation as an overlay sibling — never nest
+                        the inner "Full profile" <a> inside another <a> (invalid
+                        HTML that the browser un-nests, causing a hydration
+                        mismatch). Content is pointer-events-none so card clicks
+                        fall through to this overlay. */}
+                    <Link
+                      href={`/birthday/${pad2(month)}-${pad2(day)}`}
+                      aria-label={c.name}
+                      className="absolute inset-0 z-0"
+                    />
+                    <div className="pointer-events-none relative z-10 flex items-start gap-3">
                       <PortraitAvatar celebrity={c} sign={cSign} />
                       <div className="min-w-0">
                         <h3 className="truncate font-display text-sm font-semibold text-starlight">
@@ -315,7 +324,7 @@ export function FamousBirthdaysHub({
                       </div>
                     </div>
 
-                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                    <div className="pointer-events-none relative z-10 mt-2.5 flex flex-wrap items-center gap-1.5">
                       <span className={`inline-block rounded-full border px-2 py-0.5 text-[0.55rem] font-medium tracking-wide ${regionStyle}`}>
                         {t(`celebrities.regions.${c.region}`, c.region)}
                       </span>
@@ -336,14 +345,13 @@ export function FamousBirthdaysHub({
                         href={wikiHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="pointer-events-auto mt-2.5 inline-flex w-fit items-center gap-1 rounded-full border border-white/10 px-2.5 py-0.5 text-[0.55rem] font-medium text-subdued transition-colors hover:border-gold/40 hover:text-gold"
+                        className="relative z-10 mt-2.5 inline-flex w-fit items-center gap-1 rounded-full border border-white/10 px-2.5 py-0.5 text-[0.55rem] font-medium text-subdued transition-colors hover:border-gold/40 hover:text-gold"
                       >
                         {t("celebrities.fullProfile", "Full profile")}
                         <span aria-hidden>&rarr;</span>
                       </a>
                     )}
-                  </Link>
+                  </div>
                 );
               })}
             </div>

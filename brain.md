@@ -767,3 +767,214 @@ New pure-data helper rendering "In plain words" sentences for the non-technical 
 ### Verification & deploy
 - `tsc --noEmit` clean; `vitest` 243/243; `next build` green (home now prerenders the embedded clients as client islands under ISR).
 - Pushed `6734e16..1591a69 master -> main`.
+
+---
+
+## Sprint #41: Pre-demo audit round
+
+**Status: SHIPPED**
+**Commit:** `1dd8f19` → pushed `32d1823..1dd8f19 master -> main`
+
+### Scope
+Five parallel audits (translation accuracy, UI/UX, content/logic, competitor research, security/perf/SEO), then fixes only for confirmed, high-confidence issues.
+
+### Translation fixes (dictionaries.ts)
+- ar: `inPlainWords` صريحة → بسيطة; `positionUpdatesLive` الموقع → الموضع مباشرةً.
+- ur: `readTodays` double-possessive trimmed; `positionUpdatesLive` redundant مقام dropped; `errorReload` repetition trimmed.
+- hi: `nodeNorth`/`nodeSouth` transliterated नोड → राहु / केतु.
+
+### Content fixes
+- `on-this-day.ts`: 10 garbled/corrupted entries fixed (ISAS not JAXA; garbled lines dropped; USS ships restored; grammar corrected).
+- `celebrities.ts`: Princess Diana moved to correct date July 1, 1961.
+- `celebrity-pool.ts`: Oksana Selekhmeteva "Spanish" → Russian.
+- `retrograde-client.tsx`: "hour-level precision" overclaim removed across all 6 locales.
+- `birthchart-client.tsx`: raw English error string replaced with localized fallback.
+- `birthchart.computedFor`: "VSOP87 Engine {version}" → "VSOP87-based ephemeris" (6 locales).
+
+### Security / headers (next.config.ts)
+- CSP `connect-src` gained `https://space-calendar.lukekorth.com`.
+- Added `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Resource-Policy: same-origin`.
+
+### UI/UX polish
+- Hero H1 → "Your sky, written from real planetary positions"; added gold "Today's horoscope" primary CTA.
+- `.kicker` 0.8rem/600; `--z-fg-subdued` 7C8BA3 → 8B9AB3.
+- Tap targets: hamburger, footer signs, strip arrows, cosmic-facts close → ≥44px.
+- RTL logical classes applied to ~11 components.
+- Home watermark 0.14 → 0.07; birthchart watermark removed.
+- Cosmic-facts EN copy de-buzzworded.
+
+### Feature decisions
+- Moon phase: compact widget already renders in daily-orbit banner; full calendar page deferred post-demo.
+
+### Regression
+- vitest 377/377; tsc clean; eslint 0 errors; build green; SSR 200 on 7 routes; Googlebot 200 with server HTML.
+- PageSpeed API: quota-blocked → use browser UI.
+
+## Sprint #41b: Lighthouse hardening (browser-measured)
+
+**Status: SHIPPED**
+
+### Lighthouse (mobile emulation, localhost `next start`) before → after
+- performance **40 → 60** (FCP 0.9–1.0s, LCP 5.7 → 4.0s, SI 2.4s, CLS 0), accessibility **100**, best-practices **100**, seo **100**.
+- Total blocking time **103s → ~1.5–1.9s** (was: three.js sky-map scene + astronomy clients executing on initial load).
+
+### What was fixed
+1. **Above-the-fold JS**: the home embeds (SkyMapClient/three.js, DailyTransitClient, SkyEvents, BentoZodiacGrid, CosmicTraits) were `dynamic(..., {ssr:false})` but mounted immediately. Added `useInView` (IntersectionObserver, 600px rootMargin) to `home-heavy-sections.tsx` so each island chunk loads only as the section scrolls into view (skeleton keeps layout stable). Removed ~a minute of main-thread work.
+2. **LCP image**: decorative Vitruvian hero watermark (550×550 `loading="lazy"` at 7% opacity) was the LCP target. Set `priority` + `fetchPriority="high"`, downscaled to 256×256 `quality={45}`.
+3. **a11y 95 → 100**: `<label htmlFor>` for daily-transit date + sky-map lat/lng inputs; header logo `aria-label` removed (mismatched visible text); LanguageSwitcher trigger uses `sr-only` span so accessible name includes visible text.
+4. **JSON-LD dedupe**: layout.tsx emits sitewide `Organization` only; WebSite lives on home via `websiteJsonLd()` (was duplicated).
+5. **celebrity-pool images**: stripped 2,608 `?utm_*` suffixes.
+
+### Verified
+- vitest 377/377; tsc clean; eslint 0 errors (2 pre-existing warnings); build green; SSR spot-checks pass.
+- Remaining mobile-emulation gap = hydration + decorative `backdrop-blur`/`saturate-180` filters. Production on Vercel CDN + HTTP/2 will score higher than http/1.1 localhost. Left as-is (necessary-items scope).
+
+### Local Lighthouse recipe (Windows)
+`npx lighthouse http://localhost:3010/ --quiet --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo --mobile --output=json --output-path=%TEMP%\lh.json`
+Known flake: chrome-launcher cleanup throws EPERM after the run; JSON is still written. Requires `npx next start -p 3010` first.
+
+---
+
+## Phase 0 — Category-Leader Transformation: audit + master plan
+
+**Trigger:** user supplied `Zunara — Category Leader Transformation Master Brief.md`.
+This is NOT a redesign task. It is a product-evolution mandate: build Zunara into the strongest astrology platform (real sky + personal chart + current transits + future timeline + clear interpretation + beautiful visualization + massive useful SEO). Identity is unchanged and locked: **"Your sky, understood."** The astronomy-vs-astrology boundary is NON-NEGOTIABLE.
+
+### Locked product principles
+- Positions / aspects / orbs / houses / retrograde / lunar phase / transit timing = deterministic calculation ONLY (`astronomy-engine` 2.1.19, VSOP87). The interpretation layer may interpret but must never decide math. No fabricated positions, fake stats, fake reviews, fake social proof.
+- No account required — personal layer is localStorage-first (`zunara_natal_profile`). Accounts only later, when they add real value; DB changes additive + reversible only.
+- No popups everywhere, no login-first, no generic "AI" branding/aesthetic, no competitor branding/UI copying, no generic AI imagery.
+- Content voice: specific, grounded, human; never fear-based; no guaranteed outcomes; no medical/financial claims. Avoid vague mystical filler.
+- Feature bar (must answer ≥1): acquisition / activation / personalization / retention / authority / revenue.
+- Design language: celestial · editorial · premium · calm · precise — observatory + luxury editorial + modern data product. NO purple-neon gradients, no random stars, no crystal-ball aesthetics.
+
+### Current-state architecture map (from inspection)
+**Routes (app router, all SSR/SSG):**
+- Home `/`: hero (live date + quick birth input) → 2 CTAs (`/birthchart`, `/birthday/{today}`) → DailyOrbitBanner (moon phase) → Live Sky & Planets bulletin → SkyMap (3D, three.js, `useInView`-gated) → DailyTransit (personal, reads localStorage profile) → SkyEvents → CelebrityBirthdays → 12-sign grid → CosmicTraits → Core 4-tool grid → Knowledge Base & Method.
+- Horoscopes: `/horoscope`, `/horoscope/[sign]`, `/horoscope/[sign]/{today,weekly,monthly,yearly}` — deterministic DB-seeded generation via cron, ISR.
+- Tools: `/birthchart` (client calc, LMT longitude offset), `/daily-transit`, `/synastry`, `/cosmic-facts` (compat hub + synastry embedded), `/sky-map`, `/sky-events`, `/retrograde`, `/ephemeris`, `/famous-birthdays`.
+- Knowledge/SEO: `/birthday/{MM-DD}` (366 SSG), `/library/{signs,planets,nodes}`, `/astrology/{topic}` (9 topics: birth-chart, transits, retrogrades, aspects, houses, zodiac-signs, planets, +…), static `/about`,`/privacy`,`/terms`,`/disclaimer`, `rss.xml`.
+- APIs: `/api/health`, `/api/cron/daily`, `/api/cron/daily-celebrities` (bearer-token secured via `CRON_SECRET`; `revalidatePath` daily). Cron: `vercel.json` (04:00 generation, 22:00 celebrities).
+- DB (Neon Postgres / drizzle, `src/db/schema.ts`): `zodiac_signs`, `planetary_snapshots`, `horoscopes`, `generation_jobs`, `system_health`, `celebrity_cache`. **No user tables.**
+- Engine/libs: `src/lib/astronomy/astro.ts` (VSOP87 wrapper + `startOfUtcDay`), `natal/*` (chart calc, readings, guidance, **transit engine**, storage, validate), `transits/daily-transits.ts`, `content/*` (sky-events data+calculated, on-this-day, celebrities+pool, glossary, engine, funfacts, fragments), `seo/*` (site, metadata, jsonld), `i18n/dictionaries.ts` (**6 locales**: en,ur,ar,es,zh,hi; parity-enforced by tests), `zodiac/*`, `celebrities/*`, `calendar/*`, `geo/*` (Nominatim), `cron/generate.ts`.
+- SEO today: full sitemap (incl. 366 birthday pages), robots, JSON-LD WebSite+Org (deduped), hreflang to same URL for 6 locales, per-route metadata+canonicals. Missing: breadcrumbs/Article/FAQ schema; per-planet/house/aspect/cluster pages.
+- Design: Tailwind v4 + CSS vars — deep velvet midnight canvas, gold #FFD166 / indigo #6C5CE7 / cyan #00CEC9 accents, 4 element colors, glass tokens, Syne display + Inter body; meteor canvas; 3D sky dome; `prefers-reduced-motion` respected; RTL-safe; H1/LCP/tap-target/a11y tuned (Sprint #41b).
+- Quality bar today: vitest 377/377, tsc clean, eslint 0 errors, build green, Lighthouse a11y/BP/SEO = 100, perf 60 (throttled localhost; better in production). Googlebot SSRs fine.
+
+### Gap map vs brief (what exists → what the brief wants)
+- **IA/nav**: 5 links (Horoscopes · Birth Chart · Cosmic Facts · Sky Events · About) → brief: Your Sky / Horoscopes / Birth Chart / Compatibility / Sky Now / Explore + Search + saved profile + language. Missing destinations: "Your Sky" hub, "Sky Now" page, "Explore" grouping (library exists), Search (absent).
+- **Personal layer**: birthchart + daily-transit + localStorage profile exist. Missing: dashboard ("Your Sky Today"), 30-day timeline UI, strength meter, areas affected, "today's strongest influence", notifications, multi-person compare.
+- **Transit engine** (`natal/transits.ts`): exists & deterministic (aspect windows, start/peak/end, orbs, plain notes, `area`). Needs: strength %, affected-house overlay, applying/separating, interpreted layers (plain → astro → technical).
+- **Birth chart**: single static render. Needs: Overview/Planets/Houses/Aspects/Patterns/Technical sections + Simple/Advanced modes + shareable cards.
+- **Sky Now / Night Sky**: `/sky-map` exists (3D, date/location controls, tooltips). Needs: aggregation page (positions, retrogrades, aspects, lunar phase, events, visibility) + location awareness.
+- **Compatibility**: synastry + sign-grid exist. Needs: 4 dimensions (communication/emotional/attraction/long-term), technical-basis disclosure, share cards, pairing pages.
+- **SEO clusters 2–7**: birth-chart terms, /planets/{slug}×12, /houses/{n}×12, aspect-pair pages, transit topics (e.g. Saturn return), pairing pages — largely missing. Internal-linking knowledge graph + search absent.
+- **Trust/methodology**: about + disclaimer exist; brief wants flagship "How Zunara Works".
+- **Retention**: no saved-profile sync, notifications, multi-person compare, share cards.
+- **Monetization**: none (deferred; tasteful only, free product stays useful).
+- **Perf/a11y**: strong baseline; keep CWV excellent + WCAG AA.
+
+### Phased plan (order per brief §61; each phase = current→target→risk→deps→validation)
+1. **Phase 1 — Design system + IA.** Tokens: add planetary color tokens, semantic scales, type scale to `globals.css` (additive, keep aliases). IA: recompose content into DISCOVER / YOUR SKY / EXPLORE / SKY NOW; nav restructure to six-item model using existing routes first (Your Sky→`/daily-transit` provisional until Phase 3/5 hub; Compatibility→`/synastry`; Sky Now→`/sky-events` + `/sky-map` provisional; Explore→`/library`). Search deferred to Phase 10. Validate: tsc/lint/vitest/build, SSR spot-check, Lighthouse a11y.
+2. **Phase 2 — Homepage redesign.** Reconceptualize to the brief's 11-section narrative; hero twin CTAs "Explore Your Sky" / "Calculate Birth Chart"; keep the existing perf budget (no new heavy client JS).
+3. **Phase 3 — Personal birth profile.** Extend `natal/storage` + form tiers (precise/approximate time), validated, localStorage. Foundation for the dashboard.
+4. **Phase 4 — Transit engine depth.** Strength scoring, applying/separating, house overlay, Layer 2 ("why") + Layer 3 (technical) interpretations. All deterministic, unit-tested against known dates.
+5. **Phase 5 — Personal Sky dashboard.** Your Sky Today: strongest influence (strength bar) → what it means → areas affected → next-30-days timeline. Build on daily-transit internals.
+6. **Phase 6 — Birth chart redesign.** Overview/chart/planets/houses/aspects/patterns/technical modes + share card.
+7. **Phase 7 — Sky Now + Night Sky.** Aggregation page; sky-map upgrades (current-date indicator, visibility).
+8. **Phase 8 — Compatibility redesign.** Four dimensions + technical basis + share card.
+9. **Phase 9 — SEO knowledge architecture.** Clusters (planets/houses/aspects/transits/pairing), breadcrumbs + Article schema, canonicals, internal linking. Strict "no thin pages" rule.
+10. **Phase 10 — Search + internal linking.** Client-side concept search; wire the knowledge graph into related-content blocks.
+11. **Phase 11 — Retention.** Multi-profile compare, deterministic event notifications (opt-in), shareable sky cards.
+12. **Phase 12 — Performance/accessibility final pass.** CWV excellent, WCAG AA, 90+ Lighthouse where realistic.
+13. **Phase 13 — Full regression.** 14. **Phase 14 — Production deployment** (build → preview → smoke → prod verify).
+
+Cross-cutting every phase: current/target/risk/deps/validation recorded in brain.md BEFORE implementation; `typecheck`+`lint`+`vitest`+`build` green before commits; safe checkpoint commits pushed `master -> main` per chunk. NEVER break existing routes/schema; prefer additive changes.
+
+### Delivery cadence
+PENDING owner decision (see conversation). Default if unanswered: execute phases sequentially, independently, one safe checkpoint chunk per turn, without stopping for review between phases.
+
+## Transformation checkpoint 1 — pushed cf5bd02 (master -> main)
+Delivered (2026-09-12): Phase 0 (audit, locked in-brain), Phase 1 design tokens, Phase 3 profile store, Phase 4 transit depth, Phase 5 Your Sky dashboard, Phase 6 birth-chart tab nav, Phase 7 Sky Now, Phase 8 verified, Phase 9 clusters (10 planets + 12 houses), 9b How Zunara Works, Phase 10 global search, WS-IA nav restructure, Phase 2 homepage reconception.
+- globals.css: planetary palette (--z-planet-*), --z-fg-emphasis, --z-focus-ring, --z-elev-1/2/3 mapped through @theme (text-planet-venus etc).
+- natal/storage.ts: multi-profile store (zunara_profiles, DEFAULT_PROFILE_ID "me"), legacy key migration; 9 tests.
+- natal/transits.ts: activeTransits(), strength 0-100, phase applying/exact/separating, targetHouse, orb, meaning layer; shared scanWindows(); 12 tests.
+- dict additions (x6 locales, parity-green): navExtra, transitPhase, transitAreas, yoursky (+compareLink), skynow (+betweenLights), search, charttabs, share, profile, home.featureSkyDesc/featureNowDesc.
+- New routes: /yoursky, /sky-now, /planets/{slug}x10, /houses/{n}x12, /how-it-works — all in sitemap.xml.
+- birthchart-client: sticky anchor-tab nav (charttabs.* keys, ARIA roving, IntersectionObserver highlight).
+- command-search: "/" + Ctrl+K global search overlay (tools/glossary concepts/signs/planets/houses), keyboard navigable.
+- site-nav/header: Your Sky | Horoscopes | Birth Chart | Compatibility | Sky Now + search trigger; md→lg desktop breakpoint.
+- Homepage: masthead = "Your Sky" + "Today's horoscope" twin CTAs; tools grid = Your Sky / Birth Chart / Compatibility / Sky Now four pillars.
+- Quality: vitest 387/387, tsc clean, eslint 0 errors (8 pre-existing warnings unchanged), next build green (all new routes prerendered).
+- Note: dictionaries.ts has mixed CRLF/LF line endings from script injections (harmless; Vite/tsc fine). Temp scripts under Temp\opencode\ (untracked). brain.md kept uncommitted per convention.
+
+## Production smoke test + Lighthouse + visual/UX QA — 2026-09-12
+Ran against live https://zunara.vercel.app. NO code changes committed in this pass — results + handoff notes only. Next round (Claude) fixes the findings below.
+
+### Route smoke (curl + Playwright-core + headless Chrome)
+- HTTP sweep: all valid routes 200; `/this-does-not-exist` 404; **note `/birth-chart` and `/compatibility` are 404 — real routes are `/birthchart` and `/synastry`** (user's checklist used the wrong names; site is correct).
+- sitemap.xml includes yoursky, sky-now (hourly 0.9), planets×10, houses×12, how-it-works + all legacy routes. robots.txt correct (`Allow: /`, disallows api/admin/_next, sitemap linked).
+- Metadata: canonical correct on / and /horoscope/aries/today; hreflang rendered as `link rel="alternate" hrefLang=...` (capital L — case-sensitive regex traps) with x-default + en/ur/ar/es/zh/hi; JSON-LD ×2 on home (WebSite+Org), ×4 on horoscope page, breadcrumbs/FAQ/article elsewhere. **Homepage title still old string** (unchanged, fine).
+- Locale switching is client-side (LanguageSwitcher) — SSR serves en defaults, all 6 dict blocks present in flight payload.
+
+### Lighthouse (13.4.1; npm-installed to %USERPROFILE%\node_modules — temp tooling, untracked)
+- **Desktop**: home 92/100/77/100 (LCP 0.7s, TBT 210ms, CLS 0); yoursky 90/100/100/100 (LCP 0.7s, TBT 250ms); sky-now 86/100/100/100 (LCP 0.6s, CLS 0.002).
+- **Mobile (Moto-G-like throttling, comparative only)**: home 52/100/100/100 (LCP 5.1s, TBT 2.1s); yoursky 65 (TBT 3.8s); birthchart 60 (LCP 3.6s); planets/sun 78; houses/1 77; sky-now 81; horoscope/aries/today 65. Mobile perf dominated by ~622KB script transfer (framework chunk 282KB + per-page). No third-party JS, no image-weight issues (44KB), CLS 0 everywhere, no console errors.
+- Flaky runs (retry → fine): horoscope mobile perf=0 once, sky-now desktop perf=0 once.
+- **BP fail desktop home (77)**: `third-party-cookies` + `inspector-issues` from Wikimedia celebrity portraits, plus `valid-source-maps` (informational). Fix: add `crossOrigin="anonymous"` to the `<img>` in `celebrity-birthdays-view.tsx:164` (Wikimedia sends ACAO:* — strips cookies, restores BP 100). Also clears the pre-existing `no-img-element` lint warning if fully migrated to next/image (remotePatterns already configured in next.config.ts).
+- Warning (dev): `/vitruvian-cosmic.jpg uses quality 45 not configured in images.qualities [75]` — Next 16 requires all used qualities listed. Two options: add `qualities: [45, 75]` to next.config or remove the custom quality prop in vitruvian-hero.
+
+### Functional QA findings (Playwright-core + system Chrome, mobile+desktop, fresh contexts)
+**REAL BUGS — must fix next round:**
+1. **Hydration mismatch React #418 on /horoscope (index), /sky-map, /famous-birthdays, /ephemeris.**
+   - `/sky-map`: `SkyMapClient` renders `now.toLocaleString(locale, {weekday,hour,minute})` for the "Shown for {place}…" caption (sky-map-client.tsx:76,161). SSR `new Date()` ≠ client `useState(new Date())` → text mismatch. Fix: gate time text behind a `mounted` flag (`const [mounted,setMounted]=useState(false); useEffect(()=>setMounted(true),[])`; render empty/placeholder until mounted).
+   - `/ephemeris`: `useState(todayLocal())` (ephemeris-client.tsx:82) — server (UTC) date vs client (local TZ) date can differ → `<input type="date" value={dateStr}>` attribute mismatch. Fix: pass server-computed date string as `initialDate` prop from `ephemeris/page.tsx` (compute via UTC there) instead of computing `new Date()` on the client at mount.
+   - `/famous-birthdays`: **invalid HTML — `<a>` nested inside `<a>`** in `famous-birthdays-hub.tsx:301-345` (outer `<Link href=/birthday/...>` wraps an inner `<a href=wikiHref target=_blank>`). Fix: card-wrapper pattern — keep the outer Link but make it `absolute inset-0 z-0` overlay, move inner anchor out of link flow (sibling, `relative z-10`), drop `onClick stopPropagation`.
+   - `/horoscope` (index): #418 args[]=text — suspect `DailyDesk` (`src/components/ui/daily-desk.tsx`) computing date/time client-side; NOT YET diagnosed. Investigate first.
+2. **Horizontal overflow on mobile**: home `scrollWidth - clientWidth = 47px`, sky-now = 9px (at 390px viewport). Desktop clean. Find the overflowing element (likely a wide table/canvas or fixed-width hero element) — suspect sky-now tables / planet orbit panel; home likely a wide flex/grid child ignoring min-width.
+3. Mobile nav toggle not found by `[aria-label="Toggle navigation menu"]`, `[data-nav-toggle]` — need to inspect `site-header.tsx` actual toggle label and re-test. (Search overlay via `/` works — PASS.)
+- Everything else PASS: 20/22 route/viewport checks clean, no console errors, no broken images (broken-img check clean), h1/lang present, no page errors besides the 4 hydration bugs above.
+
+### Visual QA
+- Screenshots captured (Temp\opencode\shot_*.png) — this model can't view images; **someone must eyeball**: home_desktop, home_mobile, yoursky_desktop, skynow_desktop, birthchart_mobile, planet_sun_mobile. Criteria checklist (from brief): premium feel, product-vs-editorial hierarchy, planetary-color coherence, card density, depth without gimmickry, typography intent, charts/maps strength, mobile design, subtle animation. No gradients/glassmorphism/neon-purple/excessive-gold/stock/decorative-animation added in this pass.
+
+### Files touched this round
+- None in src/ (diagnostics only). Temp tooling in `Temp\opencode\`: lh-summarize.ps1, qa.js, qa-hydration.js, qa-hydration2.js, shot_*.png, lh_*_mobile/desktop.json — all untracked; reuse for the fix round.
+- npm artifacts created outside repo: `%USERPROFILE%\node_modules\lighthouse` + package.json/lock (from an npm install that ran in $HOME instead of the temp dir). Safe to `npm uninstall lighthouse -g`-style cleanup or leave (unused).
+
+### Handoff to Claude (next round)
+1. Fix the 4 hydration bugs (pattern above) + diagnose `/horoscope` DailyDesk.
+2. Fix mobile overflow (home 47px, sky-now 9px).
+3. `crossOrigin="anonymous"` on celebrity `<img>` (or next/image migration) → BP 100; optionally images.qualities config.
+4. Verify mobile nav toggle selector, then rerun qa.js (PASS/FAIL) on all routes/views.
+5. Re-run Lighthouse home desktop (expect BP 100) + one mobile spot-check.
+
+## Fix round (Claude Opus 4.8): hydration #418, mobile overflow, invalid HTML, BP — 2026-09-12
+
+Actioned the smoke-test handoff above. Verified live on production FIRST (React #418 confirmed on `/ephemeris`; home mobile overflow 62px, sky-now 24px — both contained by `html{overflow-x:clip}` so no visible scrollbar, but real layout overflow), then fixed at source and re-verified every fix in a local production build (`next start`).
+
+### Hydration (React #418) — all four flagged routes now clean (0 console errors in `next start`)
+- `components/ui/daily-desk.tsx` (`/horoscope` index): computed the snapshot + per-card signals from raw `new Date()` (server ≠ client instant). Now derives ONE `startOfUtcDay()` reference and `computeSnapshot(today)`, passing `today` to every `getHoroscopeContent` — SSR and hydration agree for the same UTC day (this is exactly the `startOfUtcDay` doc contract).
+- `app/ephemeris/ephemeris-client.tsx` + `app/ephemeris/page.tsx`: state seeded from `todayLocal()` (client TZ) AND `parseLocal()` built a *local*-time Date, so even identical date strings resolved to different instants → different positions SSR vs client. Now: server computes a UTC `initialDate` and passes it as a prop; `parseUtcNoon()` parses as UTC noon; caption formats with `timeZone:"UTC"`; day-nav uses UTC setters. Added `export const revalidate = 3600` so the server-seeded initial day stays fresh (was fully static/frozen at build).
+- `app/sky-map/sky-map-client.tsx`: the "Shown for {place}" caption called `now.toLocaleString(locale,…)` → SSR/client text mismatch. Gated behind a `mounted` flag (renders `…` until mounted, then the live time). Also fixes the same client embedded on the home page.
+- `app/sky-now/page.tsx`: hardened the bare `<MoonPhaseWidget />` (whose `moonPhase()` defaults to `new Date()`) by passing `date={startOfUtcDay()}` — latent hydration risk removed.
+
+### Invalid HTML / hydration — `/famous-birthdays`
+- `components/celebrities/famous-birthdays-hub.tsx`: each card was a `<Link>` wrapping an inner `<a>` ("Full profile") — nested anchors, which the browser un-nests → hydration mismatch + a11y break. Rebuilt with the overlay pattern: a `<div>` card, an `absolute inset-0 z-0` overlay `<Link>` (aria-label = person name), content wrappers set `pointer-events-none`, and the inner `<a>` a `relative z-10` sibling. Verified in-DOM `a a` count = 0; card nav and external link both work.
+
+### Mobile horizontal overflow — both eliminated (local build: home 62→1px, sky-now 24→0px, 0 offenders)
+- `components/ui/daily-orbit-banner.tsx`: the promo row had two `shrink-0` clusters (4 sign glyphs + gold CTA) that could not fit at 375px. Added `flex-wrap` (CTA wraps to its own line; verified visually intentional).
+- `app/sky-now/page.tsx`: `grid gap-6 lg:grid-cols-5` had no base column, so the mobile track was `auto` and grew to the widest unshrinkable child (the nowrap "Ecliptic longitude …°" rows). Added `grid-cols-1` → clamped `minmax(0,1fr)`.
+
+### Best-practices / config
+- `components/ui/celebrity-birthdays-view.tsx`: added `crossOrigin="anonymous"` to the Wikimedia `<img>` (Wikimedia sends ACAO:* → strips third-party cookies → desktop BP 100).
+- `next.config.ts`: `images.qualities = [45, 75]` (Next 16 requires every used quality be listed; clears the vitruvian-hero `quality={45}` build warning).
+
+### Verified correct and deliberately UNCHANGED
+- **Daily-horoscope freshness/SEO is already healthy on production** (audited live): `/horoscope/aries/today` title+H1+description+OG all show today's date; canonical correct; `robots: index, follow`; 7 hreflang (x-default + 6 locales, all same-URL — correct for client-side i18n); JSON-LD Organization + Article (`datePublished`/`dateModified` = today) + BreadcrumbList. Content path is deterministic (`getHoroscopeContent` never touches the DB; the same `now` drives both the displayed date and the content) + ISR 1h + cron `revalidatePath` at 04:00 UTC. No freshness bug — no change.
+- Astronomy engine, DB schema, routes, i18n dictionaries, sitemap/robots — untouched.
+- The prior handoff's "mobile nav toggle bug" was a false alarm: the toggle IS accessible (`aria-label` Open/Close menu, `aria-expanded`, `aria-controls`, 44px tap target). The QA script just queried the wrong selector. No change.
+
+### Quality gates (all green)
+`tsc --noEmit` 0 errors · `eslint` 0 errors (7 pre-existing warnings unchanged) · `vitest` 387/387 (32 files) · `next build` green · local `next start` smoke: /ephemeris /horoscope /sky-map /famous-birthdays all 0 console errors, overflow eliminated on home + sky-now, nested-anchor count 0.
+6. tsc + eslint + vitest + next build green before commit; push master→main (brain.md stays uncommitted).

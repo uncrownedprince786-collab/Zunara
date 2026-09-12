@@ -16,7 +16,11 @@ export const metadata: Metadata = {
   ),
 };
 
+export const revalidate = 3600;
+
 export default function EphemerisPage() {
+  const now = new Date();
+  const initialDate = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-${String(now.getUTCDate()).padStart(2, "0")}`;
   return (
     <div className="constellation-bg">
       <div className="mx-auto max-w-5xl px-4 pt-14 sm:px-6">
@@ -35,7 +39,7 @@ export default function EphemerisPage() {
           </p>
         </div>
       </div>
-      <EphemerisClient />
+      <EphemerisClient initialDate={initialDate} />
     </div>
   );
 }

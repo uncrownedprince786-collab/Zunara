@@ -54,6 +54,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
+    qualities: [45, 75],
     remotePatterns: [
       {
         protocol: "https",

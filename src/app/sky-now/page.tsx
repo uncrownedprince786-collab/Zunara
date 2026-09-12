@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { snapshotForToday } from "@/lib/astronomy/astro";
+import { snapshotForToday, startOfUtcDay } from "@/lib/astronomy/astro";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
@@ -71,7 +71,7 @@ export default function SkyNowPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="grid gap-6 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
           <div className="paper-panel rounded-lg p-6 sm:p-8 lg:col-span-3">
             <div className="flex items-center justify-between gap-3">
               <p className="kicker">
@@ -131,7 +131,7 @@ export default function SkyNowPage() {
                 <LocaleText path="skynow.moonKicker" fallback="Moon now" />
               </p>
               <div className="mt-4">
-                <MoonPhaseWidget />
+                <MoonPhaseWidget date={startOfUtcDay()} />
               </div>
             </div>
 

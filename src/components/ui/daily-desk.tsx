@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
-import { snapshotForToday } from "@/lib/astronomy/astro";
+import { computeSnapshot, startOfUtcDay } from "@/lib/astronomy/astro";
 import { getHoroscopeContent } from "@/lib/horoscope/read";
 import { ZodiacSymbol } from "./zodiac-symbol";
 import { ThemeSymbol, type ThemeKey } from "./theme-symbol";
@@ -33,16 +33,21 @@ function strengthText(s: SignalStrength): string {
 /** A "daily zodiac desk": all twelve signs with today's real signal before the click. */
 export function DailyDesk() {
   const { t, tSign, tArea, locale } = useLocale();
-  const snapshot = snapshotForToday();
+  // Stable "today" reference: the server prerender and the client hydration must
+  // derive the snapshot + signals from the same UTC day, or the few minutes
+  // between them shift planetary positions and trigger a React #418 hydration
+  // mismatch (which flushes a full client re-render). See startOfUtcDay docs.
+  const today = startOfUtcDay();
+  const snapshot = computeSnapshot(today);
   const dateLabel = new Intl.DateTimeFormat(locale, {
     timeZone: "UTC",
     weekday: "long",
     month: "long",
     day: "numeric",
-  }).format(new Date());
+  }).format(today);
 
   const cards = ZODIAC_SIGNS.map((sign) => {
-    const result = getHoroscopeContent(sign.slug, "daily", new Date(), snapshot);
+    const result = getHoroscopeContent(sign.slug, "daily", today, snapshot);
     const strongest = result?.signals?.areas?.find((a) => a.present);
     const headline = result?.signals?.headline ?? null;
     const watch = result?.glance?.watchOutFor ?? null;

@@ -170,6 +170,7 @@ export function PortraitAvatar({
           loading="lazy"
           decoding="async"
           referrerPolicy="no-referrer"
+          crossOrigin="anonymous"
           className="h-full w-full object-cover"
           onError={onError}
         />
