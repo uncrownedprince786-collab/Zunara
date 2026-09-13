@@ -33,9 +33,9 @@ export default async function SignLayout({
                 {sign.element} · {sign.modality} · {sign.ruler}
                 {sign.modernRuler ? ` · ${sign.modernRuler}` : ""}
               </p>
-              <h1 className="mt-2 font-display text-4xl font-medium text-starlight sm:text-5xl">
+              <p className="mt-2 font-display text-4xl font-medium text-starlight sm:text-5xl">
                 {sign.name}
-              </h1>
+              </p>
               <p className="mt-2 text-sm text-muted">{formatDateRange(sign)}</p>
             </div>
           </div>

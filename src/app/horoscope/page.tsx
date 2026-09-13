@@ -7,6 +7,8 @@ import { Reveal } from "@/components/ui/reveal";
 import { VitruvianMark } from "@/components/ui/vitruvian-mark";
 import { SITE, absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
+import { faqJsonLd } from "@/lib/seo/jsonld";
+import { JsonLd } from "@/components/ui/json-ld";
 import { LocaleText } from "@/components/ui/locale-text";
 
 export const metadata: Metadata = {
@@ -28,55 +30,32 @@ export default function HoroscopeIndexPage() {
     { type: "yearly", labelKey: "horizons.thisYear", descKey: "horizons.yearlyDesc" },
   ] as const;
 
-  const faq = (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: [
-            {
-              "@type": "Question",
-              name: "What is my horoscope today?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Choose your zodiac sign on Zunara to read a daily forecast calculated from the real current positions of the Sun, Moon and planets.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "How are Zunara horoscopes calculated?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Every planetary position is computed deterministically from the VSOP87 astronomical model and IAU precession models — the same class of models used in published ephemerides. Positions and aspects are never invented.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "What are the twelve zodiac signs?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius and Pisces.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "What is the difference between a sun sign and a rising sign?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Your sun sign reflects your core identity. Your rising (ascendant) sign is the sign rising on the eastern horizon at your exact birth time and place, and shapes how you present to the world.",
-              },
-            },
-          ],
-        }),
-      }}
-    />
-  );
+  const FAQ_ITEMS = [
+    {
+      question: "What is my horoscope today?",
+      answer:
+        "Choose your zodiac sign on Zunara to read a daily forecast calculated from the real current positions of the Sun, Moon and planets.",
+    },
+    {
+      question: "How are Zunara horoscopes calculated?",
+      answer:
+        "Every planetary position is computed deterministically from the VSOP87 astronomical model and IAU precession models, the same class of models used in published ephemerides. Positions and aspects are never invented.",
+    },
+    {
+      question: "What are the twelve zodiac signs?",
+      answer:
+        "Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius and Pisces.",
+    },
+    {
+      question: "What is the difference between a sun sign and a rising sign?",
+      answer:
+        "Your sun sign reflects your core identity. Your rising (ascendant) sign is the sign rising on the eastern horizon at your exact birth time and place, and shapes how you present to the world.",
+    },
+  ];
 
   return (
     <div className="constellation-bg pb-20">
-      {faq}
+      <JsonLd data={faqJsonLd(FAQ_ITEMS)} />
       <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
         <div className="mx-auto max-w-3xl text-center">
           <div className="flex justify-center">
@@ -134,6 +113,35 @@ export default function HoroscopeIndexPage() {
             </div>
           </section>
         </Reveal>
+
+        <section aria-labelledby="faq-heading" className="mx-auto mt-16 max-w-3xl">
+          <h2 id="faq-heading" className="text-center font-display text-2xl text-starlight">
+            Common questions
+          </h2>
+          <div className="mt-8 space-y-3">
+            {FAQ_ITEMS.map((item) => (
+              <details
+                key={item.question}
+                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base text-starlight">
+                  {item.question}
+                  <span aria-hidden className="text-muted transition-transform group-open:rotate-45">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-7 text-muted">{item.answer}</p>
+              </details>
+            ))}
+          </div>
+          <p className="mt-6 text-center text-sm leading-7 text-muted">
+            Want a forecast for exactly you, not just your sun sign?{" "}
+            <Link href="/birthchart" className="text-gold hover:underline">
+              Calculate your free birth chart
+            </Link>{" "}
+            to find your rising sign, moon sign and personal transits.
+          </p>
+        </section>
 
         <div className="mx-auto mt-14 flex max-w-2xl items-center gap-4 text-center">
           <div aria-hidden="true" className="gold-rule h-px flex-1" />

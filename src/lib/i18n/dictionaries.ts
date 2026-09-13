@@ -516,7 +516,7 @@ export const en = {
     originsTitle: "Origins & mythology",
     coreArchetypeTitle: "Core archetype",
     careerArenasTitle: "Career arenas",
-    superpowersTitle: "Your superpowers",
+    superpowersTitle: "Natural strengths",
     watchOutForTitle: "Watch out for",
     cosmicFunFactTitle: "Fun fact",
     elements: {
@@ -537,7 +537,7 @@ export const en = {
       sagittarius: "Tactless · Restless · Overconfident",
       capricorn: "Rigid · Unforgiving · Work-obsessed",
       aquarius: "Detached · Rebellious · Emotionally distant",
-      pisces: "Escapist · Overly trusting · Victim mentality",
+      pisces: "Escapist · Overly trusting · Avoids hard truths",
     },
     compat: {
       Fire: {
@@ -556,7 +556,7 @@ export const en = {
         challenging: "Air + Earth: Earth wants proof; Air wants possibility. Patience bridges the gap.",
       },
       Water: {
-        same: "Water + Water: Profound emotional understanding, almost psychic connection.",
+        same: "Water + Water: Deep emotional understanding, often without needing words.",
         best: "Water + Earth: Earth holds Water. Sensitivity meets stability in a safe container.",
         challenging: "Water + Fire: Emotion meets impulse. Both must learn the other's language.",
       },
@@ -3073,7 +3073,7 @@ export const es: Dict = {
     square: "Cuadratura",
     trine: "Trígono",
     sextile: "Sextil",
-    orb: "orb",
+    orb: "orbe",
   },
   changes: {
     movedIntoPlanet: "{planet} entró en {sign}",
@@ -3177,7 +3177,7 @@ export const es: Dict = {
     theTwelve: "Los doce signos",
     backToTop: "Volver arriba",
     skipToContent: "Saltar al contenido principal",
-    pills: "Píldoras",
+    pills: "Claves",
     drivingPlacements: "Posiciones determinantes",
     steadySky: "El cielo está estable hoy.",
     noTightAspects: "No hay aspectos mayores ajustados ahora.",

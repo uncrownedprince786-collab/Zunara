@@ -9,6 +9,7 @@ import { LocaleDate } from "@/components/ui/locale-date";
 import { JsonLd } from "@/components/ui/json-ld";
 import { SkyEvents } from "@/components/home/home-heavy-sections";
 import { plainRetro, plainAspect } from "@/lib/content/sky-plain";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { websiteJsonLd } from "@/lib/seo/jsonld";
 
@@ -51,6 +52,9 @@ export default function SkyNowPage() {
           className="pointer-events-none absolute inset-x-0 top-0 h-[26rem] bg-[radial-gradient(circle_at_top,rgba(108,92,231,0.15)_0%,transparent_70%)]"
         />
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-14 pt-16 text-center sm:px-6 sm:pt-20">
+          <div className="flex justify-center">
+            <Breadcrumbs items={[{ label: "Sky Now", href: "/sky-now" }]} />
+          </div>
           <p className="kicker">
             <LocaleText path="skynow.kicker" fallback="Live from the sky" />
           </p>
@@ -69,6 +73,28 @@ export default function SkyNowPage() {
           </p>
         </div>
       </section>
+
+      <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
+        <Link
+          href="/yoursky"
+          className="group flex flex-col items-start justify-between gap-4 rounded-2xl border border-gold/25 bg-gold/5 p-6 backdrop-blur-xl transition-colors hover:border-gold/40 hover:bg-gold/10 sm:flex-row sm:items-center"
+        >
+          <div>
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+              <LocaleText path="yoursky.title" fallback="Your Sky" />
+            </p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+              <LocaleText
+                path="yoursky.subtitle"
+                fallback="A live reading of the strongest influence touching your birth chart right now and what peaks next, computed from real planetary positions."
+              />
+            </p>
+          </div>
+          <span className="shrink-0 text-sm font-medium text-gold">
+            <LocaleText path="yoursky.title" fallback="Your Sky" /> →
+          </span>
+        </Link>
+      </div>
 
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
@@ -114,7 +140,7 @@ export default function SkyNowPage() {
                         </p>
                       </div>
                       <Link
-                        href="/library/planets"
+                        href={`/planets/${p.key}`}
                         className="hidden text-xs text-gold transition-colors hover:underline sm:block"
                       >
                         <LocaleText path="common.readMore" fallback="Read more" /> →

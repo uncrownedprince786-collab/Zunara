@@ -33,7 +33,7 @@ export default function FamousBirthdaysPage() {
           <Breadcrumbs items={[{ label: "Famous Birthdays", href: "/famous-birthdays" }]} />
         </div>
         <header className="mx-auto mt-8 max-w-3xl text-center">
-          <p className="kicker">Explore by date</p>
+          <p className="kicker">Browse by date</p>
           <div aria-hidden="true" className="gold-rule mx-auto mt-4 w-20" />
           <h1 className="mt-6 font-display text-4xl leading-tight text-starlight sm:text-6xl">
             Famous Birthdays

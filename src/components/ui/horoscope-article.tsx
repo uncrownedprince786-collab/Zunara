@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Breadcrumbs, type Crumb } from "./breadcrumbs";
 import { PeriodTabs } from "./period-tabs";
 import { ZodiacSymbol } from "./zodiac-symbol";
@@ -454,6 +455,32 @@ export function HoroscopeArticle({
             <div className="mt-9">
               <WhyForecast result={result} />
             </div>
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-gold/20 bg-gold/[0.04] p-6">
+          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+            {t("yoursky.title", "Your Sky")}
+          </p>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+            {t(
+              "yoursky.subtitle",
+              "A live reading of the strongest influence touching your birth chart right now and what peaks next, computed from real planetary positions.",
+            )}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/birthchart"
+              className="rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-xs font-medium text-gold transition-colors hover:bg-gold/20"
+            >
+              {t("nav.birthchart", "Birth Chart")} →
+            </Link>
+            <Link
+              href="/yoursky"
+              className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs text-muted transition-colors hover:border-gold/40 hover:text-gold"
+            >
+              {t("yoursky.title", "Your Sky")} →
+            </Link>
           </div>
         </div>
 

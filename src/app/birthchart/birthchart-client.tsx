@@ -18,6 +18,7 @@ import { useLocale } from "@/lib/i18n/client";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { formatDate } from "@/lib/i18n/date";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 function subst(tpl: string, vars: Record<string, string>): string {
@@ -240,6 +241,27 @@ export function BirthchartClient() {
               </button>
             </div>
 
+            {/* Your chart is fixed; the sky keeps moving. Bridge to Your Sky. */}
+            <Link
+              href="/yoursky"
+              className="group flex flex-col items-start justify-between gap-4 rounded-2xl border border-gold/25 bg-gold/5 p-6 backdrop-blur-xl transition-colors hover:border-gold/40 hover:bg-gold/10 sm:flex-row sm:items-center"
+            >
+              <div>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-gold">
+                  {t("yoursky.title", "Your Sky")}
+                </p>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+                  {t(
+                    "yoursky.subtitle",
+                    "A live reading of the strongest influence touching your birth chart right now and what peaks next, computed from real planetary positions.",
+                  )}
+                </p>
+              </div>
+              <span className="shrink-0 text-sm font-medium text-gold transition-transform group-hover:translate-x-0.5">
+                {t("yoursky.title", "Your Sky")} →
+              </span>
+            </Link>
+
             {chart.timeAssumed && (
               <div className="rounded-xl border border-gold/30 bg-gold/5 p-4 text-sm leading-6 text-gold">
                 {t("birthchart.noonNote", chart.timeNote)}
@@ -414,7 +436,7 @@ export function BirthchartClient() {
                         <td className="p-4 font-medium text-starlight">
                           <div className="flex items-center gap-2.5">
                             <PlanetSymbol body={p.key} size="sm" className="text-gold" decorative />
-                            <span>{tPlanet(p.key)}</span>
+                            <Link href={`/planets/${p.key}`} className="transition-colors hover:text-gold hover:underline">{tPlanet(p.key)}</Link>
                           </div>
                         </td>
                         <td className="p-4 text-muted">

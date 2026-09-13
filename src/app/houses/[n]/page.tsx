@@ -64,7 +64,7 @@ export default async function HousePage({
           <Breadcrumbs
             items={[
               { label: "Library", href: "/library" },
-              { label: "Houses", href: "/library" },
+              { label: "Houses", href: "/library/houses" },
               { label: `House ${house.number}`, href: `/houses/${house.number}` },
             ]}
           />
@@ -126,11 +126,25 @@ export default async function HousePage({
             <dl className="mt-4 space-y-4 text-sm">
               <div>
                 <dt className="text-subdued">Natural ruling planet</dt>
-                <dd className="mt-1 text-starlight">{house.planetRule}</dd>
+                <dd className="mt-1 text-starlight">
+                  <Link
+                    href={`/planets/${house.planetRule.toLowerCase()}`}
+                    className="transition-colors hover:text-gold hover:underline"
+                  >
+                    {house.planetRule}
+                  </Link>
+                </dd>
               </div>
               <div>
                 <dt className="text-subdued">Sign that orbits it</dt>
-                <dd className="mt-1 text-starlight">{house.signOrbit}</dd>
+                <dd className="mt-1 text-starlight">
+                  <Link
+                    href={`/horoscope/${house.signOrbit.toLowerCase()}`}
+                    className="transition-colors hover:text-gold hover:underline"
+                  >
+                    {house.signOrbit}
+                  </Link>
+                </dd>
               </div>
               <div>
                 <dt className="text-subdued">Axis</dt>

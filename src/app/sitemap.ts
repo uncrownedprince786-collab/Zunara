@@ -87,6 +87,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/library", changeFrequency: "monthly", priority: 0.5 },
     { path: "/library/signs", changeFrequency: "monthly", priority: 0.5 },
     { path: "/library/planets", changeFrequency: "monthly", priority: 0.5 },
+    { path: "/library/houses", changeFrequency: "monthly", priority: 0.5 },
     { path: "/library/nodes", changeFrequency: "monthly", priority: 0.5 },
   ];
   for (const tool of tools) {

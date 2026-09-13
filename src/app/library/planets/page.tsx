@@ -7,6 +7,7 @@ import { CELESTIAL_BODIES } from "@/lib/astronomy/bodies";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { AstroTerm } from "@/components/ui/astro-tooltip";
 import type { BodyKey } from "@/lib/astronomy/bodies";
+import { PLANET_SLUGS, type PlanetSlug } from "@/lib/planets/planet-content";
 
 export const metadata: Metadata = {
   title: "Planets in Astrology: Meanings & Glyphs",
@@ -61,24 +62,50 @@ export default function PlanetsPage() {
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {CELESTIAL_BODIES.map((b) => (
-            <div
-              key={b.key}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-colors hover:border-white/20"
-            >
-              <div className="flex items-center gap-3">
-                <PlanetSymbol body={b.key} size="md" className="text-gold" />
-                <div>
-                  <h2 className="font-display text-lg font-semibold text-starlight">{b.name}</h2>
-                  <p className="text-xs uppercase tracking-[0.14em] text-subdued">{b.glyph}</p>
+          {CELESTIAL_BODIES.map((b) => {
+            const isPlanet = PLANET_SLUGS.includes(b.key as PlanetSlug);
+            const cardBody = (
+              <>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <PlanetSymbol body={b.key} size="md" className="text-gold" />
+                    <div>
+                      <h2 className="font-display text-lg font-semibold text-starlight">{b.name}</h2>
+                      <p className="text-xs uppercase tracking-[0.14em] text-subdued">{b.glyph}</p>
+                    </div>
+                  </div>
+                  {isPlanet && (
+                    <span
+                      aria-hidden="true"
+                      className="text-gold opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      →
+                    </span>
+                  )}
                 </div>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-gold">
+                  {b.description}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted">{NATURE[b.key]}</p>
+              </>
+            );
+            return isPlanet ? (
+              <Link
+                key={b.key}
+                href={`/planets/${b.key}`}
+                className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
+              >
+                {cardBody}
+              </Link>
+            ) : (
+              <div
+                key={b.key}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl"
+              >
+                {cardBody}
               </div>
-              <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-gold">
-                {b.description}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-muted">{NATURE[b.key]}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm leading-6 text-muted backdrop-blur-xl">

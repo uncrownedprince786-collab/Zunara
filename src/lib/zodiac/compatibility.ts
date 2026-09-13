@@ -102,7 +102,7 @@ export function compatibilityBetween(aSlug: string, bSlug: string): Compatibilit
 
   const overall = clamp(Math.round((love * 0.5 + energy * 0.25 + mind * 0.25)));
 
-  const verdict = `${a.name} & ${b.name} ${love >= 80 ? "share an easy, magnetic warmth that feels fated" : love >= 60 ? "find real rhythm together once they read each other's pace" : "are drawn together but must consciously bridge their different natures"}. ${energy >= 75 ? "Their energy is electric — when they align, momentum is unstoppable." : energy >= 55 ? "They keep each other moving with lively, complementary momentum." : "When they collide, they both learn to pace the other's current."}.`;
+  const verdict = `${a.name} & ${b.name} ${love >= 80 ? "share an easy, magnetic warmth" : love >= 60 ? "find real rhythm together once they read each other's pace" : "are drawn together but must consciously bridge their different natures"}. ${energy >= 75 ? "Their energy runs high, and it tends to carry both people along." : energy >= 55 ? "They keep each other moving with lively, complementary momentum." : "When they collide, they both learn to pace the other's current."}.`;
 
   return {
     a: aSlug,

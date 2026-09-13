@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: BirthdayPageProps): Promise<M
   const label = dateLabel(parsed.month, parsed.day);
   return pageMetadata(
     `/birthday/${date}`,
-    `Famous Birthdays on ${label} — Who Was Born On This Day?`,
+    `Famous Birthdays on ${label}`,
     `Notable actors, musicians, athletes, leaders and more born on ${label}, their zodiac signs and their stories — verified from Wikidata and updated live.`,
     "article",
     [

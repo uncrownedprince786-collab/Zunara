@@ -46,23 +46,32 @@ export default function SignsPage() {
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {ZODIAC_SIGNS.map((s) => (
-            <div
+            <Link
               key={s.slug}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-colors hover:border-white/20"
+              href={`/horoscope/${s.slug}/today`}
+              className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-colors hover:border-gold/40 hover:bg-white/[0.06]"
             >
-              <div className="flex items-center gap-3">
-                <ZodiacSymbol
-                  sign={s.slug}
-                  size="md"
-                  className={elementText(s.element)}
-                  label={s.name}
-                />
-                <div>
-                  <h2 className="font-display text-lg font-semibold text-starlight">{s.name}</h2>
-                  <p className="text-xs text-muted">
-                    {s.element} · {s.modality}
-                  </p>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <ZodiacSymbol
+                    sign={s.slug}
+                    size="md"
+                    className={elementText(s.element)}
+                    label={s.name}
+                  />
+                  <div>
+                    <h2 className="font-display text-lg font-semibold text-starlight">{s.name}</h2>
+                    <p className="text-xs text-muted">
+                      {s.element} · {s.modality}
+                    </p>
+                  </div>
                 </div>
+                <span
+                  aria-hidden="true"
+                  className="text-gold opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  →
+                </span>
               </div>
               <p className="mt-3 text-xs uppercase tracking-wider text-gold">
                 {formatDateRange(s)} · Ruled by {s.ruler}
@@ -78,7 +87,7 @@ export default function SignsPage() {
                   </span>
                 ))}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

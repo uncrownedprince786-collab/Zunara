@@ -4,6 +4,8 @@ export interface AstrologyTopic {
   summary: string;
   body: string[];
   related: string[];
+  /** The Zunara tool that lets a reader act on this topic. */
+  tool?: { href: string; label: string };
   updated?: string;
 }
 
@@ -18,6 +20,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "The Sun sign — the sign the Sun occupied at birth — is the centre of identity. The Moon sign reflects the inner emotional nature, while the Ascendant, or rising sign, describes how a person first presents to the world. Together they form the core of a natal reading.",
     ],
     related: ["transits", "aspects", "houses"],
+    tool: { href: "/birthchart", label: "Calculate your birth chart" },
   },
   {
     slug: "transits",
@@ -29,6 +32,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "At Zunara, our forecasts are built from the current positions of all ten major bodies. Every transit we reference corresponds to a real, calculated planetary position rather than an invented one.",
     ],
     related: ["aspects", "retrogrades", "birth-chart"],
+    tool: { href: "/yoursky", label: "See your live transits in Your Sky" },
   },
   {
     slug: "retrogrades",
@@ -40,6 +44,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "Our retrograde indicators are computed directly from the daily motion of each planet, so they always reflect the true state of the sky on any given date.",
     ],
     related: ["transits", "aspects"],
+    tool: { href: "/retrograde", label: "See what's retrograde right now" },
   },
   {
     slug: "aspects",
@@ -51,6 +56,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "At Zunara, aspects are calculated from the true angular separation of the planets, with orbs matching the traditional allowances. They form the backbone of our theme selection for each forecast.",
     ],
     related: ["transits", "birth-chart", "houses"],
+    tool: { href: "/birthchart", label: "See the aspects in your birth chart" },
   },
   {
     slug: "houses",
@@ -62,6 +68,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "The foundation for houses is a precise, calculated Ascendant. Zunara's architecture supports house computation for future personalised natal charts, built on the same astronomical engine used for our public forecasts.",
     ],
     related: ["birth-chart", "aspects"],
+    tool: { href: "/library/houses", label: "Read about all twelve houses" },
   },
   {
     slug: "zodiac-signs",
@@ -73,6 +80,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "At Zunara, we determine a sign's boundaries by the Sun's calculated longitude crossing each 30° mark, so dates are exact and never approximate.",
     ],
     related: ["birth-chart", "aspects", "transits"],
+    tool: { href: "/horoscope", label: "Read today's horoscopes" },
   },
   {
     slug: "planets",
@@ -84,6 +92,7 @@ export const ASTROLOGY_TOPICS: readonly AstrologyTopic[] = [
       "The positions of all ten bodies are calculated with precision at Zunara. You will see them reflected honestly in our planetary tables on every horoscope page.",
     ],
     related: ["transits", "aspects", "retrogrades"],
+    tool: { href: "/library/planets", label: "Read about the ten planets" },
   },
 ];
 

@@ -49,7 +49,7 @@ export function horoscopeMetadata(
   const periodNoun = PERIOD_TITLE[periodType];
   const path = `/horoscope/${sign.slug}/${periodType === "daily" ? "today" : periodType}`;
   const canonical = absoluteUrl(path);
-  const title = `${sign.name} ${periodNoun} Horoscope — ${label}`;
+  const title = `${sign.name} ${periodNoun} Horoscope`;
   const description = `Read the ${sign.name} ${periodType.toLowerCase()} horoscope for ${label}, calculated from real planetary positions for ${sign.name}, a ${sign.element} ${sign.modality} sign.`;
 
   return {

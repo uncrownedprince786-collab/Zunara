@@ -31,6 +31,12 @@ const FEATURES = [
       "All twelve signs with their element, modality, ruler, dates and traits.",
   },
   {
+    href: "/library/houses",
+    title: "Houses",
+    summary:
+      "The twelve houses and the area of life each one governs, from identity to career to what stays hidden.",
+  },
+  {
     href: "/library/nodes",
     title: "Lunar Nodes",
     summary:

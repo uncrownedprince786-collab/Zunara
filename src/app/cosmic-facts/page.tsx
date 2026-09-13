@@ -35,7 +35,6 @@ export default function CosmicFactsPage() {
       item: {
         "@type": "DefinedTerm",
         name: sign.name,
-        url: absoluteUrl(`/horoscope/${sign.slug}`),
       },
     })),
   };

@@ -321,10 +321,10 @@ export function YourSkyClient() {
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-2.5">
                         <PlanetSymbol body={f.transitBody} size="sm" className="text-gold" decorative />
-                        <span className="font-medium text-starlight">{tPlanet(f.transitBody)}</span>
+                        <Link href={`/planets/${f.transitBody}`} className="font-medium text-starlight transition-colors hover:text-gold hover:underline">{tPlanet(f.transitBody)}</Link>
                         <span className="text-sm text-muted">{t(`aspects.${f.aspectName}`, f.aspectName)}</span>
                         <PlanetSymbol body={f.targetBody} size="sm" className="text-cosmic" decorative />
-                        <span className="font-medium text-starlight">{tPlanet(f.targetBody)}</span>
+                        <Link href={`/planets/${f.targetBody}`} className="font-medium text-starlight transition-colors hover:text-gold hover:underline">{tPlanet(f.targetBody)}</Link>
                       </div>
                       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted">
                         <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5">
@@ -397,10 +397,10 @@ export function YourSkyClient() {
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
                           <PlanetSymbol body={f.transitBody} size="sm" className="text-gold" decorative />
-                          <span className="text-sm font-medium text-starlight">{tPlanet(f.transitBody)}</span>
+                          <Link href={`/planets/${f.transitBody}`} className="text-sm font-medium text-starlight transition-colors hover:text-gold hover:underline">{tPlanet(f.transitBody)}</Link>
                           <span className="text-sm text-muted">{t(`aspects.${f.aspectName}`, f.aspectName)}</span>
                           <PlanetSymbol body={f.targetBody} size="sm" className="text-cosmic" decorative />
-                          <span className="text-sm font-medium text-starlight">{tPlanet(f.targetBody)}</span>
+                          <Link href={`/planets/${f.targetBody}`} className="text-sm font-medium text-starlight transition-colors hover:text-gold hover:underline">{tPlanet(f.targetBody)}</Link>
                           {exactLabel && (
                             <span className="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-gold">
                               {exactLabel}
@@ -424,6 +424,30 @@ export function YourSkyClient() {
               </ol>
             )}
           </section>
+
+          <nav
+            aria-label={t("yoursky.exploreNext", "Where to go next")}
+            className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-8"
+          >
+            <Link
+              href="/birthchart"
+              className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs text-muted transition-colors hover:border-gold/40 hover:text-gold"
+            >
+              {t("nav.birthchart", "Birth Chart")} →
+            </Link>
+            <Link
+              href="/sky-now"
+              className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs text-muted transition-colors hover:border-gold/40 hover:text-gold"
+            >
+              {t("skynow.title", "Sky Now")} →
+            </Link>
+            <Link
+              href="/synastry"
+              className="rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-xs text-muted transition-colors hover:border-gold/40 hover:text-gold"
+            >
+              {t("nav.synastry", "Compatibility")} →
+            </Link>
+          </nav>
         </div>
       )}
     </div>

@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { BirthForm } from "@/components/birthchart/birth-form";
 import { computeNatalChart } from "@/lib/natal/natal";
 import { validateBirth } from "@/lib/natal/validate";
 import { dailyTransitInsights, daySummary } from "@/lib/transits/daily-transits";
-import { loadNatalProfile, clearNatalProfile } from "@/lib/natal/storage";
+import { loadNatalProfile, clearNatalProfile, saveNatalProfile } from "@/lib/natal/storage";
 import {
   upcomingTransits,
   type TransitForecast,
@@ -102,6 +103,10 @@ export function DailyTransitClient() {
     try {
       await new Promise((r) => setTimeout(r, 500));
       const result = computeFor(input, dateStr, t, locale);
+      // Persist the profile to the same key /birthchart and /yoursky read, so
+      // the details survive the session. The UI promises "no re-entry needed",
+      // which only holds if we actually save here (previously this was missing).
+      saveNatalProfile(input);
       setChart(result.chart);
       setInsights(result.insights);
       setSummary(result.summary);
@@ -254,7 +259,7 @@ export function DailyTransitClient() {
                   >
                     <div className="flex items-center gap-2.5">
                       <PlanetSymbol body={ins.transitBody} size="sm" className="text-gold" decorative />
-                      <span className="font-medium text-starlight">{tPlanet(ins.transitBody)}</span>
+                      <Link href={`/planets/${ins.transitBody}`} className="font-medium text-starlight transition-colors hover:text-gold hover:underline">{tPlanet(ins.transitBody)}</Link>
                       <span className="ms-auto font-mono text-xs text-muted">{subst(t("dailyTransit.houseLabel", "House {n}"), { n: String(ins.house) })}</span>
                     </div>
                     <div className="mt-2 flex items-center gap-2">

@@ -80,6 +80,17 @@ export default async function AstrologyTopicPage({ params }: { params: Promise<{
           </div>
         </div>
 
+        {data.tool && (
+          <div className="mt-9 flex justify-center">
+            <Link
+              href={data.tool.href}
+              className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/5 px-6 py-3 text-sm font-medium text-gold transition-colors hover:bg-gold/15"
+            >
+              {data.tool.label} <span aria-hidden>→</span>
+            </Link>
+          </div>
+        )}
+
         {data.related.length > 0 && (
           <section className="mt-12 border-t border-line-soft pt-8">
             <div className="flex items-center gap-4">

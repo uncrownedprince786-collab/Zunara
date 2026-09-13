@@ -9,12 +9,18 @@ import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { AstroTerm } from "@/components/ui/astro-tooltip";
 import { LocaleText } from "@/components/ui/locale-text";
 import { ZODIAC_SIGNS } from "@/lib/zodiac/zodiac";
+import { HOUSES } from "@/lib/houses/house-content";
 import {
   PLANET_SLUGS,
   getPlanet,
   type PlanetSlug,
   type SignSlug,
 } from "@/lib/planets/planet-content";
+
+const ORDINAL: Record<number, string> = {
+  1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th", 6: "6th",
+  7: "7th", 8: "8th", 9: "9th", 10: "10th", 11: "11th", 12: "12th",
+};
 
 export const dynamicParams = false;
 
@@ -54,6 +60,7 @@ export default async function PlanetPage({
   const next = getPlanet(PLANET_SLUGS[(idx + 1) % PLANET_SLUGS.length])!;
   const prev = getPlanet(PLANET_SLUGS[(idx - 1 + PLANET_SLUGS.length) % PLANET_SLUGS.length])!;
   const lower = name.toLowerCase();
+  const ruledHouses = HOUSES.filter((h) => h.planetRule.toLowerCase() === slug);
 
   return (
     <div className="constellation-bg">
@@ -175,6 +182,19 @@ export default async function PlanetPage({
           <blockquote className="mx-auto mt-8 max-w-2xl rounded-2xl border border-gold/20 bg-gold/5 p-7 text-center font-serif-body text-lg italic leading-8 text-starlight backdrop-blur-xl">
             &ldquo;{content.house}&rdquo;
           </blockquote>
+          {ruledHouses.length > 0 && (
+            <div className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-3">
+              {ruledHouses.map((h) => (
+                <Link
+                  key={h.number}
+                  href={`/houses/${h.number}`}
+                  className="rounded-full border border-gold/25 bg-gold/5 px-4 py-2 text-sm text-gold transition-colors hover:bg-gold/10"
+                >
+                  The {ORDINAL[h.number]} House: {h.title} →
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="mt-16">
