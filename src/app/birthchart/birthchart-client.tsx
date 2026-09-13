@@ -14,7 +14,7 @@ import { AspectsPanel } from "@/components/birthchart/aspects-panel";
 import { AgeHeader } from "@/components/birthchart/age-header";
 import { LifePillars } from "@/components/birthchart/life-pillars";
 import { TrendTimeline } from "@/components/birthchart/trend-timeline";
-import { useLocale } from "@/lib/i18n/client";
+import { useLocale, type Locale } from "@/lib/i18n/client";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { formatDate } from "@/lib/i18n/date";
@@ -23,6 +23,23 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 function subst(tpl: string, vars: Record<string, string>): string {
   return tpl.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+}
+
+// Echoes the birth details the user actually entered (date, local clock time,
+// place) instead of the internally computed UTC instant. That instant is an LMT
+// longitude offset; formatting it in the viewer's own timezone previously showed
+// a shifted, misleading time (e.g. entered 12:00 PM → displayed ~7:03).
+// Presentational only — the chart math is unchanged.
+function buildBirthLabel(b: BirthInput, locale: Locale): string {
+  const dateStr = formatDate(
+    locale,
+    new Date(Date.UTC(b.year, b.month - 1, b.day)),
+    { dateStyle: "medium", timeZone: "UTC" },
+  );
+  const timeStr = b.timeKnown
+    ? `${b.hour12}:${String(b.minute).padStart(2, "0")} ${b.ampm}`
+    : null;
+  return [dateStr, timeStr, b.placeName].filter(Boolean).join(", ");
 }
 
 const TAB_SECTIONS = [
@@ -71,6 +88,7 @@ export function BirthchartClient() {
   const { t, tSign, tPlanet, locale } = useLocale();
 
   const [chart, setChart] = useState<NatalChart | null>(null);
+  const [birth, setBirth] = useState<BirthInput | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,6 +109,7 @@ export function BirthchartClient() {
         { timeAssumed: result.config.timeAssumed },
       ),
     );
+    setBirth(profile);
   }, []);
 
   // One `at` reference per chart so the life-phase and transit engines stay
@@ -160,6 +179,7 @@ export function BirthchartClient() {
         { timeAssumed: result.config!.timeAssumed }
       );
       setChart(computed);
+      setBirth(input);
       setShowEditForm(false);
       // Persist the validated profile so /daily-transit (and other personal
       // tools) can load the same birth details without re-entry.
@@ -225,7 +245,7 @@ export function BirthchartClient() {
                   {tSign(chart.bigThree.sun.sign)} {t("birthchart.sunSign", "Sun")} · {tSign(chart.bigThree.moon.sign)} {t("birthchart.moonSign", "Moon")} · {tSign(chart.bigThree.ascendant)} {t("birthchart.ascendant", "Rising")}
                 </p>
                 <p className="mt-1 text-xs text-muted">
-                  {subst(t("birthchart.computedFor", "Computed for {date} · VSOP87 Engine {version}"), { date: formatDate(locale, new Date(chart.utcTime), { dateStyle: "medium", timeStyle: "short" }), version: chart.engineVersion })}
+                  {subst(t("birthchart.computedFor", "Computed for {date} · VSOP87 Engine {version}"), { date: birth ? buildBirthLabel(birth, locale) : formatDate(locale, new Date(chart.utcTime), { dateStyle: "medium", timeZone: "UTC" }), version: chart.engineVersion })}
                 </p>
               </div>
               <button
