@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { absoluteUrl } from "@/lib/seo/site";
+import { JsonLdScript } from "@/components/ui/json-ld";
+import { absoluteUrl, SITE } from "@/lib/seo/site";
 import { pageMetadata, alternateLanguages } from "@/lib/seo/metadata";
 import { HOUSES, getHouse } from "@/lib/houses/house-content";
 
@@ -56,9 +57,21 @@ export default async function HousePage({
 
   const ord = ORDINAL[house.number];
   const titleLower = house.title.toLowerCase();
+  const canonical = absoluteUrl(`/houses/${house.number}`);
+  const articleData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `The ${ord} House: ${house.title}`,
+    description: house.nature,
+    inLanguage: "en",
+    author: { "@type": "Organization", name: SITE.name },
+    publisher: { "@id": absoluteUrl("/#organization") },
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  };
 
   return (
     <div className="constellation-bg">
+      <JsonLdScript data={articleData} />
       <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
         <div className="flex justify-center">
           <Breadcrumbs

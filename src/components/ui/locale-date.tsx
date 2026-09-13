@@ -18,6 +18,7 @@ interface LocaleDateProps {
  */
 export function LocaleDate({ date, month, day, options }: LocaleDateProps) {
   const { locale } = useLocale();
+  const isNow = month == null && day == null && date == null;
   let value: Date | number;
   if (month != null && day != null) {
     value = Date.UTC(2024, month - 1, day);
@@ -31,5 +32,11 @@ export function LocaleDate({ date, month, day, options }: LocaleDateProps) {
     (month != null
       ? { month: "long", day: "numeric" }
       : { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-  return <>{formatDate(locale, value, opts)}</>;
+  const text = formatDate(locale, value, opts);
+  // The "now" branch is non-deterministic: on ISR pages the server HTML is
+  // baked at regeneration time, so a UTC-day rollover before the next rebuild
+  // mismatches the client's fresh clock. Suppress that single hydration diff
+  // (React #418); every other branch is deterministic and unaffected.
+  if (isNow) return <time suppressHydrationWarning>{text}</time>;
+  return <>{text}</>;
 }

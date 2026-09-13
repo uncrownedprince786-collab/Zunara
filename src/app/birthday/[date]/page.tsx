@@ -14,6 +14,7 @@ import { pageMetadata } from "@/lib/seo/metadata";
 import { birthdayItemListJsonLd } from "@/lib/seo/jsonld";
 import { LocaleDate } from "@/components/ui/locale-date";
 import { BirthdayLive } from "./birthday-client";
+import { OnThisDay } from "@/components/home/on-this-day";
 
 export const revalidate = 86400;
 export const dynamicParams = false;
@@ -63,6 +64,11 @@ export default async function BirthdayPage({ params }: BirthdayPageProps) {
   const label = dateLabel(month, day);
   const people = celebritiesForDate(month, day);
   const sign = zodiacForDate(2000, month, day);
+  const traitWords = sign.traits.slice(0, 4).map((t) => t.toLowerCase());
+  const traitText =
+    traitWords.length > 1
+      ? `${traitWords.slice(0, -1).join(", ")} and ${traitWords[traitWords.length - 1]}`
+      : traitWords[0];
 
   return (
     <div className="constellation-bg">
@@ -71,7 +77,7 @@ export default async function BirthdayPage({ params }: BirthdayPageProps) {
       />
       <div className="mx-auto max-w-5xl px-4 pt-14 sm:px-6">
         <div className="flex justify-center">
-          <Breadcrumbs items={[{ label: "Famous Birthdays", href: `/birthday/${date}` }]} />
+          <Breadcrumbs items={[{ label: "Famous Birthdays", href: "/famous-birthdays" }, { label, href: `/birthday/${date}` }]} />
         </div>
         <header className="mx-auto mt-8 max-w-3xl text-center">
           <p className="kicker">Famous birthdays by date</p>
@@ -93,6 +99,32 @@ export default async function BirthdayPage({ params }: BirthdayPageProps) {
         </header>
       </div>
       <BirthdayLive month={month} day={day} initial={people} />
+      <section
+        aria-labelledby="sign-connection-heading"
+        className="mx-auto max-w-3xl px-4 sm:px-6"
+      >
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl saturate-180 sm:p-8">
+          <p className="kicker">The shared sign</p>
+          <h2
+            id="sign-connection-heading"
+            className="mt-3 font-display text-2xl text-starlight sm:text-3xl"
+          >
+            Everyone born on {label} is a {sign.name}
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-p-muted">
+            {sign.name} is a {sign.element.toLowerCase()} {sign.modality.toLowerCase()}{" "}
+            sign ruled by {sign.ruler}, associated with being {traitText}. Anyone born
+            on {label} shares that sign and reads the same {sign.name} horoscope.
+          </p>
+          <Link
+            href={`/horoscope/${sign.slug}`}
+            className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-gold transition-colors hover:text-gold/80"
+          >
+            Explore the {sign.name} sign — dates, traits &amp; horoscopes &rarr;
+          </Link>
+        </div>
+      </section>
+      <OnThisDay month={month} day={day} />
     </div>
   );
 }

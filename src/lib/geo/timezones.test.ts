@@ -88,12 +88,12 @@ describe("civilToUtc — Local Mean Time fallback", () => {
     expectUtcInstant(civilToUtc(civil(2026, 1, 15, 12), { longitude: 0 }), 2026, 1, 15, 12);
   });
 
-  it("longitude +90 (90°E) ⇒ 18:00 UTC", () => {
-    expectUtcInstant(civilToUtc(civil(2026, 1, 15, 12), { longitude: 90 }), 2026, 1, 15, 18);
+  it("longitude +90 (90°E, 6h ahead of UTC) ⇒ 06:00 UTC", () => {
+    expectUtcInstant(civilToUtc(civil(2026, 1, 15, 12), { longitude: 90 }), 2026, 1, 15, 6);
   });
 
-  it("longitude -90 (90°W) ⇒ 06:00 UTC", () => {
-    expectUtcInstant(civilToUtc(civil(2026, 1, 15, 12), { longitude: -90 }), 2026, 1, 15, 6);
+  it("longitude -90 (90°W, 6h behind UTC) ⇒ 18:00 UTC", () => {
+    expectUtcInstant(civilToUtc(civil(2026, 1, 15, 12), { longitude: -90 }), 2026, 1, 15, 18);
   });
 
   it("no opts at all ⇒ LMT fallback with default longitude 0 (UTC)", () => {
@@ -107,7 +107,7 @@ describe("civilToUtc — invalid/unknown timezone falls back, never throws", () 
       timeZone: "Not/AZone",
       longitude: 90,
     });
-    expectUtcInstant(d, 2026, 1, 15, 18);
+    expectUtcInstant(d, 2026, 1, 15, 6);
   });
 
   it("invalid civil date (month 13) returns null", () => {

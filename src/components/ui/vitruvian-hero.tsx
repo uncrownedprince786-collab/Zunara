@@ -33,7 +33,7 @@ export function VitruvianHero({
         priority
         fetchPriority="high"
         sizes="256px"
-        quality={45}
+        quality={30}
         className="mx-auto max-w-[256px] object-contain opacity-15"
       />
     </div>

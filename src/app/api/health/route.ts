@@ -32,7 +32,8 @@ export async function GET() {
     checks.distinctSigns = distinctSigns.size;
     checks.lastComputedAgeHours = 0;
   } catch (err) {
-    checks.planetsError = err instanceof Error ? err.message : String(err);
+    console.error("[health] planet computation failed:", err);
+    checks.planetsError = "computation_failed";
   }
 
   let dbOk = false;
@@ -51,7 +52,8 @@ export async function GET() {
         checks.dbFresh = ageHours < 36 && latestJob.status === "success";
       }
     } catch (err) {
-      checks.dbError = err instanceof Error ? err.message : String(err);
+      console.error("[health] database check failed:", err);
+      checks.dbError = "unavailable";
     }
   } else {
     checks.db = "not configured";

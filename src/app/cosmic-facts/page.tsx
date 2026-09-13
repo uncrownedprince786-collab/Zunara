@@ -48,7 +48,7 @@ export default function CosmicFactsPage() {
       />
       <div className="mx-auto max-w-5xl px-4 pt-14 sm:px-6">
         <div className="flex justify-center">
-          <Breadcrumbs items={[{ label: "Horoscopes & Signs", href: "/cosmic-facts" }]} />
+          <Breadcrumbs items={[{ label: "Cosmic Facts", href: "/cosmic-facts" }]} />
         </div>
       </div>
       <CosmicFactsClient />

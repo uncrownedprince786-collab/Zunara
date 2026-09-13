@@ -15,8 +15,8 @@ const socialImages = { images: [absoluteUrl(SITE.image)] };
 const twitterMeta = { site: SITE.twitter, creator: SITE.twitter, images: [absoluteUrl(SITE.image)] };
 
 /**
- * hreflang mapping: every page exists once and is served in all five locales
- * through the client-side language switcher, so all five language codes plus
+ * hreflang mapping: every page exists once and is served in all six locales
+ * through the client-side language switcher, so all six language codes plus
  * `x-default` point at the same canonical URL.
  */
 export function alternateLanguages(path: string): Record<string, string> {
@@ -102,14 +102,14 @@ export function pageMetadata(
     alternates: { canonical, languages: alternateLanguages(path) },
     keywords,
     openGraph: {
-      title,
+      title: `${title} | ${SITE.name}`,
       description,
       url: canonical,
       type,
       siteName: SITE.name,
       ...socialImages,
     },
-    twitter: { card: "summary_large_image", title, description, ...twitterMeta },
+    twitter: { card: "summary_large_image", title: `${title} | ${SITE.name}`, description, ...twitterMeta },
   };
 }
 

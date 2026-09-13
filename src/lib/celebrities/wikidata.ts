@@ -62,7 +62,7 @@ function valueOf(binding: Record<string, unknown> | undefined): string {
 export function commonsThumb(uri: string): string {
   const filename = uri.split("/").pop() ?? uri;
   const clean = filename.replace(/^File:/i, "").replace(/ /g, "_");
-  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(clean)}?width=330`;
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(clean)}?width=256`;
 }
 
 /**
@@ -112,7 +112,7 @@ export function imageCandidates(uri: string): string[] {
   try {
     const decoded = decodeURIComponent(filename);
     if (decoded !== filename) {
-      add(`${base}${encodeURIComponent(decoded)}?width=330`);
+      add(`${base}${encodeURIComponent(decoded)}?width=256`);
       add(`${base}${encodeURIComponent(decoded)}`);
     }
   } catch {
@@ -122,13 +122,13 @@ export function imageCandidates(uri: string): string[] {
   //    Skipped when the name is already percent-escaped — re-encoding it
   //    there would double-encode (e.g. "%28" → "%2528") and break the URL.
   if (!filename.includes("%")) {
-    add(`${base}${encodeURIComponent(filename)}?width=330`);
+    add(`${base}${encodeURIComponent(filename)}?width=256`);
     add(`${base}${encodeURIComponent(filename)}`);
   }
   // 3) Pass the reference through verbatim; the browser encodes the parts it
   //    must, so an already-escaped filename keeps its escapes intact.
   if (!/[?#"\\]/.test(filename)) {
-    add(`${base}${filename}?width=330`);
+    add(`${base}${filename}?width=256`);
   }
   return out;
 }

@@ -57,7 +57,7 @@ describe("wikidata birthday pipeline", () => {
     expect(ada!.sitelinks).toBe(98);
     expect(ada!.star).toBe("Pioneer of analytical computing.");
     expect(ada!.url).toBe("https://en.wikipedia.org/wiki/Ada_Example");
-    expect(ada!.image).toContain("commons.wikimedia.org/wiki/Special:FilePath/Ada_Example.jpg?width=330");
+    expect(ada!.image).toContain("commons.wikimedia.org/wiki/Special:FilePath/Ada_Example.jpg?width=256");
   });
 
   it("merges duplicate rows by QID and keeps up to two occupations", () => {
@@ -93,24 +93,24 @@ describe("wikidata birthday pipeline", () => {
 
   it("normalises Commons file URLs into resized thumbnails", () => {
     expect(commonsThumb("http://commons.wikimedia.org/wiki/Special:FilePath/Foo Bar.png"))
-      .toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
+      .toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=256");
   });
 
   it("builds a multi-candidate image fallback chain from a plain filename", () => {
     const c = imageCandidates("Foo_Bar.png");
-    expect(c[0]).toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
-    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330");
+    expect(c[0]).toBe("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=256");
+    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=256");
     expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png");
     expect(c.every((u) => u.startsWith("https://"))).toBe(true);
   });
 
   it("adds decode-then-encode variants for already-escaped filenames", () => {
     const c = imageCandidates("Foo%28Bar%29.jpg");
-    expect(c[0]).toContain("?width=330");
+    expect(c[0]).toContain("?width=256");
     // Never double-encode "%28" into "%2528".
     expect(c.every((u) => !u.includes("%25"))).toBe(true);
     // The passed-through (already-escaped) reference stays reachable too.
-    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo%28Bar%29.jpg?width=330");
+    expect(c).toContain("https://commons.wikimedia.org/wiki/Special:FilePath/Foo%28Bar%29.jpg?width=256");
   });
 
   it("passes an already-absolute URL through verbatim instead of re-splitting it", () => {
@@ -119,10 +119,10 @@ describe("wikidata birthday pipeline", () => {
     // valid thumb, not the file "330px-Foo.jpg").
     expect(
       imageCandidates(
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=256",
       ),
     ).toEqual([
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=330",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Foo_Bar.png?width=256",
     ]);
     expect(
       imageCandidates(
@@ -135,9 +135,9 @@ describe("wikidata birthday pipeline", () => {
 
   it("upgrades http: source URLs to https: to avoid mixed-content blocking", () => {
     expect(
-      imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo.png?width=330"),
+      imageCandidates("http://commons.wikimedia.org/wiki/Special:FilePath/Foo.png?width=256"),
     ).toEqual([
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Foo.png?width=330",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Foo.png?width=256",
     ]);
   });
 

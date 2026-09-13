@@ -4,10 +4,11 @@ import { LOCALES } from "@/lib/i18n/dictionaries";
 
 export type JsonLdData = Record<string, unknown>;
 
+// Reference the canonical Organization node declared once in the root layout
+// (`/#organization`) rather than re-describing it, so Google consolidates one
+// entity instead of seeing duplicate unlinked Organization nodes.
 const ORGANIZATION: JsonLdData = {
-  "@type": "Organization",
-  name: SITE.orgName,
-  url: SITE.url,
+  "@id": absoluteUrl("/#organization"),
 };
 
 /** Root WebSite + publisher, used on the homepage. */

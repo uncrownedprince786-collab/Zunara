@@ -1,0 +1,22 @@
+# Zunara
+
+> Zunara publishes exact birth charts and daily, weekly, monthly and yearly horoscopes for all 12 zodiac signs, computed from real planetary positions (the astronomy-engine library, VSOP87 models) rather than generic copy. It also offers live current-sky data, an interactive night-sky map, a perpetual sky-events calendar, compatibility/synastry, and famous birthdays. The core tools are free and require no login. Content is framed honestly for entertainment and reflection — no fortune-telling, no guarantees.
+
+## Core tools
+- [Birth Chart Calculator](https://zunara.vercel.app/birthchart): free natal chart — sun, moon and rising signs, houses, aspects and planetary placements from precise astronomical positions.
+- [Synastry & Compatibility](https://zunara.vercel.app/synastry): relationship chart comparison.
+- [The Sky Now](https://zunara.vercel.app/sky-now): where every planet is right now, by sign and degree.
+- [Night Sky Map](https://zunara.vercel.app/sky-map): live altitude/azimuth of the Sun, Moon, planets and bright stars for your location.
+- [Sky Events Calendar](https://zunara.vercel.app/sky-events): meteor showers, eclipses, equinoxes, solstices and lunar phases, computed from real astronomy.
+
+## Horoscopes
+- [Horoscopes hub](https://zunara.vercel.app/horoscope): daily, weekly, monthly and yearly readings for every sign, calculated from current transits.
+
+## Education & reference
+- [Astrology Library](https://zunara.vercel.app/library): plain-English explanations of signs, planets, houses and lunar nodes.
+- [Cosmic Facts](https://zunara.vercel.app/cosmic-facts): zodiac sign traits, strengths and weaknesses.
+- [How It Works](https://zunara.vercel.app/how-it-works): the calculation method behind every reading.
+- [About](https://zunara.vercel.app/about): who is behind Zunara and the astronomy standard it holds to.
+
+## Data
+- [Famous Birthdays](https://zunara.vercel.app/famous-birthdays): notable people by birth date, with their zodiac sign.

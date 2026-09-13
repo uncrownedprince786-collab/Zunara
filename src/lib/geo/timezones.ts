@@ -130,7 +130,9 @@ export function civilToUtc(
     time.second,
     0,
   );
-  // Local Mean Time conversion: UTC = civil + lmtOffsetSeconds (the module's
-  // convention — see timezones.test.ts LMT expectations).
-  return new Date(civilMs + lmtOffsetSeconds(longitude) * 1000);
+  // Local Mean Time conversion: a place east of Greenwich (positive longitude)
+  // runs AHEAD of UTC, so subtract its offset to recover the UTC instant —
+  // UTC = civil − lmtOffset. This matches the IANA path above (e.g. a location
+  // near 90°E and Asia/Tokyo both resolve civil noon to the morning in UTC).
+  return new Date(civilMs - lmtOffsetSeconds(longitude) * 1000);
 }

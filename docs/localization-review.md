@@ -211,14 +211,14 @@ The same concept is rendered with different existing words at different keys *wi
 
 ## Native-review checklist
 
-- [ ] Section A — 12 Arabic corruptions rewritten
-- [ ] Section B — 3 Arabic meaning/grammar items
-- [ ] Section C — 8 Urdu corruptions rewritten
-- [ ] Section D — 3 Urdu meaning items
-- [ ] D-notes — 3 keys re-aligned to the softened English
-- [ ] Section E — es/hi RTL label + footer.copyright parity decision
-- [ ] Section F — 8 terminology concepts standardized to one existing form each
-- [ ] Section G — 3 missing-key leaks (add keys + translate)
+- [x] Section A — 12 Arabic corruptions rewritten *(fixed 2026-09-13; see "Corruption fix pass" below — spot-confirm terms)*
+- [x] Section B — 3 Arabic meaning/grammar items *(fixed 2026-09-13)*
+- [x] Section C — 8 Urdu corruptions rewritten *(fixed 2026-09-13; spot-confirm terms)*
+- [x] Section D — 3 Urdu meaning items *(fixed 2026-09-13)*
+- [x] D-notes — 3 keys re-aligned to the softened English *(fixed 2026-09-13)*
+- [ ] Section E — es/hi RTL label + footer.copyright parity decision *(intentionally deferred — owner decisions, not defects; see status note)*
+- [ ] Section F — 8 terminology concepts standardized to one existing form each *(intentionally deferred — all forms are individually correct; needs native preference judgment)*
+- [x] Section G — birth-form + footer missing-key leaks (fixed 2026-09-13); Progressed Moon prose still deferred to `life-phases.ts` engine-i18n
 
 ---
 
@@ -237,3 +237,65 @@ These render English in all non-English locales because the code references dict
 **Fixed — footer tool column.** Six links now REUSE existing native keys (no new translations): Compatibility→`nav.synastry`, Daily Transit→`nav.dailyTransit`, Sky Map→`nav.skyMap`, Retrogrades→`skynow.retroKicker`, Sky Events→`nav.astronomy`, section title→`nav.tools`. Four had no native source and were added as `footer.astrologyGuide/ephemeris/famousBirthdays/library` (es/zh/hi standard). **ar/ur values added (please spot-confirm):** ar `التنجيم · التقويم الفلكي · مواليد المشاهير · المكتبة`; ur `علم نجوم · فلکیاتی جدول · مشہور سالگرہیں · لائبریری`. Note: "Ephemeris" (ar التقويم الفلكي / ur فلکیاتی جدول) and "Famous Birthdays" (ur مشہور سالگرہیں) are the least-certain of these — confirm wording.
 
 **Deferred — Progressed Moon / life-milestone prose.** NOT changed. It is generated English prose in `life-phases.ts` (same category as the horoscope generator and the `sky-plain` explainers), so a rushed translation would violate "don't invent ar/ur / don't expand scope." Localizing the milestone engine is its own task; flagged here for the native/i18n pass.
+
+---
+
+## Corruption fix pass — 2026-09-13 (Sections A–D + D-notes)
+
+All mixed-script splices and documented meaning errors were repaired. Each replacement **reuses standard native terminology** for the meaning fixed by the surrounding (native-authored) text and, where applicable, the parallel `en`/`zh` values. **None of the surrounding grammar was machine-translated wholesale** — only the corrupted fragment or the flagged word/clause was changed. A native reviewer should still **spot-confirm** the terms marked ⚠ (medium confidence on exact word choice; meaning is correct).
+
+### A. Arabic corruptions (foreign script removed)
+| Key | Was → Now (fragment) | Note |
+| --- | --- | --- |
+| `signs.gemini.mythology` | `بloyaltyǔ مطلقة` → `ولاءٍ مطلق` | "absolute loyalty" |
+| `signs.cancer.careerArenas` | `心理学 الأطفال` → `علم نفس الأطفال` | "child psychology" — matches `zh` 儿童心理学 |
+| `signs.virgo.mythology` | `الصامت الم sustentateur` → `الصامت الداعم` | "sustaining/supportive silent work" |
+| `signs.libra.mythology` | `بال Balance` → `بالموازين` | "the scales" (sentence already ends "…ميزان العدالة") |
+| `signs.libra.careerArenas` | `القانونorporate` → `قانون الشركات` | "corporate law" — matches `en` Corporate law |
+| `signs.scorpio.careerArenas` | `العلوم forensische` → `العلوم الجنائية` | "forensic science" |
+| `signs.sagittarius.coreArchetype` | `بال pewnością` → `باليقين` | "certainty" |
+| `signs.capricorn.mythology` | `بالmartin من بان` → `بأسطورة بان` | "the myth of Pan" (word unrecoverable; meaning preserved) |
+| `signs.capricorn.careerArenas` | `الحوكمةorporate` → `الحوكمة المؤسسية` | "corporate governance" — matches `en` |
+| `weaknesses.sagittarius` | `​ Lack of tact` → `قلة اللباقة` | "tactlessness"; leading space dropped |
+| `skyEvents.newMoonMay.desc` | `لل objects` → `للأجرام` | astronomy "(celestial) objects" |
+| `skyEvents.newMoonNov.desc` | `لل objects` → `للأجرام` | astronomy "(celestial) objects" |
+
+### B. Arabic meaning / grammar
+| Key | Was → Now | Note |
+| --- | --- | --- |
+| `signs.aquarius.coreArchetype` | `المتعطّل المبدع` → `الثائر المبدع` | "idle"→"rebel"; "visionary rebel" (keeps المبدع) |
+| `signs.leo.coreArchetype` | `ويحوّل كل مسرحاً وإلى كل شخص يستحق الإبهار` → `ويحوّل كل مكانٍ إلى مسرح، وكل شخصٍ إلى من يستحق الإبهار` | grammar repair; ⚠ confirm phrasing |
+| `signs.libra.coreArchetype` | `الوساط…يسخدم` → `الوسيط…يستخدم` | "mediator" + typo "uses" |
+
+### C. Urdu corruptions (foreign script removed)
+| Key | Was → Now (fragment) | Note |
+| --- | --- | --- |
+| `weaknesses.aries` | `م对面ہ طرز` → `مخالفانہ طرز` | "oppositional/confrontational manner"; ⚠ |
+| `signs.sagittarius.coreArchetype` | `م界第一。` → `متحرک۔` | "driven"; Chinese tail + full-stop removed |
+| `signs.scorpio.careerArenas` | `ဖောင်းဒ် سائنس` → `فرانزک سائنس` | "forensic science" (matches transliteration register of the same list) |
+| `signs.libra.coreArchetype` | `nwazat daar میانجی` → `شائستہ میانجی` | "courteous/graceful mediator"; ⚠ confirm adjective |
+| `compat.Fire.challenging` | `م dynamics` → `معاملات` | "emotional matters/dynamics" |
+| `compat.Water.same` | `دل کا مutaabaqat` → (rewritten, see D-notes) | also softened per D-1 |
+| `compat.Air.best` | `بولد خیالات` → `جرات مندانہ خیالات` | "bold ideas" |
+| `compat.Earth.challenging` | `مختلف تیمپو` → `مختلف رفتار` | "different pace" (as audit suggested) |
+
+### D. Urdu meaning
+| Key | Was → Now | Note |
+| --- | --- | --- |
+| `elements.Water` | `​ دیانتداری` → `بصیرت` | "honesty"→"intuition/insight"; leading space dropped |
+| `weaknesses.sagittarius` | `بے رحمی` → `بے لحاظی` | "mercilessness"→"tactlessness" |
+| `weaknesses.pisces` | `ہمدردی` → `تلخ حقیقتوں سے گریز` | "empathy" (contradiction) → "avoids hard truths" |
+
+### D-notes — re-aligned to softened `en`
+| Key | `en` now | ar → | ur → |
+| --- | --- | --- | --- |
+| `compat.Water.same` | "Deep emotional understanding, often without needing words." | `فهم عاطفي عميق، غالباً دون الحاجة إلى كلمات.` | `گہری جذباتی سمجھ بوجھ، اکثر الفاظ کے بغیر۔` |
+| `weaknesses.pisces` | "Escapist · Overly trusting · Avoids hard truths." | `هروب · ثقة مفرطة · تجنّب الحقائق الصعبة` | `بھاگنا · بہت زیادہ یقین · تلخ حقیقتوں سے گریز` |
+| `superpowersTitle` | "Natural strengths" | `نقاط قوتك الفطرية` | `آپ کی فطری خوبیاں` · es `Tus fortalezas naturales` · hi `आपकी स्वाभाविक खूबियाँ` · zh `专属天赋与强项` kept (already "gifts & strengths", not 超能力) |
+
+> Note: the separate keys `superpowers` (en "Superpowers") and `featureFactsDesc` (en prose still says "superpowers") were **left unchanged** — their `en` masters were not softened, so their translations remain correctly aligned. Only `superpowersTitle` changed.
+
+### Why E and F were NOT auto-fixed
+- **E-1 (`common.languageRtl` es/hi = "RTL")** — a tiny direction badge; "RTL" is an internationally recognized abbreviation and this is explicitly a low-priority *decision*, not a corruption. Left for owner to decide (translate vs. keep).
+- **E-2 (`footer.copyright` parity)** — an owner/brand decision (keep the poetic "Written in the stars" opening in the 5 translations, or drop it to match `en`). All six strings are grammatically correct; nothing is broken. Left for owner.
+- **Section F (terminology consistency)** — every listed form is an *individually correct* native term; the task is to pick one existing form per concept and reuse it. That is a native-preference judgment (which correct term is canonical), and the file's own Critical Rules say not to change terminology without native review. Changing it blind risks regressing correct copy with no correctness gain, so it remains flagged for the native pass. **These are polish, not defects.**

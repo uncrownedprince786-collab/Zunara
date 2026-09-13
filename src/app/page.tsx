@@ -37,7 +37,7 @@ export const revalidate = 3600;
 export const metadata = pageMetadata(
   "/",
   "Birth Charts & Daily Horoscopes, Calculated",
-  "Calculate your exact birth chart and read daily horoscopes for all 12 signs, computed from real planetary positions, plus the famous people who share your birthday.",
+  "Calculate your exact birth chart and read daily horoscopes for all 12 zodiac signs, computed from real planetary positions rather than generic copy.",
   "website",
   [
     "birth chart calculator",

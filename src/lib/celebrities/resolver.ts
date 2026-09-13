@@ -13,8 +13,6 @@
  */
 import type { Celebrity } from "@/lib/content/celebrities";
 import { celebritiesForDate } from "@/lib/content/celebrities";
-import { isDbConfigured } from "@/db";
-import { getCelebrityCache, upsertCelebrityCache } from "@/db/repository";
 import { fetchWikidataBirthdayCelebrities } from "./wikidata";
 
 export type CelebritySource = "cache" | "live" | "static";
@@ -78,19 +76,13 @@ export function createMemoryCache(): CacheStore {
 let memoryCache: CacheStore | null = null;
 
 function defaultStore(): CacheStore | null {
-  if (isDbConfigured()) {
-    return {
-      get: async (key) => {
-        const row = await getCelebrityCache(key);
-        if (!row) return null;
-        return { payload: row.payload as unknown, source: row.source, updatedAt: row.updatedAt };
-      },
-      set: (key, payload, source) => upsertCelebrityCache(key, payload, source),
-    };
-  }
-  // No database configured: back the live tier with a shared in-memory cache
-  // so birthdays stay dynamic without hammering Wikidata per page view. Tests
-  // opt out so they never touch the network.
+  // Back the live tier with a shared in-memory cache so birthdays stay dynamic
+  // without hammering Wikidata per page view. This resolver is imported by
+  // client islands (todays-stars, famous-birthdays-hub, birthday-client), so it
+  // must NOT pull in the server-only database layer (Neon/Drizzle) — doing so
+  // shipped the whole driver + schema to the browser. A DB-backed cron cache,
+  // if ever read server-side, is injected via `deps.store`. Tests opt out so
+  // they never touch the network.
   if (process.env.NODE_ENV === "test") return null;
   memoryCache ??= createMemoryCache();
   return memoryCache;

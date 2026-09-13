@@ -2,11 +2,11 @@ export const SITE = {
   name: "Zunara",
   tagline: "Written in the stars.",
   description:
-    "Exact birth charts and daily, weekly, monthly and yearly horoscopes for all 12 zodiac signs, computed from real planetary positions. Plus live sky data and celebrity birthdays.",
+    "Exact birth charts and daily, weekly, monthly and yearly horoscopes for all 12 zodiac signs, computed from real planetary positions plus live sky data.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://zunara.vercel.app",
   twitter: "@zunara",
   locale: "en_US",
-  image: "/og.svg",
+  image: "/og.png",
   orgName: "Zunara Publishing",
 } as const;
 

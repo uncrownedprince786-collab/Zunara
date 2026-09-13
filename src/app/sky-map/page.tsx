@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { SkyMapClient } from "./sky-map-client";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { JsonLd } from "@/components/ui/json-ld";
 import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
+import { softwareApplicationJsonLd } from "@/lib/seo/jsonld";
 
 export const metadata: Metadata = {
   title: "Live Night Sky Map for Your Location",
@@ -18,7 +20,15 @@ export const metadata: Metadata = {
 
 export default function SkyMapPage() {
   return (
-    <div className="constellation-bg">
+    <>
+      <JsonLd
+        data={softwareApplicationJsonLd(
+          "Zunara Night Sky Map",
+          "Free interactive night-sky map plotting the Sun, Moon, planets and bright stars in real time for your location, with altitude and azimuth computed from precise ephemeris.",
+          absoluteUrl("/sky-map"),
+        )}
+      />
+      <div className="constellation-bg">
       <div className="mx-auto max-w-5xl px-4 pt-14 sm:px-6">
         <div className="flex justify-center">
           <Breadcrumbs items={[{ label: "Night Sky Map", href: "/sky-map" }]} />
@@ -38,5 +48,6 @@ export default function SkyMapPage() {
       </div>
       <SkyMapClient />
     </div>
+    </>
   );
 }

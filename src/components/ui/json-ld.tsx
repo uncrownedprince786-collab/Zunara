@@ -11,6 +11,15 @@ interface JsonLdProps {
 }
 
 /**
+ * Serialize JSON-LD for an inline <script>. Escapes `<` as `<` so no value
+ * can break out of the script element (defensive; current inputs are all
+ * site-defined config, but this hardens against any future dynamic input).
+ */
+function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+/**
  * Render any JSON-LD payload as a single <script type="application/ld+json">.
  * When `data` is provided it is emitted as-is (see the builders in
  * src/lib/seo/jsonld.ts); otherwise a small schema.org object is assembled
@@ -46,7 +55,7 @@ export function JsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(payload) }}
     />
   );
 }
@@ -56,7 +65,7 @@ export function JsonLdScript({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
     />
   );
 }

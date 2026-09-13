@@ -191,8 +191,32 @@ export function isAthlete(c: Pick<Celebrity, "profession" | "region">): boolean 
 }
 
 /**
+ * A "born YYYY" / "YYYY–YYYY" short-description reads as auto-imported
+ * boilerplate; a full narrative sentence (the norm for hand-curated entries)
+ * reads as a real editorial pick. This is a zero-dependency notability
+ * proxy -- cheap to compute, and empirically it tracks whether an entry got
+ * real curatorial attention, which correlates with how recognizable the
+ * person actually is.
+ */
+const BOILERPLATE_STAR_RE = /\(born \d{4}\)|\(\d{4}\s*[–-]\s*(\d{4}|present)\)/i;
+
+/** Notability proxy for supplementary-pool entries (see above). Higher = more notable. */
+function fameScore(entry: Pick<SupplementaryCelebrity, "star">): number {
+  const star = entry.star.trim();
+  if (BOILERPLATE_STAR_RE.test(star)) return 0;
+  if (star.length < 50) return 0;
+  if (!/[.!]$/.test(star)) return 0;
+  return 1;
+}
+
+/**
  * Diversity-preserving selection: picks `count` items from `pool` using a
  * deterministic hash, trying to balance across regions and professions.
+ * Notability (`fameScore`) is layered in purely as an ordering key /
+ * tie-breaker -- within each region, and when filling remaining slots, more
+ * notable entries are tried first -- so globally recognizable people win out
+ * over obscure same-region, same-profession entries without overriding the
+ * diversity or athlete-minority rules below.
  */
 function diversitySelect(
   month: number,
@@ -206,6 +230,13 @@ function diversitySelect(
   const usedIndices = new Set<number>();
   const usedRegions = new Set<string>();
   const usedProfessions = new Set<string>();
+
+  // Pool indices ranked most-to-least notable (stable for equal fame), reused
+  // below to bias both the fill pass and the deterministic fallback pass.
+  const fameRankedIndices = pool
+    .map((entry, i) => ({ i, fame: fameScore(entry) }))
+    .sort((a, b) => b.fame - a.fame || a.i - b.i)
+    .map((x) => x.i);
 
   // Try to get one from each region first (priority pass)
   const regions: CelebrityRegion[] = [
@@ -225,8 +256,14 @@ function diversitySelect(
           entry.region === region && !usedIndices.has(i),
       );
     if (candidates.length > 0) {
-      const pick =
-        candidates[dateHash(month, day, selected.length) % candidates.length];
+      // Rank by notability first (stable), then use the existing date hash
+      // to pick within the more-notable half -- iconic names win out over
+      // obscure same-region entries while still varying date to date.
+      const ranked = [...candidates].sort(
+        (a, b) => fameScore(b.entry) - fameScore(a.entry) || a.i - b.i,
+      );
+      const topHalf = ranked.slice(0, Math.max(1, Math.ceil(ranked.length / 2)));
+      const pick = topHalf[dateHash(month, day, selected.length) % topHalf.length];
       selected.push(pick.entry);
       usedIndices.add(pick.i);
       usedRegions.add(region);
@@ -234,11 +271,17 @@ function diversitySelect(
     }
   }
 
-  // Fill remaining slots via shuffled round-robin
+  // Fill remaining slots via shuffled round-robin. This pass's job is
+  // reliably reaching `count` while respecting the athlete cap and
+  // diversity rules below, so -- unlike the region pass above -- it walks
+  // the full pool rather than a notability-restricted slice: the fallback
+  // pass further down already leans on fameRankedIndices, which is enough
+  // notability bias without risking starving this pass of eligible
+  // candidates (which would otherwise spill into that fallback, which
+  // cannot enforce the athlete cap the way this loop does).
   let offset = 0;
   while (selected.length < count && offset < pool.length * 4) {
-    const idx =
-      dateHash(month, day, 1000 + offset) % pool.length;
+    const idx = dateHash(month, day, 1000 + offset) % pool.length;
     offset++;
     if (usedIndices.has(idx)) continue;
     const entry = pool[idx];
@@ -260,10 +303,12 @@ function diversitySelect(
     usedProfessions.add(entry.profession);
   }
 
-  // Deterministic fallback: top up with unused entries in index order when the
-  // hash walk ran out of acceptable candidates (e.g. an all-sport pool).
+  // Deterministic fallback: top up with unused entries in notability order
+  // (index order among equally-(un)notable entries) when the hash walk ran
+  // out of acceptable candidates (e.g. an all-sport pool).
   if (selected.length < count) {
-    for (let i = 0; i < pool.length && selected.length < count; i++) {
+    for (let k = 0; k < fameRankedIndices.length && selected.length < count; k++) {
+      const i = fameRankedIndices[k];
       if (usedIndices.has(i)) continue;
       const entry = pool[i];
       selected.push(entry);
@@ -286,7 +331,8 @@ function diversitySelect(
       if (!wasAthlete && isAthlete(cand) && athleteCount() >= 3) continue;
       const score =
         (cand.region === selected[i].region ? 2 : 0) +
-        (isAthlete(cand) === wasAthlete ? 1 : 0);
+        (isAthlete(cand) === wasAthlete ? 1 : 0) +
+        fameScore(cand);
       if (score > bestScore) {
         bestScore = score;
         bestI = j;

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { absoluteUrl } from "@/lib/seo/site";
+import { JsonLdScript } from "@/components/ui/json-ld";
+import { absoluteUrl, SITE } from "@/lib/seo/site";
 import { pageMetadata, alternateLanguages } from "@/lib/seo/metadata";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
@@ -61,9 +62,21 @@ export default async function PlanetPage({
   const prev = getPlanet(PLANET_SLUGS[(idx - 1 + PLANET_SLUGS.length) % PLANET_SLUGS.length])!;
   const lower = name.toLowerCase();
   const ruledHouses = HOUSES.filter((h) => h.planetRule.toLowerCase() === slug);
+  const canonical = absoluteUrl(`/planets/${slug}`);
+  const articleData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `${name} in Astrology`,
+    description: `What ${name} means in your birth chart: its nature, the house it keys to, its zodiac-sign expressions and mythology.`,
+    inLanguage: "en",
+    author: { "@type": "Organization", name: SITE.name },
+    publisher: { "@id": absoluteUrl("/#organization") },
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+  };
 
   return (
     <div className="constellation-bg">
+      <JsonLdScript data={articleData} />
       <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
         <div className="flex justify-center">
           <Breadcrumbs

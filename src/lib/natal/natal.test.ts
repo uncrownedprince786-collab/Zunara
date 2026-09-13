@@ -161,19 +161,19 @@ describe("birth input validation", () => {
   it("builds a correct UTC noon when time is marked unknown", () => {
     const cfg = validateBirth({ ...validInput, timeKnown: false })!;
     const d = cfg.config!.date;
-    // NYC longitude −74.006 → LMT offset ≈ −4h 56m (module convention
-    // UTC = civil + lmtOffsetSeconds); noon local → ~07:04 UTC.
-    expect(d.getUTCHours()).toBe(7);
-    expect(d.getUTCMinutes()).toBe(3);
+    // NYC longitude −74.006 is ~4h56m WEST of Greenwich, so it runs behind UTC:
+    // civil noon → ~16:56 UTC (UTC = civil − lmtOffset).
+    expect(d.getUTCHours()).toBe(16);
+    expect(d.getUTCMinutes()).toBe(56);
   });
 
   it("resolves AM/PM into the correct 24-hour UTC time", () => {
-    // 9:30 AM local in NYC → 04:33 UTC (LMT offset ≈ −4h 56m)
+    // 9:30 AM local in NYC (~4h56m behind UTC) → ~14:26 UTC.
     const am = validateBirth(validInput)!.config!.date;
-    expect(am.getUTCHours()).toBe(4);
-    // 9:30 PM local → 16:33 UTC same day
+    expect(am.getUTCHours()).toBe(14);
+    // 9:30 PM (21:30) local → 21:30 + 4h56m ≈ 02:26 UTC the next day.
     const pm = validateBirth({ ...validInput, hour12: 9, ampm: "PM" })!.config!.date;
-    expect(pm.getUTCHours()).toBe(16);
+    expect(pm.getUTCHours()).toBe(2);
   });
 });
 
