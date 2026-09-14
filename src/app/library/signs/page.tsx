@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { LocaleTraits, LocaleSignDescription } from "@/components/ui/locale-traits";
 import { absoluteUrl } from "@/lib/seo/site";
 import { shareMeta } from "@/lib/seo/metadata";
 import { ZODIAC_SIGNS, formatDateRange } from "@/lib/zodiac/zodiac";
@@ -76,16 +77,13 @@ export default function SignsPage() {
               <p className="mt-3 text-xs uppercase tracking-wider text-gold">
                 {formatDateRange(s)} · Ruled by {s.ruler}
               </p>
-              <p className="mt-2 text-sm leading-6 text-muted">{s.description}</p>
+              <p className="mt-2 text-sm leading-6 text-muted"><LocaleSignDescription slug={s.slug} /></p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {s.traits.slice(0, 4).map((trait) => (
-                  <span
-                    key={trait}
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-xs text-p-ink"
-                  >
-                    {trait}
-                  </span>
-                ))}
+                <LocaleTraits
+                  slug={s.slug}
+                  limit={4}
+                  itemClassName="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-xs text-p-ink"
+                />
               </div>
             </Link>
           ))}

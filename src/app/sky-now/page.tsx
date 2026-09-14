@@ -117,7 +117,7 @@ export default function SkyNowPage() {
                         <p className="text-sm text-starlight">
                           <LocaleText path={`planets.${p.key}`} fallback={p.key} />
                         </p>
-                        <p className="text-[11px] uppercase tracking-wider text-subdued">
+                        <p className="text-xs uppercase tracking-wider text-subdued">
                           {p.retrograde ? (
                             <span className="text-gold-deep">℞ <LocaleText path="common.retrograde" fallback="retrograde" /></span>
                           ) : (
@@ -135,7 +135,7 @@ export default function SkyNowPage() {
                           )}{" "}
                           <span className="tabular-nums">{Math.floor(p.degreeInSign)}°</span>
                         </p>
-                        <p className="truncate text-[11px] text-subdued">
+                        <p className="truncate text-xs text-subdued">
                           Ecliptic longitude {p.longitude.toFixed(1)}°
                         </p>
                       </div>

@@ -26,7 +26,7 @@ function strengthText(s: SignalStrength): string {
     case "mild":
       return "text-subdued";
     default:
-      return "text-subdued/70";
+      return "text-subdued";
   }
 }
 

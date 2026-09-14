@@ -170,6 +170,14 @@ body {
   background: transparent;
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  /* Explicit, central baseline: 16px comfortably clears the "~15-16px on
+     desktop" readability target instead of relying on an implicit browser
+     default, and 1.65 gives body copy the breathing room long-form pages
+     (About, horoscope reads, birth-chart interpretations) need. Any element
+     with its own Tailwind text-size/leading utility overrides this as usual;
+     this only raises the floor for plain paragraphs that set neither. */
+  font-size: 1rem;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

@@ -129,7 +129,7 @@ export function ZodiacPeriodStrip({ periodType, activeSign }: ZodiacPeriodStripP
                   >
                     {tSign(sign.slug)}
                   </span>
-                  <span className="hidden text-[0.62rem] text-subdued/70 lg:block">
+                  <span className="hidden text-[0.65rem] text-subdued lg:block">
                     {formatDateRange(sign, locale)}
                   </span>
                 </Link>

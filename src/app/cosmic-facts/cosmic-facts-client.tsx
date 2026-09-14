@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ZODIAC_SIGNS, type ZodiacSign, type Element } from "@/lib/zodiac/zodiac";
 import { funFactForSign } from "@/lib/content/funfacts";
+import { signTraits, signDescription } from "@/lib/content/sign-traits-i18n";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
 import { elementText } from "@/components/ui/element";
 import { CompatibilityHub } from "@/components/ui/compatibility-hub";
@@ -169,7 +170,7 @@ export function CosmicFactsClient() {
 }
 
 function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void }) {
-  const { t, tSign, tElement, tModality, tPlanet } = useLocale();
+  const { t, tSign, tElement, tModality, tPlanet, locale } = useLocale();
   const funFact = funFactForSign(sign.slug);
   const sameElement = ZODIAC_SIGNS.filter((s) => s.element === sign.element && s.slug !== sign.slug).map((s) => s.slug);
 
@@ -218,24 +219,26 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
             </button>
           </div>
 
-          <p className="mt-6 font-serif-body text-base leading-7 text-p-ink">{sign.description}</p>
+          <p className="mt-6 font-serif-body text-base leading-7 text-p-ink">{signDescription(sign.slug, locale)}</p>
 
           <div className="mt-8">
             <h3 className="kicker">{t("common.keyTraits", "Key traits & personality")}</h3>
             <div className="mt-4 flex flex-wrap gap-2">
-              {sign.traits.map((trait) => (
+              {signTraits(sign.slug, locale).map((trait) => (
                 <span key={trait} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-p-ink">
                   {trait}
                 </span>
               ))}
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {sign.keywords.map((k) => (
-                <span key={k} className="rounded-full border border-gold/20 bg-gold/5 px-3 py-1 text-xs font-medium text-gold-deep">
-                  {k}
-                </span>
-              ))}
-            </div>
+            {locale === "en" && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {sign.keywords.map((k) => (
+                  <span key={k} className="rounded-full border border-gold/20 bg-gold/5 px-3 py-1 text-xs font-medium text-gold-deep">
+                    {k}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5">
@@ -275,7 +278,7 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
                 {t("cosmicFacts.superpowersTitle", "Your superpowers")}
               </h3>
               <ul className="mt-3 space-y-2">
-                {sign.traits.slice(0, 4).map((tr) => (
+                {signTraits(sign.slug, locale).slice(0, 4).map((tr) => (
                   <li key={tr} className="flex items-center gap-2 text-sm text-p-ink">
                     <span aria-hidden className="text-gold">✦</span>
                     {tr}
@@ -298,6 +301,7 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
             </div>
           </div>
 
+          {locale === "en" && (
           <div className="mt-8 rounded-xl border border-gold/20 bg-gold/5 p-5">
             <div className="flex items-start gap-3">
               <span className="mt-0.5 text-lg text-gold">☽</span>
@@ -309,6 +313,7 @@ function SignProfile({ sign, onClose }: { sign: ZodiacSign; onClose: () => void 
               </div>
             </div>
           </div>
+          )}
 
           <div className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] p-5">
             <h3 className="kicker">{t("common.elementPower", "Compatibility & element power")}</h3>

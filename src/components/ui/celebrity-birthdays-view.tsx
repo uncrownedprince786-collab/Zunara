@@ -20,6 +20,19 @@ import type { CelebritySource } from "@/lib/celebrities/resolver";
 /** In-memory cache of resolved REST lead-image URLs, keyed by article title. */
 const PORTRAIT_CACHE = new Map<string, string | null>();
 
+/**
+ * Shrink an oversized Wikimedia thumbnail to a width fit for the small avatar
+ * (rendered ~64px, so 200px stays crisp on retina). Pool images are stored at
+ * 330px; rewriting the width cuts image bytes ~60% with no visible change.
+ * Non-matching URLs (data URIs, curated thumbs) pass through untouched.
+ */
+function downscaleThumb(url: string): string {
+  if (typeof url !== "string") return url;
+  return url
+    .replace(/\/\d{3,4}px-/, "/200px-")
+    .replace(/([?&]width=)\d+/, "$1200");
+}
+
 export function initialsOf(name: string): string {
   return name
     .replace(/[^a-zA-Z0-9' .-]/g, "")
@@ -153,7 +166,7 @@ export function PortraitAvatar({
     );
   }
 
-  const src = exhausted ? (restSrc as string) : sources[srcIndex];
+  const src = downscaleThumb(exhausted ? (restSrc as string) : sources[srcIndex]);
   const onError = exhausted
     ? () => setRestState("failed")
     : () => setSrcIndex((i) => i + 1);

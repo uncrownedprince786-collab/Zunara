@@ -325,14 +325,14 @@ export function FamousBirthdaysHub({
                     </div>
 
                     <div className="pointer-events-none relative z-10 mt-2.5 flex flex-wrap items-center gap-1.5">
-                      <span className={`inline-block rounded-full border px-2 py-0.5 text-[0.55rem] font-medium tracking-wide ${regionStyle}`}>
+                      <span className={`inline-block rounded-full border px-2 py-0.5 text-[0.65rem] font-medium tracking-wide ${regionStyle}`}>
                         {t(`celebrities.regions.${c.region}`, c.region)}
                       </span>
-                      <span className={`inline-block rounded-full border px-2 py-0.5 text-[0.55rem] font-medium tracking-wide ${catStyle}`}>
+                      <span className={`inline-block rounded-full border px-2 py-0.5 text-[0.65rem] font-medium tracking-wide ${catStyle}`}>
                         {t(`celebrities.categories.${cat}`, categoryName(cat))}
                       </span>
                       {typeof c.sitelinks === "number" && c.sitelinks > 0 && (
-                        <span className="text-[0.55rem] text-subdued">
+                        <span className="text-[0.65rem] text-subdued">
                           <span aria-hidden className="text-gold">&bull;</span>{" "}
                           &#9733; {c.sitelinks}{" "}
                           {t("celebrities.sitelinks", "language editions")}
@@ -345,7 +345,7 @@ export function FamousBirthdaysHub({
                         href={wikiHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="relative z-10 mt-2.5 inline-flex w-fit items-center gap-1 rounded-full border border-white/10 px-2.5 py-0.5 text-[0.55rem] font-medium text-subdued transition-colors hover:border-gold/40 hover:text-gold"
+                        className="relative z-10 mt-2.5 inline-flex w-fit items-center gap-1 rounded-full border border-white/10 px-2.5 py-0.5 text-[0.65rem] font-medium text-subdued transition-colors hover:border-gold/40 hover:text-gold"
                       >
                         {t("celebrities.fullProfile", "Full profile")}
                         <span aria-hidden>&rarr;</span>

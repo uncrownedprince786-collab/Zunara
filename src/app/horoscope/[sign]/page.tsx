@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getZodiacSign, formatDateRange } from "@/lib/zodiac/zodiac";
 import { getHoroscopeContent } from "@/lib/horoscope/read";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { LocaleTraits, LocaleSignDescription } from "@/components/ui/locale-traits";
 import { PeriodTabs } from "@/components/ui/period-tabs";
 import { ThemeSymbol, type ThemeKey } from "@/components/ui/theme-symbol";
 import { Reveal } from "@/components/ui/reveal";
@@ -103,7 +104,7 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
             <LocaleText path="horoscope.aboutSign" fallback="About" /> <LocaleText path={`signs.${signData.slug}`} fallback={signData.name} />
           </h2>
           <p className="drop-cap mt-4 font-serif-body text-lg leading-8 text-starlight/90">
-            {signData.description}
+            <LocaleSignDescription slug={signData.slug} />
           </p>
 
           <blockquote
@@ -117,14 +118,11 @@ export default async function SignOverviewPage({ params }: { params: Promise<{ s
           <section className="rounded-lg border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl saturate-180">
             <h3 className="kicker"><LocaleText path="common.traits" fallback="Traits" /></h3>
             <ul className="mt-3 flex flex-wrap gap-2">
-              {signData.traits.map((trait) => (
-                <li
-                  key={trait}
-                  className="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
-                >
-                  {trait}
-                </li>
-              ))}
+              <LocaleTraits
+                slug={signData.slug}
+                as="li"
+                itemClassName="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
+              />
             </ul>
           </section>
 

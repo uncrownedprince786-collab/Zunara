@@ -9,6 +9,7 @@ import { ElementIcon } from "@/components/ui/element-icon";
 import { snapshotForToday } from "@/lib/astronomy/astro";
 import { DailyOrbitBanner } from "@/components/ui/daily-orbit-banner";
 import { LocaleText } from "@/components/ui/locale-text";
+import { LocaleTraits } from "@/components/ui/locale-traits";
 import { LocaleDate } from "@/components/ui/locale-date";
 import { MoonSignCard } from "@/components/ui/moon-sign-card";
 import { JsonLd } from "@/components/ui/json-ld";
@@ -133,14 +134,11 @@ export default function HomePage() {
               </p>
               {sunSign && (
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {sunSign.traits.slice(0, 4).map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                  <LocaleTraits
+                    slug={sunSign.slug}
+                    limit={4}
+                    itemClassName="rounded-full border border-white/[0.08] bg-cosmic/10 px-3 py-1 text-xs text-muted backdrop-blur-sm"
+                  />
                 </div>
               )}
             </div>
