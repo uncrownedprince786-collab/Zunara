@@ -7,6 +7,7 @@ import {
   YEARLY_EVENTS_2026,
   FALLBACK_BY_CATEGORY,
   EVENT_GUIDES,
+  localizedEventTitle,
   type SkyEvent,
 } from "@/lib/content/sky-events-data";
 import {
@@ -189,7 +190,7 @@ export function SkyEvents() {
     if (events.length === 0) return;
     const text = generateTransitICS(
       events.map((e) => ({
-        title: e.titleKey ? t(e.titleKey, e.title) : e.title,
+        title: localizedEventTitle(e, t),
         start: new Date(`${e.start}`),
         description: e.descKey ? t(e.descKey, e.description) : e.description,
       })),
@@ -265,7 +266,7 @@ export function SkyEvents() {
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col px-5 py-4">
-                    <h3 className="font-display text-base font-semibold leading-snug text-p-ink">{e.titleKey ? t(e.titleKey, e.title) : e.title}</h3>
+                    <h3 className="font-display text-base font-semibold leading-snug text-p-ink">{localizedEventTitle(e, t)}</h3>
                     <p className="mt-2 line-clamp-3 flex-1 text-sm leading-6 text-p-muted">{e.descKey ? t(e.descKey, e.description) : e.description}</p>
                     <Link
                       href={resolveUrl(e)}

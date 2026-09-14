@@ -6,6 +6,7 @@ import { calculateSkyEventsForYear } from "@/lib/content/sky-events-calculated";
 import {
   FALLBACK_BY_CATEGORY,
   EVENT_GUIDES,
+  localizedEventTitle,
   type SkyEvent,
 } from "@/lib/content/sky-events-data";
 import { startOfUtcDay } from "@/lib/astronomy/astro";
@@ -200,10 +201,7 @@ export function SkyEventsCalendar() {
   }
 
   function localizedTitle(e: SkyEvent): string {
-    if (e.category === "conjunctions" && e.bodyA && e.bodyB) {
-      return `${t(`planets.${e.bodyA}`, e.bodyA)} \u2013 ${t(`planets.${e.bodyB}`, e.bodyB)} ${t("skyEvents.conjunction", "Conjunction")}`;
-    }
-    return e.titleKey ? t(e.titleKey, e.title) : e.title;
+    return localizedEventTitle(e, t);
   }
 
   function localizedDesc(e: SkyEvent): string {

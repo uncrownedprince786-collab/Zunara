@@ -231,4 +231,37 @@ describe("calculateSkyEventsForYear", () => {
     const b = calculateSkyEventsForYear(YEAR);
     expect(a).toEqual(b);
   });
+
+  it("surfaces the four real 2026 eclipses and skips penumbral ones", () => {
+    const eclipses = events.filter((e) => e.category === "eclipses");
+    const dates = eclipses.map((e) => e.start.slice(0, 10));
+    // The four well-known, observable 2026 eclipses.
+    expect(dates).toContain("2026-02-17"); // annular solar
+    expect(dates).toContain("2026-03-03"); // total lunar
+    expect(dates).toContain("2026-08-12"); // total solar
+    expect(dates).toContain("2026-08-28"); // partial lunar
+    expect(eclipses.length).toBeGreaterThanOrEqual(4);
+    expect(eclipses.length).toBeLessThanOrEqual(7);
+    for (const e of eclipses) {
+      expect(["skyEvents.lunarEclipse", "skyEvents.solarEclipse"]).toContain(
+        e.titleKey,
+      );
+      expect(e.descKey).toBe("skyEvents.eclipsesDesc");
+    }
+  });
+
+  it("surfaces real outer-planet oppositions (target longitude 0, not 180)", () => {
+    const opps = events.filter((e) => e.category === "oppositions");
+    const byBody = Object.fromEntries(opps.map((e) => [e.bodyA, e.start.slice(0, 10)]));
+    // Jupiter opposes ~Jan 10 2026, Saturn ~early Oct 2026. Mars has NO 2026
+    // opposition (next is Feb 2027); a 180° sign error would wrongly list it.
+    expect(byBody.jupiter?.slice(0, 7)).toBe("2026-01");
+    expect(byBody.saturn?.slice(0, 7)).toBe("2026-10");
+    expect(byBody.mars).toBeUndefined();
+    expect(opps).toHaveLength(2);
+    for (const e of opps) {
+      expect(e.bodyA).toBeTruthy();
+      expect(e.descKey).toBe("skyEvents.oppositionsDesc");
+    }
+  });
 });

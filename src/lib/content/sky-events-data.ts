@@ -127,3 +127,23 @@ export const ANNUAL_SHOWER_PEAKS: ReadonlyArray<{ slug: string; month: number; d
   { slug: "geminids", month: 12, day: 14, region: "northern" },
   { slug: "ursids", month: 12, day: 22, region: "northern" },
 ];
+
+/**
+ * Localized display title for an event, shared by the home widget and the
+ * full calendar so both stay in sync. Planet-pair conjunctions and single-body
+ * oppositions are composed from the localized `planets.*` atoms plus the
+ * category label, so no per-event translation has to be invented. Everything
+ * else resolves through its `titleKey` (with the English `title` as fallback).
+ */
+export function localizedEventTitle(
+  e: SkyEvent,
+  t: (key: string, fallback?: string) => string,
+): string {
+  if (e.category === "conjunctions" && e.bodyA && e.bodyB) {
+    return `${t(`planets.${e.bodyA}`, e.bodyA)} – ${t(`planets.${e.bodyB}`, e.bodyB)} ${t("skyEvents.conjunction", "Conjunction")}`;
+  }
+  if (e.category === "oppositions" && e.bodyA) {
+    return `${t(`planets.${e.bodyA}`, e.bodyA)} ${t("skyEvents.opposition", "Opposition")}`;
+  }
+  return e.titleKey ? t(e.titleKey, e.title) : e.title;
+}

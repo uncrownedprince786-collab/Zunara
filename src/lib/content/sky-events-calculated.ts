@@ -10,6 +10,20 @@ export const SKY_CALC_MAX_QUARTERS = 8;
 
 const NASA_MOON_URL = "https://science.nasa.gov/moon/moon-phases/";
 const NASA_SKY_URL = "https://www.nasa.gov/skywatching/";
+const NASA_ECLIPSE_URL = "https://science.nasa.gov/eclipses/";
+
+/**
+ * Outer planets whose opposition (elongation 180° from the Sun) is a genuine
+ * naked-eye highlight — they rise at sunset and shine at their brightest and
+ * closest for the year. Inner planets never reach opposition, so they are
+ * excluded. Each slug maps to an existing `planets.*` dictionary atom so the
+ * title localizes without inventing per-event translations.
+ */
+const OPPOSITION_BODIES: Array<{ body: AE.Body; slug: string }> = [
+  { body: AE.Body.Mars, slug: "mars" },
+  { body: AE.Body.Jupiter, slug: "jupiter" },
+  { body: AE.Body.Saturn, slug: "saturn" },
+];
 
 /** Localized keys for the four principal lunar phases (see `phases.*`). */
 const QUARTER_INFO: Array<{ titleKey: string; descKey: string }> = [
@@ -92,6 +106,11 @@ export function calculateSkyEvents(
       });
     }
   }
+
+  // Date-only starts keep this rolling feed consistent with its moon/seasonal
+  // events (the home widget shows dates, not times).
+  events.push(...collectEclipses(now, horizonMs, true));
+  events.push(...collectOppositions(now, horizonMs, true));
 
   return events.sort(
     (a, b) =>
@@ -223,6 +242,117 @@ function findConjunctionsInYear(
   return results;
 }
 
+/**
+ * Eclipses (lunar + global solar) whose peak falls in [fromDate, untilTs].
+ *
+ * astronomy-engine finds these deterministically from first principles. Barely
+ * visible penumbral lunar eclipses are skipped so every listed event is worth
+ * stepping outside for. The kind (total/partial/annular) is intentionally not
+ * surfaced in the localized label — the title stays "Lunar/Solar Eclipse" so it
+ * localizes from a single dictionary key, and the "how to watch" link carries
+ * the specifics.
+ */
+function collectEclipses(
+  fromDate: Date,
+  untilTs: number,
+  dateOnly = false,
+): SkyEvent[] {
+  const out: SkyEvent[] = [];
+  const fromTs = fromDate.getTime();
+  const fmt = (d: Date) => (dateOnly ? isoDay(d) : d.toISOString());
+
+  let lunar = AE.SearchLunarEclipse(fromDate);
+  for (let i = 0; i < 16; i++) {
+    const at = new Date(lunar.peak.date);
+    const ts = at.getTime();
+    if (ts > untilTs) break;
+    if (ts >= fromTs && lunar.kind !== AE.EclipseKind.Penumbral) {
+      out.push({
+        title: "Lunar Eclipse",
+        start: fmt(at),
+        description:
+          "The Moon passes through Earth's shadow, dimming or reddening its face.",
+        url: NASA_ECLIPSE_URL,
+        category: "eclipses",
+        titleKey: "skyEvents.lunarEclipse",
+        descKey: "skyEvents.eclipsesDesc",
+        regionKey: "skyEvents.regions.global",
+      });
+    }
+    lunar = AE.NextLunarEclipse(lunar.peak);
+  }
+
+  let solar = AE.SearchGlobalSolarEclipse(fromDate);
+  for (let i = 0; i < 16; i++) {
+    const at = new Date(solar.peak.date);
+    const ts = at.getTime();
+    if (ts > untilTs) break;
+    if (ts >= fromTs) {
+      out.push({
+        title: "Solar Eclipse",
+        start: fmt(at),
+        description:
+          "The Moon crosses in front of the Sun; visibility depends on your location.",
+        url: NASA_ECLIPSE_URL,
+        category: "eclipses",
+        titleKey: "skyEvents.solarEclipse",
+        descKey: "skyEvents.eclipsesDesc",
+        regionKey: "skyEvents.regions.global",
+      });
+    }
+    solar = AE.NextGlobalSolarEclipse(solar.peak);
+  }
+
+  return out;
+}
+
+/**
+ * Outer-planet oppositions whose exact moment falls in [fromDate, untilTs].
+ * The title is composed in the view from the planet's `planets.*` atom plus the
+ * localized "Opposition" label (see `localizedEventTitle`), so no per-planet
+ * translation is invented here.
+ */
+function collectOppositions(
+  fromDate: Date,
+  untilTs: number,
+  dateOnly = false,
+): SkyEvent[] {
+  const out: SkyEvent[] = [];
+  const fromTs = fromDate.getTime();
+  const fmt = (d: Date) => (dateOnly ? isoDay(d) : d.toISOString());
+  for (const { body, slug } of OPPOSITION_BODIES) {
+    try {
+      // A superior planet is at opposition when its ecliptic longitude relative
+      // to the Earth (as seen from the Sun) is 0° — NOT 180°, which is superior
+      // conjunction behind the Sun. See astronomy-engine SearchRelativeLongitude.
+      let t = AE.SearchRelativeLongitude(body, 0, fromDate);
+      for (let i = 0; i < 4; i++) {
+        const at = new Date(t.date);
+        const ts = at.getTime();
+        if (Number.isNaN(ts) || ts > untilTs) break;
+        if (ts >= fromTs) {
+          out.push({
+            title: `${slug.charAt(0).toUpperCase()}${slug.slice(1)} at Opposition`,
+            bodyA: slug,
+            start: fmt(at),
+            description: "",
+            category: "oppositions",
+            descKey: "skyEvents.oppositionsDesc",
+            url: NASA_SKY_URL,
+            regionKey: "skyEvents.regions.global",
+          });
+        }
+        // Jump past this event before searching for the planet's next
+        // opposition (synodic period ≥ ~1 year, so this rarely loops twice).
+        t = AE.SearchRelativeLongitude(body, 0, new Date(ts + 7 * 86400000));
+      }
+    } catch {
+      // A search that fails to converge must never break the calendar.
+    }
+  }
+  return out;
+}
+
 export function calculateSkyEventsForYear(year: number): SkyEvent[] {
   const events: SkyEvent[] = [];
   const yearStart = new Date(Date.UTC(year, 0, 1, 0, 0, 0));
@@ -307,6 +437,9 @@ export function calculateSkyEventsForYear(year: number): SkyEvent[] {
       }
     }
   }
+
+  events.push(...collectEclipses(yearStart, yearEndTs));
+  events.push(...collectOppositions(yearStart, yearEndTs));
 
   return events.sort(
     (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
