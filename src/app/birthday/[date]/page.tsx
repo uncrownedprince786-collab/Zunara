@@ -9,6 +9,7 @@ import {
 } from "@/lib/calendar/birthday-routes";
 import { celebritiesForDate } from "@/lib/content/celebrities";
 import { zodiacForDate } from "@/lib/zodiac/zodiac";
+import { moonPhase, moonSign } from "@/lib/astronomy/moon";
 import { absoluteUrl } from "@/lib/seo/site";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { birthdayItemListJsonLd } from "@/lib/seo/jsonld";
@@ -29,6 +30,11 @@ function dateLabel(month: number, day: number): string {
     day: "numeric",
     timeZone: "UTC",
   }).format(Date.UTC(2000, month - 1, day));
+}
+
+function shiftDate(month: number, day: number, delta: number): { month: number; day: number } {
+  const d = Date.UTC(2000, month - 1, day) + delta * 86400000;
+  return { month: new Date(d).getUTCMonth() + 1, day: new Date(d).getUTCDate() };
 }
 
 export function generateStaticParams() {
@@ -69,6 +75,13 @@ export default async function BirthdayPage({ params }: BirthdayPageProps) {
     traitWords.length > 1
       ? `${traitWords.slice(0, -1).join(", ")} and ${traitWords[traitWords.length - 1]}`
       : traitWords[0];
+
+  const year = new Date().getUTCFullYear();
+  const skyDate = new Date(Date.UTC(year, month - 1, day, 12));
+  const phase = moonPhase(skyDate);
+  const moon = moonSign(skyDate);
+  const prev = shiftDate(month, day, -1);
+  const next = shiftDate(month, day, 1);
 
   return (
     <div className="constellation-bg">
@@ -124,6 +137,64 @@ export default async function BirthdayPage({ params }: BirthdayPageProps) {
           </Link>
         </div>
       </section>
+      {moon && (
+        <section
+          aria-labelledby="moon-heading"
+          className="mx-auto max-w-3xl px-4 sm:px-6"
+        >
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl saturate-180 sm:p-8">
+            <p className="kicker">The Moon on this day</p>
+            <h2
+              id="moon-heading"
+              className="mt-3 font-display text-2xl text-starlight sm:text-3xl"
+            >
+              Moon phase on {label}: {phase.name}
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-p-muted">
+              On {label} the Moon is {phase.illumination}% illuminated and
+              travelling through {moon.signName}, about{" "}
+              {Math.round(phase.age)} days into its 29.5-day lunar cycle.
+              Everyone born on {label} carries this same lunar phase as a
+              backdrop to their {sign.name} sun sign.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link
+                href="/sky-map"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08]"
+              >
+                See tonight&rsquo;s sky map &rarr;
+              </Link>
+              <Link
+                href="/ephemeris"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-4 py-2 text-sm text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08]"
+              >
+                Daily ephemeris table &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+      <nav
+        aria-label="Famous birthdays the day before and after"
+        className="mx-auto mt-10 max-w-3xl px-4 sm:px-6"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <Link
+            href={`/birthday/${String(prev.month).padStart(2, "0")}-${String(prev.day).padStart(2, "0")}`}
+            rel="prev"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-sm text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08]"
+          >
+            <span aria-hidden>&larr;</span> Previous day
+          </Link>
+          <Link
+            href={`/birthday/${String(next.month).padStart(2, "0")}-${String(next.day).padStart(2, "0")}`}
+            rel="next"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-2.5 text-sm text-starlight transition-colors hover:border-gold/40 hover:bg-white/[0.08]"
+          >
+            Next day <span aria-hidden>&rarr;</span>
+          </Link>
+        </div>
+      </nav>
       <OnThisDay month={month} day={day} />
     </div>
   );
