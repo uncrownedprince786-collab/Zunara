@@ -77,6 +77,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   const tools: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number }[] = [
+    { path: "/tools", changeFrequency: "weekly", priority: 0.7 },
     { path: "/synastry", changeFrequency: "weekly", priority: 0.8 },
     { path: "/daily-transit", changeFrequency: "weekly", priority: 0.7 },
     { path: "/sky-map", changeFrequency: "weekly", priority: 0.6 },

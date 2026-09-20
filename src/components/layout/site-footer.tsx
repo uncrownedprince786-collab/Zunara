@@ -36,6 +36,7 @@ export function SiteFooter() {
     {
       title: dict.nav.tools,
       links: [
+        { label: t("footer.freeTools", "Free Astrology Tools"), href: "/tools" },
         { label: dict.nav.synastry, href: "/synastry" },
         { label: dict.nav.dailyTransit, href: "/daily-transit" },
         { label: dict.nav.skyMap, href: "/sky-map" },
