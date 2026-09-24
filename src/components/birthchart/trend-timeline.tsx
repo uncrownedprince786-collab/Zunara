@@ -4,7 +4,7 @@ import type { TransitForecast, TransitAspectName, TransitArea } from "@/lib/nata
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { useLocale } from "@/lib/i18n/client";
 import { monthShort } from "@/lib/i18n/date";
-import type { Locale } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/lib/i18n/meta";
 
 const ASPECT_STYLE: Record<TransitAspectName, string> = {
   Conjunction: "border-gold/25 bg-gold/10 text-gold",

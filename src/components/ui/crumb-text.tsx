@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useLocale } from "@/lib/i18n/client";
-import { dictionaries, DEFAULT_LOCALE } from "@/lib/i18n/dictionaries";
+import { en } from "@/lib/i18n/dictionaries-en";
 
 type Entry = [value: string, path: string];
 
@@ -25,7 +25,6 @@ let cachedIndex: Map<string, string> | null = null;
 function getIndex(): Map<string, string> {
   if (!cachedIndex) {
     const entries: Entry[] = [];
-    const en = dictionaries[DEFAULT_LOCALE];
     if (en) {
       collectLeaves(en.nav as unknown as Record<string, unknown>, "nav", entries);
       collectLeaves(en.home as unknown as Record<string, unknown>, "home", entries);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LOCALES, type Locale } from "@/lib/i18n/dictionaries";
+import { LOCALES, type Locale } from "@/lib/i18n/meta";
 import { useLocale } from "@/lib/i18n/client";
 
 export function LanguageSwitcher({ id = "lang-switcher" }: { id?: string }) {

@@ -3,14 +3,13 @@
 import { createContext, useContext, useMemo, useEffect, useSyncExternalStore, useState, type ReactNode } from "react";
 import {
   type Locale,
-  type Dict,
-  dictionaries,
   DEFAULT_LOCALE,
   LOCALE_COOKIE,
   LOCALES,
   getLocaleDir,
   isLocale,
-} from "./dictionaries";
+} from "./meta";
+import { en, type Dict } from "./dictionaries-en";
 
 export type { Locale, Dict };
 
@@ -136,12 +135,59 @@ function applyStore(next: Locale) {
   }
 }
 
+// --- Lazy per-locale dictionaries: only the active locale's dict (plus the
+// English fallback) is loaded into the client bundle up front. Each other
+// locale is fetched on demand via dynamic import when the user switches, so
+// six full dictionaries never ship with the initial page load. ---
+const dictLoaders: Record<Locale, () => Promise<Dict>> = {
+  en: () => Promise.resolve(en),
+  ur: () => import("./dictionaries-ur").then((m) => m.ur),
+  ar: () => import("./dictionaries-ar").then((m) => m.ar),
+  es: () => import("./dictionaries-es").then((m) => m.es),
+  zh: () => import("./dictionaries-zh").then((m) => m.zh),
+  hi: () => import("./dictionaries-hi").then((m) => m.hi),
+};
+
+let dictStore: { locale: Locale; dict: Dict } = { locale: DEFAULT_LOCALE, dict: en };
+const dictListeners = new Set<() => void>();
+
+function emitDictStore() {
+  for (const l of dictListeners) l();
+}
+
+function subscribeDictStore(cb: () => void) {
+  dictListeners.add(cb);
+  return () => dictListeners.delete(cb);
+}
+
+function getDictSnapshot(): { locale: Locale; dict: Dict } {
+  return dictStore;
+}
+
+function getServerDictSnapshot(): { locale: Locale; dict: Dict } {
+  return dictStore;
+}
+
+/** Loads `locale`'s dictionary (cached after first load) and applies it. */
+async function loadLocaleDict(locale: Locale) {
+  const loader = dictLoaders[locale];
+  if (!loader) return;
+  const dict = await loader();
+  // Only apply if this locale is still the user's active choice (guards
+  // against a stale async load landing after the user switched away).
+  if (storeLocale === locale) {
+    dictStore = { locale, dict };
+    emitDictStore();
+  }
+}
+
 export function LocaleProvider({ children }: { children: ReactNode }) {
   // Hydration safety: the module store only carries the SSR/initial (English)
   // locale until the component mounts. `hydrated` flips to true in an effect so
   // the client locale (from cookie) can be applied without a render mismatch.
   const [hydrated, setHydrated] = useState(false);
   const locale = useSyncExternalStore(subscribeStore, getSnapshot, getServerSnapshot);
+  const dictState = useSyncExternalStore(subscribeDictStore, getDictSnapshot, getServerDictSnapshot);
 
   // Restore saved language from cookie only AFTER first client mount (hydration).
   useEffect(() => {
@@ -150,7 +196,15 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     if (saved !== DEFAULT_LOCALE) {
       applyStore(saved);
     }
+    void loadLocaleDict(saved);
   }, []);
+
+  // Keep the active dictionary in sync with the chosen locale.
+  useEffect(() => {
+    if (dictState.locale !== locale) {
+      void loadLocaleDict(locale);
+    }
+  }, [locale, dictState.locale]);
 
   // Sync choice cookie + <html dir/lang> only after hydration.
   useEffect(() => {
@@ -179,14 +233,14 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<LocaleContextValue>(() => {
     // Always fall back to English if the active locale's dict is unavailable.
-    const dict = dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
-    const english = dictionaries[DEFAULT_LOCALE];
-    const safeSigns = dict?.signs ?? (dictionaries[DEFAULT_LOCALE]?.signs ?? {});
-    const safeElements = dict?.elements ?? (dictionaries[DEFAULT_LOCALE]?.elements ?? {});
-    const safeModalities = dict?.modalities ?? (dictionaries[DEFAULT_LOCALE]?.modalities ?? {});
-    const safePlanets = dict?.planets ?? (dictionaries[DEFAULT_LOCALE]?.planets ?? {});
-    const safeHorizons = dict?.horizons ?? (dictionaries[DEFAULT_LOCALE]?.horizons ?? {});
-    const safeAreas = dict?.areas ?? (dictionaries[DEFAULT_LOCALE]?.areas ?? {});
+    const dict = dictState.dict ?? en;
+    const english = en;
+    const safeSigns = dict?.signs ?? english?.signs ?? {};
+    const safeElements = dict?.elements ?? english?.elements ?? {};
+    const safeModalities = dict?.modalities ?? english?.modalities ?? {};
+    const safePlanets = dict?.planets ?? english?.planets ?? {};
+    const safeHorizons = dict?.horizons ?? english?.horizons ?? {};
+    const safeAreas = dict?.areas ?? english?.areas ?? {};
     let dir: "ltr" | "rtl";
     try {
       dir = getLocaleDir(locale);
@@ -263,7 +317,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       tArea,
       setLocale: applyStore,
     };
-  }, [locale]);
+  }, [locale, dictState]);
 
   return (
     <LocaleContext.Provider value={value}>
@@ -277,8 +331,8 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 export function useLocale(): LocaleContextValue {
   const ctx = useContext(LocaleContext);
   if (!ctx) {
-    const fallbackDict = dictionaries[DEFAULT_LOCALE] ?? ({} as Dict);
-    const english = dictionaries[DEFAULT_LOCALE];
+    const fallbackDict = en ?? ({} as Dict);
+    const english = en;
     return {
       locale: DEFAULT_LOCALE,
       dir: "ltr",
