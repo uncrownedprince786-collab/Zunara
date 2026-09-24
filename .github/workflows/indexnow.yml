@@ -1,0 +1,56 @@
+name: Zunara URL Submit (IndexNow)
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # weekly, Monday 07:00 UTC — IndexNow recommends ~once a week at most
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch sitemap URLs
+        id: urls
+        run: |
+          curl -s -o sitemap.xml https://zunara.vercel.app/sitemap.xml
+          grep -oP '(?<=<loc>)[^<]+' sitemap.xml > urls.txt
+          wc -l < urls.txt
+          echo "count=$(wc -l < urls.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Submit to IndexNow endpoints
+        run: |
+          python3 - <<'EOF'
+          import json, urllib.request
+
+          KEY = "45e9ef44c1922abc073bc24ff65c1622"
+          HOST = "zunara.vercel.app"
+          KEY_LOCATION = f"https://{HOST}/{KEY}.txt"
+          ENDPOINTS = [
+              "https://api.indexnow.org/indexnow",          # Bing / DuckDuckGo / others
+              "https://yandex.com/indexnow",
+              "https://search.seznam.cz/indexnow",
+              "https://searchadvisor.naver.com/indexnow",
+          ]
+
+          urls = [l.strip() for l in open("urls.txt") if l.strip()]
+          print(f"URLs to submit: {len(urls)}")
+
+          payload = {
+              "host": HOST,
+              "key": KEY,
+              "keyLocation": KEY_LOCATION,
+              "urlList": urls,
+          }
+          body = json.dumps(payload).encode()
+
+          for ep in ENDPOINTS:
+              try:
+                  req = urllib.request.Request(ep, data=body, headers={"Content-Type": "application/json; charset=utf-8"}, method="POST")
+                  with urllib.request.urlopen(req, timeout=60) as resp:
+                      print(f"{ep} -> {resp.status} {resp.reason}")
+              except Exception as e:
+                  print(f"{ep} -> ERROR {e}")
+          EOF
