@@ -28,12 +28,9 @@ jobs:
           KEY = "45e9ef44c1922abc073bc24ff65c1622"
           HOST = "zunara.vercel.app"
           KEY_LOCATION = f"https://{HOST}/{KEY}.txt"
-          ENDPOINTS = [
-              "https://api.indexnow.org/indexnow",          # Bing / DuckDuckGo / others
-              "https://yandex.com/indexnow",
-              "https://search.seznam.cz/indexnow",
-              "https://searchadvisor.naver.com/indexnow",
-          ]
+          # api.indexnow.org distributes to Bing, DuckDuckGo, Seznam, Naver.
+          # Yandex deprecated IndexNow (2024) -> excluded.
+          ENDPOINTS = ["https://api.indexnow.org/indexnow"]
 
           urls = [l.strip() for l in open("urls.txt") if l.strip()]
           print(f"URLs to submit: {len(urls)}")
