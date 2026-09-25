@@ -168,6 +168,53 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
+        <section className="mt-16" aria-labelledby="sources-heading">
+          <div className="flex items-center justify-between border-b border-line-soft pb-5">
+            <div>
+              <p className="kicker">Primary sources</p>
+              <h2 id="sources-heading" className="mt-2 font-display text-2xl text-starlight">
+                Where our mathematics comes from
+              </h2>
+            </div>
+            <span className="hidden text-sm text-subdued sm:block">
+              Verifiable, published references
+            </span>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <h3 className="font-display text-lg text-starlight">VSOP87 planetary theory</h3>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                The VSOP87 (Variations Séculaires des Orbites Planétaires) theory of planetary
+                longitudes, the same series used in professional astronomical almanacs.{" "}
+                <a href="https://en.wikipedia.org/wiki/VSOP_(planetary_theory)" className="text-gold hover:underline" rel="noopener noreferrer">
+                  Reference
+                </a>
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <h3 className="font-display text-lg text-starlight">NASA JPL Horizons</h3>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                Our live positions cross-check against JPL{"'"}s Horizons database, NASA{"'"}s own
+                authoritative ephemeris service.{" "}
+                <a href="https://ssd.jpl.nasa.gov/horizons/" className="text-gold hover:underline" rel="noopener noreferrer">
+                  Reference
+                </a>
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <h3 className="font-display text-lg text-starlight">The Astronomical Almanac</h3>
+              <p className="mt-2 text-sm leading-6 text-muted">
+                The same geometric conventions for ecliptic longitude, lunar nodes and equinoxes
+                used in the printed Astronomical Almanac published jointly with the US Naval
+                Observatory.{" "}
+                <a href="https://aa.usno.navy.mil/" className="text-gold hover:underline" rel="noopener noreferrer">
+                  Reference
+                </a>
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section className="mt-16 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm leading-6 text-muted backdrop-blur-xl">
           <p>
             For the deeper story — the origin of sky-watching, the exact three-step method and

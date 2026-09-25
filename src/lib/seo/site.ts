@@ -8,6 +8,8 @@ export const SITE = {
   locale: "en_US",
   image: "/og.png",
   orgName: "Zunara Publishing",
+  // Real, verifiable public profiles for the Organization entity (E-E-A-T):
+  sameAs: ["https://github.com/uncrownedprince786-collab/Zunara"],
 } as const;
 
 export function absoluteUrl(path = ""): string {

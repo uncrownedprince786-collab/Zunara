@@ -40,8 +40,8 @@ export default async function AstrologyTopicPage({ params }: { params: Promise<{
     headline: data.title,
     description: data.summary,
     inLanguage: "en",
-    author: { "@type": "Organization", name: SITE.name },
-    publisher: { "@type": "Organization", name: SITE.name },
+    author: { "@id": absoluteUrl("/#organization") },
+    publisher: { "@id": absoluteUrl("/#organization") },
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   };
 

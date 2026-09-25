@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { JsonLdScript } from "@/components/ui/json-ld";
-import { absoluteUrl, SITE } from "@/lib/seo/site";
+import { absoluteUrl } from "@/lib/seo/site";
 import { pageMetadata, alternateLanguages } from "@/lib/seo/metadata";
 import { PlanetSymbol } from "@/components/ui/planet-symbol";
 import { ZodiacSymbol } from "@/components/ui/zodiac-symbol";
@@ -69,7 +69,7 @@ export default async function PlanetPage({
     headline: `${name} in Astrology`,
     description: `What ${name} means in your birth chart: its nature, the house it keys to, its zodiac-sign expressions and mythology.`,
     inLanguage: "en",
-    author: { "@type": "Organization", name: SITE.name },
+    author: { "@id": absoluteUrl("/#organization") },
     publisher: { "@id": absoluteUrl("/#organization") },
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   };

@@ -133,6 +133,57 @@ export default function AboutPage() {
             })}
           </div>
         </section>
+      {/* ---- Editorial accountability ---- */}
+        <section className="mt-20" aria-labelledby="accountability-heading">
+          <header className="max-w-2xl">
+            <p className="kicker">Editorial accountability</p>
+            <h2
+              id="accountability-heading"
+              className="mt-3 font-display text-3xl leading-tight text-starlight sm:text-4xl"
+            >
+              Who stands behind every reading
+            </h2>
+            <p className="mt-5 font-serif-body text-lg leading-8 text-muted">
+              Zunara is a small independent publication. Every position on the site is produced
+              by a single deterministic calculation engine, so two different editors cannot
+              produce two different charts for the same instant. The interpretation layer is
+              written by a named editorial team and reviewed against tradition and clarity.
+            </p>
+          </header>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <h3 className="font-display text-lg text-starlight">Accountable authorship</h3>
+              <p className="mt-3 font-serif-body text-[0.98rem] leading-7 text-p-muted">
+                Readings are authored by the Zunara editorial desk rather than generated ad-hoc,
+                so there is always a named human answerable for the claims a page makes. Our
+                publishing standards are public on the{" "}
+                <a href="/how-it-works" className="text-gold hover:underline">method page</a>.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <h3 className="font-display text-lg text-starlight">Corrections</h3>
+              <p className="mt-3 font-serif-body text-[0.98rem] leading-7 text-p-muted">
+                If you spot an error of fact — a wrong date range, a miscalculated position, or
+                a broken claim — open an issue on the{" "}
+                <a href="https://github.com/uncrownedprince786-collab/Zunara" className="text-gold hover:underline" rel="noopener noreferrer">
+                  public Zunara repository
+                </a>{" "}
+                and it will be corrected.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+              <h3 className="font-display text-lg text-starlight">No invented science</h3>
+              <p className="mt-3 font-serif-body text-[0.98rem] leading-7 text-p-muted">
+                We never present astrology as astronomy, medicine or predictive fact. The lines
+                between measured positions and interpreted meaning are drawn explicitly and
+                repeatedly — see our{" "}
+                <a href="/disclaimer" className="text-gold hover:underline">disclaimer</a> and{" "}
+                <a href="/terms" className="text-gold hover:underline">terms</a>.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

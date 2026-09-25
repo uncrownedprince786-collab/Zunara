@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { JsonLdScript } from "@/components/ui/json-ld";
-import { absoluteUrl, SITE } from "@/lib/seo/site";
+import { absoluteUrl } from "@/lib/seo/site";
 import { pageMetadata, alternateLanguages } from "@/lib/seo/metadata";
 import { HOUSES, getHouse } from "@/lib/houses/house-content";
 
@@ -64,7 +64,7 @@ export default async function HousePage({
     headline: `The ${ord} House: ${house.title}`,
     description: house.nature,
     inLanguage: "en",
-    author: { "@type": "Organization", name: SITE.name },
+    author: { "@id": absoluteUrl("/#organization") },
     publisher: { "@id": absoluteUrl("/#organization") },
     mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   };

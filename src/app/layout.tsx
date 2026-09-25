@@ -32,6 +32,9 @@ export const metadata: Metadata = {
   },
   description:
     SITE.description,
+  authors: { name: SITE.orgName, url: absoluteUrl("/about") },
+  creator: SITE.orgName,
+  publisher: SITE.orgName,
   keywords: [
     "daily horoscope",
     "weekly horoscope",
@@ -96,7 +99,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: SITE.orgName,
               url: SITE.url,
               logo: absoluteUrl(SITE.image),
-              sameAs: [],
+              description: SITE.description,
+              sameAs: SITE.sameAs,
+              publishingPrinciples: absoluteUrl("/how-it-works"),
             }),
           }}
         />
