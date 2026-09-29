@@ -1,0 +1,36 @@
+name: Publish Articles to Medium & Dev.to
+
+on:
+  schedule:
+    # every day, 10:00 UTC — each article posts exactly once (state-guarded)
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/publish/**"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run publisher
+        env:
+          MEDIUM_TOKEN: ${{ secrets.MEDIUM_TOKEN }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        run: node scripts/publish/publish.mjs
+      - name: Commit state changes (published flags)
+        if: always()
+        run: |
+          git config user.name "zunara-bot"
+          git config user.email "bot@zunara.vercel.app"
+          git add scripts/publish/articles
+          git diff --cached --quiet || git commit -m "automation: mark articles as published"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main 2>/dev/null || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
