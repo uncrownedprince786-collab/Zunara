@@ -1,6 +1,7 @@
 ---
 title: "Your Birth Chart Isn't a Horoscope Column. Here's What It Actually Measures"
 published: false
+description: "What a birth chart actually measures — real planetary positions, from VSOP87 — and where the human symbolism enters."
 platforms:
   medium: false
   devto: false

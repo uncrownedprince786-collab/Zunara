@@ -1,6 +1,7 @@
 ---
 title: "Mercury Retrograde, Explained Without the Fear-Mongering"
 published: false
+description: "Why Mercury retrograde is an optical illusion, what the astronomy actually shows, and why the interpretation is optional."
 platforms:
   medium: false
   devto: false

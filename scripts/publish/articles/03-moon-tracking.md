@@ -1,6 +1,7 @@
 ---
 title: "The Moon Is a Planet You Can Actually Feel. Here's How to Track It"
 published: false
+description: "The lunar cycle in plain terms — phases, illumination, and where the Moon is right now — based on exact astronomy."
 platforms:
   medium: false
   devto: false

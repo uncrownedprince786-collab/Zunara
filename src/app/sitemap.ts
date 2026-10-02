@@ -6,6 +6,7 @@ import { dailyKey } from "@/lib/calendar/periods";
 import { birthdayDates } from "@/lib/calendar/birthday-routes";
 import { PLANET_SLUGS } from "@/lib/planets/planet-content";
 import { HOUSES } from "@/lib/houses/house-content";
+import { getJournalArticles } from "@/lib/journal/articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -55,6 +56,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   entries.push({ url: `${base}/cosmic-facts`, lastModified: now, changeFrequency: "weekly", priority: 0.6 });
+  entries.push({ url: `${base}/journal`, lastModified: now, changeFrequency: "weekly", priority: 0.6 });
+  for (const article of getJournalArticles()) {
+    entries.push({
+      url: `${base}/journal/${article.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+  }
   entries.push({ url: `${base}/birthchart`, lastModified: now, changeFrequency: "weekly", priority: 0.8 });
   entries.push({ url: `${base}/yoursky`, lastModified: now, changeFrequency: "weekly", priority: 0.8 });
   entries.push({ url: `${base}/sky-now`, lastModified: now, changeFrequency: "hourly", priority: 0.9 });

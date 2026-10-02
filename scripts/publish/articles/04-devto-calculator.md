@@ -1,6 +1,7 @@
 ---
 title: "How We Built a Free Astrology Calculator on Real Planetary Math"
 published: false
+description: "How the free Zunara calculators work — VSOP87 exact positions, honest interpretation, and no account required."
 platforms:
   medium: false
   devto: true
