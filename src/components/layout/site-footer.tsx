@@ -27,6 +27,7 @@ export function SiteFooter() {
         { label: dict.nav.birthchart, href: "/birthchart" },
         { label: t("footer.astrologyGuide", "Astrology"), href: "/astrology" },
         { label: dict.nav.cosmicFacts, href: "/cosmic-facts" },
+        { label: t("footer.journal", "Journal"), href: "/journal" },
         { label: dict.nav.about, href: "/about" },
         { label: dict.nav.privacy, href: "/privacy" },
         { label: dict.nav.terms, href: "/terms" },

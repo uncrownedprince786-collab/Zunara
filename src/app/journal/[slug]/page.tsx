@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { ShareButtons } from "@/components/ui/share-buttons";
 import { absoluteUrl } from "@/lib/seo/site";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getJournalArticle, getJournalArticles, markdownBody } from "@/lib/journal/articles";
@@ -104,6 +105,8 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
             })}
           </div>
         </article>
+
+        <ShareButtons title={article.title} path={`/journal/${article.slug}`} />
 
         {all.length > 0 && (
           <section className="mt-12 border-t border-line-soft pt-8">
