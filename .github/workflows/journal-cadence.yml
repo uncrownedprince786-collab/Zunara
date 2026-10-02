@@ -1,0 +1,56 @@
+name: Journal Cadence Reminder
+
+on:
+  schedule:
+    # every Monday 09:00 UTC
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if a batch is due
+        id: check
+        run: |
+          node - <<'EOF'
+          const state = JSON.parse(require("fs").readFileSync("scripts/publish/journal-state.json", "utf8"));
+          const last = new Date(state.lastBatchAt);
+          const now = new Date();
+          const days = Math.floor((now - last) / 86400000);
+          const due = days >= 7;
+          if (due) state.lastBatchAt = now.toISOString().slice(0,10);
+          require("fs").writeFileSync("scripts/publish/journal-state.json", JSON.stringify(state, null, 2) + "\n");
+          require("fs").writeFileSync(process.env.GITHUB_ENV, `DUE=${due}\nLAST_BATCH=${state.lastBatchAt}\n`);
+          console.log(`daysSinceBatch=${days} due=${due} lastBatch=${state.lastBatchAt}`);
+          EOF
+      - name: Open reminder issue (weekly cadence)
+        if: env.DUE == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const last = process.env.LAST_BATCH;
+            const body = `Weekly journal cadence reminder.
+
+**Target:** ~2 essays per week.
+**Last batch:** ${last}
+
+To add essays: create markdown files in \`scripts/publish/articles/\` (frontmatter: \`title\`, \`description\`, tags) — they render automatically at \`/journal/*\` and appear in the sitemap. Close this issue once published.`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Journal batch due (last published ${last})`,
+              body,
+            });
+      - name: Push state update
+        run: |
+          git config user.name "zunara-bot"
+          git config user.email "bot@zunara.vercel.app"
+          git add scripts/publish/journal-state.json
+          git diff --cached --quiet || git commit -m "automation: journal cadence state update"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main 2>/dev/null || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

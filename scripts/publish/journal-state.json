@@ -1,0 +1,6 @@
+{
+  "targetPerWeek": 2,
+  "lastBatchAt": "2026-10-03",
+  "totalEssays": 9,
+  "notes": "Add ~2 essays per week. New essays go to scripts/publish/articles/ and render automatically at /journal/*."
+}
